@@ -9,7 +9,7 @@ import { useCampaignUiStore } from "@/features/campaign/store/campaign-ui-store"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
-import { ResourceAmount, ResourceIcon, resourceLabels } from "@/components/ui/resource-icon";
+import { ResourceIcon, resourceLabels } from "@/components/ui/resource-icon";
 import { RecruitmentModal } from "@/features/recruitment/components/recruitment-modal";
 import { formatCountdown } from "@/lib/time";
 import type { CampaignSnapshot, StarSystem } from "@/domain/campaign";
@@ -83,14 +83,7 @@ function ResourceBar({ snapshot }: { snapshot: CampaignSnapshot }) {
   );
 
   return (
-    <Panel className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
-      <div>
-        <div className="text-xs uppercase tracking-[0.24em] text-cyan-200/70">Subsector Helios</div>
-        <div className="mt-1 text-sm text-slate-300">
-          Próximo tick de recursos: {formatCountdown(snapshot.nextResourceTickAt)}
-        </div>
-      </div>
-
+    <Panel className="mx-auto flex w-fit max-w-full flex-wrap items-center justify-center gap-2 px-4 py-3">
       <div className="flex flex-wrap items-center gap-2">
         {mainResources.map((key) => (
           <div
@@ -241,8 +234,8 @@ function GalaxyTooltip({
           </span>
         </div>
         <div className="flex items-center justify-between gap-3">
-          <span>Producción</span>
-          <span className="text-cyan-100">+{totalProduction} por tick</span>
+          <span>Producción diaria</span>
+          <span className="text-cyan-100">+{totalProduction}/día</span>
         </div>
         {system.blockedUntil ? (
           <div className="flex items-center justify-between gap-3 text-amber-100">
@@ -328,7 +321,7 @@ function SystemPanel({
           ) : null}
 
           <section>
-            <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Producción por tick</h2>
+            <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Producción diaria</h2>
             <div className="grid grid-cols-2 gap-2">
               {mainResources.map((key) => (
                 <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={key}>
@@ -336,7 +329,7 @@ function SystemPanel({
                     <ResourceIcon className="size-4" resource={key} />
                     {resourceLabels[key]}
                   </div>
-                  <ResourceAmount className="font-semibold text-cyan-50" prefix="+" resource={key} value={system.production[key]} />
+                  <div className="font-semibold tabular-nums text-cyan-50">+{system.production[key]}</div>
                 </div>
               ))}
             </div>

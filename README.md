@@ -46,4 +46,4 @@ sombra-emperador@rol40k.local / rol40k-local-123
 guardia-muerte@rol40k.local / rol40k-local-123
 ```
 
-La produccion de recursos funciona por tick temporal configurable, no por turno estrategico.
+La produccion de recursos funciona con tick diario de backend, no por turno estrategico.

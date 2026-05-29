@@ -215,8 +215,9 @@ Las rutas entre sistemas se dibujan con PixiJS:
 
 #### Ruta de mayor coste
 
-- Línea más gruesa o doble trazo.
-- Puede mostrar coste de Uridium al hacer hover.
+- Mantiene el mismo grosor base que el resto de rutas.
+- No muestra numeros de coste de forma permanente.
+- El coste de Uridium aparece solo cuando el jugador esta preparando un movimiento o inspecciona la ruta desde una UI especifica.
 
 #### Ruta bloqueada por evento
 
@@ -226,13 +227,30 @@ Las rutas entre sistemas se dibujan con PixiJS:
 #### Ruta seleccionada
 
 - Línea brillante.
-- Animación sutil.
-- Partículas recorriendo la ruta.
+- Realce estatico o pulso suave, sin sugerir direccion.
 
 #### Movimiento de tropas
 
 - Pequeña partícula, icono o marcador viajando de origen a destino.
 - Solo visible para el jugador dueño de la tropa y admin, salvo que más adelante haya espionaje.
+- La animacion direccional se reserva exclusivamente para `movement_orders` reales en estado `moving` que el usuario tenga permiso de ver.
+
+### 3.5 Estado inicial del mapa
+
+El seed local inicial debe representar una campana viva, no un reparto aleatorio:
+
+- El mapa empieza con 30 sistemas.
+- Cada faccion tiene capital en un borde dificil de alcanzar del grafo.
+- Cada faccion controla 3 sistemas contiguos: capital, retaguardia y frontera.
+- El centro del grafo permanece neutral y disputado.
+- Existen corredores reconocibles desde cada capital hacia el centro.
+- Hay 3 conflictos iniciales en sistemas neutrales fronterizos:
+  - Orcos contra Guardia Imperial en `azur-trench`.
+  - Guardia de la Muerte contra Necrones en `ossuary-reach`.
+  - Sombra del Emperador contra Culto Genestelar en `saint-veil`.
+- Los sistemas con conflicto inicial estan en estado `war`, bloqueados y pendientes de reporte de batalla fisica.
+- Cada faccion empieza con guarnicion en capital, ejercito de frontera, fuerza movil y presencia en el conflicto que le corresponde.
+- Las ordenes de movimiento iniciales son visibles solo para la faccion propietaria y para admin.
 
 ---
 
@@ -292,28 +310,28 @@ No todas las unidades básicas deben costar Piedra ancestral.
 
 ### 4.3 Producción
 
-Cada sistema puede producir una cantidad de recursos por tick temporal configurable:
+Cada sistema produce una cantidad diaria de recursos. En base de datos estos valores se guardan como campos `*_per_tick`, pero en la v1 del juego cada tick equivale a 24 horas reales:
 
 - `supply_per_tick`
 - `minerals_per_tick`
 - `ancestral_stone_per_tick`
 - `uridium_per_tick`
 
-La producción total de una facción en cada tick es la suma de los sistemas que controla.
+La producción diaria total de una facción es la suma de los sistemas que controla.
 
-La cadencia inicial recomendada para el tick de producción es:
+La cadencia de usuario para la v1 es diaria:
 
 ```text
 24 horas
 ```
 
-El admin debe poder cambiar esta cadencia si la campaña necesita avanzar más rápido o más lento.
+El admin podrá cambiar esta cadencia más adelante si la campaña necesita avanzar más rápido o más lento.
 
-El panel superior debe mostrar recursos actuales.
+El panel superior debe mostrar solo los recursos actuales, centrados y sin texto de siguiente tick.
 
 El panel detallado de recursos debe mostrar también:
 
-- Producción total por tick.
+- Producción diaria total.
 - Cadencia actual de producción.
 - Sistemas que producen cada recurso.
 - Reliquias poseídas.
@@ -347,9 +365,9 @@ Los cronos deben ser gestionados por backend con timestamps reales:
 
 El frontend solo muestra cuenta atrás.
 
-### 5.2 Producción por tick temporal
+### 5.2 Producción diaria
 
-El backend ejecuta un tick de producción cada X horas.
+El backend ejecuta un tick de producción cada 24 horas en la v1.
 
 Valor inicial recomendado:
 
@@ -668,7 +686,7 @@ Si todo es válido:
 - El ejército pasa a estado `moving`.
 - Se guarda `arrival_at`.
 - El frontend muestra cuenta atrás.
-- El mapa puede mostrar animación de movimiento para el dueño/admin.
+- El mapa muestra animación direccional solo para órdenes de movimiento visibles por el usuario.
 
 ### 8.4 Llegada
 
@@ -724,6 +742,8 @@ El reporte debe permitir registrar:
 - Admin ve todos los movimientos.
 - Otros jugadores no ven movimientos enemigos.
 - Más adelante espionaje podrá revelar movimientos.
+- Las rutas base no deben sugerir dirección ni movimiento por sí mismas.
+- La animación direccional sobre una ruta se reserva para `movement_orders` en estado `moving` que el usuario tenga permiso de ver.
 
 ---
 
@@ -935,16 +955,16 @@ Al hacer click, abrir panel:
 Recursos actuales
 
 Suministro vital: 120
-Producción: +18 por tick
+Producción diaria: +18
 
 Mineral: 85
-Producción: +11 por tick
+Producción diaria: +11
 
 Piedra ancestral: 8
-Producción: +2 por tick
+Producción diaria: +2
 
 Uridium: 14
-Producción: +4 por tick
+Producción diaria: +4
 
 Cadencia de producción: cada 24 horas
 ```
@@ -1463,6 +1483,15 @@ Backend local:
 - Seed de campana en `supabase/seed.sql`.
 - Usuarios locales mediante script con service role.
 
+El seed local inicial representa el estado jugable de prueba:
+
+- 30 sistemas con capitales en los bordes del grafo.
+- 3 sistemas contiguos controlados por cada faccion.
+- 3 conflictos iniciales en sistemas neutrales fronterizos.
+- 4 ejercitos iniciales por faccion: capital, frontera, movimiento y conflicto.
+- 6 ordenes de movimiento activas, una por faccion.
+- Sin reportes de batalla precargados; los conflictos esperan resultados reales o resolucion admin.
+
 Puertos locales estandar:
 
 ```text
@@ -1580,7 +1609,7 @@ Muestra:
 Muestra:
 
 - Recursos actuales.
-- Producción por tick.
+- Producción diaria.
 - Cadencia temporal de producción.
 - Sistemas que producen.
 - Reliquias.
@@ -1848,7 +1877,7 @@ Sin login todavía.
 
 - Barra superior.
 - Panel de recursos.
-- Producción por tick temporal configurable.
+- Producción diaria por tick backend de 24h.
 - Cron/lazy processing de recursos.
 - Admin puede configurar cadencia de producción.
 - Logs de ticks de producción.
@@ -2033,7 +2062,7 @@ Construir una aplicación web privada de campaña Warhammer 40K con:
   - Mineral,
   - Piedra ancestral,
   - Uridium.
-- Producción por sistemas controlados mediante tick temporal configurable.
+- Producción diaria por sistemas controlados mediante tick backend de 24h.
 - Reclutamiento temporizado.
 - Movimiento temporizado.
 - Reportes de batalla por jugadores/admin.

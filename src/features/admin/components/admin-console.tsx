@@ -3,13 +3,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
 import { mockCampaignSnapshot } from "@/mocks/campaign-data";
-import { formatCountdown } from "@/lib/time";
 
 const adminBlocks = [
   {
-    title: "Producción temporal",
+    title: "Producción diaria",
     icon: Clock3,
-    text: "Tick configurable de 24h con resolución por cron o lazy processing.",
+    text: "Tick diario de 24h con resolución por cron o lazy processing.",
     action: "Configurar"
   },
   {
@@ -21,7 +20,7 @@ const adminBlocks = [
   {
     title: "Mapa y rutas",
     icon: Database,
-    text: "Sistemas, rutas, producción por tick, bloqueos y control territorial.",
+    text: "Sistemas, rutas, producción diaria, bloqueos y control territorial.",
     action: "Editar"
   },
   {
@@ -55,11 +54,7 @@ export function AdminConsole() {
         <div className="grid gap-4 md:grid-cols-3">
           <MetricCard label="Conflictos pendientes" value={pendingConflicts.length} tone="rose" />
           <MetricCard label="Reportes por revisar" value={pendingReports.length} tone="amber" />
-          <MetricCard
-            label="Próximo tick"
-            value={formatCountdown(mockCampaignSnapshot.nextResourceTickAt)}
-            tone="cyan"
-          />
+          <MetricCard label="Tick de recursos" value="Diario" tone="cyan" />
         </div>
 
         <div className="grid gap-4 lg:grid-cols-4">

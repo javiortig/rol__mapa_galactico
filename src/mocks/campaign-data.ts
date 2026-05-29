@@ -10,6 +10,1427 @@ const emptyResources: ResourceBundle = {
 
 const now = Date.now();
 const inHours = (hours: number) => new Date(now + hours * 60 * 60 * 1000).toISOString();
+const dailyProduction = (resources: Partial<ResourceBundle>): ResourceBundle => ({
+  ...emptyResources,
+  ...resources
+});
+
+const factions: CampaignSnapshot["factions"] = [
+  { id: "orcos", name: "Orcos", color: "#84cc16", capitalSystemId: "cinder-maw" },
+  { id: "necrones", name: "Necrones", color: "#2dd4bf", capitalSystemId: "thokt-vault" },
+  { id: "guardia-imperial", name: "Guardia Imperial", color: "#38bdf8", capitalSystemId: "kharon-prime" },
+  { id: "culto-genestelar", name: "Culto Genestelar", color: "#c084fc", capitalSystemId: "blackglass" },
+  { id: "sombra-emperador", name: "Sombra del Emperador", color: "#facc15", capitalSystemId: "sa-cea-gate" },
+  { id: "guardia-muerte", name: "Guardia de la Muerte", color: "#b6c35a", capitalSystemId: "mordax" }
+];
+
+const systems: CampaignSnapshot["systems"] = [
+  {
+    id: "kharon-prime",
+    name: "Kharon Prime",
+    x: 90,
+    y: 170,
+    size: 1.2,
+    starClass: "blue",
+    type: "Capital fortificada",
+    status: "controlled",
+    controllerFactionId: "guardia-imperial",
+    isCapital: true,
+    publicDescription: "Bastion manufactorum y astropuerto militar del frente imperial.",
+    production: dailyProduction({ supply: 9, minerals: 6, uridium: 2 })
+  },
+  {
+    id: "helios-drift",
+    name: "Helios Drift",
+    x: 215,
+    y: 190,
+    size: 0.9,
+    starClass: "orange",
+    type: "Cinturon minero",
+    status: "controlled",
+    controllerFactionId: "guardia-imperial",
+    isCapital: false,
+    publicDescription: "Asteroides ricos en mineral defendidos por baterias orbitales.",
+    production: dailyProduction({ supply: 1, minerals: 7, uridium: 1 })
+  },
+  {
+    id: "arx-solum",
+    name: "Arx Solum",
+    x: 315,
+    y: 255,
+    size: 0.82,
+    starClass: "white",
+    type: "Bastion exterior",
+    status: "controlled",
+    controllerFactionId: "guardia-imperial",
+    isCapital: false,
+    publicDescription: "Fortaleza avanzada que vigila las rutas hacia la Zanja Azul.",
+    production: dailyProduction({ supply: 5, minerals: 3, uridium: 1 })
+  },
+  {
+    id: "sa-cea-gate",
+    name: "Sa'cea Gate",
+    x: 910,
+    y: 150,
+    size: 1.2,
+    starClass: "white",
+    type: "Capital orbital",
+    status: "controlled",
+    controllerFactionId: "sombra-emperador",
+    isCapital: true,
+    publicDescription: "Estacion de paso con matrices de navegacion de largo alcance.",
+    production: dailyProduction({ supply: 5, minerals: 4, uridium: 5, technology: 1 })
+  },
+  {
+    id: "lyra-terminus",
+    name: "Lyra Terminus",
+    x: 790,
+    y: 210,
+    size: 0.88,
+    starClass: "blue",
+    type: "Puerto externo",
+    status: "controlled",
+    controllerFactionId: "sombra-emperador",
+    isCapital: false,
+    publicDescription: "Puerto orbital en el borde del subsector.",
+    production: dailyProduction({ supply: 3, minerals: 1, uridium: 4 })
+  },
+  {
+    id: "narthex",
+    name: "Narthex",
+    x: 685,
+    y: 285,
+    size: 0.95,
+    starClass: "yellow",
+    type: "Santuario sellado",
+    status: "controlled",
+    controllerFactionId: "sombra-emperador",
+    isCapital: false,
+    publicDescription: "Complejo sacro con rutas de descenso peligrosas.",
+    production: dailyProduction({ supply: 2, ancestralStone: 2, uridium: 1 })
+  },
+  {
+    id: "blackglass",
+    name: "Blackglass",
+    x: 930,
+    y: 440,
+    size: 1.16,
+    starClass: "white",
+    type: "Capital cristalina",
+    status: "controlled",
+    controllerFactionId: "culto-genestelar",
+    isCapital: true,
+    publicDescription: "Piedra ancestral bajo oceanos de vidrio oscuro.",
+    production: dailyProduction({ supply: 3, minerals: 4, ancestralStone: 2, uridium: 1 })
+  },
+  {
+    id: "red-sabbath",
+    name: "Red Sabbath",
+    x: 805,
+    y: 485,
+    size: 0.88,
+    starClass: "red",
+    type: "Mundo sermonario",
+    status: "controlled",
+    controllerFactionId: "culto-genestelar",
+    isCapital: false,
+    publicDescription: "Ciudades santuario infiltradas por redes de culto.",
+    production: dailyProduction({ supply: 5, minerals: 2, ancestralStone: 1, uridium: 1 })
+  },
+  {
+    id: "mirrorcoil",
+    name: "Mirrorcoil",
+    x: 685,
+    y: 510,
+    size: 0.82,
+    starClass: "violet",
+    type: "Enjambre orbital",
+    status: "controlled",
+    controllerFactionId: "culto-genestelar",
+    isCapital: false,
+    publicDescription: "Estaciones gemelas que repiten senales falsas hacia el centro.",
+    production: dailyProduction({ supply: 2, minerals: 2, ancestralStone: 1, uridium: 3 })
+  },
+  {
+    id: "thokt-vault",
+    name: "Thokt Vault",
+    x: 805,
+    y: 800,
+    size: 1.2,
+    starClass: "green",
+    type: "Capital tumba",
+    status: "controlled",
+    controllerFactionId: "necrones",
+    isCapital: true,
+    publicDescription: "Cripta silenciosa rodeada de energia verdosa.",
+    production: dailyProduction({ minerals: 8, ancestralStone: 3, uridium: 2, technology: 1 })
+  },
+  {
+    id: "novem",
+    name: "Novem",
+    x: 725,
+    y: 700,
+    size: 0.84,
+    starClass: "white",
+    type: "Luna industrial",
+    status: "controlled",
+    controllerFactionId: "necrones",
+    isCapital: false,
+    publicDescription: "Complejo lunar de extraccion automatizada.",
+    production: dailyProduction({ minerals: 7, uridium: 1 })
+  },
+  {
+    id: "ghostlight",
+    name: "Ghostlight",
+    x: 625,
+    y: 645,
+    size: 0.8,
+    starClass: "green",
+    type: "Faro perdido",
+    status: "controlled",
+    controllerFactionId: "necrones",
+    isCapital: false,
+    publicDescription: "Faro de navegacion que parpadea con luz fria.",
+    production: dailyProduction({ minerals: 2, ancestralStone: 1, uridium: 3, technology: 1 })
+  },
+  {
+    id: "mordax",
+    name: "Mordax",
+    x: 150,
+    y: 780,
+    size: 1.18,
+    starClass: "red",
+    type: "Capital corrupta",
+    status: "controlled",
+    controllerFactionId: "guardia-muerte",
+    isCapital: true,
+    publicDescription: "Mundo industrial desgarrado por senales disformes.",
+    production: dailyProduction({ supply: 5, minerals: 6, ancestralStone: 1, uridium: 2 })
+  },
+  {
+    id: "drusus",
+    name: "Drusus",
+    x: 260,
+    y: 700,
+    size: 0.86,
+    starClass: "orange",
+    type: "Bastion menor",
+    status: "controlled",
+    controllerFactionId: "guardia-muerte",
+    isCapital: false,
+    publicDescription: "Fortaleza tomada tras una campana sangrienta.",
+    production: dailyProduction({ supply: 4, minerals: 4, uridium: 1 })
+  },
+  {
+    id: "plaguefall-bastion",
+    name: "Plaguefall Bastion",
+    x: 360,
+    y: 640,
+    size: 0.82,
+    starClass: "green",
+    type: "Bastion infectado",
+    status: "controlled",
+    controllerFactionId: "guardia-muerte",
+    isCapital: false,
+    publicDescription: "Plataformas de asedio cubiertas por esporas y ceniza.",
+    production: dailyProduction({ supply: 3, minerals: 5, ancestralStone: 1, uridium: 1 })
+  },
+  {
+    id: "cinder-maw",
+    name: "Cinder Maw",
+    x: 80,
+    y: 430,
+    size: 1.15,
+    starClass: "orange",
+    type: "Capital volcanica",
+    status: "controlled",
+    controllerFactionId: "orcos",
+    isCapital: true,
+    publicDescription: "Forjas geotermicas y tormentas de ceniza.",
+    production: dailyProduction({ supply: 4, minerals: 7, uridium: 1 })
+  },
+  {
+    id: "eclipse-forge",
+    name: "Eclipse Forge",
+    x: 185,
+    y: 485,
+    size: 0.86,
+    starClass: "red",
+    type: "Forja abandonada",
+    status: "controlled",
+    controllerFactionId: "orcos",
+    isCapital: false,
+    publicDescription: "Estructuras de manufactura latentes convertidas en talleres orkos.",
+    production: dailyProduction({ supply: 1, minerals: 6, uridium: 1, technology: 1 })
+  },
+  {
+    id: "rustmaw-run",
+    name: "Rustmaw Run",
+    x: 285,
+    y: 430,
+    size: 0.82,
+    starClass: "orange",
+    type: "Corredor chatarrero",
+    status: "controlled",
+    controllerFactionId: "orcos",
+    isCapital: false,
+    publicDescription: "Ruta de pecios saqueados que apunta hacia el centro.",
+    production: dailyProduction({ supply: 3, minerals: 5, uridium: 2 })
+  },
+  {
+    id: "azur-trench",
+    name: "Azur Trench",
+    x: 405,
+    y: 390,
+    size: 0.86,
+    starClass: "blue",
+    type: "Nebulosa navegable",
+    status: "war",
+    blockedUntil: inHours(72),
+    isCapital: false,
+    publicDescription: "Corredor azul con pozos de gravedad inestables. Orcos e Imperiales han chocado aqui.",
+    production: dailyProduction({ uridium: 5 })
+  },
+  {
+    id: "ossuary-reach",
+    name: "Ossuary Reach",
+    x: 485,
+    y: 625,
+    size: 0.84,
+    starClass: "violet",
+    type: "Osario orbital",
+    status: "war",
+    blockedUntil: inHours(72),
+    isCapital: false,
+    publicDescription: "Campos funerarios en orbita baja, disputados por plaga y tecnologia necrona.",
+    production: dailyProduction({ minerals: 2, ancestralStone: 2, uridium: 2 }),
+    specialObjects: [{ id: "obj-ossuary-reach", name: "Cripta fracturada", type: "anomaly", isPublic: true }]
+  },
+  {
+    id: "saint-veil",
+    name: "Saint Veil",
+    x: 650,
+    y: 395,
+    size: 0.86,
+    starClass: "yellow",
+    type: "Velo sagrado",
+    status: "war",
+    blockedUntil: inHours(72),
+    isCapital: false,
+    publicDescription: "Santuario velado donde la Sombra del Emperador combate una revuelta genestelar.",
+    production: dailyProduction({ supply: 2, ancestralStone: 2, uridium: 2, technology: 1 }),
+    specialObjects: [{ id: "obj-saint-veil", name: "Reliquia velada", type: "relic", isPublic: true }]
+  },
+  {
+    id: "orison",
+    name: "Orison",
+    x: 470,
+    y: 310,
+    size: 0.84,
+    starClass: "yellow",
+    type: "Colonia agricola",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Graneros presurizados y bastiones de defensa civil abandonados.",
+    production: dailyProduction({ supply: 7, minerals: 1 })
+  },
+  {
+    id: "vesper-halo",
+    name: "Vesper Halo",
+    x: 560,
+    y: 220,
+    size: 0.82,
+    starClass: "violet",
+    type: "Anillo orbital",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Ruinas orbitales con ecos de tecnologia antigua.",
+    production: dailyProduction({ minerals: 2, ancestralStone: 1, uridium: 2, technology: 1 })
+  },
+  {
+    id: "pale-choir",
+    name: "Pale Choir",
+    x: 690,
+    y: 605,
+    size: 0.78,
+    starClass: "violet",
+    type: "Anomalia psiquica",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Un coro de senales imposibles atraviesa el vacio.",
+    production: dailyProduction({ ancestralStone: 2, uridium: 2 })
+  },
+  {
+    id: "ashen-road",
+    name: "Ashen Road",
+    x: 560,
+    y: 555,
+    size: 0.78,
+    starClass: "blue",
+    type: "Nodo de transito",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Rutas estables entre corrientes de polvo orbital.",
+    production: dailyProduction({ supply: 1, minerals: 1, uridium: 4 })
+  },
+  {
+    id: "sepulchre-nine",
+    name: "Sepulchre IX",
+    x: 340,
+    y: 780,
+    size: 0.78,
+    starClass: "violet",
+    type: "Necropolis",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Tumbas y coordenadas contradictorias.",
+    production: dailyProduction({ minerals: 2, ancestralStone: 2 })
+  },
+  {
+    id: "nexus-aster",
+    name: "Nexus Aster",
+    x: 525,
+    y: 455,
+    size: 0.92,
+    starClass: "green",
+    type: "Nodo central",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Interseccion de corrientes de salto que todas las facciones desean controlar.",
+    production: dailyProduction({ supply: 2, minerals: 2, ancestralStone: 1, uridium: 3, technology: 1 }),
+    specialObjects: [{ id: "obj-nexus-aster", name: "Baliza del Nexus", type: "technology", isPublic: true }]
+  },
+  {
+    id: "argent-rift",
+    name: "Argent Rift",
+    x: 500,
+    y: 245,
+    size: 0.76,
+    starClass: "white",
+    type: "Fisura plateada",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Brecha gravitatoria brillante, estable solo en ventanas cortas.",
+    production: dailyProduction({ minerals: 1, uridium: 4 })
+  },
+  {
+    id: "voidfall-anchor",
+    name: "Voidfall Anchor",
+    x: 510,
+    y: 735,
+    size: 0.78,
+    starClass: "blue",
+    type: "Ancla de vacio",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Macroestructura que estabiliza saltos en el borde inferior del mapa.",
+    production: dailyProduction({ supply: 1, minerals: 2, uridium: 3, technology: 1 })
+  },
+  {
+    id: "goregate",
+    name: "Goregate",
+    x: 260,
+    y: 540,
+    size: 0.78,
+    starClass: "red",
+    type: "Paso sangriento",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Paso estrecho entre chatarra orka y ruinas funerarias.",
+    production: dailyProduction({ supply: 2, minerals: 3, uridium: 2 })
+  }
+];
+
+const edges: CampaignSnapshot["edges"] = [
+  { id: "route-01", fromSystemId: "kharon-prime", toSystemId: "helios-drift", uridiumCost: 1 },
+  { id: "route-02", fromSystemId: "helios-drift", toSystemId: "arx-solum", uridiumCost: 1 },
+  { id: "route-03", fromSystemId: "arx-solum", toSystemId: "azur-trench", uridiumCost: 2 },
+  { id: "route-04", fromSystemId: "arx-solum", toSystemId: "orison", uridiumCost: 2 },
+  { id: "route-05", fromSystemId: "cinder-maw", toSystemId: "eclipse-forge", uridiumCost: 1 },
+  { id: "route-06", fromSystemId: "eclipse-forge", toSystemId: "rustmaw-run", uridiumCost: 1 },
+  { id: "route-07", fromSystemId: "rustmaw-run", toSystemId: "azur-trench", uridiumCost: 2 },
+  { id: "route-08", fromSystemId: "rustmaw-run", toSystemId: "goregate", uridiumCost: 1 },
+  { id: "route-09", fromSystemId: "sa-cea-gate", toSystemId: "lyra-terminus", uridiumCost: 1 },
+  { id: "route-10", fromSystemId: "lyra-terminus", toSystemId: "narthex", uridiumCost: 1 },
+  { id: "route-11", fromSystemId: "narthex", toSystemId: "saint-veil", uridiumCost: 2 },
+  { id: "route-12", fromSystemId: "narthex", toSystemId: "vesper-halo", uridiumCost: 1 },
+  { id: "route-13", fromSystemId: "blackglass", toSystemId: "red-sabbath", uridiumCost: 1 },
+  { id: "route-14", fromSystemId: "red-sabbath", toSystemId: "mirrorcoil", uridiumCost: 1 },
+  { id: "route-15", fromSystemId: "mirrorcoil", toSystemId: "saint-veil", uridiumCost: 2 },
+  { id: "route-16", fromSystemId: "mirrorcoil", toSystemId: "pale-choir", uridiumCost: 1 },
+  { id: "route-17", fromSystemId: "thokt-vault", toSystemId: "novem", uridiumCost: 1 },
+  { id: "route-18", fromSystemId: "novem", toSystemId: "ghostlight", uridiumCost: 1 },
+  { id: "route-19", fromSystemId: "ghostlight", toSystemId: "ossuary-reach", uridiumCost: 2 },
+  { id: "route-20", fromSystemId: "ghostlight", toSystemId: "voidfall-anchor", uridiumCost: 1 },
+  { id: "route-21", fromSystemId: "mordax", toSystemId: "drusus", uridiumCost: 1 },
+  { id: "route-22", fromSystemId: "drusus", toSystemId: "plaguefall-bastion", uridiumCost: 1 },
+  { id: "route-23", fromSystemId: "plaguefall-bastion", toSystemId: "ossuary-reach", uridiumCost: 2 },
+  { id: "route-24", fromSystemId: "plaguefall-bastion", toSystemId: "sepulchre-nine", uridiumCost: 1 },
+  { id: "route-25", fromSystemId: "azur-trench", toSystemId: "orison", uridiumCost: 2 },
+  { id: "route-26", fromSystemId: "orison", toSystemId: "argent-rift", uridiumCost: 1 },
+  { id: "route-27", fromSystemId: "argent-rift", toSystemId: "vesper-halo", uridiumCost: 1 },
+  { id: "route-28", fromSystemId: "vesper-halo", toSystemId: "saint-veil", uridiumCost: 2 },
+  { id: "route-29", fromSystemId: "saint-veil", toSystemId: "pale-choir", uridiumCost: 2 },
+  { id: "route-30", fromSystemId: "pale-choir", toSystemId: "ashen-road", uridiumCost: 1 },
+  { id: "route-31", fromSystemId: "ashen-road", toSystemId: "ossuary-reach", uridiumCost: 2 },
+  { id: "route-32", fromSystemId: "ossuary-reach", toSystemId: "voidfall-anchor", uridiumCost: 2 },
+  { id: "route-33", fromSystemId: "voidfall-anchor", toSystemId: "sepulchre-nine", uridiumCost: 1 },
+  { id: "route-34", fromSystemId: "sepulchre-nine", toSystemId: "goregate", uridiumCost: 2 },
+  { id: "route-35", fromSystemId: "goregate", toSystemId: "azur-trench", uridiumCost: 1 },
+  { id: "route-36", fromSystemId: "nexus-aster", toSystemId: "orison", uridiumCost: 3 },
+  { id: "route-37", fromSystemId: "nexus-aster", toSystemId: "azur-trench", uridiumCost: 3 },
+  { id: "route-38", fromSystemId: "nexus-aster", toSystemId: "saint-veil", uridiumCost: 3 },
+  { id: "route-39", fromSystemId: "nexus-aster", toSystemId: "ashen-road", uridiumCost: 3 },
+  { id: "route-40", fromSystemId: "nexus-aster", toSystemId: "ossuary-reach", uridiumCost: 3 }
+];
+
+const resources: CampaignSnapshot["resources"] = [
+  {
+    factionId: "guardia-imperial",
+    supply: 180,
+    minerals: 130,
+    ancestralStone: 12,
+    uridium: 24,
+    technology: 2,
+    updatedAt: new Date(now).toISOString()
+  },
+  {
+    factionId: "orcos",
+    supply: 190,
+    minerals: 135,
+    ancestralStone: 7,
+    uridium: 20,
+    technology: 1,
+    updatedAt: new Date(now).toISOString()
+  },
+  {
+    factionId: "necrones",
+    supply: 115,
+    minerals: 155,
+    ancestralStone: 18,
+    uridium: 22,
+    technology: 3,
+    updatedAt: new Date(now).toISOString()
+  },
+  {
+    factionId: "culto-genestelar",
+    supply: 185,
+    minerals: 115,
+    ancestralStone: 13,
+    uridium: 22,
+    technology: 2,
+    updatedAt: new Date(now).toISOString()
+  },
+  {
+    factionId: "sombra-emperador",
+    supply: 135,
+    minerals: 130,
+    ancestralStone: 18,
+    uridium: 26,
+    technology: 4,
+    updatedAt: new Date(now).toISOString()
+  },
+  {
+    factionId: "guardia-muerte",
+    supply: 155,
+    minerals: 135,
+    ancestralStone: 15,
+    uridium: 20,
+    technology: 2,
+    updatedAt: new Date(now).toISOString()
+  }
+];
+
+const armies: CampaignSnapshot["armies"] = [
+  {
+    id: "imperial-kharon-garrison",
+    factionId: "guardia-imperial",
+    name: "Guarnicion de Kharon",
+    currentSystemId: "kharon-prime",
+    status: "ready",
+    pointsTotal: 510,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "imperial-kharon-cadians",
+        armyId: "imperial-kharon-garrison",
+        name: "Cadian Shock Troops",
+        points: 80,
+        quantity: 3,
+        experience: 1,
+        rank: "Linea"
+      }
+    ]
+  },
+  {
+    id: "imperial-arx-front",
+    factionId: "guardia-imperial",
+    name: "117o Grupo de Choque",
+    currentSystemId: "arx-solum",
+    status: "ready",
+    pointsTotal: 760,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "imperial-arx-kasrkin",
+        armyId: "imperial-arx-front",
+        name: "Kasrkin",
+        points: 105,
+        quantity: 2,
+        experience: 2,
+        rank: "Veteranos",
+        enhancementText: "Doctrina de frontera"
+      }
+    ]
+  },
+  {
+    id: "imperial-helios-column",
+    factionId: "guardia-imperial",
+    name: "Columna Helios",
+    currentSystemId: "kharon-prime",
+    status: "moving",
+    pointsTotal: 360,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "imperial-helios-sentinels",
+        armyId: "imperial-helios-column",
+        name: "Sentinel Squadron",
+        points: 180,
+        quantity: 1,
+        experience: 0,
+        rank: "Reconocimiento"
+      }
+    ]
+  },
+  {
+    id: "imperial-azur-line",
+    factionId: "guardia-imperial",
+    name: "Linea de Azur",
+    currentSystemId: "azur-trench",
+    status: "in_war",
+    pointsTotal: 690,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "imperial-azur-tank",
+        armyId: "imperial-azur-line",
+        name: "Leman Russ Battle Tank",
+        points: 145,
+        quantity: 2,
+        experience: 1,
+        rank: "Blindados"
+      }
+    ]
+  },
+  {
+    id: "ork-cinder-garrison",
+    factionId: "orcos",
+    name: "Kampamento de Cinder Maw",
+    currentSystemId: "cinder-maw",
+    status: "ready",
+    pointsTotal: 560,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "ork-cinder-boyz",
+        armyId: "ork-cinder-garrison",
+        name: "Boyz",
+        points: 80,
+        quantity: 4,
+        experience: 1,
+        rank: "Marea"
+      }
+    ]
+  },
+  {
+    id: "ork-rustmaw-front",
+    factionId: "orcos",
+    name: "Peaje de Rustmaw",
+    currentSystemId: "rustmaw-run",
+    status: "ready",
+    pointsTotal: 790,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "ork-rustmaw-meganobz",
+        armyId: "ork-rustmaw-front",
+        name: "Meganobz",
+        points: 105,
+        quantity: 2,
+        experience: 2,
+        rank: "Noblez",
+        enhancementText: "Armaduras remachadas"
+      }
+    ]
+  },
+  {
+    id: "ork-eclipse-riders",
+    factionId: "orcos",
+    name: "Jinetes de Eclipse",
+    currentSystemId: "cinder-maw",
+    status: "moving",
+    pointsTotal: 380,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "ork-eclipse-buggies",
+        armyId: "ork-eclipse-riders",
+        name: "Warbikers",
+        points: 140,
+        quantity: 1,
+        experience: 0,
+        rank: "Movil"
+      }
+    ]
+  },
+  {
+    id: "ork-azur-waaagh",
+    factionId: "orcos",
+    name: "Waaagh de la Zanja Azul",
+    currentSystemId: "azur-trench",
+    status: "in_war",
+    pointsTotal: 720,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "ork-azur-dread",
+        armyId: "ork-azur-waaagh",
+        name: "Deff Dread",
+        points: 135,
+        quantity: 2,
+        experience: 1,
+        rank: "Chatarreros"
+      }
+    ]
+  },
+  {
+    id: "sombra-gate-watch",
+    factionId: "sombra-emperador",
+    name: "Guardia de Sa'cea Gate",
+    currentSystemId: "sa-cea-gate",
+    status: "ready",
+    pointsTotal: 620,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "sombra-gate-intercessors",
+        armyId: "sombra-gate-watch",
+        name: "Intercessor Squad",
+        points: 105,
+        quantity: 2,
+        experience: 1,
+        rank: "Linea"
+      }
+    ]
+  },
+  {
+    id: "sombra-narthex-spear",
+    factionId: "sombra-emperador",
+    name: "Punta de Lanza Narthex",
+    currentSystemId: "narthex",
+    status: "ready",
+    pointsTotal: 830,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "sombra-narthex-terminators",
+        armyId: "sombra-narthex-spear",
+        name: "Terminator Squad",
+        points: 160,
+        quantity: 2,
+        experience: 2,
+        rank: "Veteranos",
+        enhancementText: "Juramento del santuario"
+      }
+    ]
+  },
+  {
+    id: "sombra-lyra-talon",
+    factionId: "sombra-emperador",
+    name: "Garra de Lyra",
+    currentSystemId: "sa-cea-gate",
+    status: "moving",
+    pointsTotal: 430,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "sombra-lyra-inceptors",
+        armyId: "sombra-lyra-talon",
+        name: "Inceptor Squad",
+        points: 130,
+        quantity: 1,
+        experience: 0,
+        rank: "Asalto"
+      }
+    ]
+  },
+  {
+    id: "sombra-saint-veil",
+    factionId: "sombra-emperador",
+    name: "Escuadra del Velo",
+    currentSystemId: "saint-veil",
+    status: "in_war",
+    pointsTotal: 760,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "sombra-saint-redemptor",
+        armyId: "sombra-saint-veil",
+        name: "Redemptor Dreadnought",
+        points: 185,
+        quantity: 1,
+        experience: 1,
+        rank: "Anciano"
+      }
+    ]
+  },
+  {
+    id: "cult-blackglass-garrison",
+    factionId: "culto-genestelar",
+    name: "Celula de Blackglass",
+    currentSystemId: "blackglass",
+    status: "ready",
+    pointsTotal: 520,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "cult-blackglass-neophytes",
+        armyId: "cult-blackglass-garrison",
+        name: "Neophyte Hybrids",
+        points: 80,
+        quantity: 4,
+        experience: 1,
+        rank: "Celula"
+      }
+    ]
+  },
+  {
+    id: "cult-mirrorcoil-front",
+    factionId: "culto-genestelar",
+    name: "Alzamiento de Mirrorcoil",
+    currentSystemId: "mirrorcoil",
+    status: "ready",
+    pointsTotal: 740,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "cult-mirrorcoil-acolytes",
+        armyId: "cult-mirrorcoil-front",
+        name: "Acolyte Hybrids",
+        points: 95,
+        quantity: 3,
+        experience: 2,
+        rank: "Alzados",
+        enhancementText: "Red de tuneles"
+      }
+    ]
+  },
+  {
+    id: "cult-sabbath-convoy",
+    factionId: "culto-genestelar",
+    name: "Convoy del Sabbath",
+    currentSystemId: "blackglass",
+    status: "moving",
+    pointsTotal: 340,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "cult-sabbath-ridgerunner",
+        armyId: "cult-sabbath-convoy",
+        name: "Achilles Ridgerunner",
+        points: 120,
+        quantity: 1,
+        experience: 0,
+        rank: "Movil"
+      }
+    ]
+  },
+  {
+    id: "cult-saint-revolt",
+    factionId: "culto-genestelar",
+    name: "Revuelta del Velo",
+    currentSystemId: "saint-veil",
+    status: "in_war",
+    pointsTotal: 700,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "cult-saint-neophytes",
+        armyId: "cult-saint-revolt",
+        name: "Neophyte Hybrids",
+        points: 80,
+        quantity: 5,
+        experience: 1,
+        rank: "Insurgentes"
+      }
+    ]
+  },
+  {
+    id: "necron-thokt-phalanx",
+    factionId: "necrones",
+    name: "Falange Thokt",
+    currentSystemId: "thokt-vault",
+    status: "ready",
+    pointsTotal: 620,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "necron-thokt-warriors",
+        armyId: "necron-thokt-phalanx",
+        name: "Necron Warriors",
+        points: 80,
+        quantity: 3,
+        experience: 1,
+        rank: "Linea"
+      }
+    ]
+  },
+  {
+    id: "necron-ghostlight-front",
+    factionId: "necrones",
+    name: "Cohorte Ghostlight",
+    currentSystemId: "ghostlight",
+    status: "ready",
+    pointsTotal: 810,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "necron-ghostlight-skorpekh",
+        armyId: "necron-ghostlight-front",
+        name: "Skorpekh Destroyers",
+        points: 140,
+        quantity: 2,
+        experience: 2,
+        rank: "Destructores",
+        enhancementText: "Protocolos de cosecha"
+      }
+    ]
+  },
+  {
+    id: "necron-novem-cohort",
+    factionId: "necrones",
+    name: "Cohorte Novem",
+    currentSystemId: "thokt-vault",
+    status: "moving",
+    pointsTotal: 420,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "necron-novem-immortals",
+        armyId: "necron-novem-cohort",
+        name: "Immortals",
+        points: 105,
+        quantity: 2,
+        experience: 0,
+        rank: "Escolta"
+      }
+    ]
+  },
+  {
+    id: "necron-ossuary-reclaimers",
+    factionId: "necrones",
+    name: "Reclamadores del Osario",
+    currentSystemId: "ossuary-reach",
+    status: "in_war",
+    pointsTotal: 760,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "necron-ossuary-warriors",
+        armyId: "necron-ossuary-reclaimers",
+        name: "Necron Warriors",
+        points: 80,
+        quantity: 4,
+        experience: 1,
+        rank: "Reclamadores"
+      }
+    ]
+  },
+  {
+    id: "death-mordax-vector",
+    factionId: "guardia-muerte",
+    name: "Vector de Mordax",
+    currentSystemId: "mordax",
+    status: "ready",
+    pointsTotal: 610,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "death-mordax-poxwalkers",
+        armyId: "death-mordax-vector",
+        name: "Poxwalkers",
+        points: 70,
+        quantity: 4,
+        experience: 1,
+        rank: "Marea"
+      }
+    ]
+  },
+  {
+    id: "death-plaguefall-front",
+    factionId: "guardia-muerte",
+    name: "Hueste Plaguefall",
+    currentSystemId: "plaguefall-bastion",
+    status: "ready",
+    pointsTotal: 830,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "death-plaguefall-marines",
+        armyId: "death-plaguefall-front",
+        name: "Plague Marines",
+        points: 115,
+        quantity: 3,
+        experience: 2,
+        rank: "Veteranos",
+        enhancementText: "Nube toxica"
+      }
+    ]
+  },
+  {
+    id: "death-drusus-procession",
+    factionId: "guardia-muerte",
+    name: "Procesion de Drusus",
+    currentSystemId: "mordax",
+    status: "moving",
+    pointsTotal: 390,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "death-drusus-drone",
+        armyId: "death-drusus-procession",
+        name: "Foetid Bloat-drone",
+        points: 145,
+        quantity: 1,
+        experience: 0,
+        rank: "Movil"
+      }
+    ]
+  },
+  {
+    id: "death-ossuary-pox",
+    factionId: "guardia-muerte",
+    name: "Marea Pox del Osario",
+    currentSystemId: "ossuary-reach",
+    status: "in_war",
+    pointsTotal: 710,
+    isVisiblePublicly: false,
+    units: [
+      {
+        id: "death-ossuary-marines",
+        armyId: "death-ossuary-pox",
+        name: "Plague Marines",
+        points: 115,
+        quantity: 2,
+        experience: 1,
+        rank: "Plaga"
+      }
+    ]
+  }
+];
+
+const movements: CampaignSnapshot["movements"] = [
+  {
+    id: "move-imperial-helios",
+    armyId: "imperial-helios-column",
+    factionId: "guardia-imperial",
+    fromSystemId: "kharon-prime",
+    toSystemId: "helios-drift",
+    uridiumCost: 1,
+    startedAt: inHours(-1),
+    arrivalAt: inHours(5),
+    status: "moving"
+  },
+  {
+    id: "move-ork-eclipse",
+    armyId: "ork-eclipse-riders",
+    factionId: "orcos",
+    fromSystemId: "cinder-maw",
+    toSystemId: "eclipse-forge",
+    uridiumCost: 1,
+    startedAt: inHours(-2),
+    arrivalAt: inHours(3),
+    status: "moving"
+  },
+  {
+    id: "move-sombra-lyra",
+    armyId: "sombra-lyra-talon",
+    factionId: "sombra-emperador",
+    fromSystemId: "sa-cea-gate",
+    toSystemId: "lyra-terminus",
+    uridiumCost: 1,
+    startedAt: inHours(-0.75),
+    arrivalAt: inHours(4),
+    status: "moving"
+  },
+  {
+    id: "move-cult-sabbath",
+    armyId: "cult-sabbath-convoy",
+    factionId: "culto-genestelar",
+    fromSystemId: "blackglass",
+    toSystemId: "red-sabbath",
+    uridiumCost: 1,
+    startedAt: inHours(-1.5),
+    arrivalAt: inHours(6),
+    status: "moving"
+  },
+  {
+    id: "move-necron-novem",
+    armyId: "necron-novem-cohort",
+    factionId: "necrones",
+    fromSystemId: "thokt-vault",
+    toSystemId: "novem",
+    uridiumCost: 1,
+    startedAt: inHours(-0.5),
+    arrivalAt: inHours(7),
+    status: "moving"
+  },
+  {
+    id: "move-death-drusus",
+    armyId: "death-drusus-procession",
+    factionId: "guardia-muerte",
+    fromSystemId: "mordax",
+    toSystemId: "drusus",
+    uridiumCost: 1,
+    startedAt: inHours(-1.25),
+    arrivalAt: inHours(5),
+    status: "moving"
+  }
+];
+
+const unitTemplates: CampaignSnapshot["unitTemplates"] = [
+  {
+    id: "unit-orcos-boyz",
+    factionId: "orcos",
+    name: "Boyz",
+    category: "Infanteria",
+    points: 80,
+    supplyCost: 12,
+    mineralsCost: 2,
+    ancestralStoneCost: 0,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 7200,
+    notes: "Masa brutal de combate cercano.",
+    isAvailable: true
+  },
+  {
+    id: "unit-orcos-meganobz",
+    factionId: "orcos",
+    name: "Meganobz",
+    category: "Elite",
+    points: 105,
+    supplyCost: 6,
+    mineralsCost: 5,
+    ancestralStoneCost: 1,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 14400,
+    notes: "Noblez armados con servoarmaduras improvisadas.",
+    isAvailable: true
+  },
+  {
+    id: "unit-orcos-deff-dread",
+    factionId: "orcos",
+    name: "Deff Dread",
+    category: "Vehiculo",
+    points: 135,
+    supplyCost: 2,
+    mineralsCost: 10,
+    ancestralStoneCost: 1,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 21600,
+    notes: "Maquina andante de metal, humo y mala intencion.",
+    isAvailable: true
+  },
+  {
+    id: "unit-necrones-warriors",
+    factionId: "necrones",
+    name: "Necron Warriors",
+    category: "Infanteria",
+    points: 80,
+    supplyCost: 8,
+    mineralsCost: 4,
+    ancestralStoneCost: 0,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 7200,
+    notes: "Linea inmortal reanimada desde las criptas.",
+    isAvailable: true
+  },
+  {
+    id: "unit-necrones-immortals",
+    factionId: "necrones",
+    name: "Immortals",
+    category: "Elite",
+    points: 105,
+    supplyCost: 6,
+    mineralsCost: 5,
+    ancestralStoneCost: 1,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 14400,
+    notes: "Guerreros superiores con protocolos de elite.",
+    isAvailable: true
+  },
+  {
+    id: "unit-necrones-skorpekh",
+    factionId: "necrones",
+    name: "Skorpekh Destroyers",
+    category: "Elite",
+    points: 140,
+    supplyCost: 4,
+    mineralsCost: 7,
+    ancestralStoneCost: 2,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 21600,
+    notes: "Asesinos de fase con cuerpos disenados para la destruccion.",
+    isAvailable: true
+  },
+  {
+    id: "unit-guardia-cadian",
+    factionId: "guardia-imperial",
+    name: "Cadian Shock Troops",
+    category: "Infanteria",
+    points: 80,
+    supplyCost: 12,
+    mineralsCost: 2,
+    ancestralStoneCost: 0,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 7200,
+    notes: "Infanteria disciplinada lista para sostener la linea.",
+    isAvailable: true
+  },
+  {
+    id: "unit-guardia-kasrkin",
+    factionId: "guardia-imperial",
+    name: "Kasrkin",
+    category: "Elite",
+    points: 105,
+    supplyCost: 8,
+    mineralsCost: 4,
+    ancestralStoneCost: 1,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 14400,
+    notes: "Veteranos de asalto con equipo especializado.",
+    isAvailable: true
+  },
+  {
+    id: "unit-guardia-leman-russ",
+    factionId: "guardia-imperial",
+    name: "Leman Russ Battle Tank",
+    category: "Vehiculo",
+    points: 145,
+    supplyCost: 2,
+    mineralsCost: 11,
+    ancestralStoneCost: 1,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 25200,
+    notes: "Blindado pesado de batalla para romper frentes.",
+    isAvailable: true
+  },
+  {
+    id: "unit-culto-neophytes",
+    factionId: "culto-genestelar",
+    name: "Neophyte Hybrids",
+    category: "Infanteria",
+    points: 80,
+    supplyCost: 12,
+    mineralsCost: 2,
+    ancestralStoneCost: 0,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 7200,
+    notes: "Celulas insurgentes armadas desde las profundidades.",
+    isAvailable: true
+  },
+  {
+    id: "unit-culto-acolytes",
+    factionId: "culto-genestelar",
+    name: "Acolyte Hybrids",
+    category: "Elite",
+    points: 95,
+    supplyCost: 8,
+    mineralsCost: 3,
+    ancestralStoneCost: 1,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 14400,
+    notes: "Fanaticos hibridos preparados para ataques decisivos.",
+    isAvailable: true
+  },
+  {
+    id: "unit-culto-ridgerunner",
+    factionId: "culto-genestelar",
+    name: "Achilles Ridgerunner",
+    category: "Vehiculo",
+    points: 120,
+    supplyCost: 3,
+    mineralsCost: 8,
+    ancestralStoneCost: 1,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 21600,
+    notes: "Vehiculo de incursion y reconocimiento rapido.",
+    isAvailable: true
+  },
+  {
+    id: "unit-sombra-intercessors",
+    factionId: "sombra-emperador",
+    name: "Intercessor Squad",
+    category: "Infanteria",
+    points: 105,
+    supplyCost: 8,
+    mineralsCost: 4,
+    ancestralStoneCost: 1,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 10800,
+    notes: "Astartes de linea con doctrina flexible.",
+    isAvailable: true
+  },
+  {
+    id: "unit-sombra-terminators",
+    factionId: "sombra-emperador",
+    name: "Terminator Squad",
+    category: "Elite",
+    points: 160,
+    supplyCost: 5,
+    mineralsCost: 6,
+    ancestralStoneCost: 3,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 21600,
+    notes: "Veteranos con armadura tactica dreadnought.",
+    isAvailable: true
+  },
+  {
+    id: "unit-sombra-redemptor",
+    factionId: "sombra-emperador",
+    name: "Redemptor Dreadnought",
+    category: "Vehiculo",
+    points: 185,
+    supplyCost: 2,
+    mineralsCost: 10,
+    ancestralStoneCost: 3,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 28800,
+    notes: "Dreadnought pesado para rupturas de linea.",
+    isAvailable: true
+  },
+  {
+    id: "unit-muerte-poxwalkers",
+    factionId: "guardia-muerte",
+    name: "Poxwalkers",
+    category: "Infanteria",
+    points: 70,
+    supplyCost: 12,
+    mineralsCost: 1,
+    ancestralStoneCost: 0,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 7200,
+    notes: "Multitud infectada que avanza sin miedo.",
+    isAvailable: true
+  },
+  {
+    id: "unit-muerte-plague-marines",
+    factionId: "guardia-muerte",
+    name: "Plague Marines",
+    category: "Infanteria",
+    points: 115,
+    supplyCost: 8,
+    mineralsCost: 5,
+    ancestralStoneCost: 1,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 14400,
+    notes: "Marines de plaga resistentes y metodicos.",
+    isAvailable: true
+  },
+  {
+    id: "unit-muerte-bloat-drone",
+    factionId: "guardia-muerte",
+    name: "Foetid Bloat-drone",
+    category: "Vehiculo",
+    points: 145,
+    supplyCost: 3,
+    mineralsCost: 8,
+    ancestralStoneCost: 2,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 25200,
+    notes: "Dron demoniaco de apoyo y hostigamiento.",
+    isAvailable: true
+  }
+];
+
+const conflicts: CampaignSnapshot["conflicts"] = [
+  {
+    id: "conflict-azur-trench",
+    systemId: "azur-trench",
+    attackerFactionId: "orcos",
+    defenderFactionId: "guardia-imperial",
+    status: "pending",
+    blockedUntil: inHours(72),
+    notes: "Orcos e Imperiales han colisionado en la ruta central de la Zanja Azul. Pendiente de batalla fisica."
+  },
+  {
+    id: "conflict-ossuary-reach",
+    systemId: "ossuary-reach",
+    attackerFactionId: "guardia-muerte",
+    defenderFactionId: "necrones",
+    status: "pending",
+    blockedUntil: inHours(72),
+    notes: "La Guardia de la Muerte intenta profanar criptas que los Necrones estan reactivando. Pendiente de batalla fisica."
+  },
+  {
+    id: "conflict-saint-veil",
+    systemId: "saint-veil",
+    attackerFactionId: "sombra-emperador",
+    defenderFactionId: "culto-genestelar",
+    status: "pending",
+    blockedUntil: inHours(72),
+    notes: "La Sombra del Emperador ha descubierto una insurreccion genestelar en el santuario. Pendiente de batalla fisica."
+  }
+];
+
+const missions: CampaignSnapshot["missions"] = [
+  {
+    id: "mission-azur-trench",
+    systemId: "azur-trench",
+    title: "La Zanja Azul",
+    narrativeDescription: "Una nebulosa de gases ionizados parte el campo de batalla en corredores estrechos.",
+    objectives: "Controlar las balizas de navegacion al final de la batalla fisica.",
+    specialRules: "Las unidades que avancen por el centro cuentan como expuestas por la luz azul.",
+    victoryConditions: "El ganador decide el control final de Azur Trench."
+  },
+  {
+    id: "mission-ossuary-reach",
+    systemId: "ossuary-reach",
+    title: "Ecos del Osario",
+    narrativeDescription: "Criptas rotas y fosas contaminadas hacen que cada metro sea una amenaza.",
+    objectives: "Asegurar tres criptas antes del final de la partida.",
+    specialRules: "El terreno central se considera peligroso por emanaciones toxicas y energia necrodermis.",
+    victoryConditions: "El ganador decide el control final de Ossuary Reach."
+  },
+  {
+    id: "mission-saint-veil",
+    systemId: "saint-veil",
+    title: "El Velo Sagrado",
+    narrativeDescription: "Un santuario en sombra se convierte en campo de purga e insurreccion.",
+    objectives: "Mantener el altar central y dos accesos laterales.",
+    specialRules: "La primera ronda usa visibilidad reducida por incienso, humo y apagones.",
+    victoryConditions: "El ganador decide el control final de Saint Veil."
+  }
+];
 
 export const mockCampaignSnapshot: CampaignSnapshot = {
   currentUser: {
@@ -19,778 +1440,16 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
     factionId: "guardia-imperial"
   },
   resourceTickIntervalHours: 24,
-  nextResourceTickAt: inHours(11),
-  factions: [
-    { id: "orcos", name: "Orcos", color: "#84cc16", capitalSystemId: "cinder-maw" },
-    { id: "necrones", name: "Necrones", color: "#2dd4bf", capitalSystemId: "thokt-vault" },
-    { id: "guardia-imperial", name: "Guardia Imperial", color: "#38bdf8", capitalSystemId: "kharon-prime" },
-    { id: "culto-genestelar", name: "Culto Genestelar", color: "#c084fc", capitalSystemId: "blackglass" },
-    { id: "sombra-emperador", name: "Sombra del Emperador", color: "#facc15", capitalSystemId: "sa-cea-gate" },
-    { id: "guardia-muerte", name: "Guardia de la Muerte", color: "#b6c35a", capitalSystemId: "mordax" }
-  ],
-  systems: [
-    {
-      id: "kharon-prime",
-      name: "Kharon Prime",
-      x: 120,
-      y: 260,
-      size: 1.2,
-      starClass: "blue",
-      type: "Capital fortificada",
-      status: "controlled",
-      controllerFactionId: "guardia-imperial",
-      isCapital: true,
-      publicDescription: "Bastión manufactorum con astropuerto militar.",
-      production: { ...emptyResources, supply: 8, minerals: 5, uridium: 2 }
-    },
-    {
-      id: "sa-cea-gate",
-      name: "Sa'cea Gate",
-      x: 790,
-      y: 180,
-      size: 1.2,
-      starClass: "white",
-      type: "Capital orbital",
-      status: "controlled",
-      controllerFactionId: "sombra-emperador",
-      isCapital: true,
-      publicDescription: "Estación de paso con matrices de navegación de largo alcance.",
-      production: { ...emptyResources, supply: 5, minerals: 4, uridium: 5, technology: 1 }
-    },
-    {
-      id: "thokt-vault",
-      name: "Thokt Vault",
-      x: 710,
-      y: 610,
-      size: 1.2,
-      starClass: "green",
-      type: "Capital tumba",
-      status: "controlled",
-      controllerFactionId: "necrones",
-      isCapital: true,
-      publicDescription: "Cripta silenciosa rodeada de energía verdosa.",
-      production: { ...emptyResources, minerals: 7, ancestralStone: 2, uridium: 2 }
-    },
-    {
-      id: "mordax",
-      name: "Mordax",
-      x: 285,
-      y: 690,
-      size: 1.2,
-      starClass: "red",
-      type: "Capital corrupta",
-      status: "war",
-      controllerFactionId: "guardia-muerte",
-      blockedUntil: inHours(36),
-      isCapital: true,
-      publicDescription: "Mundo industrial desgarrado por señales disformes.",
-      production: { ...emptyResources, supply: 4, minerals: 6, ancestralStone: 1, uridium: 2 }
-    },
-    {
-      id: "helios-drift",
-      name: "Helios Drift",
-      x: 265,
-      y: 180,
-      size: 0.9,
-      starClass: "orange",
-      type: "Cinturón minero",
-      status: "neutral",
-      isCapital: false,
-      publicDescription: "Asteroides ricos en mineral, mal cartografiados.",
-      production: { ...emptyResources, minerals: 6, uridium: 1 }
-    },
-    {
-      id: "vesper-halo",
-      name: "Vesper Halo",
-      x: 435,
-      y: 140,
-      size: 0.85,
-      starClass: "violet",
-      type: "Anillo orbital",
-      status: "neutral",
-      isCapital: false,
-      publicDescription: "Ruinas orbitales con ecos de tecnología antigua.",
-      production: { ...emptyResources, minerals: 2, technology: 1, uridium: 1 }
-    },
-    {
-      id: "narthex",
-      name: "Narthex",
-      x: 590,
-      y: 245,
-      size: 0.95,
-      starClass: "yellow",
-      type: "Santuario sellado",
-      status: "controlled",
-      controllerFactionId: "sombra-emperador",
-      isCapital: false,
-      publicDescription: "Complejo sacro con rutas de descenso peligrosas.",
-      production: { ...emptyResources, supply: 2, ancestralStone: 1 },
-      specialObjects: [{ id: "obj-narthex", name: "Reliquia avistada", type: "relic", isPublic: true }]
-    },
-    {
-      id: "cinder-maw",
-      name: "Cinder Maw",
-      x: 230,
-      y: 420,
-      size: 0.8,
-      starClass: "orange",
-      type: "Mundo volcánico",
-      status: "controlled",
-      controllerFactionId: "orcos",
-      isCapital: true,
-      publicDescription: "Forjas geotérmicas y tormentas de ceniza.",
-      production: { ...emptyResources, minerals: 5, supply: 1 }
-    },
-    {
-      id: "azur-trench",
-      name: "Azur Trench",
-      x: 395,
-      y: 355,
-      size: 0.75,
-      starClass: "blue",
-      type: "Nebulosa navegable",
-      status: "neutral",
-      isCapital: false,
-      publicDescription: "Corredor azul con pozos de gravedad inestables.",
-      production: { ...emptyResources, uridium: 4 }
-    },
-    {
-      id: "orison",
-      name: "Orison",
-      x: 555,
-      y: 390,
-      size: 0.9,
-      starClass: "yellow",
-      type: "Colonia agrícola",
-      status: "controlled",
-      controllerFactionId: "guardia-imperial",
-      isCapital: false,
-      publicDescription: "Graneros presurizados y bastiones de defensa civil.",
-      production: { ...emptyResources, supply: 7 }
-    },
-    {
-      id: "blackglass",
-      name: "Blackglass",
-      x: 715,
-      y: 395,
-      size: 0.8,
-      starClass: "white",
-      type: "Mundo cristalino",
-      status: "controlled",
-      controllerFactionId: "culto-genestelar",
-      isCapital: true,
-      publicDescription: "Piedra ancestral bajo océanos de vidrio oscuro.",
-      production: { ...emptyResources, ancestralStone: 2, minerals: 2 }
-    },
-    {
-      id: "eclipse-forge",
-      name: "Eclipse Forge",
-      x: 125,
-      y: 535,
-      size: 0.85,
-      starClass: "red",
-      type: "Forja abandonada",
-      status: "controlled",
-      controllerFactionId: "orcos",
-      isCapital: false,
-      publicDescription: "Estructuras de manufactura latentes.",
-      production: { ...emptyResources, minerals: 4, technology: 1 }
-    },
-    {
-      id: "ashen-road",
-      name: "Ashen Road",
-      x: 405,
-      y: 555,
-      size: 0.72,
-      starClass: "blue",
-      type: "Nodo de tránsito",
-      status: "controlled",
-      controllerFactionId: "culto-genestelar",
-      isCapital: false,
-      publicDescription: "Rutas estables entre corrientes de polvo orbital.",
-      production: { ...emptyResources, uridium: 3 }
-    },
-    {
-      id: "red-sabbath",
-      name: "Red Sabbath",
-      x: 560,
-      y: 535,
-      size: 0.86,
-      starClass: "red",
-      type: "Zona de guerra",
-      status: "war",
-      controllerFactionId: "culto-genestelar",
-      blockedUntil: inHours(18),
-      isCapital: false,
-      publicDescription: "Señales de batalla activas y tráfico encriptado.",
-      production: { ...emptyResources, supply: 2, minerals: 2, uridium: 1 }
-    },
-    {
-      id: "pale-choir",
-      name: "Pale Choir",
-      x: 835,
-      y: 520,
-      size: 0.78,
-      starClass: "violet",
-      type: "Anomalía psíquica",
-      status: "neutral",
-      isCapital: false,
-      publicDescription: "Un coro de señales imposibles atraviesa el vacío.",
-      production: { ...emptyResources, ancestralStone: 1, uridium: 2 }
-    },
-    {
-      id: "drusus",
-      name: "Drusus",
-      x: 475,
-      y: 735,
-      size: 0.82,
-      starClass: "orange",
-      type: "Bastión menor",
-      status: "controlled",
-      controllerFactionId: "guardia-muerte",
-      isCapital: false,
-      publicDescription: "Fortaleza tomada tras una campaña sangrienta.",
-      production: { ...emptyResources, supply: 3, minerals: 3 }
-    },
-    {
-      id: "ghostlight",
-      name: "Ghostlight",
-      x: 640,
-      y: 760,
-      size: 0.78,
-      starClass: "green",
-      type: "Faro perdido",
-      status: "controlled",
-      controllerFactionId: "necrones",
-      isCapital: false,
-      publicDescription: "Faro de navegación que parpadea con luz fría.",
-      production: { ...emptyResources, uridium: 3, technology: 1 }
-    },
-    {
-      id: "novem",
-      name: "Novem",
-      x: 860,
-      y: 690,
-      size: 0.78,
-      starClass: "white",
-      type: "Luna industrial",
-      status: "controlled",
-      controllerFactionId: "necrones",
-      isCapital: false,
-      publicDescription: "Complejo lunar de extracción automatizada.",
-      production: { ...emptyResources, minerals: 5 }
-    },
-    {
-      id: "lyra-terminus",
-      name: "Lyra Terminus",
-      x: 930,
-      y: 310,
-      size: 0.82,
-      starClass: "blue",
-      type: "Puerto externo",
-      status: "controlled",
-      controllerFactionId: "sombra-emperador",
-      isCapital: false,
-      publicDescription: "Puerto orbital en el borde del subsector.",
-      production: { ...emptyResources, supply: 2, uridium: 3 }
-    },
-    {
-      id: "sepulchre-nine",
-      name: "Sepulchre IX",
-      x: 345,
-      y: 830,
-      size: 0.76,
-      starClass: "violet",
-      type: "Necrópolis",
-      status: "neutral",
-      isCapital: false,
-      publicDescription: "Tumbas y coordenadas contradictorias.",
-      production: { ...emptyResources, ancestralStone: 1, minerals: 1 }
-    }
-  ],
-  edges: [
-    { id: "e1", fromSystemId: "kharon-prime", toSystemId: "helios-drift", uridiumCost: 1 },
-    { id: "e2", fromSystemId: "kharon-prime", toSystemId: "cinder-maw", uridiumCost: 1 },
-    { id: "e3", fromSystemId: "helios-drift", toSystemId: "vesper-halo", uridiumCost: 2 },
-    { id: "e4", fromSystemId: "vesper-halo", toSystemId: "narthex", uridiumCost: 1 },
-    { id: "e5", fromSystemId: "narthex", toSystemId: "sa-cea-gate", uridiumCost: 1 },
-    { id: "e6", fromSystemId: "sa-cea-gate", toSystemId: "lyra-terminus", uridiumCost: 1 },
-    { id: "e7", fromSystemId: "lyra-terminus", toSystemId: "pale-choir", uridiumCost: 2 },
-    { id: "e8", fromSystemId: "pale-choir", toSystemId: "novem", uridiumCost: 2 },
-    { id: "e9", fromSystemId: "novem", toSystemId: "thokt-vault", uridiumCost: 1 },
-    { id: "e10", fromSystemId: "thokt-vault", toSystemId: "ghostlight", uridiumCost: 1 },
-    { id: "e11", fromSystemId: "ghostlight", toSystemId: "drusus", uridiumCost: 2 },
-    { id: "e12", fromSystemId: "drusus", toSystemId: "mordax", uridiumCost: 1 },
-    { id: "e13", fromSystemId: "mordax", toSystemId: "sepulchre-nine", uridiumCost: 1 },
-    { id: "e14", fromSystemId: "mordax", toSystemId: "eclipse-forge", uridiumCost: 2 },
-    { id: "e15", fromSystemId: "eclipse-forge", toSystemId: "cinder-maw", uridiumCost: 1 },
-    { id: "e16", fromSystemId: "cinder-maw", toSystemId: "azur-trench", uridiumCost: 1 },
-    { id: "e17", fromSystemId: "azur-trench", toSystemId: "orison", uridiumCost: 1 },
-    { id: "e18", fromSystemId: "orison", toSystemId: "blackglass", uridiumCost: 2 },
-    { id: "e19", fromSystemId: "blackglass", toSystemId: "red-sabbath", uridiumCost: 1 },
-    { id: "e20", fromSystemId: "red-sabbath", toSystemId: "ashen-road", uridiumCost: 1 },
-    { id: "e21", fromSystemId: "ashen-road", toSystemId: "drusus", uridiumCost: 1 },
-    { id: "e22", fromSystemId: "orison", toSystemId: "red-sabbath", uridiumCost: 2 },
-    { id: "e23", fromSystemId: "blackglass", toSystemId: "thokt-vault", uridiumCost: 2 },
-    { id: "e24", fromSystemId: "azur-trench", toSystemId: "vesper-halo", uridiumCost: 2 }
-  ],
-  resources: [
-    {
-      factionId: "guardia-imperial",
-      supply: 120,
-      minerals: 85,
-      ancestralStone: 8,
-      uridium: 14,
-      technology: 1,
-      updatedAt: new Date(now).toISOString()
-    },
-    {
-      factionId: "orcos",
-      supply: 115,
-      minerals: 90,
-      ancestralStone: 4,
-      uridium: 10,
-      technology: 0,
-      updatedAt: new Date(now).toISOString()
-    },
-    {
-      factionId: "necrones",
-      supply: 65,
-      minerals: 100,
-      ancestralStone: 12,
-      uridium: 12,
-      technology: 2,
-      updatedAt: new Date(now).toISOString()
-    },
-    {
-      factionId: "culto-genestelar",
-      supply: 130,
-      minerals: 55,
-      ancestralStone: 6,
-      uridium: 11,
-      technology: 1,
-      updatedAt: new Date(now).toISOString()
-    },
-    {
-      factionId: "sombra-emperador",
-      supply: 80,
-      minerals: 75,
-      ancestralStone: 10,
-      uridium: 16,
-      technology: 3,
-      updatedAt: new Date(now).toISOString()
-    },
-    {
-      factionId: "guardia-muerte",
-      supply: 95,
-      minerals: 80,
-      ancestralStone: 9,
-      uridium: 9,
-      technology: 1,
-      updatedAt: new Date(now).toISOString()
-    }
-  ],
-  armies: [
-    {
-      id: "army-guardia-imperial",
-      factionId: "guardia-imperial",
-      name: "Regimiento de Guardia Imperial",
-      currentSystemId: "kharon-prime",
-      status: "moving",
-      pointsTotal: 750,
-      isVisiblePublicly: false,
-      units: [
-        {
-          id: "unit-1",
-          armyId: "army-guardia-imperial",
-          name: "Veteranos de Kharon",
-          points: 180,
-          quantity: 1,
-          experience: 3,
-          rank: "Curtidos",
-          enhancementText: "Juramento de venganza"
-        }
-      ]
-    },
-    {
-      id: "army-orcos",
-      factionId: "orcos",
-      name: "Marea Verde",
-      currentSystemId: "cinder-maw",
-      status: "ready",
-      pointsTotal: 800,
-      isVisiblePublicly: false,
-      units: []
-    },
-    {
-      id: "army-necrones",
-      factionId: "necrones",
-      name: "Legión de la Cripta",
-      currentSystemId: "thokt-vault",
-      status: "ready",
-      pointsTotal: 780,
-      isVisiblePublicly: false,
-      units: []
-    },
-    {
-      id: "army-culto-genestelar",
-      factionId: "culto-genestelar",
-      name: "Célula del Alzamiento",
-      currentSystemId: "blackglass",
-      status: "ready",
-      pointsTotal: 720,
-      isVisiblePublicly: false,
-      units: []
-    },
-    {
-      id: "army-sombra-emperador",
-      factionId: "sombra-emperador",
-      name: "Sombra del Emperador",
-      currentSystemId: "sa-cea-gate",
-      status: "ready",
-      pointsTotal: 700,
-      isVisiblePublicly: false,
-      units: []
-    },
-    {
-      id: "army-guardia-muerte",
-      factionId: "guardia-muerte",
-      name: "Vector de la Plaga",
-      currentSystemId: "mordax",
-      status: "in_war",
-      pointsTotal: 760,
-      isVisiblePublicly: false,
-      units: []
-    }
-  ],
-  movements: [
-    {
-      id: "move-1",
-      armyId: "army-guardia-imperial",
-      factionId: "guardia-imperial",
-      fromSystemId: "kharon-prime",
-      toSystemId: "cinder-maw",
-      uridiumCost: 1,
-      startedAt: inHours(-1),
-      arrivalAt: inHours(2),
-      status: "moving"
-    }
-  ],
-  unitTemplates: [
-    {
-      id: "unit-orcos-boyz",
-      factionId: "orcos",
-      name: "Boyz",
-      category: "Infantería",
-      points: 80,
-      supplyCost: 12,
-      mineralsCost: 2,
-      ancestralStoneCost: 0,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 7200,
-      notes: "Masa brutal de combate cercano.",
-      isAvailable: true
-    },
-    {
-      id: "unit-orcos-meganobz",
-      factionId: "orcos",
-      name: "Meganobz",
-      category: "Élite",
-      points: 105,
-      supplyCost: 6,
-      mineralsCost: 5,
-      ancestralStoneCost: 1,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 14400,
-      notes: "Noblez armados con servoarmaduras improvisadas.",
-      isAvailable: true
-    },
-    {
-      id: "unit-orcos-deff-dread",
-      factionId: "orcos",
-      name: "Deff Dread",
-      category: "Vehículo",
-      points: 135,
-      supplyCost: 2,
-      mineralsCost: 10,
-      ancestralStoneCost: 1,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 21600,
-      notes: "Máquina andante de metal, humo y mala intención.",
-      isAvailable: true
-    },
-    {
-      id: "unit-necrones-warriors",
-      factionId: "necrones",
-      name: "Necron Warriors",
-      category: "Infantería",
-      points: 80,
-      supplyCost: 8,
-      mineralsCost: 4,
-      ancestralStoneCost: 0,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 7200,
-      notes: "Línea inmortal reanimada desde las criptas.",
-      isAvailable: true
-    },
-    {
-      id: "unit-necrones-immortals",
-      factionId: "necrones",
-      name: "Immortals",
-      category: "Élite",
-      points: 105,
-      supplyCost: 6,
-      mineralsCost: 5,
-      ancestralStoneCost: 1,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 14400,
-      notes: "Guerreros superiores con protocolos de élite.",
-      isAvailable: true
-    },
-    {
-      id: "unit-necrones-skorpekh",
-      factionId: "necrones",
-      name: "Skorpekh Destroyers",
-      category: "Élite",
-      points: 140,
-      supplyCost: 4,
-      mineralsCost: 7,
-      ancestralStoneCost: 2,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 21600,
-      notes: "Asesinos de fase con cuerpos diseñados para la destrucción.",
-      isAvailable: true
-    },
-    {
-      id: "unit-guardia-cadian",
-      factionId: "guardia-imperial",
-      name: "Cadian Shock Troops",
-      category: "Infantería",
-      points: 80,
-      supplyCost: 12,
-      mineralsCost: 2,
-      ancestralStoneCost: 0,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 7200,
-      notes: "Infantería disciplinada lista para sostener la línea.",
-      isAvailable: true
-    },
-    {
-      id: "unit-guardia-kasrkin",
-      factionId: "guardia-imperial",
-      name: "Kasrkin",
-      category: "Élite",
-      points: 105,
-      supplyCost: 8,
-      mineralsCost: 4,
-      ancestralStoneCost: 1,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 14400,
-      notes: "Veteranos de asalto con equipo especializado.",
-      isAvailable: true
-    },
-    {
-      id: "unit-guardia-leman-russ",
-      factionId: "guardia-imperial",
-      name: "Leman Russ Battle Tank",
-      category: "Vehículo",
-      points: 145,
-      supplyCost: 2,
-      mineralsCost: 11,
-      ancestralStoneCost: 1,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 25200,
-      notes: "Blindado pesado de batalla para romper frentes.",
-      isAvailable: true
-    },
-    {
-      id: "unit-culto-neophytes",
-      factionId: "culto-genestelar",
-      name: "Neophyte Hybrids",
-      category: "Infantería",
-      points: 80,
-      supplyCost: 12,
-      mineralsCost: 2,
-      ancestralStoneCost: 0,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 7200,
-      notes: "Células insurgentes armadas desde las profundidades.",
-      isAvailable: true
-    },
-    {
-      id: "unit-culto-acolytes",
-      factionId: "culto-genestelar",
-      name: "Acolyte Hybrids",
-      category: "Élite",
-      points: 95,
-      supplyCost: 8,
-      mineralsCost: 3,
-      ancestralStoneCost: 1,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 14400,
-      notes: "Fanáticos híbridos preparados para ataques decisivos.",
-      isAvailable: true
-    },
-    {
-      id: "unit-culto-ridgerunner",
-      factionId: "culto-genestelar",
-      name: "Achilles Ridgerunner",
-      category: "Vehículo",
-      points: 120,
-      supplyCost: 3,
-      mineralsCost: 8,
-      ancestralStoneCost: 1,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 21600,
-      notes: "Vehículo de incursión y reconocimiento rápido.",
-      isAvailable: true
-    },
-    {
-      id: "unit-sombra-intercessors",
-      factionId: "sombra-emperador",
-      name: "Intercessor Squad",
-      category: "Infantería",
-      points: 105,
-      supplyCost: 8,
-      mineralsCost: 4,
-      ancestralStoneCost: 1,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 10800,
-      notes: "Astartes de línea con doctrina flexible.",
-      isAvailable: true
-    },
-    {
-      id: "unit-sombra-terminators",
-      factionId: "sombra-emperador",
-      name: "Terminator Squad",
-      category: "Élite",
-      points: 160,
-      supplyCost: 5,
-      mineralsCost: 6,
-      ancestralStoneCost: 3,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 21600,
-      notes: "Veteranos con armadura táctica dreadnought.",
-      isAvailable: true
-    },
-    {
-      id: "unit-sombra-redemptor",
-      factionId: "sombra-emperador",
-      name: "Redemptor Dreadnought",
-      category: "Vehículo",
-      points: 185,
-      supplyCost: 2,
-      mineralsCost: 10,
-      ancestralStoneCost: 3,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 28800,
-      notes: "Dreadnought pesado para rupturas de línea.",
-      isAvailable: true
-    },
-    {
-      id: "unit-muerte-poxwalkers",
-      factionId: "guardia-muerte",
-      name: "Poxwalkers",
-      category: "Infantería",
-      points: 70,
-      supplyCost: 12,
-      mineralsCost: 1,
-      ancestralStoneCost: 0,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 7200,
-      notes: "Multitud infectada que avanza sin miedo.",
-      isAvailable: true
-    },
-    {
-      id: "unit-muerte-plague-marines",
-      factionId: "guardia-muerte",
-      name: "Plague Marines",
-      category: "Infantería",
-      points: 115,
-      supplyCost: 8,
-      mineralsCost: 5,
-      ancestralStoneCost: 1,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 14400,
-      notes: "Marines de plaga resistentes y metódicos.",
-      isAvailable: true
-    },
-    {
-      id: "unit-muerte-bloat-drone",
-      factionId: "guardia-muerte",
-      name: "Foetid Bloat-drone",
-      category: "Vehículo",
-      points: 145,
-      supplyCost: 3,
-      mineralsCost: 8,
-      ancestralStoneCost: 2,
-      uridiumCost: 0,
-      technologyCost: 0,
-      recruitmentTimeSeconds: 25200,
-      notes: "Dron demoníaco de apoyo y hostigamiento.",
-      isAvailable: true
-    }
-  ],
-  recruitmentQueue: [
-    {
-      id: "queue-1",
-      factionId: "guardia-imperial",
-      unitTemplateId: "unit-guardia-cadian",
-      unitName: "Cadian Shock Troops",
-      quantity: 1,
-      startedAt: inHours(-3),
-      finishesAt: inHours(5),
-      status: "queued"
-    }
-  ],
-  conflicts: [
-    {
-      id: "conflict-1",
-      systemId: "mordax",
-      attackerFactionId: "guardia-imperial",
-      defenderFactionId: "guardia-muerte",
-      status: "pending",
-      blockedUntil: inHours(36),
-      notes: "Batalla pendiente de reporte."
-    }
-  ],
-  battleReports: [
-    {
-      id: "report-1",
-      conflictId: "conflict-1",
-      reporterFactionId: "guardia-imperial",
-      winnerFactionId: "guardia-imperial",
-      finalControllerFactionId: "guardia-imperial",
-      status: "submitted",
-      narrativeNotes: "Reporte provisional del atacante."
-    }
-  ],
-  missions: [
-    {
-      id: "mission-1",
-      systemId: "mordax",
-      title: "El Puente de Ceniza",
-      narrativeDescription: "Las fuerzas chocan bajo columnas de humo industrial.",
-      objectives: "Controlar los nodos de carga al final del quinto turno de batalla física.",
-      specialRules: "Visibilidad reducida en el primer round.",
-      victoryConditions: "El ganador decide el control final del sistema."
-    }
-  ]
+  nextResourceTickAt: inHours(24),
+  factions,
+  systems,
+  edges,
+  resources,
+  armies,
+  movements,
+  unitTemplates,
+  recruitmentQueue: [],
+  conflicts,
+  battleReports: [],
+  missions
 };

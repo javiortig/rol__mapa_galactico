@@ -388,7 +388,7 @@ function renderDynamicLayers({
     movementOriginSystemId,
     time
   });
-  drawMovements(state.layers.movement, data.systems, data.movements, time);
+  drawMovements(state.layers.movement, data.systems, data.movements, data.factionColorById, time);
   updateLabels(state.labels, state.view.scale, selectedSystemId, hoveredSystemId);
 }
 
@@ -460,7 +460,7 @@ function drawRoutes(layer: PIXI.Container, systems: StarSystem[], edges: SystemE
     const routeColor = edge.isBlocked ? 0xfb7185 : 0x67e8f9;
     route.moveTo(from.x, from.y);
     route.lineTo(to.x, to.y);
-    route.stroke({ color: routeColor, alpha: edge.isBlocked ? 0.12 : 0.12, width: edge.uridiumCost > 1 ? 7 : 5 });
+    route.stroke({ color: routeColor, alpha: 0.12, width: 5 });
 
     if (edge.isBlocked) {
       drawDashedLine(route, from.x, from.y, to.x, to.y, 14, 8);
@@ -468,35 +468,10 @@ function drawRoutes(layer: PIXI.Container, systems: StarSystem[], edges: SystemE
     } else {
       route.moveTo(from.x, from.y);
       route.lineTo(to.x, to.y);
-      route.stroke({ color: routeColor, alpha: 0.36, width: edge.uridiumCost > 1 ? 2.4 : 1.4 });
+      route.stroke({ color: routeColor, alpha: 0.36, width: 1.4 });
     }
 
     layer.addChild(route);
-
-    if (edge.uridiumCost > 1) {
-      const midX = (from.x + to.x) / 2;
-      const midY = (from.y + to.y) / 2;
-      const markerWrap = new PIXI.Container();
-      const markerBg = new PIXI.Graphics();
-      markerBg.roundRect(-10, -9, 20, 18, 3);
-      markerBg.fill({ color: 0x06111f, alpha: 0.78 });
-      markerBg.stroke({ color: 0x67e8f9, alpha: 0.38, width: 1 });
-      markerWrap.addChild(markerBg);
-
-      const marker = new PIXI.Text({
-        text: `${edge.uridiumCost}`,
-        style: {
-          fill: 0xa5f3fc,
-          fontFamily: "Arial",
-          fontSize: 12,
-          fontWeight: "700"
-        }
-      });
-      marker.anchor.set(0.5);
-      markerWrap.addChild(marker);
-      markerWrap.position.set(midX, midY);
-      layer.addChild(markerWrap);
-    }
   }
 }
 
@@ -709,19 +684,6 @@ function drawRouteEffects({
     line.stroke({ color, alpha, width: isAdjacent ? 4 : 2.3 });
     layer.addChild(line);
 
-    if (isAdjacent && !edge.isBlocked) {
-      for (let index = 0; index < 3; index += 1) {
-        const progress = (time * 0.012 + index / 3) % 1;
-        const particle = pointOnLine(from, to, progress);
-        const reverseParticle = pointOnLine(from, to, 1 - progress);
-        const dot = new PIXI.Graphics();
-        dot.circle(particle.x, particle.y, 2.4);
-        dot.fill({ color, alpha: 0.82 });
-        dot.circle(reverseParticle.x, reverseParticle.y, 1.8);
-        dot.fill({ color, alpha: 0.64 });
-        layer.addChild(dot);
-      }
-    }
   }
 }
 
@@ -791,7 +753,13 @@ function drawSystemEffects({
   }
 }
 
-function drawMovements(layer: PIXI.Container, systems: StarSystem[], movements: MovementOrder[], time: number) {
+function drawMovements(
+  layer: PIXI.Container,
+  systems: StarSystem[],
+  movements: MovementOrder[],
+  factionColorById: Map<string, string>,
+  time: number
+) {
   const systemById = new Map(systems.map((system) => [system.id, system]));
   const now = Date.now();
 
@@ -803,26 +771,46 @@ function drawMovements(layer: PIXI.Container, systems: StarSystem[], movements: 
       continue;
     }
 
+    const movementColor = toPixiColor(factionColorById.get(movement.factionId) ?? "#fef08a");
     const started = new Date(movement.startedAt).getTime();
     const arrival = new Date(movement.arrivalAt).getTime();
     const progress = clamp((now - started) / Math.max(arrival - started, 1), 0, 1);
     const point = pointOnLine(from, to, progress);
     const trailStart = pointOnLine(from, to, Math.max(progress - 0.08, 0));
+
+    const routeGlow = new PIXI.Graphics();
+    routeGlow.moveTo(from.x, from.y);
+    routeGlow.lineTo(to.x, to.y);
+    routeGlow.stroke({ color: movementColor, alpha: 0.18, width: 4.8 });
+    routeGlow.moveTo(from.x, from.y);
+    routeGlow.lineTo(to.x, to.y);
+    routeGlow.stroke({ color: movementColor, alpha: 0.42, width: 1.4 });
+    layer.addChild(routeGlow);
+
+    for (let index = 0; index < 4; index += 1) {
+      const particleProgress = (time * 0.014 + index / 4) % 1;
+      const particle = pointOnLine(from, to, particleProgress);
+      const dot = new PIXI.Graphics();
+      dot.circle(particle.x, particle.y, 2.3);
+      dot.fill({ color: movementColor, alpha: 0.8 });
+      layer.addChild(dot);
+    }
+
     const trail = new PIXI.Graphics();
     trail.moveTo(trailStart.x, trailStart.y);
     trail.lineTo(point.x, point.y);
-    trail.stroke({ color: 0xfef08a, alpha: 0.36, width: 5 });
+    trail.stroke({ color: movementColor, alpha: 0.36, width: 5 });
     trail.moveTo(trailStart.x, trailStart.y);
     trail.lineTo(point.x, point.y);
-    trail.stroke({ color: 0xfef08a, alpha: 0.86, width: 1.6 });
+    trail.stroke({ color: movementColor, alpha: 0.86, width: 1.6 });
     layer.addChild(trail);
 
     const marker = new PIXI.Graphics();
     const pulse = 1 + Math.sin(time * 0.16) * 0.16;
     marker.circle(point.x, point.y, 4.8 * pulse);
-    marker.fill({ color: 0xfef08a, alpha: 0.96 });
+    marker.fill({ color: movementColor, alpha: 0.96 });
     marker.circle(point.x, point.y, 12 * pulse);
-    marker.stroke({ color: 0xfef08a, alpha: 0.34, width: 1.7 });
+    marker.stroke({ color: movementColor, alpha: 0.34, width: 1.7 });
     marker.moveTo(point.x - 8, point.y);
     marker.lineTo(point.x + 8, point.y);
     marker.moveTo(point.x, point.y - 8);
