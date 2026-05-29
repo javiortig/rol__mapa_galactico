@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+:root {
+  --background: #05060a;
+  --foreground: #eef5ff;
+  --panel: rgba(9, 16, 28, 0.78);
+  --panel-strong: rgba(12, 21, 36, 0.94);
+  --line: rgba(125, 211, 252, 0.24);
+  --accent: #67e8f9;
+  --danger: #fb7185;
+  --warning: #fbbf24;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(34, 211, 238, 0.12), transparent 28rem),
+    radial-gradient(circle at 78% 18%, rgba(168, 85, 247, 0.1), transparent 24rem),
+    radial-gradient(circle at 50% 88%, rgba(248, 113, 113, 0.08), transparent 26rem),
+    var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(103, 232, 249, 0.32);
+}
+
+.hud-panel {
+  border: 1px solid rgba(125, 211, 252, 0.22);
+  background: linear-gradient(180deg, rgba(13, 24, 42, 0.9), rgba(7, 12, 22, 0.76));
+  box-shadow: 0 0 32px rgba(8, 145, 178, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+}
+
+.hud-grid {
+  background-image:
+    linear-gradient(rgba(125, 211, 252, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(125, 211, 252, 0.06) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
