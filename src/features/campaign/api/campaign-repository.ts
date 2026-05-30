@@ -1,7 +1,6 @@
 import type {
-  Army,
-  ArmyUnit,
   BattleReport,
+  CampaignUnit,
   CampaignSnapshot,
   Conflict,
   Faction,
@@ -62,9 +61,9 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       productionResult,
       specialObjectsResult,
       resourcesResult,
-      armiesResult,
-      armyUnitsResult,
+      unitsResult,
       movementsResult,
+      movementUnitsResult,
       unitTemplatesResult,
       recruitmentQueueResult,
       conflictsResult,
@@ -80,9 +79,9 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       supabase.from("system_production").select("*"),
       supabase.from("system_special_objects").select("id, system_id, name, type, is_public").eq("is_public", true),
       supabase.from("faction_resources").select("*"),
-      supabase.from("armies").select("*").order("name"),
-      supabase.from("army_units").select("*").order("created_at"),
+      supabase.from("campaign_units").select("*").order("name"),
       supabase.from("movement_orders").select("*").order("arrival_at"),
+      supabase.from("movement_order_units").select("*"),
       supabase.from("unit_templates").select("*").order("name"),
       supabase.from("recruitment_queue").select("*, unit_templates(name)").order("finishes_at"),
       supabase.from("conflicts").select("*").order("created_at"),
@@ -119,7 +118,10 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       getRows(specialObjectsResult, "system_special_objects").map(mapSpecialObject),
       (item) => item.systemId
     );
-    const unitsByArmy = groupBy(getRows(armyUnitsResult, "army_units").map(mapArmyUnit), (item) => item.armyId);
+    const unitIdsByMovement = groupBy(
+      getRows(movementUnitsResult, "movement_order_units").map(mapMovementUnit),
+      (item) => item.movementOrderId
+    );
 
     return {
       currentUser: {
@@ -136,8 +138,10 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       ),
       edges: getRows(edgesResult, "system_edges").map(mapEdge),
       resources: getRows(resourcesResult, "faction_resources").map(mapFactionResources),
-      armies: getRows(armiesResult, "armies").map((row) => mapArmy(row, unitsByArmy.get(row.id as string))),
-      movements: getRows(movementsResult, "movement_orders").map(mapMovement),
+      units: getRows(unitsResult, "campaign_units").map(mapCampaignUnit),
+      movements: getRows(movementsResult, "movement_orders").map((row) =>
+        mapMovement(row, unitIdsByMovement.get(row.id as string))
+      ),
       unitTemplates: getRows(unitTemplatesResult, "unit_templates").map(mapUnitTemplate),
       recruitmentQueue: getRows(recruitmentQueueResult, "recruitment_queue").map(mapRecruitmentQueueItem),
       conflicts: getRows(conflictsResult, "conflicts").map(mapConflict),
@@ -241,41 +245,45 @@ function mapFactionResources(row: Record<string, unknown>): FactionResources {
   };
 }
 
-function mapArmy(row: Record<string, unknown>, units: ArmyUnit[] = []): Army {
+function mapCampaignUnit(row: Record<string, unknown>): CampaignUnit {
   return {
     id: row.id as string,
     factionId: row.faction_id as string,
     name: row.name as string,
     currentSystemId: (row.current_system_id as string | null) ?? null,
-    status: row.status as Army["status"],
-    pointsTotal: Number(row.points_total ?? 0),
-    isVisiblePublicly: Boolean(row.is_visible_publicly),
-    units
-  };
-}
-
-function mapArmyUnit(row: Record<string, unknown>): ArmyUnit {
-  return {
-    id: row.id as string,
-    armyId: row.army_id as string,
-    name: row.name as string,
+    status: row.status as CampaignUnit["status"],
+    category: row.category as CampaignUnit["category"],
     points: Number(row.points ?? 0),
     quantity: Number(row.quantity ?? 1),
     experience: Number(row.experience ?? 0),
+    isVisiblePublicly: Boolean(row.is_visible_publicly),
+    unitTemplateId: (row.unit_template_id as string | null) ?? null,
     rank: (row.rank as string | null) ?? null,
     enhancementText: (row.enhancement_text as string | null) ?? null,
     notes: (row.notes as string | null) ?? null
   };
 }
 
-function mapMovement(row: Record<string, unknown>): MovementOrder {
+function mapMovementUnit(row: Record<string, unknown>) {
+  return {
+    movementOrderId: row.movement_order_id as string,
+    unitId: row.unit_id as string
+  };
+}
+
+function mapMovement(row: Record<string, unknown>, movementUnits: Array<{ unitId: string }> = []): MovementOrder {
   return {
     id: row.id as string,
-    armyId: row.army_id as string,
+    unitIds: movementUnits.map((item) => item.unitId),
     factionId: row.faction_id as string,
     fromSystemId: row.from_system_id as string,
     toSystemId: row.to_system_id as string,
+    pathSystemIds: Array.isArray(row.path_system_ids)
+      ? (row.path_system_ids as string[])
+      : [row.from_system_id as string, row.to_system_id as string],
     uridiumCost: Number(row.uridium_cost ?? 0),
+    segmentCount: Number(row.segment_count ?? 1),
+    durationSeconds: Number(row.duration_seconds ?? 0),
     startedAt: row.started_at as string,
     arrivalAt: row.arrival_at as string,
     status: row.status as MovementOrder["status"]

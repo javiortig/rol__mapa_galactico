@@ -10,7 +10,16 @@ interface GalaxyMapProps {
   edges: SystemEdge[];
   factions: Faction[];
   movements: MovementOrder[];
+  movementPlanning?: MovementPlanning;
 }
+
+type MovementPlanning = {
+  active: boolean;
+  originSystemId: string;
+  pathSystemIds: string[];
+  onSystemHover: (systemId: string | null) => void;
+  onSystemClick: (systemId: string) => void;
+};
 
 type ViewState = {
   scale: number;
@@ -67,10 +76,11 @@ const starPalette: Record<StarClass, { core: number; corona: number; halo: numbe
   green: { core: 0xdcfce7, corona: 0x34d399, halo: 0x059669, name: "Verde" }
 };
 
-export function GalaxyMap({ systems, edges, factions, movements }: GalaxyMapProps) {
+export function GalaxyMap({ systems, edges, factions, movements, movementPlanning }: GalaxyMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const pixiStateRef = useRef<PixiMapState | null>(null);
   const dataRef = useRef<MapData | null>(null);
+  const movementPlanningRef = useRef<MovementPlanning | undefined>(movementPlanning);
   const selectedSystemId = useCampaignUiStore((state) => state.selectedSystemId);
   const hoveredSystemId = useCampaignUiStore((state) => state.hoveredSystemId);
   const movementOriginSystemId = useCampaignUiStore((state) => state.movementOriginSystemId);
@@ -106,13 +116,18 @@ export function GalaxyMap({ systems, edges, factions, movements }: GalaxyMapProp
   }, [movementOriginSystemId]);
 
   useEffect(() => {
+    movementPlanningRef.current = movementPlanning;
+  }, [movementPlanning]);
+
+  useEffect(() => {
     dataRef.current = { systems, edges, factions, movements, factionColorById };
 
     if (pixiStateRef.current) {
       renderStaticMap(pixiStateRef.current, dataRef.current, {
         setHoveredSystem,
         setSelectedSystem,
-        setTooltipPosition
+        setTooltipPosition,
+        getMovementPlanning: () => movementPlanningRef.current
       });
     }
   }, [edges, factionColorById, factions, movements, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems]);
@@ -192,7 +207,8 @@ export function GalaxyMap({ systems, edges, factions, movements }: GalaxyMapProp
       renderStaticMap(state, dataRef.current ?? { systems, edges, factions, movements, factionColorById }, {
         setHoveredSystem,
         setSelectedSystem,
-        setTooltipPosition
+        setTooltipPosition,
+        getMovementPlanning: () => movementPlanningRef.current
       });
 
       let time = 0;
@@ -206,7 +222,8 @@ export function GalaxyMap({ systems, edges, factions, movements }: GalaxyMapProp
           time,
           selectedSystemId: selectedSystemIdRef.current,
           hoveredSystemId: hoveredSystemIdRef.current,
-          movementOriginSystemId: movementOriginSystemIdRef.current
+          movementOriginSystemId: movementOriginSystemIdRef.current,
+          movementPlanning: movementPlanningRef.current
         });
       });
       tickerAttached = true;
@@ -327,6 +344,7 @@ function renderStaticMap(
     setHoveredSystem: (systemId: string | null) => void;
     setSelectedSystem: (systemId: string | null) => void;
     setTooltipPosition: (position: { x: number; y: number } | null) => void;
+    getMovementPlanning: () => MovementPlanning | undefined;
   }
 ) {
   clearLayer(state.layers.background);
@@ -338,7 +356,7 @@ function renderStaticMap(
 
   const bounds = getBounds(data.systems);
   drawBackground(state.layers.background, bounds, state.backgroundStars);
-  drawRoutes(state.layers.routes, data.systems, data.edges);
+  drawRoutes(state.layers.routes, data.systems, data.edges, data.factionColorById);
   drawSystems({
     layer: state.layers.systems,
     labelsLayer: state.layers.labels,
@@ -347,7 +365,8 @@ function renderStaticMap(
     factionColorById: data.factionColorById,
     setSelectedSystem: handlers.setSelectedSystem,
     setHoveredSystem: handlers.setHoveredSystem,
-    setTooltipPosition: handlers.setTooltipPosition
+    setTooltipPosition: handlers.setTooltipPosition,
+    getMovementPlanning: handlers.getMovementPlanning
   });
 }
 
@@ -357,7 +376,8 @@ function renderDynamicLayers({
   time,
   selectedSystemId,
   hoveredSystemId,
-  movementOriginSystemId
+  movementOriginSystemId,
+  movementPlanning
 }: {
   state: PixiMapState;
   data: MapData;
@@ -365,6 +385,7 @@ function renderDynamicLayers({
   selectedSystemId: string | null;
   hoveredSystemId: string | null;
   movementOriginSystemId: string | null;
+  movementPlanning?: MovementPlanning;
 }) {
   clearLayer(state.layers.effects);
   clearLayer(state.layers.routeEffects);
@@ -377,6 +398,7 @@ function renderDynamicLayers({
     selectedSystemId,
     hoveredSystemId,
     movementOriginSystemId,
+    plannedPathSystemIds: movementPlanning?.pathSystemIds ?? [],
     time
   });
   drawSystemEffects({
@@ -445,7 +467,12 @@ function drawNebula(layer: PIXI.Container, bounds: Bounds, x: number, y: number,
   layer.addChild(nebula);
 }
 
-function drawRoutes(layer: PIXI.Container, systems: StarSystem[], edges: SystemEdge[]) {
+function drawRoutes(
+  layer: PIXI.Container,
+  systems: StarSystem[],
+  edges: SystemEdge[],
+  factionColorById: Map<string, string>
+) {
   const systemById = new Map(systems.map((system) => [system.id, system]));
 
   for (const edge of edges) {
@@ -457,7 +484,7 @@ function drawRoutes(layer: PIXI.Container, systems: StarSystem[], edges: SystemE
     }
 
     const route = new PIXI.Graphics();
-    const routeColor = edge.isBlocked ? 0xfb7185 : 0x67e8f9;
+    const routeColor = getRouteColor(edge, from, to, factionColorById);
     route.moveTo(from.x, from.y);
     route.lineTo(to.x, to.y);
     route.stroke({ color: routeColor, alpha: 0.12, width: 5 });
@@ -483,7 +510,8 @@ function drawSystems({
   factionColorById,
   setSelectedSystem,
   setHoveredSystem,
-  setTooltipPosition
+  setTooltipPosition,
+  getMovementPlanning
 }: {
   layer: PIXI.Container;
   labelsLayer: PIXI.Container;
@@ -493,6 +521,7 @@ function drawSystems({
   setSelectedSystem: (systemId: string | null) => void;
   setHoveredSystem: (systemId: string | null) => void;
   setTooltipPosition: (position: { x: number; y: number } | null) => void;
+  getMovementPlanning: () => MovementPlanning | undefined;
 }) {
   for (const system of systems) {
     const starColors = getStarColors(system);
@@ -524,21 +553,6 @@ function drawSystems({
       factionGlow.circle(0, 0, radius * 2.92);
       factionGlow.stroke({ color: controlColor, alpha: 0.16, width: 1.2 });
       node.addChild(factionGlow);
-    }
-
-    if (system.isCapital) {
-      const capitalRing = new PIXI.Graphics();
-      capitalRing.circle(0, 0, radius * 2.55);
-      capitalRing.stroke({ color: controlColor, alpha: 0.88, width: 2.4 });
-      capitalRing.circle(0, 0, radius * 3.08);
-      capitalRing.stroke({ color: 0xffffff, alpha: 0.28, width: 1.2 });
-      capitalRing.moveTo(0, -radius * 3.62);
-      capitalRing.lineTo(radius * 0.82, -radius * 2.8);
-      capitalRing.lineTo(0, -radius * 1.98);
-      capitalRing.lineTo(-radius * 0.82, -radius * 2.8);
-      capitalRing.closePath();
-      capitalRing.stroke({ color: controlColor, alpha: 0.74, width: 1.5 });
-      node.addChild(capitalRing);
     }
 
     if (system.status === "war") {
@@ -602,8 +616,18 @@ function drawSystems({
     scanline.stroke({ color: controlColor, alpha: system.status === "neutral" ? 0.22 : 0.44, width: 1 });
     node.addChild(scanline);
 
-    node.on("pointertap", () => setSelectedSystem(system.id));
+    node.on("pointertap", () => {
+      const planning = getMovementPlanning();
+
+      if (planning?.active) {
+        planning.onSystemClick(system.id);
+        return;
+      }
+
+      setSelectedSystem(system.id);
+    });
     node.on("pointerover", (event) => {
+      getMovementPlanning()?.onSystemHover(system.id);
       setHoveredSystem(system.id);
       setTooltipPosition({ x: event.global.x + 18, y: event.global.y + 18 });
     });
@@ -611,6 +635,7 @@ function drawSystems({
       setTooltipPosition({ x: event.global.x + 18, y: event.global.y + 18 });
     });
     node.on("pointerout", () => {
+      getMovementPlanning()?.onSystemHover(null);
       setHoveredSystem(null);
       setTooltipPosition(null);
     });
@@ -622,8 +647,8 @@ function drawSystems({
       style: {
         fill: 0xdbeafe,
         fontFamily: "Arial",
-        fontSize: system.isCapital ? 14 : 12,
-        fontWeight: system.isCapital ? "700" : "400",
+        fontSize: 12,
+        fontWeight: "400",
         letterSpacing: 0,
         dropShadow: {
           alpha: 0.55,
@@ -647,6 +672,7 @@ function drawRouteEffects({
   selectedSystemId,
   hoveredSystemId,
   movementOriginSystemId,
+  plannedPathSystemIds,
   time
 }: {
   layer: PIXI.Container;
@@ -655,11 +681,13 @@ function drawRouteEffects({
   selectedSystemId: string | null;
   hoveredSystemId: string | null;
   movementOriginSystemId: string | null;
+  plannedPathSystemIds: string[];
   time: number;
 }) {
   const systemById = new Map(systems.map((system) => [system.id, system]));
   const activeSystemId = movementOriginSystemId ?? selectedSystemId ?? hoveredSystemId;
   const warSystemIds = new Set(systems.filter((system) => system.status === "war").map((system) => system.id));
+  drawPathHighlight(layer, systemById, plannedPathSystemIds, 0xfef08a, 0.74);
 
   for (const edge of edges) {
     const from = systemById.get(edge.fromSystemId);
@@ -764,10 +792,13 @@ function drawMovements(
   const now = Date.now();
 
   for (const movement of movements.filter((item) => item.status === "moving")) {
-    const from = systemById.get(movement.fromSystemId);
-    const to = systemById.get(movement.toSystemId);
+    const pathSystemIds =
+      movement.pathSystemIds.length > 1 ? movement.pathSystemIds : [movement.fromSystemId, movement.toSystemId];
+    const pathSystems = pathSystemIds
+      .map((systemId) => systemById.get(systemId))
+      .filter((system): system is StarSystem => Boolean(system));
 
-    if (!from || !to) {
+    if (pathSystems.length < 2) {
       continue;
     }
 
@@ -775,21 +806,17 @@ function drawMovements(
     const started = new Date(movement.startedAt).getTime();
     const arrival = new Date(movement.arrivalAt).getTime();
     const progress = clamp((now - started) / Math.max(arrival - started, 1), 0, 1);
-    const point = pointOnLine(from, to, progress);
-    const trailStart = pointOnLine(from, to, Math.max(progress - 0.08, 0));
+    const point = pointOnPath(pathSystems, progress);
+    const trailStart = pointOnPath(pathSystems, Math.max(progress - 0.08, 0));
 
     const routeGlow = new PIXI.Graphics();
-    routeGlow.moveTo(from.x, from.y);
-    routeGlow.lineTo(to.x, to.y);
-    routeGlow.stroke({ color: movementColor, alpha: 0.18, width: 4.8 });
-    routeGlow.moveTo(from.x, from.y);
-    routeGlow.lineTo(to.x, to.y);
-    routeGlow.stroke({ color: movementColor, alpha: 0.42, width: 1.4 });
+    drawPathStroke(routeGlow, pathSystems, movementColor, 0.18, 4.8);
+    drawPathStroke(routeGlow, pathSystems, movementColor, 0.42, 1.4);
     layer.addChild(routeGlow);
 
     for (let index = 0; index < 4; index += 1) {
       const particleProgress = (time * 0.014 + index / 4) % 1;
-      const particle = pointOnLine(from, to, particleProgress);
+      const particle = pointOnPath(pathSystems, particleProgress);
       const dot = new PIXI.Graphics();
       dot.circle(particle.x, particle.y, 2.3);
       dot.fill({ color: movementColor, alpha: 0.8 });
@@ -811,11 +838,12 @@ function drawMovements(
     marker.fill({ color: movementColor, alpha: 0.96 });
     marker.circle(point.x, point.y, 12 * pulse);
     marker.stroke({ color: movementColor, alpha: 0.34, width: 1.7 });
-    marker.moveTo(point.x - 8, point.y);
-    marker.lineTo(point.x + 8, point.y);
-    marker.moveTo(point.x, point.y - 8);
-    marker.lineTo(point.x, point.y + 8);
-    marker.stroke({ color: 0xffffff, alpha: 0.65, width: 1 });
+    const angle = Math.atan2(point.y - trailStart.y, point.x - trailStart.x);
+    marker.moveTo(point.x + Math.cos(angle) * 10, point.y + Math.sin(angle) * 10);
+    marker.lineTo(point.x + Math.cos(angle + 2.45) * 7, point.y + Math.sin(angle + 2.45) * 7);
+    marker.lineTo(point.x + Math.cos(angle - 2.45) * 7, point.y + Math.sin(angle - 2.45) * 7);
+    marker.closePath();
+    marker.fill({ color: 0xffffff, alpha: 0.72 });
     layer.addChild(marker);
   }
 }
@@ -824,9 +852,9 @@ function updateLabels(labels: LabelRecord[], scale: number, selectedSystemId: st
   for (const { label, system } of labels) {
     const isSelected = system.id === selectedSystemId;
     const isHovered = system.id === hoveredSystemId;
-    const shouldShow = system.isCapital || isSelected || isHovered || scale > 0.82;
+    const shouldShow = isSelected || isHovered || scale > 0.82;
     label.visible = shouldShow;
-    label.alpha = isSelected || isHovered ? 1 : system.isCapital ? 0.88 : clamp((scale - 0.72) / 0.28, 0.34, 0.82);
+    label.alpha = isSelected || isHovered ? 1 : clamp((scale - 0.72) / 0.28, 0.34, 0.82);
     label.scale.set(clamp(1 / scale, 0.78, 1.18));
   }
 }
@@ -915,6 +943,63 @@ function pointOnLine(from: StarSystem, to: StarSystem, progress: number) {
   };
 }
 
+function pointOnPath(pathSystems: StarSystem[], progress: number) {
+  if (pathSystems.length === 1) {
+    return { x: pathSystems[0].x, y: pathSystems[0].y };
+  }
+
+  const scaledProgress = clamp(progress, 0, 1) * (pathSystems.length - 1);
+  const segmentIndex = Math.min(Math.floor(scaledProgress), pathSystems.length - 2);
+  const localProgress = scaledProgress - segmentIndex;
+
+  return pointOnLine(pathSystems[segmentIndex], pathSystems[segmentIndex + 1], localProgress);
+}
+
+function drawPathStroke(
+  graphics: PIXI.Graphics,
+  pathSystems: StarSystem[],
+  color: number,
+  alpha: number,
+  width: number
+) {
+  if (pathSystems.length < 2) {
+    return;
+  }
+
+  graphics.moveTo(pathSystems[0].x, pathSystems[0].y);
+
+  for (const system of pathSystems.slice(1)) {
+    graphics.lineTo(system.x, system.y);
+  }
+
+  graphics.stroke({ color, alpha, width });
+}
+
+function drawPathHighlight(
+  layer: PIXI.Container,
+  systemById: Map<string, StarSystem>,
+  pathSystemIds: string[],
+  color: number,
+  alpha: number
+) {
+  if (pathSystemIds.length < 2) {
+    return;
+  }
+
+  const pathSystems = pathSystemIds
+    .map((systemId) => systemById.get(systemId))
+    .filter((system): system is StarSystem => Boolean(system));
+
+  if (pathSystems.length < 2) {
+    return;
+  }
+
+  const glow = new PIXI.Graphics();
+  drawPathStroke(glow, pathSystems, color, alpha * 0.24, 8);
+  drawPathStroke(glow, pathSystems, color, alpha, 2.4);
+  layer.addChild(glow);
+}
+
 function applyView(world: PIXI.Container, view: ViewState) {
   world.position.set(view.x, view.y);
   world.scale.set(view.scale);
@@ -944,6 +1029,31 @@ function getFactionColor(system: StarSystem, factionColorById: Map<string, strin
   }
 
   return toPixiColor(factionColorById.get(system.controllerFactionId) ?? "#94a3b8");
+}
+
+function getRouteColor(
+  edge: SystemEdge,
+  from: StarSystem,
+  to: StarSystem,
+  factionColorById: Map<string, string>
+) {
+  if (edge.isBlocked) {
+    return 0xfb7185;
+  }
+
+  const sharedFactionId =
+    from.status === "controlled" &&
+    to.status === "controlled" &&
+    from.controllerFactionId &&
+    from.controllerFactionId === to.controllerFactionId
+      ? from.controllerFactionId
+      : null;
+
+  if (!sharedFactionId) {
+    return 0x67e8f9;
+  }
+
+  return toPixiColor(factionColorById.get(sharedFactionId) ?? "#67e8f9");
 }
 
 function getBounds(systems: StarSystem[]) {

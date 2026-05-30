@@ -1,18 +1,26 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { AlertTriangle, Clock3, Crosshair, RadioTower, Shield, Swords } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+import { AlertTriangle, Check, Clock3, Crosshair, MousePointer2, RadioTower, Route, Shield, Swords, Undo2, X } from "lucide-react";
 import { getCampaignSnapshot } from "@/features/campaign/api/campaign-repository";
 import { useCampaignUiStore } from "@/features/campaign/store/campaign-ui-store";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
 import { ResourceIcon, resourceLabels } from "@/components/ui/resource-icon";
+import { canUseMovementRpc, createMovementOrder } from "@/features/movement/api/movement-api";
+import {
+  calculateRoutePlan,
+  canAppendManualStep,
+  findCheapestRoute,
+  formatTravelDuration,
+  isSystemBlockedForMovement
+} from "@/features/movement/lib/pathfinding";
 import { RecruitmentModal } from "@/features/recruitment/components/recruitment-modal";
 import { formatCountdown } from "@/lib/time";
-import type { CampaignSnapshot, StarSystem } from "@/domain/campaign";
+import type { CampaignSnapshot, CampaignUnit, StarSystem } from "@/domain/campaign";
 
 const GalaxyMap = dynamic(
   () => import("@/features/galaxy-map/components/galaxy-map").then((mod) => mod.GalaxyMap),
@@ -28,7 +36,14 @@ export function CampaignShell() {
   const selectedSystemId = useCampaignUiStore((state) => state.selectedSystemId);
   const hoveredSystemId = useCampaignUiStore((state) => state.hoveredSystemId);
   const tooltipPosition = useCampaignUiStore((state) => state.tooltipPosition);
+  const startMovementMode = useCampaignUiStore((state) => state.startMovementMode);
+  const cancelMovementMode = useCampaignUiStore((state) => state.cancelMovementMode);
   const [recruitmentOpen, setRecruitmentOpen] = useState(false);
+  const [movementOriginSystemId, setMovementOriginSystemId] = useState<string | null>(null);
+  const [movementUnitIds, setMovementUnitIds] = useState<string[]>([]);
+  const [movementRouteMode, setMovementRouteMode] = useState<"optimal" | "manual">("optimal");
+  const [movementPathSystemIds, setMovementPathSystemIds] = useState<string[]>([]);
+  const [movementHoverPathSystemIds, setMovementHoverPathSystemIds] = useState<string[]>([]);
   const { data } = useQuery({
     queryKey: ["campaign-snapshot"],
     queryFn: getCampaignSnapshot
@@ -41,6 +56,100 @@ export function CampaignShell() {
   const selectedSystem = data.systems.find(
     (system) => system.id === selectedSystemId
   );
+  const movementOriginSystem = data.systems.find((system) => system.id === movementOriginSystemId) ?? null;
+  const movementDisplayPath =
+    movementHoverPathSystemIds.length > 1 ? movementHoverPathSystemIds : movementPathSystemIds;
+  const movementRoutePlan =
+    movementDisplayPath.length > 1 ? calculateRoutePlan(movementDisplayPath, data.edges) : null;
+
+  const openMovement = (system: StarSystem) => {
+    const readyUnitIds = data.units
+      .filter(
+        (unit) =>
+          unit.factionId === data.currentUser.factionId &&
+          unit.currentSystemId === system.id &&
+          unit.status === "ready"
+      )
+      .map((unit) => unit.id);
+
+    setMovementOriginSystemId(system.id);
+    setMovementUnitIds(readyUnitIds);
+    setMovementRouteMode("optimal");
+    setMovementPathSystemIds([system.id]);
+    setMovementHoverPathSystemIds([]);
+    startMovementMode(system.id);
+  };
+
+  const closeMovement = () => {
+    setMovementOriginSystemId(null);
+    setMovementUnitIds([]);
+    setMovementPathSystemIds([]);
+    setMovementHoverPathSystemIds([]);
+    cancelMovementMode();
+  };
+
+  const handleMovementHover = (systemId: string | null) => {
+    if (!movementOriginSystemId || !systemId) {
+      setMovementHoverPathSystemIds([]);
+      return;
+    }
+
+    if (movementRouteMode === "optimal") {
+      const route = findCheapestRoute({
+        systems: data.systems,
+        edges: data.edges,
+        originSystemId: movementOriginSystemId,
+        targetSystemId: systemId
+      });
+      setMovementHoverPathSystemIds(route?.pathSystemIds ?? []);
+      return;
+    }
+
+    const basePath = movementPathSystemIds.length > 0 ? movementPathSystemIds : [movementOriginSystemId];
+
+    if (canAppendManualStep(data.systems, data.edges, basePath, systemId) && !basePath.includes(systemId)) {
+      setMovementHoverPathSystemIds([...basePath, systemId]);
+      return;
+    }
+
+    setMovementHoverPathSystemIds([]);
+  };
+
+  const handleMovementClick = (systemId: string) => {
+    if (!movementOriginSystemId) {
+      return;
+    }
+
+    if (movementRouteMode === "optimal") {
+      const route = findCheapestRoute({
+        systems: data.systems,
+        edges: data.edges,
+        originSystemId: movementOriginSystemId,
+        targetSystemId: systemId
+      });
+
+      if (route && route.pathSystemIds.length > 1) {
+        setMovementPathSystemIds(route.pathSystemIds);
+        setMovementHoverPathSystemIds([]);
+      }
+
+      return;
+    }
+
+    const basePath = movementPathSystemIds.length > 0 ? movementPathSystemIds : [movementOriginSystemId];
+    const existingIndex = basePath.indexOf(systemId);
+
+    if (existingIndex >= 0) {
+      setMovementPathSystemIds(basePath.slice(0, existingIndex + 1));
+      setMovementHoverPathSystemIds([]);
+      return;
+    }
+
+    if (canAppendManualStep(data.systems, data.edges, basePath, systemId)) {
+      setMovementPathSystemIds([...basePath, systemId]);
+      setMovementHoverPathSystemIds([]);
+    }
+  };
 
   return (
     <main className="relative h-screen overflow-hidden">
@@ -48,6 +157,17 @@ export function CampaignShell() {
         edges={data.edges}
         factions={data.factions}
         movements={data.movements}
+        movementPlanning={
+          movementOriginSystemId
+            ? {
+                active: true,
+                originSystemId: movementOriginSystemId,
+                pathSystemIds: movementDisplayPath,
+                onSystemHover: handleMovementHover,
+                onSystemClick: handleMovementClick
+              }
+            : undefined
+        }
         systems={data.systems}
       />
 
@@ -59,6 +179,7 @@ export function CampaignShell() {
         <div className="flex min-h-0 flex-1 items-stretch justify-between gap-4 px-4 pb-4">
           <CommandDock snapshot={data} />
           <SystemPanel
+            onOpenMovement={openMovement}
             onOpenRecruitment={() => setRecruitmentOpen(true)}
             snapshot={data}
             system={selectedSystem ?? data.systems[0]}
@@ -73,6 +194,35 @@ export function CampaignShell() {
       />
 
       <RecruitmentModal onClose={() => setRecruitmentOpen(false)} open={recruitmentOpen} snapshot={data} />
+      {movementOriginSystem ? (
+        <MovementPlanner
+          activePathSystemIds={movementDisplayPath}
+          onChangeRouteMode={(mode) => {
+            setMovementRouteMode(mode);
+            setMovementPathSystemIds(movementOriginSystemId ? [movementOriginSystemId] : []);
+            setMovementHoverPathSystemIds([]);
+          }}
+          onClose={closeMovement}
+          onResetPath={() => {
+            setMovementPathSystemIds(movementOriginSystemId ? [movementOriginSystemId] : []);
+            setMovementHoverPathSystemIds([]);
+          }}
+          onToggleUnit={(unitId) =>
+            setMovementUnitIds((current) =>
+              current.includes(unitId) ? current.filter((id) => id !== unitId) : [...current, unitId]
+            )
+          }
+          onUndoPath={() => {
+            setMovementPathSystemIds((current) => (current.length > 1 ? current.slice(0, -1) : current));
+            setMovementHoverPathSystemIds([]);
+          }}
+          originSystem={movementOriginSystem}
+          routeMode={movementRouteMode}
+          routePlan={movementRoutePlan}
+          selectedUnitIds={movementUnitIds}
+          snapshot={data}
+        />
+      ) : null}
     </main>
   );
 }
@@ -103,7 +253,7 @@ function ResourceBar({ snapshot }: { snapshot: CampaignSnapshot }) {
 }
 
 function CommandDock({ snapshot }: { snapshot: CampaignSnapshot }) {
-  const ownArmies = snapshot.armies.filter((army) => army.factionId === snapshot.currentUser.factionId);
+  const ownUnits = snapshot.units.filter((unit) => unit.factionId === snapshot.currentUser.factionId);
   const activeMovements = snapshot.movements.filter((movement) => movement.status === "moving");
   const pendingConflicts = snapshot.conflicts.filter((conflict) => conflict.status === "pending");
 
@@ -166,13 +316,13 @@ function CommandDock({ snapshot }: { snapshot: CampaignSnapshot }) {
       </Panel>
 
       <Panel className="p-4">
-        <h2 className="mb-3 text-sm font-semibold text-cyan-50">Ejércitos propios</h2>
+        <h2 className="mb-3 text-sm font-semibold text-cyan-50">Unidades propias</h2>
         <div className="space-y-2">
-          {ownArmies.map((army) => (
-            <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={army.id}>
-              <div className="font-medium text-slate-100">{army.name}</div>
+          {ownUnits.slice(0, 6).map((unit) => (
+            <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={unit.id}>
+              <div className="font-medium text-slate-100">{unit.name}</div>
               <div className="mt-1 text-xs text-slate-400">
-                {army.pointsTotal} pts · {army.status}
+                x{unit.quantity} · {unit.points * unit.quantity} pts · {unit.status}
               </div>
             </div>
           ))}
@@ -251,14 +401,19 @@ function GalaxyTooltip({
 function SystemPanel({
   snapshot,
   system,
+  onOpenMovement,
   onOpenRecruitment
 }: {
   snapshot: CampaignSnapshot;
   system: StarSystem;
+  onOpenMovement: (system: StarSystem) => void;
   onOpenRecruitment: () => void;
 }) {
   const faction = snapshot.factions.find((item) => item.id === system.controllerFactionId);
-  const relatedArmies = snapshot.armies.filter((army) => army.currentSystemId === system.id);
+  const relatedUnits = snapshot.units.filter((unit) => unit.currentSystemId === system.id);
+  const ownReadyUnits = relatedUnits.filter(
+    (unit) => unit.factionId === snapshot.currentUser.factionId && unit.status === "ready"
+  );
   const conflict = snapshot.conflicts.find(
     (item) => item.systemId === system.id && item.status === "pending"
   );
@@ -268,6 +423,11 @@ function SystemPanel({
     Boolean(ownFaction?.capitalSystemId === system.id) &&
     system.isCapital &&
     system.controllerFactionId === snapshot.currentUser.factionId &&
+    (snapshot.currentUser.role === "admin" || snapshot.currentUser.role === "player");
+  const canMove =
+    ownReadyUnits.length > 0 &&
+    system.status !== "war" &&
+    !isSystemBlockedForMovement(system) &&
     (snapshot.currentUser.role === "admin" || snapshot.currentUser.role === "player");
 
   return (
@@ -338,12 +498,17 @@ function SystemPanel({
           <section>
             <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Tropas visibles</h2>
             <div className="space-y-2">
-              {relatedArmies.length > 0 ? (
-                relatedArmies.map((army) => (
-                  <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={army.id}>
-                    <div className="text-sm font-medium text-slate-100">{army.name}</div>
+              {relatedUnits.length > 0 ? (
+                relatedUnits.map((unit) => (
+                  <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={unit.id}>
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="text-sm font-medium text-slate-100">{unit.name}</div>
+                      <Badge tone={unit.status === "ready" ? "cyan" : unit.status === "moving" ? "amber" : "rose"}>
+                        {unit.status}
+                      </Badge>
+                    </div>
                     <div className="mt-1 text-xs text-slate-400">
-                      {army.pointsTotal} pts · {army.status}
+                      x{unit.quantity} · {unit.points * unit.quantity} pts
                     </div>
                   </div>
                 ))
@@ -373,11 +538,216 @@ function SystemPanel({
               Reclutar
             </Button>
           ) : null}
-          <Button variant={system.status === "war" ? "danger" : "ghost"}>
+          <Button
+            disabled={!canMove && system.status !== "war"}
+            onClick={() => {
+              if (canMove) {
+                onOpenMovement(system);
+              }
+            }}
+            variant={system.status === "war" ? "danger" : "ghost"}
+          >
             {system.status === "war" ? "Reportar" : "Mover tropas"}
           </Button>
         </div>
       </div>
     </Panel>
+  );
+}
+
+function MovementPlanner({
+  activePathSystemIds,
+  snapshot,
+  originSystem,
+  selectedUnitIds,
+  routeMode,
+  routePlan,
+  onToggleUnit,
+  onChangeRouteMode,
+  onUndoPath,
+  onResetPath,
+  onClose
+}: {
+  activePathSystemIds: string[];
+  snapshot: CampaignSnapshot;
+  originSystem: StarSystem;
+  selectedUnitIds: string[];
+  routeMode: "optimal" | "manual";
+  routePlan: NonNullable<ReturnType<typeof calculateRoutePlan>> | null;
+  onToggleUnit: (unitId: string) => void;
+  onChangeRouteMode: (mode: "optimal" | "manual") => void;
+  onUndoPath: () => void;
+  onResetPath: () => void;
+  onClose: () => void;
+}) {
+  const queryClient = useQueryClient();
+  const resources = snapshot.resources.find((item) => item.factionId === snapshot.currentUser.factionId);
+  const availableUnits = useMemo(
+    () =>
+      snapshot.units.filter(
+        (unit) =>
+          unit.factionId === snapshot.currentUser.factionId &&
+          unit.currentSystemId === originSystem.id &&
+          unit.status === "ready"
+      ),
+    [originSystem.id, snapshot.currentUser.factionId, snapshot.units]
+  );
+  const systemById = useMemo(() => new Map(snapshot.systems.map((system) => [system.id, system])), [snapshot.systems]);
+  const rpcReady = canUseMovementRpc();
+  const selectedUnits = availableUnits.filter((unit) => selectedUnitIds.includes(unit.id));
+  const hasEnoughUridium = resources && routePlan ? resources.uridium >= routePlan.uridiumCost : false;
+  const canConfirm =
+    rpcReady &&
+    selectedUnitIds.length > 0 &&
+    Boolean(routePlan && routePlan.segmentCount > 0) &&
+    Boolean(hasEnoughUridium);
+
+  const mutation = useMutation({
+    mutationFn: () => {
+      if (!routePlan) {
+        throw new Error("Selecciona una ruta valida.");
+      }
+
+      return createMovementOrder(selectedUnitIds, routePlan.pathSystemIds);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+      onClose();
+    }
+  });
+
+  return (
+    <Panel className="pointer-events-auto fixed inset-x-4 bottom-4 z-40 mx-auto grid max-h-[42vh] max-w-6xl grid-cols-1 overflow-hidden md:grid-cols-[1fr_340px]">
+      <div className="min-h-0 overflow-y-auto p-4">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="text-xs uppercase tracking-[0.22em] text-cyan-200/70">Movimiento de unidades</div>
+            <h2 className="mt-1 text-lg font-semibold text-cyan-50">{originSystem.name}</h2>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => onChangeRouteMode("optimal")}
+              size="sm"
+              variant={routeMode === "optimal" ? "primary" : "ghost"}
+            >
+              <MousePointer2 size={15} />
+              Optima
+            </Button>
+            <Button
+              onClick={() => onChangeRouteMode("manual")}
+              size="sm"
+              variant={routeMode === "manual" ? "primary" : "ghost"}
+            >
+              <Route size={15} />
+              Manual
+            </Button>
+            <Button aria-label="Cerrar movimiento" onClick={onClose} size="icon" variant="ghost">
+              <X size={17} />
+            </Button>
+          </div>
+        </div>
+
+        <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+          {availableUnits.map((unit) => (
+            <UnitSelectionCard
+              key={unit.id}
+              onToggle={() => onToggleUnit(unit.id)}
+              selected={selectedUnitIds.includes(unit.id)}
+              unit={unit}
+            />
+          ))}
+        </div>
+      </div>
+
+      <aside className="border-t border-cyan-200/15 bg-slate-950/35 p-4 md:border-l md:border-t-0">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div className="text-sm font-semibold text-cyan-50">Ruta trazada</div>
+          <div className="flex items-center gap-2">
+            <Button disabled={activePathSystemIds.length <= 1} onClick={onUndoPath} size="icon" variant="ghost">
+              <Undo2 size={16} />
+            </Button>
+            <Button onClick={onResetPath} size="sm" variant="ghost">
+              Reiniciar
+            </Button>
+          </div>
+        </div>
+
+        <div className="mb-4 rounded-md border border-cyan-200/15 bg-slate-950/45 p-3 text-sm text-slate-200">
+          {activePathSystemIds.length > 1
+            ? activePathSystemIds.map((id) => systemById.get(id)?.name ?? id).join(" -> ")
+            : "Sin destino fijado"}
+        </div>
+
+        <div className="mb-4 grid grid-cols-2 gap-2">
+          <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 p-3">
+            <div className="mb-1 flex items-center gap-2 text-xs text-slate-400">
+              <ResourceIcon className="size-4" resource="uridium" />
+              Uridium
+            </div>
+            <div className={hasEnoughUridium ? "font-semibold text-cyan-50" : "font-semibold text-rose-100"}>
+              {routePlan?.uridiumCost ?? 0} / {resources?.uridium ?? 0}
+            </div>
+          </div>
+          <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 p-3">
+            <div className="mb-1 flex items-center gap-2 text-xs text-slate-400">
+              <Clock3 size={15} />
+              Tiempo
+            </div>
+            <div className="font-semibold text-cyan-50">{formatTravelDuration(routePlan?.durationSeconds ?? 0)}</div>
+          </div>
+        </div>
+
+        <div className="mb-4 rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-xs text-slate-300">
+          {selectedUnits.length > 0
+            ? `${selectedUnits.length} unidades seleccionadas`
+            : "Sin unidades seleccionadas"}
+        </div>
+
+        {!rpcReady ? (
+          <div className="mb-3 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
+            Supabase no esta configurado.
+          </div>
+        ) : null}
+
+        {mutation.error ? <p className="mb-3 text-sm text-rose-200">{mutation.error.message}</p> : null}
+
+        <Button className="w-full" disabled={!canConfirm || mutation.isPending} onClick={() => mutation.mutate()}>
+          <Check size={16} />
+          {mutation.isPending ? "Enviando..." : "Confirmar movimiento"}
+        </Button>
+      </aside>
+    </Panel>
+  );
+}
+
+function UnitSelectionCard({
+  unit,
+  selected,
+  onToggle
+}: {
+  unit: CampaignUnit;
+  selected: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      className={`rounded-md border p-3 text-left transition ${
+        selected
+          ? "border-cyan-200/55 bg-cyan-300/12 shadow-[0_0_20px_rgba(34,211,238,0.12)]"
+          : "border-cyan-200/15 bg-slate-950/35 hover:border-cyan-200/35"
+      }`}
+      onClick={onToggle}
+      type="button"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="font-medium text-slate-100">{unit.name}</div>
+          <div className="mt-1 text-xs text-slate-400">
+            x{unit.quantity} · {unit.points * unit.quantity} pts · {unit.category}
+          </div>
+        </div>
+        <Badge tone={selected ? "cyan" : "slate"}>{selected ? "Lista" : "Libre"}</Badge>
+      </div>
+    </button>
   );
 }

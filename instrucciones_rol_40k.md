@@ -6,7 +6,7 @@ Este documento describe una aplicación web privada para gestionar una campaña 
 
 La web debe funcionar como un **mapa estelar interactivo de campaña**, con estética de videojuego/estrategia espacial. La aplicación no será comercial, no se publicará como producto ni usará monetización. Es una herramienta privada para una campaña entre jugadores.
 
-La idea principal es que varios jugadores, cada uno asociado a una **facción**, compitan por controlar sistemas estelares conectados entre sí por rutas. Cada sistema conquistado produce recursos. Los jugadores gastan esos recursos para reclutar tropas, mover ejércitos y disputar nuevos sistemas mediante partidas reales de Warhammer 40K.
+La idea principal es que varios jugadores, cada uno asociado a una **facción**, compitan por controlar sistemas estelares conectados entre sí por rutas. Cada sistema conquistado produce recursos. Los jugadores gastan esos recursos para reclutar tropas, mover unidades Warhammer y disputar nuevos sistemas mediante partidas reales de Warhammer 40K.
 
 La web no tiene que simular las reglas de combate de Warhammer 40K. Las batallas se juegan fuera de la aplicación, usando el juego físico normal. La web solo gestiona:
 
@@ -69,7 +69,7 @@ Motivo:
 - React sirve para los paneles, modales y menús.
 - PixiJS da un mapa WebGL visualmente rico, con animaciones, partículas, glow y buena interacción.
 - Tailwind permite construir UI rápida con estética consistente.
-- Zustand ayuda a gestionar estado local como sistema seleccionado, modo movimiento, ejército activo, etc.
+- Zustand ayuda a gestionar estado local como sistema seleccionado, modo movimiento, ruta activa, etc.
 - TanStack Query ayuda con datos remotos, cache, invalidación y sincronización.
 
 ### 2.2 Backend
@@ -87,7 +87,7 @@ Usar preferiblemente:
 
 Motivo:
 
-- PostgreSQL encaja muy bien con facciones, sistemas, rutas, recursos, ejércitos, órdenes y colas.
+- PostgreSQL encaja muy bien con facciones, sistemas, rutas, recursos, unidades, órdenes y colas.
 - Supabase Auth simplifica login por jugador.
 - RLS permite controlar qué ve o modifica cada usuario.
 - Realtime permite actualizar frontend cuando cambian movimientos, recursos, colas, etc.
@@ -100,11 +100,11 @@ Motivo:
 
 El frontend puede mostrar posibilidades, pero el backend debe validar todo:
 
-- Si el jugador puede mover ese ejército.
+- Si el jugador puede mover esas unidades.
 - Si tiene Uridium.
 - Si la ruta existe.
 - Si el sistema no está bloqueado.
-- Si el ejército no está en guerra o moviéndose.
+- Si las unidades no están en guerra o moviéndose.
 - Si el jugador es dueño de la facción.
 - Si la cola de reclutamiento es válida.
 - Si los recursos alcanzan.
@@ -181,10 +181,8 @@ Los sistemas NO se representarán como planetas grandes. Se representarán como 
 
 #### Capital
 
-- Doble anillo.
-- Icono especial.
-- Brillo más fuerte.
-- Puede tener tamaño ligeramente mayor.
+- En el mapa se representa visualmente como cualquier otro sistema controlado.
+- La condicion de capital se mantiene en datos y paneles para reclutamiento, pero no debe anadir animaciones, iconos o marcadores especiales sobre el nodo.
 
 #### Sistema en guerra
 
@@ -212,6 +210,8 @@ Las rutas entre sistemas se dibujan con PixiJS:
 
 - Línea azul/cian tenue.
 - Ligero glow.
+- Si la ruta no esta bloqueada y une dos sistemas controlados por la misma faccion, se dibuja con el color de esa faccion.
+- El color de bloqueo siempre tiene prioridad sobre el color de faccion.
 
 #### Ruta de mayor coste
 
@@ -249,7 +249,7 @@ El seed local inicial debe representar una campana viva, no un reparto aleatorio
   - Guardia de la Muerte contra Necrones en `ossuary-reach`.
   - Sombra del Emperador contra Culto Genestelar en `saint-veil`.
 - Los sistemas con conflicto inicial estan en estado `war`, bloqueados y pendientes de reporte de batalla fisica.
-- Cada faccion empieza con guarnicion en capital, ejercito de frontera, fuerza movil y presencia en el conflicto que le corresponde.
+- Cada faccion empieza con unidades en capital, unidades de frontera, fuerza movil y presencia en el conflicto que le corresponde.
 - Las ordenes de movimiento iniciales son visibles solo para la faccion propietaria y para admin.
 
 ---
@@ -555,11 +555,17 @@ El jugador ve:
 
 ### 8.1 Principio general
 
-Los jugadores pueden mover tropas entre sistemas conectados por rutas.
+Los jugadores mueven unidades Warhammer concretas, no destacamentos abstractos.
+
+Una orden de movimiento puede incluir una o varias unidades propias que esten `ready`, pertenezcan a la misma faccion y esten en el mismo sistema de origen.
+
+Cada unidad movible es una unidad real de faccion, por ejemplo `Boyz`, `Meganobz`, `Deff Dread`, `Necron Warriors`, `Kasrkin`, `Leman Russ Battle Tank`, `Intercessor Squad`, `Plague Marines` o `Foetid Bloat-drone`.
 
 El coste se paga con Uridium.
 
-Por ahora no hay riesgos aleatorios en rutas. Algunas rutas simplemente pueden costar más.
+Por ahora no hay riesgos aleatorios en rutas. Algunas rutas simplemente pueden costar mas.
+
+Para test local, la duracion inicial recomendada es `2 minutos por arista`.
 
 ### 8.2 Coste de movimiento
 
@@ -584,7 +590,7 @@ El flujo debe ser claro y visual.
 
 #### Paso 1: seleccionar sistema propio
 
-El jugador pincha un sistema donde tenga tropas propias.
+El jugador pincha un sistema donde tenga unidades propias `ready`.
 
 Se abre el panel de sistema.
 
@@ -596,8 +602,8 @@ Controlador: Guardia Imperial
 Estado: Controlado
 
 Tropas presentes:
-- 1ª Fuerza Expedicionaria — 750 pts
-- Blindados Vortan — 520 pts
+- Cadian Shock Troops x3 - 240 pts
+- Kasrkin x2 - 210 pts
 
 Acciones:
 [Mover tropas]
@@ -611,22 +617,26 @@ Se abre panel o modal:
 ```text
 Mover tropas desde Kharon Prime
 
-Selecciona ejército:
-[ ] 1ª Fuerza Expedicionaria — 750 pts
-[ ] Blindados Vortan — 520 pts
+Selecciona unidades:
+[ ] Cadian Shock Troops x3 - 240 pts
+[ ] Kasrkin x2 - 210 pts
+[ ] Leman Russ Battle Tank x1 - 145 pts
 ```
 
-Primera versión recomendada:
+Primera version:
 
-- Mover ejércitos completos.
+- Seleccion multiple de unidades Warhammer concretas.
+- Todas deben estar en el sistema origen.
+- Todas deben estar `ready`.
+- No se dividen unidades en subunidades.
 
-Más adelante:
+Mas adelante:
 
-- Permitir crear destacamentos seleccionando unidades concretas.
+- Permitir dividir unidades si la campana lo necesita.
 
-#### Paso 3: seleccionar ejército
+#### Paso 3: seleccionar ruta
 
-Al elegir ejército, el mapa entra en modo movimiento:
+Al elegir una o mas unidades, el mapa entra en modo movimiento:
 
 - Resalta sistemas alcanzables.
 - Ilumina rutas válidas.
@@ -634,21 +644,35 @@ Al elegir ejército, el mapa entra en modo movimiento:
 - Muestra candado sobre sistemas bloqueados.
 - Muestra coste de Uridium en hover.
 - Muestra aviso si no hay Uridium suficiente.
+- Permite ruta optima y ruta manual.
+
+Modo ruta optima:
+
+- Hover sobre destino dibuja la ruta mas barata por Dijkstra.
+- El coste total y tiempo estimado se muestran en la UI.
+- Click fija destino y prepara confirmacion.
+
+Modo ruta manual:
+
+- El jugador va pasando o clicando sistema a sistema.
+- Solo acepta tramos conectados y no bloqueados.
+- Permite deshacer el ultimo tramo.
+- La ruta confirmada puede no ser la mas barata.
 
 #### Paso 4: seleccionar destino
 
 El jugador pincha destino.
 
-Se abre confirmación:
+Se abre confirmacion compacta:
 
 ```text
-Mover 1ª Fuerza Expedicionaria
+Mover unidades
 
 Origen: Kharon Prime
-Destino: Mordax
-Ruta: Kharon Prime → Mordax
+Destino: Helios Drift
+Ruta: Kharon Prime -> Helios Drift
 Coste: 1 Uridium
-Llegada: 2 horas
+Llegada: 2 minutos
 
 Al llegar:
 - Si es propio: quedará estacionado.
@@ -663,17 +687,17 @@ Al llegar:
 
 El backend debe comprobar:
 
-- El usuario pertenece a la facción.
-- El ejército existe.
-- El ejército pertenece a la facción.
-- El ejército está en el sistema origen.
-- El ejército no está moviéndose.
-- El ejército no está bloqueado en guerra.
-- El destino existe.
-- Hay ruta válida.
-- La ruta no está bloqueada.
-- El sistema destino no está bloqueado para ataque si el destino es enemigo o neutral disputable.
-- La facción tiene suficiente Uridium.
+- El usuario pertenece a la faccion.
+- Las unidades existen.
+- Las unidades pertenecen a la faccion.
+- Las unidades estan en el sistema origen.
+- Las unidades estan `ready`.
+- Las unidades no estan moviendose ni bloqueadas en guerra.
+- Todos los sistemas de la ruta existen.
+- La ruta es continua por aristas existentes.
+- Las aristas de la ruta no estan bloqueadas.
+- El sistema destino no esta bloqueado para ataque si el destino es enemigo o neutral disputable.
+- La faccion tiene suficiente Uridium.
 - El coste calculado por backend coincide.
 - No hay otra orden contradictoria.
 
@@ -682,8 +706,10 @@ El backend debe comprobar:
 Si todo es válido:
 
 - Se descuenta Uridium.
-- Se crea `movement_order`.
-- El ejército pasa a estado `moving`.
+- Se crea `movement_orders`.
+- Se crean filas en `movement_order_units`.
+- Las unidades pasan a estado `moving`.
+- Se guarda la ruta completa en `path_system_ids`.
 - Se guarda `arrival_at`.
 - El frontend muestra cuenta atrás.
 - El mapa muestra animación direccional solo para órdenes de movimiento visibles por el usuario.
@@ -694,7 +720,7 @@ Cuando `now() >= arrival_at`, backend procesa la llegada.
 
 #### Si llega a sistema propio
 
-- Ejército pasa a `ready`.
+- Las unidades pasan a `ready`.
 - `current_system_id = destino`.
 - No se crea guerra.
 
@@ -703,6 +729,7 @@ Cuando `now() >= arrival_at`, backend procesa la llegada.
 - Sistema pasa a `war`.
 - Queda bloqueado mientras haya batalla pendiente.
 - Se crea conflicto pendiente.
+- Las unidades quedan `in_war`.
 - Los participantes juegan la batalla en la vida real si corresponde.
 - Los jugadores participantes o el admin reportan el resultado.
 
@@ -711,7 +738,7 @@ Cuando `now() >= arrival_at`, backend procesa la llegada.
 - Sistema pasa a `war`.
 - Queda bloqueado mientras haya batalla pendiente.
 - Se crea conflicto.
-- Tropas quedan asociadas al conflicto.
+- Las unidades quedan `in_war`.
 - Los participantes juegan la batalla en la vida real.
 - Los jugadores participantes o el admin reportan el resultado.
 
@@ -754,6 +781,8 @@ El reporte debe permitir registrar:
 Los jugadores pueden gastar recursos para crear tropas.
 
 El reclutamiento tarda tiempo real, estilo Grepolis.
+
+Para test local, los tiempos iniciales son de minutos, no horas.
 
 Al completarse, las tropas aparecen en la capital de la facción.
 
@@ -822,8 +851,8 @@ Si todo es válido:
 Cuando `now() >= finishes_at`:
 
 - Backend marca la cola como `completed`.
-- Crea unidad o ejército en la capital.
-- Si no existe un ejército de reserva en capital, puede crear uno.
+- Crea una fila nueva en `campaign_units` en la capital.
+- La unidad queda `ready` y disponible para movimiento.
 - Frontend actualiza por Realtime o refetch.
 
 ### 9.6 Las bajas
@@ -1053,7 +1082,7 @@ UPDATE faction_resources SET uridium = uridium - 3;
 Debe llamar a una función segura:
 
 ```text
-move_army(army_id, destination_system_id)
+create_movement_order(unit_ids, path_system_ids)
 ```
 
 El backend calcula y valida.
@@ -1063,7 +1092,7 @@ El backend calcula y valida.
 Crear funciones RPC o endpoints equivalentes:
 
 ```text
-move_army(army_id, destination_system_id)
+create_movement_order(unit_ids, path_system_ids)
 recruit_unit(unit_template_id, quantity)
 resolve_resource_ticks()
 resolve_movement_orders()
@@ -1082,9 +1111,9 @@ admin_create_or_update_mission(...)
 Para movimiento:
 
 - Facción correcta.
-- Ejército propio.
-- Estado adecuado.
-- Ruta válida.
+- Unidades propias.
+- Unidades listas y en el mismo origen.
+- Ruta continua y valida.
 - Uridium suficiente.
 - Sistema no bloqueado.
 - No duplicar órdenes.
@@ -1280,41 +1309,46 @@ La cadencia global de producción se puede guardar en una tabla de configuració
 campaign_settings
 - id text primary key default 'default'
 - resource_tick_interval_hours integer default 24
+- movement_edge_duration_seconds integer default 120
+- conflict_block_duration_minutes integer default 30
 - last_resource_tick_at timestamptz nullable
 - next_resource_tick_at timestamptz nullable
 - updated_at timestamptz
 ```
 
-### 16.8 armies
+### 16.8 campaign_units
 
 ```sql
-armies
+campaign_units
 - id uuid primary key
+- slug text unique
 - faction_id uuid references factions(id)
+- unit_template_id uuid nullable references unit_templates(id)
 - name text
-- current_system_id uuid nullable references systems(id)
-- status text check in ('ready', 'moving', 'in_war')
-- points_total integer default 0
-- is_visible_publicly boolean default false
-- created_at timestamptz
-- updated_at timestamptz
-```
-
-### 16.9 army_units
-
-```sql
-army_units
-- id uuid primary key
-- army_id uuid references armies(id)
-- name text
+- category text
 - points integer
 - quantity integer default 1
 - experience integer default 0
 - rank text nullable
 - enhancement_text text nullable
 - notes text nullable
+- current_system_id uuid nullable references systems(id)
+- status text check in ('ready', 'moving', 'in_war')
+- is_visible_publicly boolean default false
 - created_at timestamptz
 - updated_at timestamptz
+```
+
+Cada fila representa una unidad Warhammer concreta movible en el mapa.
+
+### 16.9 movement_order_units
+
+```sql
+movement_order_units
+- movement_order_id uuid references movement_orders(id)
+- unit_id uuid references campaign_units(id)
+- created_at timestamptz
+- primary key (movement_order_id, unit_id)
 ```
 
 ### 16.10 unit_templates
@@ -1361,11 +1395,13 @@ recruitment_queue
 ```sql
 movement_orders
 - id uuid primary key
-- army_id uuid references armies(id)
 - faction_id uuid references factions(id)
 - from_system_id uuid references systems(id)
 - to_system_id uuid references systems(id)
+- path_system_ids uuid[]
 - uridium_cost integer
+- segment_count integer
+- duration_seconds integer
 - started_at timestamptz
 - arrival_at timestamptz
 - status text check in ('moving', 'arrived', 'cancelled')
@@ -1488,7 +1524,7 @@ El seed local inicial representa el estado jugable de prueba:
 - 30 sistemas con capitales en los bordes del grafo.
 - 3 sistemas contiguos controlados por cada faccion.
 - 3 conflictos iniciales en sistemas neutrales fronterizos.
-- 4 ejercitos iniciales por faccion: capital, frontera, movimiento y conflicto.
+- Unidades iniciales por faccion: capital, frontera, movimiento y conflicto.
 - 6 ordenes de movimiento activas, una por faccion.
 - Sin reportes de batalla precargados; los conflictos esperan resultados reales o resolucion admin.
 
@@ -1527,7 +1563,7 @@ Las entidades principales mantienen UUID como clave primaria real y anaden `slug
 - `factions.slug`
 - `systems.slug`
 - `system_edges.slug`
-- `armies.slug`
+- `campaign_units.slug`
 - `unit_templates.slug`
 - `conflicts.slug`
 
@@ -1536,7 +1572,7 @@ La aplicacion carga Supabase si hay `.env.local` y una sesion autenticada. Si Su
 RLS local:
 
 - Datos publicos del mapa visibles para `anon` y `authenticated`.
-- Recursos, ejercitos, colas y movimientos visibles solo para miembros de faccion o admin.
+- Recursos, unidades, colas y movimientos visibles solo para miembros de faccion o admin.
 - Admin con acceso total.
 - Jugadores sin escritura directa sobre recursos, tropas o control territorial.
 - Mutaciones criticas solo mediante RPC segura.
@@ -1548,6 +1584,7 @@ resolve_resource_ticks()
 resolve_movement_orders()
 resolve_recruitment_queue()
 recruit_unit(unit_template_id, quantity)
+create_movement_order(unit_ids, path_system_ids)
 submit_battle_report(conflict_id, report_payload)
 admin_resolve_battle(target_conflict_id, winner_faction_id, final_controller_faction_id, post_battle_blocked_until, narrative_notes)
 ```
@@ -1893,7 +1930,7 @@ Sin login todavía.
 
 ### Fase 6: Tropas y movimiento
 
-- Crear ejércitos.
+- Crear unidades Warhammer.
 - Ver tropas propias.
 - Modo movimiento.
 - Validación backend.
@@ -1999,7 +2036,7 @@ controlled
 war
 ```
 
-Estados de ejército:
+Estados de unidad:
 
 ```text
 ready

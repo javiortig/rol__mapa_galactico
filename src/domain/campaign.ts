@@ -2,7 +2,7 @@ export type Role = "admin" | "player" | "spectator";
 
 export type SystemStatus = "neutral" | "controlled" | "war";
 
-export type ArmyStatus = "ready" | "moving" | "in_war";
+export type UnitStatus = "ready" | "moving" | "in_war";
 
 export type RecruitmentStatus = "queued" | "completed" | "cancelled";
 
@@ -73,24 +73,18 @@ export interface FactionResources extends ResourceBundle {
   updatedAt: string;
 }
 
-export interface Army {
+export interface CampaignUnit {
   id: string;
   factionId: string;
+  unitTemplateId?: string | null;
   name: string;
   currentSystemId?: string | null;
-  status: ArmyStatus;
-  pointsTotal: number;
-  isVisiblePublicly: boolean;
-  units: ArmyUnit[];
-}
-
-export interface ArmyUnit {
-  id: string;
-  armyId: string;
-  name: string;
+  status: UnitStatus;
+  category: UnitCategory;
   points: number;
   quantity: number;
   experience: number;
+  isVisiblePublicly: boolean;
   rank?: string | null;
   enhancementText?: string | null;
   notes?: string | null;
@@ -98,11 +92,14 @@ export interface ArmyUnit {
 
 export interface MovementOrder {
   id: string;
-  armyId: string;
+  unitIds: string[];
   factionId: string;
   fromSystemId: string;
   toSystemId: string;
+  pathSystemIds: string[];
   uridiumCost: number;
+  segmentCount: number;
+  durationSeconds: number;
   startedAt: string;
   arrivalAt: string;
   status: MovementStatus;
@@ -180,7 +177,7 @@ export interface CampaignSnapshot {
   systems: StarSystem[];
   edges: SystemEdge[];
   resources: FactionResources[];
-  armies: Army[];
+  units: CampaignUnit[];
   movements: MovementOrder[];
   unitTemplates: UnitTemplate[];
   recruitmentQueue: RecruitmentQueueItem[];

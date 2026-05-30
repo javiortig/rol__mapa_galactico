@@ -21,9 +21,9 @@ delete from public.missions;
 delete from public.system_special_objects;
 delete from public.relics;
 delete from public.recruitment_queue;
+delete from public.movement_order_units;
 delete from public.movement_orders;
-delete from public.army_units;
-delete from public.armies;
+delete from public.campaign_units;
 delete from public.conflicts;
 delete from public.campaign_logs;
 delete from public.system_production;
@@ -43,24 +43,10 @@ values
   (public.seed_uuid('faction', 'sombra-emperador'), 'sombra-emperador', 'Sombra del Emperador', '#facc15'),
   (public.seed_uuid('faction', 'guardia-muerte'), 'guardia-muerte', 'Guardia de la Muerte', '#b6c35a')
 on conflict (slug) do update
-set
-  name = excluded.name,
-  color = excluded.color;
+set name = excluded.name, color = excluded.color;
 
 insert into public.systems (
-  id,
-  slug,
-  name,
-  x,
-  y,
-  size,
-  star_class,
-  type,
-  status,
-  controller_faction_id,
-  blocked_until,
-  public_description,
-  is_capital
+  id, slug, name, x, y, size, star_class, type, status, controller_faction_id, blocked_until, public_description, is_capital
 )
 values
   (public.seed_uuid('system', 'kharon-prime'), 'kharon-prime', 'Kharon Prime', 90, 170, 1.2, 'blue', 'Capital fortificada', 'controlled', public.seed_uuid('faction', 'guardia-imperial'), null, 'Bastion manufactorum y astropuerto militar del frente imperial.', true),
@@ -81,9 +67,9 @@ values
   (public.seed_uuid('system', 'cinder-maw'), 'cinder-maw', 'Cinder Maw', 80, 430, 1.15, 'orange', 'Capital volcanica', 'controlled', public.seed_uuid('faction', 'orcos'), null, 'Forjas geotermicas y tormentas de ceniza.', true),
   (public.seed_uuid('system', 'eclipse-forge'), 'eclipse-forge', 'Eclipse Forge', 185, 485, 0.86, 'red', 'Forja abandonada', 'controlled', public.seed_uuid('faction', 'orcos'), null, 'Estructuras de manufactura latentes convertidas en talleres orkos.', false),
   (public.seed_uuid('system', 'rustmaw-run'), 'rustmaw-run', 'Rustmaw Run', 285, 430, 0.82, 'orange', 'Corredor chatarrero', 'controlled', public.seed_uuid('faction', 'orcos'), null, 'Ruta de pecios saqueados que apunta hacia el centro.', false),
-  (public.seed_uuid('system', 'azur-trench'), 'azur-trench', 'Azur Trench', 405, 390, 0.86, 'blue', 'Nebulosa navegable', 'war', null, now() + interval '72 hours', 'Corredor azul con pozos de gravedad inestables. Orcos e Imperiales han chocado aqui.', false),
-  (public.seed_uuid('system', 'ossuary-reach'), 'ossuary-reach', 'Ossuary Reach', 485, 625, 0.84, 'violet', 'Osario orbital', 'war', null, now() + interval '72 hours', 'Campos funerarios en orbita baja, disputados por plaga y tecnologia necrona.', false),
-  (public.seed_uuid('system', 'saint-veil'), 'saint-veil', 'Saint Veil', 650, 395, 0.86, 'yellow', 'Velo sagrado', 'war', null, now() + interval '72 hours', 'Santuario velado donde la Sombra del Emperador combate una revuelta genestelar.', false),
+  (public.seed_uuid('system', 'azur-trench'), 'azur-trench', 'Azur Trench', 405, 390, 0.86, 'blue', 'Nebulosa navegable', 'war', null, now() + interval '30 minutes', 'Corredor azul con pozos de gravedad inestables. Orcos e Imperiales han chocado aqui.', false),
+  (public.seed_uuid('system', 'ossuary-reach'), 'ossuary-reach', 'Ossuary Reach', 485, 625, 0.84, 'violet', 'Osario orbital', 'war', null, now() + interval '30 minutes', 'Campos funerarios en orbita baja, disputados por plaga y tecnologia necrona.', false),
+  (public.seed_uuid('system', 'saint-veil'), 'saint-veil', 'Saint Veil', 650, 395, 0.86, 'yellow', 'Velo sagrado', 'war', null, now() + interval '30 minutes', 'Santuario velado donde la Sombra del Emperador combate una revuelta genestelar.', false),
   (public.seed_uuid('system', 'orison'), 'orison', 'Orison', 470, 310, 0.84, 'yellow', 'Colonia agricola', 'neutral', null, null, 'Graneros presurizados y bastiones de defensa civil abandonados.', false),
   (public.seed_uuid('system', 'vesper-halo'), 'vesper-halo', 'Vesper Halo', 560, 220, 0.82, 'violet', 'Anillo orbital', 'neutral', null, null, 'Ruinas orbitales con ecos de tecnologia antigua.', false),
   (public.seed_uuid('system', 'pale-choir'), 'pale-choir', 'Pale Choir', 690, 605, 0.78, 'violet', 'Anomalia psiquica', 'neutral', null, null, 'Un coro de senales imposibles atraviesa el vacio.', false),
@@ -158,11 +144,7 @@ values
   (public.seed_uuid('edge', 'route-39'), 'route-39', public.seed_uuid('system', 'nexus-aster'), public.seed_uuid('system', 'ashen-road'), 3, false),
   (public.seed_uuid('edge', 'route-40'), 'route-40', public.seed_uuid('system', 'nexus-aster'), public.seed_uuid('system', 'ossuary-reach'), 3, false)
 on conflict (slug) do update
-set
-  from_system_id = excluded.from_system_id,
-  to_system_id = excluded.to_system_id,
-  uridium_cost = excluded.uridium_cost,
-  is_blocked = excluded.is_blocked;
+set from_system_id = excluded.from_system_id, to_system_id = excluded.to_system_id, uridium_cost = excluded.uridium_cost, is_blocked = excluded.is_blocked;
 
 insert into public.faction_resources (faction_id, supply, minerals, ancestral_stone, uridium, technology)
 values
@@ -173,13 +155,7 @@ values
   (public.seed_uuid('faction', 'sombra-emperador'), 135, 130, 18, 26, 4),
   (public.seed_uuid('faction', 'guardia-muerte'), 155, 135, 15, 20, 2)
 on conflict (faction_id) do update
-set
-  supply = excluded.supply,
-  minerals = excluded.minerals,
-  ancestral_stone = excluded.ancestral_stone,
-  uridium = excluded.uridium,
-  technology = excluded.technology,
-  updated_at = now();
+set supply = excluded.supply, minerals = excluded.minerals, ancestral_stone = excluded.ancestral_stone, uridium = excluded.uridium, technology = excluded.technology, updated_at = now();
 
 insert into public.system_production (system_id, supply_per_tick, minerals_per_tick, ancestral_stone_per_tick, uridium_per_tick, technology_per_tick)
 values
@@ -214,214 +190,102 @@ values
   (public.seed_uuid('system', 'voidfall-anchor'), 1, 2, 0, 3, 1),
   (public.seed_uuid('system', 'goregate'), 2, 3, 0, 2, 0)
 on conflict (system_id) do update
-set
-  supply_per_tick = excluded.supply_per_tick,
-  minerals_per_tick = excluded.minerals_per_tick,
-  ancestral_stone_per_tick = excluded.ancestral_stone_per_tick,
-  uridium_per_tick = excluded.uridium_per_tick,
-  technology_per_tick = excluded.technology_per_tick;
-
-insert into public.armies (id, slug, faction_id, name, current_system_id, status, points_total, is_visible_publicly)
-values
-  (public.seed_uuid('army', 'imperial-kharon-garrison'), 'imperial-kharon-garrison', public.seed_uuid('faction', 'guardia-imperial'), 'Guarnicion de Kharon', public.seed_uuid('system', 'kharon-prime'), 'ready', 510, false),
-  (public.seed_uuid('army', 'imperial-arx-front'), 'imperial-arx-front', public.seed_uuid('faction', 'guardia-imperial'), '117o Grupo de Choque', public.seed_uuid('system', 'arx-solum'), 'ready', 760, false),
-  (public.seed_uuid('army', 'imperial-helios-column'), 'imperial-helios-column', public.seed_uuid('faction', 'guardia-imperial'), 'Columna Helios', public.seed_uuid('system', 'kharon-prime'), 'moving', 360, false),
-  (public.seed_uuid('army', 'imperial-azur-line'), 'imperial-azur-line', public.seed_uuid('faction', 'guardia-imperial'), 'Linea de Azur', public.seed_uuid('system', 'azur-trench'), 'in_war', 690, false),
-  (public.seed_uuid('army', 'ork-cinder-garrison'), 'ork-cinder-garrison', public.seed_uuid('faction', 'orcos'), 'Kampamento de Cinder Maw', public.seed_uuid('system', 'cinder-maw'), 'ready', 560, false),
-  (public.seed_uuid('army', 'ork-rustmaw-front'), 'ork-rustmaw-front', public.seed_uuid('faction', 'orcos'), 'Peaje de Rustmaw', public.seed_uuid('system', 'rustmaw-run'), 'ready', 790, false),
-  (public.seed_uuid('army', 'ork-eclipse-riders'), 'ork-eclipse-riders', public.seed_uuid('faction', 'orcos'), 'Jinetes de Eclipse', public.seed_uuid('system', 'cinder-maw'), 'moving', 380, false),
-  (public.seed_uuid('army', 'ork-azur-waaagh'), 'ork-azur-waaagh', public.seed_uuid('faction', 'orcos'), 'Waaagh de la Zanja Azul', public.seed_uuid('system', 'azur-trench'), 'in_war', 720, false),
-  (public.seed_uuid('army', 'sombra-gate-watch'), 'sombra-gate-watch', public.seed_uuid('faction', 'sombra-emperador'), 'Guardia de Sa''cea Gate', public.seed_uuid('system', 'sa-cea-gate'), 'ready', 620, false),
-  (public.seed_uuid('army', 'sombra-narthex-spear'), 'sombra-narthex-spear', public.seed_uuid('faction', 'sombra-emperador'), 'Punta de Lanza Narthex', public.seed_uuid('system', 'narthex'), 'ready', 830, false),
-  (public.seed_uuid('army', 'sombra-lyra-talon'), 'sombra-lyra-talon', public.seed_uuid('faction', 'sombra-emperador'), 'Garra de Lyra', public.seed_uuid('system', 'sa-cea-gate'), 'moving', 430, false),
-  (public.seed_uuid('army', 'sombra-saint-veil'), 'sombra-saint-veil', public.seed_uuid('faction', 'sombra-emperador'), 'Escuadra del Velo', public.seed_uuid('system', 'saint-veil'), 'in_war', 760, false),
-  (public.seed_uuid('army', 'cult-blackglass-garrison'), 'cult-blackglass-garrison', public.seed_uuid('faction', 'culto-genestelar'), 'Celula de Blackglass', public.seed_uuid('system', 'blackglass'), 'ready', 520, false),
-  (public.seed_uuid('army', 'cult-mirrorcoil-front'), 'cult-mirrorcoil-front', public.seed_uuid('faction', 'culto-genestelar'), 'Alzamiento de Mirrorcoil', public.seed_uuid('system', 'mirrorcoil'), 'ready', 740, false),
-  (public.seed_uuid('army', 'cult-sabbath-convoy'), 'cult-sabbath-convoy', public.seed_uuid('faction', 'culto-genestelar'), 'Convoy del Sabbath', public.seed_uuid('system', 'blackglass'), 'moving', 340, false),
-  (public.seed_uuid('army', 'cult-saint-revolt'), 'cult-saint-revolt', public.seed_uuid('faction', 'culto-genestelar'), 'Revuelta del Velo', public.seed_uuid('system', 'saint-veil'), 'in_war', 700, false),
-  (public.seed_uuid('army', 'necron-thokt-phalanx'), 'necron-thokt-phalanx', public.seed_uuid('faction', 'necrones'), 'Falange Thokt', public.seed_uuid('system', 'thokt-vault'), 'ready', 620, false),
-  (public.seed_uuid('army', 'necron-ghostlight-front'), 'necron-ghostlight-front', public.seed_uuid('faction', 'necrones'), 'Cohorte Ghostlight', public.seed_uuid('system', 'ghostlight'), 'ready', 810, false),
-  (public.seed_uuid('army', 'necron-novem-cohort'), 'necron-novem-cohort', public.seed_uuid('faction', 'necrones'), 'Cohorte Novem', public.seed_uuid('system', 'thokt-vault'), 'moving', 420, false),
-  (public.seed_uuid('army', 'necron-ossuary-reclaimers'), 'necron-ossuary-reclaimers', public.seed_uuid('faction', 'necrones'), 'Reclamadores del Osario', public.seed_uuid('system', 'ossuary-reach'), 'in_war', 760, false),
-  (public.seed_uuid('army', 'death-mordax-vector'), 'death-mordax-vector', public.seed_uuid('faction', 'guardia-muerte'), 'Vector de Mordax', public.seed_uuid('system', 'mordax'), 'ready', 610, false),
-  (public.seed_uuid('army', 'death-plaguefall-front'), 'death-plaguefall-front', public.seed_uuid('faction', 'guardia-muerte'), 'Hueste Plaguefall', public.seed_uuid('system', 'plaguefall-bastion'), 'ready', 830, false),
-  (public.seed_uuid('army', 'death-drusus-procession'), 'death-drusus-procession', public.seed_uuid('faction', 'guardia-muerte'), 'Procesion de Drusus', public.seed_uuid('system', 'mordax'), 'moving', 390, false),
-  (public.seed_uuid('army', 'death-ossuary-pox'), 'death-ossuary-pox', public.seed_uuid('faction', 'guardia-muerte'), 'Marea Pox del Osario', public.seed_uuid('system', 'ossuary-reach'), 'in_war', 710, false)
-on conflict (slug) do update
-set
-  faction_id = excluded.faction_id,
-  name = excluded.name,
-  current_system_id = excluded.current_system_id,
-  status = excluded.status,
-  points_total = excluded.points_total,
-  is_visible_publicly = excluded.is_visible_publicly,
-  updated_at = now();
-
-insert into public.army_units (id, army_id, name, points, quantity, experience, rank, enhancement_text)
-values
-  (public.seed_uuid('army_unit', 'imperial-kharon-cadians'), public.seed_uuid('army', 'imperial-kharon-garrison'), 'Cadian Shock Troops', 80, 3, 1, 'Linea', null),
-  (public.seed_uuid('army_unit', 'imperial-arx-kasrkin'), public.seed_uuid('army', 'imperial-arx-front'), 'Kasrkin', 105, 2, 2, 'Veteranos', 'Doctrina de frontera'),
-  (public.seed_uuid('army_unit', 'imperial-helios-sentinels'), public.seed_uuid('army', 'imperial-helios-column'), 'Sentinel Squadron', 180, 1, 0, 'Reconocimiento', null),
-  (public.seed_uuid('army_unit', 'imperial-azur-tank'), public.seed_uuid('army', 'imperial-azur-line'), 'Leman Russ Battle Tank', 145, 2, 1, 'Blindados', null),
-  (public.seed_uuid('army_unit', 'ork-cinder-boyz'), public.seed_uuid('army', 'ork-cinder-garrison'), 'Boyz', 80, 4, 1, 'Marea', null),
-  (public.seed_uuid('army_unit', 'ork-rustmaw-meganobz'), public.seed_uuid('army', 'ork-rustmaw-front'), 'Meganobz', 105, 2, 2, 'Noblez', 'Armaduras remachadas'),
-  (public.seed_uuid('army_unit', 'ork-eclipse-buggies'), public.seed_uuid('army', 'ork-eclipse-riders'), 'Warbikers', 140, 1, 0, 'Movil', null),
-  (public.seed_uuid('army_unit', 'ork-azur-dread'), public.seed_uuid('army', 'ork-azur-waaagh'), 'Deff Dread', 135, 2, 1, 'Chatarreros', null),
-  (public.seed_uuid('army_unit', 'sombra-gate-intercessors'), public.seed_uuid('army', 'sombra-gate-watch'), 'Intercessor Squad', 105, 2, 1, 'Linea', null),
-  (public.seed_uuid('army_unit', 'sombra-narthex-terminators'), public.seed_uuid('army', 'sombra-narthex-spear'), 'Terminator Squad', 160, 2, 2, 'Veteranos', 'Juramento del santuario'),
-  (public.seed_uuid('army_unit', 'sombra-lyra-inceptors'), public.seed_uuid('army', 'sombra-lyra-talon'), 'Inceptor Squad', 130, 1, 0, 'Asalto', null),
-  (public.seed_uuid('army_unit', 'sombra-saint-redemptor'), public.seed_uuid('army', 'sombra-saint-veil'), 'Redemptor Dreadnought', 185, 1, 1, 'Anciano', null),
-  (public.seed_uuid('army_unit', 'cult-blackglass-neophytes'), public.seed_uuid('army', 'cult-blackglass-garrison'), 'Neophyte Hybrids', 80, 4, 1, 'Celula', null),
-  (public.seed_uuid('army_unit', 'cult-mirrorcoil-acolytes'), public.seed_uuid('army', 'cult-mirrorcoil-front'), 'Acolyte Hybrids', 95, 3, 2, 'Alzados', 'Red de tuneles'),
-  (public.seed_uuid('army_unit', 'cult-sabbath-ridgerunner'), public.seed_uuid('army', 'cult-sabbath-convoy'), 'Achilles Ridgerunner', 120, 1, 0, 'Movil', null),
-  (public.seed_uuid('army_unit', 'cult-saint-neophytes'), public.seed_uuid('army', 'cult-saint-revolt'), 'Neophyte Hybrids', 80, 5, 1, 'Insurgentes', null),
-  (public.seed_uuid('army_unit', 'necron-thokt-warriors'), public.seed_uuid('army', 'necron-thokt-phalanx'), 'Necron Warriors', 80, 3, 1, 'Linea', null),
-  (public.seed_uuid('army_unit', 'necron-ghostlight-skorpekh'), public.seed_uuid('army', 'necron-ghostlight-front'), 'Skorpekh Destroyers', 140, 2, 2, 'Destructores', 'Protocolos de cosecha'),
-  (public.seed_uuid('army_unit', 'necron-novem-immortals'), public.seed_uuid('army', 'necron-novem-cohort'), 'Immortals', 105, 2, 0, 'Escolta', null),
-  (public.seed_uuid('army_unit', 'necron-ossuary-warriors'), public.seed_uuid('army', 'necron-ossuary-reclaimers'), 'Necron Warriors', 80, 4, 1, 'Reclamadores', null),
-  (public.seed_uuid('army_unit', 'death-mordax-poxwalkers'), public.seed_uuid('army', 'death-mordax-vector'), 'Poxwalkers', 70, 4, 1, 'Marea', null),
-  (public.seed_uuid('army_unit', 'death-plaguefall-marines'), public.seed_uuid('army', 'death-plaguefall-front'), 'Plague Marines', 115, 3, 2, 'Veteranos', 'Nube toxica'),
-  (public.seed_uuid('army_unit', 'death-drusus-drone'), public.seed_uuid('army', 'death-drusus-procession'), 'Foetid Bloat-drone', 145, 1, 0, 'Movil', null),
-  (public.seed_uuid('army_unit', 'death-ossuary-marines'), public.seed_uuid('army', 'death-ossuary-pox'), 'Plague Marines', 115, 2, 1, 'Plaga', null)
-on conflict (id) do update
-set
-  army_id = excluded.army_id,
-  name = excluded.name,
-  points = excluded.points,
-  quantity = excluded.quantity,
-  experience = excluded.experience,
-  rank = excluded.rank,
-  enhancement_text = excluded.enhancement_text,
-  updated_at = now();
+set supply_per_tick = excluded.supply_per_tick, minerals_per_tick = excluded.minerals_per_tick, ancestral_stone_per_tick = excluded.ancestral_stone_per_tick, uridium_per_tick = excluded.uridium_per_tick, technology_per_tick = excluded.technology_per_tick;
 
 insert into public.unit_templates (
-  id,
-  slug,
-  faction_id,
-  name,
-  category,
-  points,
-  supply_cost,
-  minerals_cost,
-  ancestral_stone_cost,
-  uridium_cost,
-  technology_cost,
-  recruitment_time_seconds,
-  notes,
-  is_available
+  id, slug, faction_id, name, category, points, supply_cost, minerals_cost, ancestral_stone_cost, uridium_cost, technology_cost, recruitment_time_seconds, notes, is_available
 )
 values
-  (public.seed_uuid('unit_template', 'unit-orcos-boyz'), 'unit-orcos-boyz', public.seed_uuid('faction', 'orcos'), 'Boyz', 'Infanteria', 80, 12, 2, 0, 0, 0, 7200, 'Masa brutal de combate cercano.', true),
-  (public.seed_uuid('unit_template', 'unit-orcos-meganobz'), 'unit-orcos-meganobz', public.seed_uuid('faction', 'orcos'), 'Meganobz', 'Elite', 105, 6, 5, 1, 0, 0, 14400, 'Noblez armados con servoarmaduras improvisadas.', true),
-  (public.seed_uuid('unit_template', 'unit-orcos-deff-dread'), 'unit-orcos-deff-dread', public.seed_uuid('faction', 'orcos'), 'Deff Dread', 'Vehiculo', 135, 2, 10, 1, 0, 0, 21600, 'Maquina andante de metal, humo y mala intencion.', true),
-  (public.seed_uuid('unit_template', 'unit-necrones-warriors'), 'unit-necrones-warriors', public.seed_uuid('faction', 'necrones'), 'Necron Warriors', 'Infanteria', 80, 8, 4, 0, 0, 0, 7200, 'Linea inmortal reanimada desde las criptas.', true),
-  (public.seed_uuid('unit_template', 'unit-necrones-immortals'), 'unit-necrones-immortals', public.seed_uuid('faction', 'necrones'), 'Immortals', 'Elite', 105, 6, 5, 1, 0, 0, 14400, 'Guerreros superiores con protocolos de elite.', true),
-  (public.seed_uuid('unit_template', 'unit-necrones-skorpekh'), 'unit-necrones-skorpekh', public.seed_uuid('faction', 'necrones'), 'Skorpekh Destroyers', 'Elite', 140, 4, 7, 2, 0, 0, 21600, 'Asesinos de fase con cuerpos disenados para la destruccion.', true),
-  (public.seed_uuid('unit_template', 'unit-guardia-cadian'), 'unit-guardia-cadian', public.seed_uuid('faction', 'guardia-imperial'), 'Cadian Shock Troops', 'Infanteria', 80, 12, 2, 0, 0, 0, 7200, 'Infanteria disciplinada lista para sostener la linea.', true),
-  (public.seed_uuid('unit_template', 'unit-guardia-kasrkin'), 'unit-guardia-kasrkin', public.seed_uuid('faction', 'guardia-imperial'), 'Kasrkin', 'Elite', 105, 8, 4, 1, 0, 0, 14400, 'Veteranos de asalto con equipo especializado.', true),
-  (public.seed_uuid('unit_template', 'unit-guardia-leman-russ'), 'unit-guardia-leman-russ', public.seed_uuid('faction', 'guardia-imperial'), 'Leman Russ Battle Tank', 'Vehiculo', 145, 2, 11, 1, 0, 0, 25200, 'Blindado pesado de batalla para romper frentes.', true),
-  (public.seed_uuid('unit_template', 'unit-culto-neophytes'), 'unit-culto-neophytes', public.seed_uuid('faction', 'culto-genestelar'), 'Neophyte Hybrids', 'Infanteria', 80, 12, 2, 0, 0, 0, 7200, 'Celulas insurgentes armadas desde las profundidades.', true),
-  (public.seed_uuid('unit_template', 'unit-culto-acolytes'), 'unit-culto-acolytes', public.seed_uuid('faction', 'culto-genestelar'), 'Acolyte Hybrids', 'Elite', 95, 8, 3, 1, 0, 0, 14400, 'Fanaticos hibridos preparados para ataques decisivos.', true),
-  (public.seed_uuid('unit_template', 'unit-culto-ridgerunner'), 'unit-culto-ridgerunner', public.seed_uuid('faction', 'culto-genestelar'), 'Achilles Ridgerunner', 'Vehiculo', 120, 3, 8, 1, 0, 0, 21600, 'Vehiculo de incursion y reconocimiento rapido.', true),
-  (public.seed_uuid('unit_template', 'unit-sombra-intercessors'), 'unit-sombra-intercessors', public.seed_uuid('faction', 'sombra-emperador'), 'Intercessor Squad', 'Infanteria', 105, 8, 4, 1, 0, 0, 10800, 'Astartes de linea con doctrina flexible.', true),
-  (public.seed_uuid('unit_template', 'unit-sombra-terminators'), 'unit-sombra-terminators', public.seed_uuid('faction', 'sombra-emperador'), 'Terminator Squad', 'Elite', 160, 5, 6, 3, 0, 0, 21600, 'Veteranos con armadura tactica dreadnought.', true),
-  (public.seed_uuid('unit_template', 'unit-sombra-redemptor'), 'unit-sombra-redemptor', public.seed_uuid('faction', 'sombra-emperador'), 'Redemptor Dreadnought', 'Vehiculo', 185, 2, 10, 3, 0, 0, 28800, 'Dreadnought pesado para rupturas de linea.', true),
-  (public.seed_uuid('unit_template', 'unit-muerte-poxwalkers'), 'unit-muerte-poxwalkers', public.seed_uuid('faction', 'guardia-muerte'), 'Poxwalkers', 'Infanteria', 70, 12, 1, 0, 0, 0, 7200, 'Multitud infectada que avanza sin miedo.', true),
-  (public.seed_uuid('unit_template', 'unit-muerte-plague-marines'), 'unit-muerte-plague-marines', public.seed_uuid('faction', 'guardia-muerte'), 'Plague Marines', 'Infanteria', 115, 8, 5, 1, 0, 0, 14400, 'Marines de plaga resistentes y metodicos.', true),
-  (public.seed_uuid('unit_template', 'unit-muerte-bloat-drone'), 'unit-muerte-bloat-drone', public.seed_uuid('faction', 'guardia-muerte'), 'Foetid Bloat-drone', 'Vehiculo', 145, 3, 8, 2, 0, 0, 25200, 'Dron demoniaco de apoyo y hostigamiento.', true)
+  (public.seed_uuid('unit_template', 'unit-orcos-boyz'), 'unit-orcos-boyz', public.seed_uuid('faction', 'orcos'), 'Boyz', 'Infanteria', 80, 12, 2, 0, 0, 0, 120, 'Masa brutal de combate cercano.', true),
+  (public.seed_uuid('unit_template', 'unit-orcos-meganobz'), 'unit-orcos-meganobz', public.seed_uuid('faction', 'orcos'), 'Meganobz', 'Elite', 105, 6, 5, 1, 0, 0, 240, 'Noblez armados con servoarmaduras improvisadas.', true),
+  (public.seed_uuid('unit_template', 'unit-orcos-deff-dread'), 'unit-orcos-deff-dread', public.seed_uuid('faction', 'orcos'), 'Deff Dread', 'Vehiculo', 135, 2, 10, 1, 0, 0, 360, 'Maquina andante de metal, humo y mala intencion.', true),
+  (public.seed_uuid('unit_template', 'unit-necrones-warriors'), 'unit-necrones-warriors', public.seed_uuid('faction', 'necrones'), 'Necron Warriors', 'Infanteria', 80, 8, 4, 0, 0, 0, 120, 'Linea inmortal reanimada desde las criptas.', true),
+  (public.seed_uuid('unit_template', 'unit-necrones-immortals'), 'unit-necrones-immortals', public.seed_uuid('faction', 'necrones'), 'Immortals', 'Elite', 105, 6, 5, 1, 0, 0, 240, 'Guerreros superiores con protocolos de elite.', true),
+  (public.seed_uuid('unit_template', 'unit-necrones-skorpekh'), 'unit-necrones-skorpekh', public.seed_uuid('faction', 'necrones'), 'Skorpekh Destroyers', 'Elite', 140, 4, 7, 2, 0, 0, 360, 'Asesinos de fase con cuerpos disenados para la destruccion.', true),
+  (public.seed_uuid('unit_template', 'unit-guardia-cadian'), 'unit-guardia-cadian', public.seed_uuid('faction', 'guardia-imperial'), 'Cadian Shock Troops', 'Infanteria', 80, 12, 2, 0, 0, 0, 120, 'Infanteria disciplinada lista para sostener la linea.', true),
+  (public.seed_uuid('unit_template', 'unit-guardia-kasrkin'), 'unit-guardia-kasrkin', public.seed_uuid('faction', 'guardia-imperial'), 'Kasrkin', 'Elite', 105, 8, 4, 1, 0, 0, 240, 'Veteranos de asalto con equipo especializado.', true),
+  (public.seed_uuid('unit_template', 'unit-guardia-leman-russ'), 'unit-guardia-leman-russ', public.seed_uuid('faction', 'guardia-imperial'), 'Leman Russ Battle Tank', 'Vehiculo', 145, 2, 11, 1, 0, 0, 420, 'Blindado pesado de batalla para romper frentes.', true),
+  (public.seed_uuid('unit_template', 'unit-culto-neophytes'), 'unit-culto-neophytes', public.seed_uuid('faction', 'culto-genestelar'), 'Neophyte Hybrids', 'Infanteria', 80, 12, 2, 0, 0, 0, 120, 'Celulas insurgentes armadas desde las profundidades.', true),
+  (public.seed_uuid('unit_template', 'unit-culto-acolytes'), 'unit-culto-acolytes', public.seed_uuid('faction', 'culto-genestelar'), 'Acolyte Hybrids', 'Elite', 95, 8, 3, 1, 0, 0, 240, 'Fanaticos hibridos preparados para ataques decisivos.', true),
+  (public.seed_uuid('unit_template', 'unit-culto-ridgerunner'), 'unit-culto-ridgerunner', public.seed_uuid('faction', 'culto-genestelar'), 'Achilles Ridgerunner', 'Vehiculo', 120, 3, 8, 1, 0, 0, 360, 'Vehiculo de incursion y reconocimiento rapido.', true),
+  (public.seed_uuid('unit_template', 'unit-sombra-intercessors'), 'unit-sombra-intercessors', public.seed_uuid('faction', 'sombra-emperador'), 'Intercessor Squad', 'Infanteria', 105, 8, 4, 1, 0, 0, 180, 'Astartes de linea con doctrina flexible.', true),
+  (public.seed_uuid('unit_template', 'unit-sombra-terminators'), 'unit-sombra-terminators', public.seed_uuid('faction', 'sombra-emperador'), 'Terminator Squad', 'Elite', 160, 5, 6, 3, 0, 0, 360, 'Veteranos con armadura tactica dreadnought.', true),
+  (public.seed_uuid('unit_template', 'unit-sombra-redemptor'), 'unit-sombra-redemptor', public.seed_uuid('faction', 'sombra-emperador'), 'Redemptor Dreadnought', 'Vehiculo', 185, 2, 10, 3, 0, 0, 480, 'Dreadnought pesado para rupturas de linea.', true),
+  (public.seed_uuid('unit_template', 'unit-muerte-poxwalkers'), 'unit-muerte-poxwalkers', public.seed_uuid('faction', 'guardia-muerte'), 'Poxwalkers', 'Infanteria', 70, 12, 1, 0, 0, 0, 120, 'Multitud infectada que avanza sin miedo.', true),
+  (public.seed_uuid('unit_template', 'unit-muerte-plague-marines'), 'unit-muerte-plague-marines', public.seed_uuid('faction', 'guardia-muerte'), 'Plague Marines', 'Infanteria', 115, 8, 5, 1, 0, 0, 240, 'Marines de plaga resistentes y metodicos.', true),
+  (public.seed_uuid('unit_template', 'unit-muerte-bloat-drone'), 'unit-muerte-bloat-drone', public.seed_uuid('faction', 'guardia-muerte'), 'Foetid Bloat-drone', 'Vehiculo', 145, 3, 8, 2, 0, 0, 420, 'Dron demoniaco de apoyo y hostigamiento.', true)
 on conflict (slug) do update
-set
-  faction_id = excluded.faction_id,
-  name = excluded.name,
-  category = excluded.category,
-  points = excluded.points,
-  supply_cost = excluded.supply_cost,
-  minerals_cost = excluded.minerals_cost,
-  ancestral_stone_cost = excluded.ancestral_stone_cost,
-  uridium_cost = excluded.uridium_cost,
-  technology_cost = excluded.technology_cost,
-  recruitment_time_seconds = excluded.recruitment_time_seconds,
-  notes = excluded.notes,
-  is_available = excluded.is_available;
+set faction_id = excluded.faction_id, name = excluded.name, category = excluded.category, points = excluded.points, supply_cost = excluded.supply_cost, minerals_cost = excluded.minerals_cost, ancestral_stone_cost = excluded.ancestral_stone_cost, uridium_cost = excluded.uridium_cost, technology_cost = excluded.technology_cost, recruitment_time_seconds = excluded.recruitment_time_seconds, notes = excluded.notes, is_available = excluded.is_available;
+
+insert into public.campaign_units (
+  id, slug, faction_id, unit_template_id, name, category, points, quantity, experience, rank, enhancement_text, current_system_id, status, is_visible_publicly
+)
+values
+  (public.seed_uuid('campaign_unit', 'imperial-kharon-cadians'), 'imperial-kharon-cadians', public.seed_uuid('faction', 'guardia-imperial'), public.seed_uuid('unit_template', 'unit-guardia-cadian'), 'Cadian Shock Troops', 'Infanteria', 80, 3, 1, 'Linea', null, public.seed_uuid('system', 'kharon-prime'), 'ready', false),
+  (public.seed_uuid('campaign_unit', 'imperial-arx-kasrkin'), 'imperial-arx-kasrkin', public.seed_uuid('faction', 'guardia-imperial'), public.seed_uuid('unit_template', 'unit-guardia-kasrkin'), 'Kasrkin', 'Elite', 105, 2, 2, 'Veteranos', 'Doctrina de frontera', public.seed_uuid('system', 'arx-solum'), 'ready', false),
+  (public.seed_uuid('campaign_unit', 'imperial-helios-leman'), 'imperial-helios-leman', public.seed_uuid('faction', 'guardia-imperial'), public.seed_uuid('unit_template', 'unit-guardia-leman-russ'), 'Leman Russ Battle Tank', 'Vehiculo', 145, 1, 0, 'Blindado', null, public.seed_uuid('system', 'kharon-prime'), 'moving', false),
+  (public.seed_uuid('campaign_unit', 'imperial-azur-cadians'), 'imperial-azur-cadians', public.seed_uuid('faction', 'guardia-imperial'), public.seed_uuid('unit_template', 'unit-guardia-cadian'), 'Cadian Shock Troops', 'Infanteria', 80, 4, 1, 'Linea de Azur', null, public.seed_uuid('system', 'azur-trench'), 'in_war', false),
+  (public.seed_uuid('campaign_unit', 'ork-cinder-boyz'), 'ork-cinder-boyz', public.seed_uuid('faction', 'orcos'), public.seed_uuid('unit_template', 'unit-orcos-boyz'), 'Boyz', 'Infanteria', 80, 4, 1, 'Marea', null, public.seed_uuid('system', 'cinder-maw'), 'ready', false),
+  (public.seed_uuid('campaign_unit', 'ork-rustmaw-meganobz'), 'ork-rustmaw-meganobz', public.seed_uuid('faction', 'orcos'), public.seed_uuid('unit_template', 'unit-orcos-meganobz'), 'Meganobz', 'Elite', 105, 2, 2, 'Noblez', 'Armaduras remachadas', public.seed_uuid('system', 'rustmaw-run'), 'ready', false),
+  (public.seed_uuid('campaign_unit', 'ork-eclipse-dread'), 'ork-eclipse-dread', public.seed_uuid('faction', 'orcos'), public.seed_uuid('unit_template', 'unit-orcos-deff-dread'), 'Deff Dread', 'Vehiculo', 135, 1, 0, 'Chatarrero', null, public.seed_uuid('system', 'cinder-maw'), 'moving', false),
+  (public.seed_uuid('campaign_unit', 'ork-azur-boyz'), 'ork-azur-boyz', public.seed_uuid('faction', 'orcos'), public.seed_uuid('unit_template', 'unit-orcos-boyz'), 'Boyz', 'Infanteria', 80, 5, 1, 'Waaagh', null, public.seed_uuid('system', 'azur-trench'), 'in_war', false),
+  (public.seed_uuid('campaign_unit', 'sombra-gate-intercessors'), 'sombra-gate-intercessors', public.seed_uuid('faction', 'sombra-emperador'), public.seed_uuid('unit_template', 'unit-sombra-intercessors'), 'Intercessor Squad', 'Infanteria', 105, 2, 1, 'Linea', null, public.seed_uuid('system', 'sa-cea-gate'), 'ready', false),
+  (public.seed_uuid('campaign_unit', 'sombra-narthex-terminators'), 'sombra-narthex-terminators', public.seed_uuid('faction', 'sombra-emperador'), public.seed_uuid('unit_template', 'unit-sombra-terminators'), 'Terminator Squad', 'Elite', 160, 2, 2, 'Veteranos', 'Juramento del santuario', public.seed_uuid('system', 'narthex'), 'ready', false),
+  (public.seed_uuid('campaign_unit', 'sombra-lyra-redemptor'), 'sombra-lyra-redemptor', public.seed_uuid('faction', 'sombra-emperador'), public.seed_uuid('unit_template', 'unit-sombra-redemptor'), 'Redemptor Dreadnought', 'Vehiculo', 185, 1, 0, 'Anciano', null, public.seed_uuid('system', 'sa-cea-gate'), 'moving', false),
+  (public.seed_uuid('campaign_unit', 'sombra-saint-intercessors'), 'sombra-saint-intercessors', public.seed_uuid('faction', 'sombra-emperador'), public.seed_uuid('unit_template', 'unit-sombra-intercessors'), 'Intercessor Squad', 'Infanteria', 105, 3, 1, 'Purga del Velo', null, public.seed_uuid('system', 'saint-veil'), 'in_war', false),
+  (public.seed_uuid('campaign_unit', 'cult-blackglass-neophytes'), 'cult-blackglass-neophytes', public.seed_uuid('faction', 'culto-genestelar'), public.seed_uuid('unit_template', 'unit-culto-neophytes'), 'Neophyte Hybrids', 'Infanteria', 80, 4, 1, 'Celula', null, public.seed_uuid('system', 'blackglass'), 'ready', false),
+  (public.seed_uuid('campaign_unit', 'cult-mirrorcoil-acolytes'), 'cult-mirrorcoil-acolytes', public.seed_uuid('faction', 'culto-genestelar'), public.seed_uuid('unit_template', 'unit-culto-acolytes'), 'Acolyte Hybrids', 'Elite', 95, 3, 2, 'Alzados', 'Red de tuneles', public.seed_uuid('system', 'mirrorcoil'), 'ready', false),
+  (public.seed_uuid('campaign_unit', 'cult-sabbath-ridgerunner'), 'cult-sabbath-ridgerunner', public.seed_uuid('faction', 'culto-genestelar'), public.seed_uuid('unit_template', 'unit-culto-ridgerunner'), 'Achilles Ridgerunner', 'Vehiculo', 120, 1, 0, 'Movil', null, public.seed_uuid('system', 'blackglass'), 'moving', false),
+  (public.seed_uuid('campaign_unit', 'cult-saint-neophytes'), 'cult-saint-neophytes', public.seed_uuid('faction', 'culto-genestelar'), public.seed_uuid('unit_template', 'unit-culto-neophytes'), 'Neophyte Hybrids', 'Infanteria', 80, 5, 1, 'Insurgentes', null, public.seed_uuid('system', 'saint-veil'), 'in_war', false),
+  (public.seed_uuid('campaign_unit', 'necron-thokt-warriors'), 'necron-thokt-warriors', public.seed_uuid('faction', 'necrones'), public.seed_uuid('unit_template', 'unit-necrones-warriors'), 'Necron Warriors', 'Infanteria', 80, 3, 1, 'Linea', null, public.seed_uuid('system', 'thokt-vault'), 'ready', false),
+  (public.seed_uuid('campaign_unit', 'necron-ghostlight-skorpekh'), 'necron-ghostlight-skorpekh', public.seed_uuid('faction', 'necrones'), public.seed_uuid('unit_template', 'unit-necrones-skorpekh'), 'Skorpekh Destroyers', 'Elite', 140, 2, 2, 'Destructores', 'Protocolos de cosecha', public.seed_uuid('system', 'ghostlight'), 'ready', false),
+  (public.seed_uuid('campaign_unit', 'necron-novem-immortals'), 'necron-novem-immortals', public.seed_uuid('faction', 'necrones'), public.seed_uuid('unit_template', 'unit-necrones-immortals'), 'Immortals', 'Elite', 105, 2, 0, 'Escolta', null, public.seed_uuid('system', 'thokt-vault'), 'moving', false),
+  (public.seed_uuid('campaign_unit', 'necron-ossuary-warriors'), 'necron-ossuary-warriors', public.seed_uuid('faction', 'necrones'), public.seed_uuid('unit_template', 'unit-necrones-warriors'), 'Necron Warriors', 'Infanteria', 80, 4, 1, 'Reclamadores', null, public.seed_uuid('system', 'ossuary-reach'), 'in_war', false),
+  (public.seed_uuid('campaign_unit', 'death-mordax-poxwalkers'), 'death-mordax-poxwalkers', public.seed_uuid('faction', 'guardia-muerte'), public.seed_uuid('unit_template', 'unit-muerte-poxwalkers'), 'Poxwalkers', 'Infanteria', 70, 4, 1, 'Marea', null, public.seed_uuid('system', 'mordax'), 'ready', false),
+  (public.seed_uuid('campaign_unit', 'death-plaguefall-marines'), 'death-plaguefall-marines', public.seed_uuid('faction', 'guardia-muerte'), public.seed_uuid('unit_template', 'unit-muerte-plague-marines'), 'Plague Marines', 'Infanteria', 115, 3, 2, 'Veteranos', 'Nube toxica', public.seed_uuid('system', 'plaguefall-bastion'), 'ready', false),
+  (public.seed_uuid('campaign_unit', 'death-drusus-drone'), 'death-drusus-drone', public.seed_uuid('faction', 'guardia-muerte'), public.seed_uuid('unit_template', 'unit-muerte-bloat-drone'), 'Foetid Bloat-drone', 'Vehiculo', 145, 1, 0, 'Movil', null, public.seed_uuid('system', 'mordax'), 'moving', false),
+  (public.seed_uuid('campaign_unit', 'death-ossuary-marines'), 'death-ossuary-marines', public.seed_uuid('faction', 'guardia-muerte'), public.seed_uuid('unit_template', 'unit-muerte-plague-marines'), 'Plague Marines', 'Infanteria', 115, 2, 1, 'Plaga', null, public.seed_uuid('system', 'ossuary-reach'), 'in_war', false)
+on conflict (slug) do update
+set faction_id = excluded.faction_id, unit_template_id = excluded.unit_template_id, name = excluded.name, category = excluded.category, points = excluded.points, quantity = excluded.quantity, experience = excluded.experience, rank = excluded.rank, enhancement_text = excluded.enhancement_text, current_system_id = excluded.current_system_id, status = excluded.status, is_visible_publicly = excluded.is_visible_publicly, updated_at = now();
 
 insert into public.movement_orders (
-  id,
-  army_id,
-  faction_id,
-  from_system_id,
-  to_system_id,
-  uridium_cost,
-  started_at,
-  arrival_at,
-  status
+  id, faction_id, from_system_id, to_system_id, uridium_cost, started_at, arrival_at, status, path_system_ids, segment_count, duration_seconds
 )
 values
-  (public.seed_uuid('movement_order', 'move-imperial-helios'), public.seed_uuid('army', 'imperial-helios-column'), public.seed_uuid('faction', 'guardia-imperial'), public.seed_uuid('system', 'kharon-prime'), public.seed_uuid('system', 'helios-drift'), 1, now() - interval '1 hour', now() + interval '5 hours', 'moving'),
-  (public.seed_uuid('movement_order', 'move-ork-eclipse'), public.seed_uuid('army', 'ork-eclipse-riders'), public.seed_uuid('faction', 'orcos'), public.seed_uuid('system', 'cinder-maw'), public.seed_uuid('system', 'eclipse-forge'), 1, now() - interval '2 hours', now() + interval '3 hours', 'moving'),
-  (public.seed_uuid('movement_order', 'move-sombra-lyra'), public.seed_uuid('army', 'sombra-lyra-talon'), public.seed_uuid('faction', 'sombra-emperador'), public.seed_uuid('system', 'sa-cea-gate'), public.seed_uuid('system', 'lyra-terminus'), 1, now() - interval '45 minutes', now() + interval '4 hours', 'moving'),
-  (public.seed_uuid('movement_order', 'move-cult-sabbath'), public.seed_uuid('army', 'cult-sabbath-convoy'), public.seed_uuid('faction', 'culto-genestelar'), public.seed_uuid('system', 'blackglass'), public.seed_uuid('system', 'red-sabbath'), 1, now() - interval '90 minutes', now() + interval '6 hours', 'moving'),
-  (public.seed_uuid('movement_order', 'move-necron-novem'), public.seed_uuid('army', 'necron-novem-cohort'), public.seed_uuid('faction', 'necrones'), public.seed_uuid('system', 'thokt-vault'), public.seed_uuid('system', 'novem'), 1, now() - interval '30 minutes', now() + interval '7 hours', 'moving'),
-  (public.seed_uuid('movement_order', 'move-death-drusus'), public.seed_uuid('army', 'death-drusus-procession'), public.seed_uuid('faction', 'guardia-muerte'), public.seed_uuid('system', 'mordax'), public.seed_uuid('system', 'drusus'), 1, now() - interval '75 minutes', now() + interval '5 hours', 'moving')
+  (public.seed_uuid('movement_order', 'move-imperial-helios'), public.seed_uuid('faction', 'guardia-imperial'), public.seed_uuid('system', 'kharon-prime'), public.seed_uuid('system', 'helios-drift'), 1, now() - interval '30 seconds', now() + interval '90 seconds', 'moving', array[public.seed_uuid('system', 'kharon-prime'), public.seed_uuid('system', 'helios-drift')]::uuid[], 1, 120),
+  (public.seed_uuid('movement_order', 'move-ork-eclipse'), public.seed_uuid('faction', 'orcos'), public.seed_uuid('system', 'cinder-maw'), public.seed_uuid('system', 'eclipse-forge'), 1, now() - interval '30 seconds', now() + interval '90 seconds', 'moving', array[public.seed_uuid('system', 'cinder-maw'), public.seed_uuid('system', 'eclipse-forge')]::uuid[], 1, 120),
+  (public.seed_uuid('movement_order', 'move-sombra-lyra'), public.seed_uuid('faction', 'sombra-emperador'), public.seed_uuid('system', 'sa-cea-gate'), public.seed_uuid('system', 'lyra-terminus'), 1, now() - interval '30 seconds', now() + interval '90 seconds', 'moving', array[public.seed_uuid('system', 'sa-cea-gate'), public.seed_uuid('system', 'lyra-terminus')]::uuid[], 1, 120),
+  (public.seed_uuid('movement_order', 'move-cult-sabbath'), public.seed_uuid('faction', 'culto-genestelar'), public.seed_uuid('system', 'blackglass'), public.seed_uuid('system', 'red-sabbath'), 1, now() - interval '30 seconds', now() + interval '90 seconds', 'moving', array[public.seed_uuid('system', 'blackglass'), public.seed_uuid('system', 'red-sabbath')]::uuid[], 1, 120),
+  (public.seed_uuid('movement_order', 'move-necron-novem'), public.seed_uuid('faction', 'necrones'), public.seed_uuid('system', 'thokt-vault'), public.seed_uuid('system', 'novem'), 1, now() - interval '30 seconds', now() + interval '90 seconds', 'moving', array[public.seed_uuid('system', 'thokt-vault'), public.seed_uuid('system', 'novem')]::uuid[], 1, 120),
+  (public.seed_uuid('movement_order', 'move-death-drusus'), public.seed_uuid('faction', 'guardia-muerte'), public.seed_uuid('system', 'mordax'), public.seed_uuid('system', 'drusus'), 1, now() - interval '30 seconds', now() + interval '90 seconds', 'moving', array[public.seed_uuid('system', 'mordax'), public.seed_uuid('system', 'drusus')]::uuid[], 1, 120)
 on conflict (id) do update
-set
-  army_id = excluded.army_id,
-  faction_id = excluded.faction_id,
-  from_system_id = excluded.from_system_id,
-  to_system_id = excluded.to_system_id,
-  uridium_cost = excluded.uridium_cost,
-  started_at = excluded.started_at,
-  arrival_at = excluded.arrival_at,
-  status = excluded.status;
+set faction_id = excluded.faction_id, from_system_id = excluded.from_system_id, to_system_id = excluded.to_system_id, uridium_cost = excluded.uridium_cost, started_at = excluded.started_at, arrival_at = excluded.arrival_at, status = excluded.status, path_system_ids = excluded.path_system_ids, segment_count = excluded.segment_count, duration_seconds = excluded.duration_seconds;
 
-insert into public.conflicts (
-  id,
-  slug,
-  system_id,
-  attacker_faction_id,
-  defender_faction_id,
-  status,
-  blocked_until,
-  notes
-)
+insert into public.movement_order_units (movement_order_id, unit_id)
 values
-  (public.seed_uuid('conflict', 'conflict-azur-trench'), 'conflict-azur-trench', public.seed_uuid('system', 'azur-trench'), public.seed_uuid('faction', 'orcos'), public.seed_uuid('faction', 'guardia-imperial'), 'pending', now() + interval '72 hours', 'Orcos e Imperiales han colisionado en la ruta central de la Zanja Azul. Pendiente de batalla fisica.'),
-  (public.seed_uuid('conflict', 'conflict-ossuary-reach'), 'conflict-ossuary-reach', public.seed_uuid('system', 'ossuary-reach'), public.seed_uuid('faction', 'guardia-muerte'), public.seed_uuid('faction', 'necrones'), 'pending', now() + interval '72 hours', 'La Guardia de la Muerte intenta profanar criptas que los Necrones estan reactivando. Pendiente de batalla fisica.'),
-  (public.seed_uuid('conflict', 'conflict-saint-veil'), 'conflict-saint-veil', public.seed_uuid('system', 'saint-veil'), public.seed_uuid('faction', 'sombra-emperador'), public.seed_uuid('faction', 'culto-genestelar'), 'pending', now() + interval '72 hours', 'La Sombra del Emperador ha descubierto una insurreccion genestelar en el santuario. Pendiente de batalla fisica.')
-on conflict (slug) do update
-set
-  system_id = excluded.system_id,
-  attacker_faction_id = excluded.attacker_faction_id,
-  defender_faction_id = excluded.defender_faction_id,
-  status = excluded.status,
-  winner_faction_id = null,
-  blocked_until = excluded.blocked_until,
-  notes = excluded.notes,
-  resolved_at = null;
+  (public.seed_uuid('movement_order', 'move-imperial-helios'), public.seed_uuid('campaign_unit', 'imperial-helios-leman')),
+  (public.seed_uuid('movement_order', 'move-ork-eclipse'), public.seed_uuid('campaign_unit', 'ork-eclipse-dread')),
+  (public.seed_uuid('movement_order', 'move-sombra-lyra'), public.seed_uuid('campaign_unit', 'sombra-lyra-redemptor')),
+  (public.seed_uuid('movement_order', 'move-cult-sabbath'), public.seed_uuid('campaign_unit', 'cult-sabbath-ridgerunner')),
+  (public.seed_uuid('movement_order', 'move-necron-novem'), public.seed_uuid('campaign_unit', 'necron-novem-immortals')),
+  (public.seed_uuid('movement_order', 'move-death-drusus'), public.seed_uuid('campaign_unit', 'death-drusus-drone'))
+on conflict (movement_order_id, unit_id) do nothing;
 
-insert into public.missions (
-  id,
-  system_id,
-  title,
-  narrative_description,
-  recommended_points,
-  objectives,
-  special_rules,
-  victory_conditions
-)
+insert into public.conflicts (id, slug, system_id, attacker_faction_id, defender_faction_id, status, blocked_until, notes)
+values
+  (public.seed_uuid('conflict', 'conflict-azur-trench'), 'conflict-azur-trench', public.seed_uuid('system', 'azur-trench'), public.seed_uuid('faction', 'orcos'), public.seed_uuid('faction', 'guardia-imperial'), 'pending', now() + interval '30 minutes', 'Orcos e Imperiales han colisionado en la ruta central de la Zanja Azul. Pendiente de batalla fisica.'),
+  (public.seed_uuid('conflict', 'conflict-ossuary-reach'), 'conflict-ossuary-reach', public.seed_uuid('system', 'ossuary-reach'), public.seed_uuid('faction', 'guardia-muerte'), public.seed_uuid('faction', 'necrones'), 'pending', now() + interval '30 minutes', 'La Guardia de la Muerte intenta profanar criptas que los Necrones estan reactivando. Pendiente de batalla fisica.'),
+  (public.seed_uuid('conflict', 'conflict-saint-veil'), 'conflict-saint-veil', public.seed_uuid('system', 'saint-veil'), public.seed_uuid('faction', 'sombra-emperador'), public.seed_uuid('faction', 'culto-genestelar'), 'pending', now() + interval '30 minutes', 'La Sombra del Emperador ha descubierto una insurreccion genestelar en el santuario. Pendiente de batalla fisica.')
+on conflict (slug) do update
+set system_id = excluded.system_id, attacker_faction_id = excluded.attacker_faction_id, defender_faction_id = excluded.defender_faction_id, status = excluded.status, winner_faction_id = null, blocked_until = excluded.blocked_until, notes = excluded.notes, resolved_at = null;
+
+insert into public.missions (id, system_id, title, narrative_description, recommended_points, objectives, special_rules, victory_conditions)
 values
   (public.seed_uuid('mission', 'mission-azur-trench'), public.seed_uuid('system', 'azur-trench'), 'La Zanja Azul', 'Una nebulosa de gases ionizados parte el campo de batalla en corredores estrechos.', '1000-1500 pts', 'Controlar las balizas de navegacion al final de la batalla fisica.', 'Las unidades que avancen por el centro cuentan como expuestas por la luz azul.', 'El ganador decide el control final de Azur Trench.'),
   (public.seed_uuid('mission', 'mission-ossuary-reach'), public.seed_uuid('system', 'ossuary-reach'), 'Ecos del Osario', 'Criptas rotas y fosas contaminadas hacen que cada metro sea una amenaza.', '1000-1500 pts', 'Asegurar tres criptas antes del final de la partida.', 'El terreno central se considera peligroso por emanaciones toxicas y energia necrodermis.', 'El ganador decide el control final de Ossuary Reach.'),
   (public.seed_uuid('mission', 'mission-saint-veil'), public.seed_uuid('system', 'saint-veil'), 'El Velo Sagrado', 'Un santuario en sombra se convierte en campo de purga e insurreccion.', '1000-1500 pts', 'Mantener el altar central y dos accesos laterales.', 'La primera ronda usa visibilidad reducida por incienso, humo y apagones.', 'El ganador decide el control final de Saint Veil.')
 on conflict (id) do update
-set
-  system_id = excluded.system_id,
-  title = excluded.title,
-  narrative_description = excluded.narrative_description,
-  recommended_points = excluded.recommended_points,
-  objectives = excluded.objectives,
-  special_rules = excluded.special_rules,
-  victory_conditions = excluded.victory_conditions,
-  updated_at = now();
+set system_id = excluded.system_id, title = excluded.title, narrative_description = excluded.narrative_description, recommended_points = excluded.recommended_points, objectives = excluded.objectives, special_rules = excluded.special_rules, victory_conditions = excluded.victory_conditions, updated_at = now();
 
 insert into public.system_special_objects (id, system_id, name, type, public_description, is_public)
 values
@@ -429,16 +293,13 @@ values
   (public.seed_uuid('system_special_object', 'obj-saint-veil'), public.seed_uuid('system', 'saint-veil'), 'Reliquia velada', 'relic', 'Un relicario emite pulsos violetas bajo el santuario.', true),
   (public.seed_uuid('system_special_object', 'obj-ossuary-reach'), public.seed_uuid('system', 'ossuary-reach'), 'Cripta fracturada', 'anomaly', 'Senales intermitentes salen de tumbas orbitales abiertas.', true)
 on conflict (id) do update
-set
-  system_id = excluded.system_id,
-  name = excluded.name,
-  type = excluded.type,
-  public_description = excluded.public_description,
-  is_public = excluded.is_public;
+set system_id = excluded.system_id, name = excluded.name, type = excluded.type, public_description = excluded.public_description, is_public = excluded.is_public;
 
 update public.campaign_settings
 set
   resource_tick_interval_hours = 24,
+  movement_edge_duration_seconds = 120,
+  conflict_block_duration_minutes = 30,
   next_resource_tick_at = now() + interval '24 hours',
   updated_at = now()
 where id = 'default';

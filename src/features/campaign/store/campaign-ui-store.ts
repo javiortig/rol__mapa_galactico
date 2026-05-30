@@ -5,11 +5,10 @@ interface CampaignUiState {
   hoveredSystemId: string | null;
   tooltipPosition: { x: number; y: number } | null;
   movementOriginSystemId: string | null;
-  activeArmyId: string | null;
   setSelectedSystem: (systemId: string | null) => void;
   setHoveredSystem: (systemId: string | null) => void;
   setTooltipPosition: (position: { x: number; y: number } | null) => void;
-  startMovementMode: (armyId: string, originSystemId: string) => void;
+  startMovementMode: (originSystemId: string) => void;
   cancelMovementMode: () => void;
 }
 
@@ -18,11 +17,9 @@ export const useCampaignUiStore = create<CampaignUiState>((set) => ({
   hoveredSystemId: null,
   tooltipPosition: null,
   movementOriginSystemId: null,
-  activeArmyId: null,
   setSelectedSystem: (selectedSystemId) => set({ selectedSystemId }),
   setHoveredSystem: (hoveredSystemId) => set({ hoveredSystemId }),
   setTooltipPosition: (tooltipPosition) => set({ tooltipPosition }),
-  startMovementMode: (activeArmyId, movementOriginSystemId) =>
-    set({ activeArmyId, movementOriginSystemId }),
-  cancelMovementMode: () => set({ activeArmyId: null, movementOriginSystemId: null })
+  startMovementMode: (movementOriginSystemId) => set({ movementOriginSystemId }),
+  cancelMovementMode: () => set({ movementOriginSystemId: null })
 }));

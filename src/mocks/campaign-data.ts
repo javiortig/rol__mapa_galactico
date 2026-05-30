@@ -10,6 +10,7 @@ const emptyResources: ResourceBundle = {
 
 const now = Date.now();
 const inHours = (hours: number) => new Date(now + hours * 60 * 60 * 1000).toISOString();
+const inMinutes = (minutes: number) => new Date(now + minutes * 60 * 1000).toISOString();
 const dailyProduction = (resources: Partial<ResourceBundle>): ResourceBundle => ({
   ...emptyResources,
   ...resources
@@ -286,7 +287,7 @@ const systems: CampaignSnapshot["systems"] = [
     starClass: "blue",
     type: "Nebulosa navegable",
     status: "war",
-    blockedUntil: inHours(72),
+    blockedUntil: inMinutes(30),
     isCapital: false,
     publicDescription: "Corredor azul con pozos de gravedad inestables. Orcos e Imperiales han chocado aqui.",
     production: dailyProduction({ uridium: 5 })
@@ -300,7 +301,7 @@ const systems: CampaignSnapshot["systems"] = [
     starClass: "violet",
     type: "Osario orbital",
     status: "war",
-    blockedUntil: inHours(72),
+    blockedUntil: inMinutes(30),
     isCapital: false,
     publicDescription: "Campos funerarios en orbita baja, disputados por plaga y tecnologia necrona.",
     production: dailyProduction({ minerals: 2, ancestralStone: 2, uridium: 2 }),
@@ -315,7 +316,7 @@ const systems: CampaignSnapshot["systems"] = [
     starClass: "yellow",
     type: "Velo sagrado",
     status: "war",
-    blockedUntil: inHours(72),
+    blockedUntil: inMinutes(30),
     isCapital: false,
     publicDescription: "Santuario velado donde la Sombra del Emperador combate una revuelta genestelar.",
     production: dailyProduction({ supply: 2, ancestralStone: 2, uridium: 2, technology: 1 }),
@@ -541,7 +542,26 @@ const resources: CampaignSnapshot["resources"] = [
   }
 ];
 
-const armies: CampaignSnapshot["armies"] = [
+type MockUnitGroup = {
+  id: string;
+  factionId: string;
+  name: string;
+  currentSystemId: string;
+  status: "ready" | "moving" | "in_war";
+  pointsTotal: number;
+  isVisiblePublicly: boolean;
+  units: Array<{
+    id: string;
+    name: string;
+    points: number;
+    quantity: number;
+    experience: number;
+    rank?: string | null;
+    enhancementText?: string | null;
+  }>;
+};
+
+const unitGroups: MockUnitGroup[] = [
   {
     id: "imperial-kharon-garrison",
     factionId: "guardia-imperial",
@@ -553,7 +573,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "imperial-kharon-cadians",
-        armyId: "imperial-kharon-garrison",
         name: "Cadian Shock Troops",
         points: 80,
         quantity: 3,
@@ -573,7 +592,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "imperial-arx-kasrkin",
-        armyId: "imperial-arx-front",
         name: "Kasrkin",
         points: 105,
         quantity: 2,
@@ -593,11 +611,10 @@ const armies: CampaignSnapshot["armies"] = [
     isVisiblePublicly: false,
     units: [
       {
-        id: "imperial-helios-sentinels",
-        armyId: "imperial-helios-column",
-        name: "Sentinel Squadron",
-        points: 180,
-        quantity: 1,
+        id: "imperial-helios-cadians",
+        name: "Cadian Shock Troops",
+        points: 80,
+        quantity: 2,
         experience: 0,
         rank: "Reconocimiento"
       }
@@ -614,7 +631,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "imperial-azur-tank",
-        armyId: "imperial-azur-line",
         name: "Leman Russ Battle Tank",
         points: 145,
         quantity: 2,
@@ -634,7 +650,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "ork-cinder-boyz",
-        armyId: "ork-cinder-garrison",
         name: "Boyz",
         points: 80,
         quantity: 4,
@@ -654,7 +669,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "ork-rustmaw-meganobz",
-        armyId: "ork-rustmaw-front",
         name: "Meganobz",
         points: 105,
         quantity: 2,
@@ -674,11 +688,10 @@ const armies: CampaignSnapshot["armies"] = [
     isVisiblePublicly: false,
     units: [
       {
-        id: "ork-eclipse-buggies",
-        armyId: "ork-eclipse-riders",
-        name: "Warbikers",
-        points: 140,
-        quantity: 1,
+        id: "ork-eclipse-boyz",
+        name: "Boyz",
+        points: 80,
+        quantity: 3,
         experience: 0,
         rank: "Movil"
       }
@@ -695,7 +708,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "ork-azur-dread",
-        armyId: "ork-azur-waaagh",
         name: "Deff Dread",
         points: 135,
         quantity: 2,
@@ -715,7 +727,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "sombra-gate-intercessors",
-        armyId: "sombra-gate-watch",
         name: "Intercessor Squad",
         points: 105,
         quantity: 2,
@@ -735,7 +746,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "sombra-narthex-terminators",
-        armyId: "sombra-narthex-spear",
         name: "Terminator Squad",
         points: 160,
         quantity: 2,
@@ -755,10 +765,9 @@ const armies: CampaignSnapshot["armies"] = [
     isVisiblePublicly: false,
     units: [
       {
-        id: "sombra-lyra-inceptors",
-        armyId: "sombra-lyra-talon",
-        name: "Inceptor Squad",
-        points: 130,
+        id: "sombra-lyra-intercessors",
+        name: "Intercessor Squad",
+        points: 105,
         quantity: 1,
         experience: 0,
         rank: "Asalto"
@@ -776,7 +785,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "sombra-saint-redemptor",
-        armyId: "sombra-saint-veil",
         name: "Redemptor Dreadnought",
         points: 185,
         quantity: 1,
@@ -796,7 +804,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "cult-blackglass-neophytes",
-        armyId: "cult-blackglass-garrison",
         name: "Neophyte Hybrids",
         points: 80,
         quantity: 4,
@@ -816,7 +823,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "cult-mirrorcoil-acolytes",
-        armyId: "cult-mirrorcoil-front",
         name: "Acolyte Hybrids",
         points: 95,
         quantity: 3,
@@ -837,7 +843,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "cult-sabbath-ridgerunner",
-        armyId: "cult-sabbath-convoy",
         name: "Achilles Ridgerunner",
         points: 120,
         quantity: 1,
@@ -857,7 +862,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "cult-saint-neophytes",
-        armyId: "cult-saint-revolt",
         name: "Neophyte Hybrids",
         points: 80,
         quantity: 5,
@@ -877,7 +881,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "necron-thokt-warriors",
-        armyId: "necron-thokt-phalanx",
         name: "Necron Warriors",
         points: 80,
         quantity: 3,
@@ -897,7 +900,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "necron-ghostlight-skorpekh",
-        armyId: "necron-ghostlight-front",
         name: "Skorpekh Destroyers",
         points: 140,
         quantity: 2,
@@ -918,7 +920,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "necron-novem-immortals",
-        armyId: "necron-novem-cohort",
         name: "Immortals",
         points: 105,
         quantity: 2,
@@ -938,7 +939,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "necron-ossuary-warriors",
-        armyId: "necron-ossuary-reclaimers",
         name: "Necron Warriors",
         points: 80,
         quantity: 4,
@@ -958,7 +958,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "death-mordax-poxwalkers",
-        armyId: "death-mordax-vector",
         name: "Poxwalkers",
         points: 70,
         quantity: 4,
@@ -978,7 +977,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "death-plaguefall-marines",
-        armyId: "death-plaguefall-front",
         name: "Plague Marines",
         points: 115,
         quantity: 3,
@@ -999,7 +997,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "death-drusus-drone",
-        armyId: "death-drusus-procession",
         name: "Foetid Bloat-drone",
         points: 145,
         quantity: 1,
@@ -1019,7 +1016,6 @@ const armies: CampaignSnapshot["armies"] = [
     units: [
       {
         id: "death-ossuary-marines",
-        armyId: "death-ossuary-pox",
         name: "Plague Marines",
         points: 115,
         quantity: 2,
@@ -1030,71 +1026,108 @@ const armies: CampaignSnapshot["armies"] = [
   }
 ];
 
+const units: CampaignSnapshot["units"] = unitGroups.flatMap((group) =>
+  group.units.map((unit) => ({
+    id: unit.id,
+    factionId: group.factionId,
+    unitTemplateId: null,
+    name: unit.name,
+    currentSystemId: group.currentSystemId,
+    status: group.status,
+    category: getMockUnitCategory(unit.name),
+    points: unit.points,
+    quantity: unit.quantity,
+    experience: unit.experience,
+    isVisiblePublicly: group.isVisiblePublicly,
+    rank: unit.rank ?? null,
+    enhancementText: unit.enhancementText ?? null,
+    notes: null
+  }))
+);
+
 const movements: CampaignSnapshot["movements"] = [
   {
     id: "move-imperial-helios",
-    armyId: "imperial-helios-column",
+    unitIds: ["imperial-helios-cadians"],
     factionId: "guardia-imperial",
     fromSystemId: "kharon-prime",
     toSystemId: "helios-drift",
+    pathSystemIds: ["kharon-prime", "helios-drift"],
     uridiumCost: 1,
-    startedAt: inHours(-1),
-    arrivalAt: inHours(5),
+    segmentCount: 1,
+    durationSeconds: 120,
+    startedAt: inMinutes(-0.5),
+    arrivalAt: inMinutes(1.5),
     status: "moving"
   },
   {
     id: "move-ork-eclipse",
-    armyId: "ork-eclipse-riders",
+    unitIds: ["ork-eclipse-boyz"],
     factionId: "orcos",
     fromSystemId: "cinder-maw",
     toSystemId: "eclipse-forge",
+    pathSystemIds: ["cinder-maw", "eclipse-forge"],
     uridiumCost: 1,
-    startedAt: inHours(-2),
-    arrivalAt: inHours(3),
+    segmentCount: 1,
+    durationSeconds: 120,
+    startedAt: inMinutes(-0.5),
+    arrivalAt: inMinutes(1.5),
     status: "moving"
   },
   {
     id: "move-sombra-lyra",
-    armyId: "sombra-lyra-talon",
+    unitIds: ["sombra-lyra-intercessors"],
     factionId: "sombra-emperador",
     fromSystemId: "sa-cea-gate",
     toSystemId: "lyra-terminus",
+    pathSystemIds: ["sa-cea-gate", "lyra-terminus"],
     uridiumCost: 1,
-    startedAt: inHours(-0.75),
-    arrivalAt: inHours(4),
+    segmentCount: 1,
+    durationSeconds: 120,
+    startedAt: inMinutes(-0.5),
+    arrivalAt: inMinutes(1.5),
     status: "moving"
   },
   {
     id: "move-cult-sabbath",
-    armyId: "cult-sabbath-convoy",
+    unitIds: ["cult-sabbath-ridgerunner"],
     factionId: "culto-genestelar",
     fromSystemId: "blackglass",
     toSystemId: "red-sabbath",
+    pathSystemIds: ["blackglass", "red-sabbath"],
     uridiumCost: 1,
-    startedAt: inHours(-1.5),
-    arrivalAt: inHours(6),
+    segmentCount: 1,
+    durationSeconds: 120,
+    startedAt: inMinutes(-0.5),
+    arrivalAt: inMinutes(1.5),
     status: "moving"
   },
   {
     id: "move-necron-novem",
-    armyId: "necron-novem-cohort",
+    unitIds: ["necron-novem-immortals"],
     factionId: "necrones",
     fromSystemId: "thokt-vault",
     toSystemId: "novem",
+    pathSystemIds: ["thokt-vault", "novem"],
     uridiumCost: 1,
-    startedAt: inHours(-0.5),
-    arrivalAt: inHours(7),
+    segmentCount: 1,
+    durationSeconds: 120,
+    startedAt: inMinutes(-0.5),
+    arrivalAt: inMinutes(1.5),
     status: "moving"
   },
   {
     id: "move-death-drusus",
-    armyId: "death-drusus-procession",
+    unitIds: ["death-drusus-drone"],
     factionId: "guardia-muerte",
     fromSystemId: "mordax",
     toSystemId: "drusus",
+    pathSystemIds: ["mordax", "drusus"],
     uridiumCost: 1,
-    startedAt: inHours(-1.25),
-    arrivalAt: inHours(5),
+    segmentCount: 1,
+    durationSeconds: 120,
+    startedAt: inMinutes(-0.5),
+    arrivalAt: inMinutes(1.5),
     status: "moving"
   }
 ];
@@ -1111,7 +1144,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 7200,
+    recruitmentTimeSeconds: 120,
     notes: "Masa brutal de combate cercano.",
     isAvailable: true
   },
@@ -1126,7 +1159,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 1,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 14400,
+    recruitmentTimeSeconds: 240,
     notes: "Noblez armados con servoarmaduras improvisadas.",
     isAvailable: true
   },
@@ -1141,7 +1174,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 1,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 21600,
+    recruitmentTimeSeconds: 360,
     notes: "Maquina andante de metal, humo y mala intencion.",
     isAvailable: true
   },
@@ -1156,7 +1189,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 7200,
+    recruitmentTimeSeconds: 120,
     notes: "Linea inmortal reanimada desde las criptas.",
     isAvailable: true
   },
@@ -1171,7 +1204,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 1,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 14400,
+    recruitmentTimeSeconds: 240,
     notes: "Guerreros superiores con protocolos de elite.",
     isAvailable: true
   },
@@ -1186,7 +1219,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 2,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 21600,
+    recruitmentTimeSeconds: 360,
     notes: "Asesinos de fase con cuerpos disenados para la destruccion.",
     isAvailable: true
   },
@@ -1201,7 +1234,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 7200,
+    recruitmentTimeSeconds: 120,
     notes: "Infanteria disciplinada lista para sostener la linea.",
     isAvailable: true
   },
@@ -1216,7 +1249,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 1,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 14400,
+    recruitmentTimeSeconds: 240,
     notes: "Veteranos de asalto con equipo especializado.",
     isAvailable: true
   },
@@ -1231,7 +1264,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 1,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 25200,
+    recruitmentTimeSeconds: 420,
     notes: "Blindado pesado de batalla para romper frentes.",
     isAvailable: true
   },
@@ -1246,7 +1279,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 7200,
+    recruitmentTimeSeconds: 120,
     notes: "Celulas insurgentes armadas desde las profundidades.",
     isAvailable: true
   },
@@ -1261,7 +1294,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 1,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 14400,
+    recruitmentTimeSeconds: 240,
     notes: "Fanaticos hibridos preparados para ataques decisivos.",
     isAvailable: true
   },
@@ -1276,7 +1309,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 1,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 21600,
+    recruitmentTimeSeconds: 360,
     notes: "Vehiculo de incursion y reconocimiento rapido.",
     isAvailable: true
   },
@@ -1291,7 +1324,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 1,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 10800,
+    recruitmentTimeSeconds: 180,
     notes: "Astartes de linea con doctrina flexible.",
     isAvailable: true
   },
@@ -1306,7 +1339,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 3,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 21600,
+    recruitmentTimeSeconds: 360,
     notes: "Veteranos con armadura tactica dreadnought.",
     isAvailable: true
   },
@@ -1321,7 +1354,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 3,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 28800,
+    recruitmentTimeSeconds: 480,
     notes: "Dreadnought pesado para rupturas de linea.",
     isAvailable: true
   },
@@ -1336,7 +1369,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 7200,
+    recruitmentTimeSeconds: 120,
     notes: "Multitud infectada que avanza sin miedo.",
     isAvailable: true
   },
@@ -1351,7 +1384,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 1,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 14400,
+    recruitmentTimeSeconds: 240,
     notes: "Marines de plaga resistentes y metodicos.",
     isAvailable: true
   },
@@ -1366,7 +1399,7 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
     ancestralStoneCost: 2,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 25200,
+    recruitmentTimeSeconds: 420,
     notes: "Dron demoniaco de apoyo y hostigamiento.",
     isAvailable: true
   }
@@ -1379,7 +1412,7 @@ const conflicts: CampaignSnapshot["conflicts"] = [
     attackerFactionId: "orcos",
     defenderFactionId: "guardia-imperial",
     status: "pending",
-    blockedUntil: inHours(72),
+    blockedUntil: inMinutes(30),
     notes: "Orcos e Imperiales han colisionado en la ruta central de la Zanja Azul. Pendiente de batalla fisica."
   },
   {
@@ -1388,7 +1421,7 @@ const conflicts: CampaignSnapshot["conflicts"] = [
     attackerFactionId: "guardia-muerte",
     defenderFactionId: "necrones",
     status: "pending",
-    blockedUntil: inHours(72),
+    blockedUntil: inMinutes(30),
     notes: "La Guardia de la Muerte intenta profanar criptas que los Necrones estan reactivando. Pendiente de batalla fisica."
   },
   {
@@ -1397,7 +1430,7 @@ const conflicts: CampaignSnapshot["conflicts"] = [
     attackerFactionId: "sombra-emperador",
     defenderFactionId: "culto-genestelar",
     status: "pending",
-    blockedUntil: inHours(72),
+    blockedUntil: inMinutes(30),
     notes: "La Sombra del Emperador ha descubierto una insurreccion genestelar en el santuario. Pendiente de batalla fisica."
   }
 ];
@@ -1445,7 +1478,7 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
   systems,
   edges,
   resources,
-  armies,
+  units,
   movements,
   unitTemplates,
   recruitmentQueue: [],
@@ -1453,3 +1486,15 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
   battleReports: [],
   missions
 };
+
+function getMockUnitCategory(name: string): CampaignSnapshot["units"][number]["category"] {
+  if (["Deff Dread", "Leman Russ Battle Tank", "Achilles Ridgerunner", "Redemptor Dreadnought", "Foetid Bloat-drone"].includes(name)) {
+    return "Vehiculo";
+  }
+
+  if (["Meganobz", "Immortals", "Skorpekh Destroyers", "Kasrkin", "Acolyte Hybrids", "Terminator Squad"].includes(name)) {
+    return "Elite";
+  }
+
+  return "Infanteria";
+}
