@@ -36,15 +36,17 @@ Crear una aplicación web privada con:
    - Mineral.
    - Piedra ancestral.
    - Uridium.
+   - Componentes tecnológicos.
 7. **Producción de recursos por sistemas controlados.**
 8. **Movimiento de tropas entre sistemas.**
 9. **Reclutamiento de tropas con cola temporizada estilo Grepolis.**
 10. **Tropas reclutadas aparecen en la capital de la facción.**
-11. **Misiones narrativas asociadas a sistemas**, con imagen del mapa de misión y explicación.
-12. **Niebla de guerra para tropas y movimientos.**
-13. **Panel de admin para resolver resultados, editar mapas, recursos, tropas, experiencia y bloqueos.**
-14. **Backend autoritativo**: las reglas críticas nunca deben depender solo del frontend.
-15. **Cronos gestionados por backend** para producción, movimiento y reclutamiento.
+11. **Árbol tecnológico por facción**, con desbloqueo de unidades, edificios futuros y bonos.
+12. **Misiones narrativas asociadas a sistemas**, con imagen del mapa de misión y explicación.
+13. **Niebla de guerra para tropas y movimientos.**
+14. **Panel de admin para resolver resultados, editar mapas, recursos, tropas, experiencia y bloqueos.**
+15. **Backend autoritativo**: las reglas críticas nunca deben depender solo del frontend.
+16. **Cronos gestionados por backend** para producción, movimiento, reclutamiento e investigación.
 
 ---
 
@@ -108,6 +110,8 @@ El frontend puede mostrar posibilidades, pero el backend debe validar todo:
 - Si el jugador es dueño de la facción.
 - Si la cola de reclutamiento es válida.
 - Si los recursos alcanzan.
+- Si la tecnología requerida para una unidad está desbloqueada.
+- Si la facción puede iniciar una investigación tecnológica.
 - Si el sistema de destino permite la acción.
 
 ---
@@ -256,7 +260,7 @@ El seed local inicial debe representar una campana viva, no un reparto aleatorio
 
 ## 4. Recursos de campaña
 
-Hay cuatro recursos básicos:
+Hay cinco recursos de campaña:
 
 | Recurso | Uso |
 |---|---|
@@ -264,10 +268,10 @@ Hay cuatro recursos básicos:
 | Mineral | Construir armamento, blindajes, vehículos, fortificaciones y equipamiento pesado. |
 | Piedra ancestral | Recurso raro para unidades importantes, élites, personajes, superpesados, reliquias y elementos especiales. |
 | Uridium | Recurso de movimiento estratégico entre sistemas. |
+| Componentes tecnológicos | Investigar tecnologías del árbol de campaña. No se usa para movimiento ni reclutamiento normal salvo reglas futuras específicas. |
 
 Más adelante se añadirán recursos secundarios, como:
 
-- Tecnología.
 - Reliquias.
 - Enhancements narrativos.
 - Objetos especiales.
@@ -317,6 +321,8 @@ Cada sistema produce una cantidad diaria de recursos. En base de datos estos val
 - `ancestral_stone_per_tick`
 - `uridium_per_tick`
 
+Los Componentes tecnológicos no se producen en planetas ni sistemas estelares.
+
 La producción diaria total de una facción es la suma de los sistemas que controla.
 
 La cadencia de usuario para la v1 es diaria:
@@ -333,10 +339,30 @@ El panel detallado de recursos debe mostrar también:
 
 - Producción diaria total.
 - Cadencia actual de producción.
-- Sistemas que producen cada recurso.
+- Sistemas que producen cada recurso planetario.
 - Reliquias poseídas.
-- Tecnología poseída.
+- Componentes tecnológicos y tecnologías desbloqueadas.
 - Objetos especiales.
+
+### 4.4 Componentes tecnológicos
+
+Los Componentes tecnológicos son el quinto recurso de la campaña.
+
+Uso principal:
+
+- Pagar investigaciones del árbol tecnológico.
+- Representar piezas de arqueotecnología, datos tácticos, núcleos de cogitador y conocimiento industrial recuperado.
+- Desbloquear nuevas unidades reclutables, edificios futuros y bonos pasivos.
+
+Reglas v1:
+
+- El campo interno del recurso es `technology`.
+- El icono visual es `icons/resources/tech_component.png`.
+- Los costes tecnológicos se pagan en `start_technology_research()`.
+- No se gastan directamente al reclutar unidades normales.
+- No se producen mediante `system_production` ni ticks diarios de recursos.
+- Deben obtenerse mediante recompensas narrativas, reliquias, eventos, misiones, hallazgos, comercio futuro o edición/admin.
+- El backend valida siempre que la tecnología necesaria esté desbloqueada antes de permitir `recruit_unit()`.
 
 ---
 
@@ -349,6 +375,7 @@ Todo el avance importante funciona por tiempo real gestionado por backend:
 - Producción de recursos.
 - Reclutamiento.
 - Movimiento.
+- Investigación tecnológica.
 - Bloqueos de sistemas.
 - Resolución de colas vencidas.
 
@@ -361,6 +388,7 @@ Los cronos deben ser gestionados por backend con timestamps reales:
 - `arrival_at`
 - `last_resource_tick_at`
 - `next_resource_tick_at`
+- `unlocked_at`
 - `status`
 
 El frontend solo muestra cuenta atrás.
@@ -393,6 +421,7 @@ El backend debe exponer funciones seguras para procesar tiempo vencido:
 resolve_resource_ticks()
 resolve_movement_orders()
 resolve_recruitment_queue()
+resolve_technology_research()
 ```
 
 Así, aunque un cron se retrase, el estado se corrige cuando alguien entra a la campaña o ejecuta una acción importante.
@@ -559,6 +588,8 @@ Los jugadores mueven unidades Warhammer concretas, no destacamentos abstractos.
 
 Una orden de movimiento puede incluir una o varias unidades propias que esten `ready`, pertenezcan a la misma faccion y esten en el mismo sistema de origen.
 
+Cada fila de `campaign_units` representa una unidad Warhammer persistente. El campo `quantity` representa cuantas miniaturas actuales quedan vivas en esa unidad, y `starting_quantity` representa su tamano de referencia al crearse o al separarse. Por ejemplo, una unidad de `Boyz` puede empezar como `10/10`, quedar `6/10` tras una batalla, o separarse en un grupo hijo de `4/4` para moverse por otra ruta.
+
 Cada unidad movible es una unidad real de faccion, por ejemplo `Boyz`, `Meganobz`, `Deff Dread`, `Necron Warriors`, `Kasrkin`, `Leman Russ Battle Tank`, `Intercessor Squad`, `Plague Marines` o `Foetid Bloat-drone`.
 
 El coste se paga con Uridium.
@@ -602,8 +633,8 @@ Controlador: Guardia Imperial
 Estado: Controlado
 
 Tropas presentes:
-- Cadian Shock Troops x3 - 240 pts
-- Kasrkin x2 - 210 pts
+- Cadian Shock Troops 10/10 miniaturas - 80 pts
+- Kasrkin 10/10 miniaturas - 105 pts
 
 Acciones:
 [Mover tropas]
@@ -618,21 +649,20 @@ Se abre panel o modal:
 Mover tropas desde Kharon Prime
 
 Selecciona unidades:
-[ ] Cadian Shock Troops x3 - 240 pts
-[ ] Kasrkin x2 - 210 pts
-[ ] Leman Russ Battle Tank x1 - 145 pts
+[ 0/10 ] Cadian Shock Troops - 80 pts
+[ 0/10 ] Kasrkin - 105 pts
+[ 0/1  ] Leman Russ Battle Tank - 145 pts
 ```
 
 Primera version:
 
 - Seleccion multiple de unidades Warhammer concretas.
+- Cada unidad permite elegir cuantas miniaturas mover, desde 1 hasta `quantity`.
+- Si se mueve la unidad completa, la fila original pasa a `moving`.
+- Si se mueve solo una parte, backend crea una unidad hija con `parent_unit_id`, `quantity = miniaturas_movidas` y `starting_quantity = miniaturas_movidas`; la unidad original conserva las miniaturas restantes.
 - Todas deben estar en el sistema origen.
 - Todas deben estar `ready`.
-- No se dividen unidades en subunidades.
-
-Mas adelante:
-
-- Permitir dividir unidades si la campana lo necesita.
+- El jugador puede fusionar despues unidades compatibles que esten `ready`, en el mismo sistema, con misma plantilla, rango y enhancement.
 
 #### Paso 3: seleccionar ruta
 
@@ -738,7 +768,8 @@ Cuando `now() >= arrival_at`, backend procesa la llegada.
 - Sistema pasa a `war`.
 - Queda bloqueado mientras haya batalla pendiente.
 - Se crea conflicto.
-- Las unidades quedan `in_war`.
+- Las unidades atacantes quedan `in_war`.
+- Las unidades defensoras presentes en el sistema que estaban `ready` tambien pasan a `in_war`.
 - Los participantes juegan la batalla en la vida real.
 - Los jugadores participantes o el admin reportan el resultado.
 
@@ -757,11 +788,19 @@ Cuando exista un conflicto:
 El reporte debe permitir registrar:
 
 - Facción ganadora.
-- Tropas supervivientes o bajas.
+- Supervivientes por unidad, expresados como miniaturas restantes.
+- Bajas calculadas por backend a partir de los supervivientes reportados.
 - Control final del sistema.
 - XP o enhancements narrativos si aplica.
 - Notas narrativas.
 - Duración de bloqueo posterior.
+
+Al aplicar el resultado:
+
+- Las unidades con `0` supervivientes pasan a `destroyed`.
+- Las unidades de la faccion que conserva/controla el sistema quedan `ready` en el sistema.
+- Las unidades supervivientes que pierden el sistema se retiran al sistema controlado mas cercano de su faccion si existe.
+- Si no hay ruta de retirada valida, quedan en estado `retreat_pending` para que el admin las coloque o resuelva narrativamente.
 
 ### 8.6 Visibilidad del movimiento
 
@@ -852,17 +891,96 @@ Cuando `now() >= finishes_at`:
 
 - Backend marca la cola como `completed`.
 - Crea una fila nueva en `campaign_units` en la capital.
+- La fila se crea con `quantity = unit_templates.default_quantity` y `starting_quantity = unit_templates.default_quantity`.
 - La unidad queda `ready` y disponible para movimiento.
 - Frontend actualiza por Realtime o refetch.
 
 ### 9.6 Las bajas
 
-Por ahora, si tropas mueren en batalla:
+Si una unidad sufre bajas en batalla:
 
-- Desaparecen.
-- Se eliminan mediante reporte de batalla confirmado o edición admin.
-- No se automatiza sistema de heridas/reparación.
-- No se recuperan automáticamente.
+- El reporte confirmado indica cuantas miniaturas sobreviven por unidad.
+- Backend actualiza `campaign_units.quantity`.
+- Si `quantity` queda en `0`, la unidad pasa a `destroyed` y conserva `destroyed_at`.
+- No se automatiza sistema de heridas/reparacion.
+- No se recuperan automaticamente.
+
+### 9.7 Árbol tecnológico y desbloqueos de reclutamiento
+
+El reclutamiento está conectado al árbol tecnológico.
+
+V1 usa un árbol común `common-v1` para todas las facciones, pero cada facción tiene progreso independiente.
+
+Estados de una tecnología:
+
+```text
+locked
+available
+researching
+unlocked
+```
+
+Reglas:
+
+- Solo puede haber una investigación activa por facción.
+- Cada tecnología puede tener coste en Componentes tecnológicos.
+- Cada tecnología puede tener tiempo de investigación en minutos para test local.
+- Los requisitos se definen como prerequisitos entre nodos.
+- Al completarse una investigación, el nodo pasa a `unlocked`.
+- `resolve_technology_research()` completa investigaciones vencidas.
+- El frontend puede mostrar unidades bloqueadas en gris, pero el backend es quien decide si se pueden reclutar.
+
+Efectos v1:
+
+- `unlock_unit`: una tecnología permite reclutar plantillas de unidad asociadas.
+- `unlock_building`: deja preparado un edificio futuro aunque la construcción aún no esté implementada.
+- `recruitment_cost_discount`: reduce costes de reclutamiento por recurso y categoría.
+- `recruitment_time_discount`: reduce tiempo de reclutamiento por categoría.
+
+Unidades iniciales desbloqueadas sin tecnología:
+
+- Boyz.
+- Necron Warriors.
+- Cadian Shock Troops.
+- Neophyte Hybrids.
+- Intercessor Squad.
+- Poxwalkers.
+
+Unidades bloqueadas por `veteranos-guerra`:
+
+- Meganobz.
+- Immortals.
+- Skorpekh Destroyers.
+- Kasrkin.
+- Acolyte Hybrids.
+- Terminator Squad.
+- Plague Marines.
+
+Unidades bloqueadas por `motores-guerra`:
+
+- Deff Dread.
+- Leman Russ Battle Tank.
+- Achilles Ridgerunner.
+- Redemptor Dreadnought.
+- Foetid Bloat-drone.
+
+Ramas del árbol común v1:
+
+- Mando y doctrina.
+- Infantería y élite.
+- Blindados y máquinas.
+- Infraestructura.
+- Arqueotecnología.
+
+La pantalla de tecnología debe sentirse como interfaz de videojuego:
+
+- Modal grande.
+- Fondo táctico oscuro.
+- Nodos por ramas.
+- Conectores luminosos.
+- Estados visuales claros.
+- Panel lateral con descripción, coste, tiempo, requisitos y efectos.
+- Botón `Tecnología` en el dock de mando.
 
 ---
 
@@ -971,7 +1089,7 @@ Tabla `missions` guarda URL pública/privada según diseño.
 Siempre visible:
 
 ```text
-Suministro vital: 120 | Mineral: 85 | Piedra ancestral: 8 | Uridium: 14
+Suministro vital: 120 | Mineral: 85 | Piedra ancestral: 8 | Uridium: 14 | Componentes tecnológicos: 16
 ```
 
 Debe tener iconos bonitos.
@@ -995,6 +1113,8 @@ Producción diaria: +2
 Uridium: 14
 Producción diaria: +4
 
+Componentes tecnológicos: 16
+
 Cadencia de producción: cada 24 horas
 ```
 
@@ -1007,9 +1127,9 @@ Reliquias:
 - Estandarte de la Cruzada Perdida
 - Núcleo de Piedra Ancestral
 
-Tecnología:
-- Auspex orbital nivel I
-- Forja de blindajes ligeros
+Tecnologías desbloqueadas:
+- Doctrina de campaña
+- Entrenamiento de línea
 ```
 
 ### 12.3 Producción
@@ -1042,6 +1162,7 @@ Puede:
 - Subir misiones.
 - Editar recursos de facciones.
 - Crear/editar/borrar tropas.
+- Inspeccionar y corregir progreso tecnológico.
 - Resolver batallas.
 - Confirmar reportes de batalla.
 - Añadir XP.
@@ -1059,6 +1180,7 @@ Puede:
 - Ver tropas propias.
 - Ver movimientos propios.
 - Reclutar unidades disponibles.
+- Investigar tecnologías disponibles.
 - Mover tropas propias.
 - Ver misiones públicas.
 - Ver paneles de sus sistemas.
@@ -1082,7 +1204,7 @@ UPDATE faction_resources SET uridium = uridium - 3;
 Debe llamar a una función segura:
 
 ```text
-create_movement_order(unit_ids, path_system_ids)
+create_movement_order(unit_selections, path_system_ids)
 ```
 
 El backend calcula y valida.
@@ -1092,12 +1214,15 @@ El backend calcula y valida.
 Crear funciones RPC o endpoints equivalentes:
 
 ```text
-create_movement_order(unit_ids, path_system_ids)
+create_movement_order(unit_selections, path_system_ids)
 recruit_unit(unit_template_id, quantity)
+start_technology_research(technology_node_id)
 resolve_resource_ticks()
 resolve_movement_orders()
 resolve_recruitment_queue()
+resolve_technology_research()
 submit_battle_report(conflict_id, report_payload)
+merge_campaign_units(unit_ids)
 admin_confirm_battle_report(conflict_id, final_payload)
 admin_resolve_battle(conflict_id, winner_faction_id, blocked_days)
 admin_update_system_control(system_id, faction_id)
@@ -1125,7 +1250,18 @@ Para reclutamiento:
 - Recursos suficientes.
 - Coste correcto.
 - Requisitos cumplidos.
+- Tecnología requerida desbloqueada.
+- Descuentos tecnológicos aplicados por backend.
 - Insert seguro en cola.
+
+Para tecnología:
+
+- Facción correcta.
+- Nodo existente y disponible.
+- Prerequisitos desbloqueados.
+- Componentes tecnológicos suficientes.
+- Solo una investigación activa por facción.
+- `finishes_at` calculado por backend.
 
 Para reportes de batalla:
 
@@ -1149,6 +1285,8 @@ Registrar acciones importantes:
 - Movimiento completado.
 - Reclutamiento iniciado.
 - Reclutamiento completado.
+- Investigación tecnológica iniciada.
+- Investigación tecnológica completada.
 - Tick de recursos aplicado.
 - Conflicto creado.
 - Reporte de batalla enviado.
@@ -1171,6 +1309,7 @@ Registrar acciones importantes:
 - Recursos propios.
 - Órdenes de movimiento propias.
 - Cola de reclutamiento propia.
+- Progreso tecnológico propio.
 - Reportes de batalla propios.
 - Estado público de sistemas.
 - Cambios de control.
@@ -1195,6 +1334,7 @@ Cuando el jugador abre la app o paneles importantes, el backend puede ejecutar:
 resolve_resource_ticks()
 resolve_movement_orders()
 resolve_recruitment_queue()
+resolve_technology_research()
 ```
 
 Así, aunque un cron se retrase, el estado se corrige.
@@ -1285,11 +1425,11 @@ faction_resources
 - minerals integer default 0
 - ancestral_stone integer default 0
 - uridium integer default 0
-- technology integer default 0
+- technology integer default 0 -- Componentes tecnológicos
 - updated_at timestamptz
 ```
 
-Aunque Tecnología sea secundaria/futura, se puede dejar campo.
+`technology` representa Componentes tecnológicos y se usa principalmente para el árbol tecnológico.
 
 ### 16.7 system_production
 
@@ -1300,7 +1440,7 @@ system_production
 - minerals_per_tick integer default 0
 - ancestral_stone_per_tick integer default 0
 - uridium_per_tick integer default 0
-- technology_per_tick integer default 0
+- technology_per_tick integer default 0 -- debe permanecer en 0; los Componentes tecnológicos no son producción planetaria
 ```
 
 La cadencia global de producción se puede guardar en una tabla de configuración:
@@ -1327,19 +1467,22 @@ campaign_units
 - name text
 - category text
 - points integer
-- quantity integer default 1
+- quantity integer default 1 -- miniaturas actuales
+- starting_quantity integer default 1 -- tamano de referencia de esta fila
+- parent_unit_id uuid nullable references campaign_units(id)
+- destroyed_at timestamptz nullable
 - experience integer default 0
 - rank text nullable
 - enhancement_text text nullable
 - notes text nullable
 - current_system_id uuid nullable references systems(id)
-- status text check in ('ready', 'moving', 'in_war')
+- status text check in ('ready', 'moving', 'in_war', 'destroyed', 'retreat_pending')
 - is_visible_publicly boolean default false
 - created_at timestamptz
 - updated_at timestamptz
 ```
 
-Cada fila representa una unidad Warhammer concreta movible en el mapa.
+Cada fila representa una unidad Warhammer concreta movible en el mapa. Al separar miniaturas para mover solo parte de una unidad, backend crea una nueva fila hija con `parent_unit_id`; al fusionar unidades compatibles, una fila absorbe a las otras.
 
 ### 16.9 movement_order_units
 
@@ -1347,6 +1490,7 @@ Cada fila representa una unidad Warhammer concreta movible en el mapa.
 movement_order_units
 - movement_order_id uuid references movement_orders(id)
 - unit_id uuid references campaign_units(id)
+- quantity_at_departure integer
 - created_at timestamptz
 - primary key (movement_order_id, unit_id)
 ```
@@ -1360,16 +1504,90 @@ unit_templates
 - name text
 - category text
 - points integer
+- default_quantity integer default 1
 - supply_cost integer
 - minerals_cost integer
 - ancestral_stone_cost integer
 - uridium_cost integer default 0
 - technology_cost integer default 0
 - recruitment_time_seconds integer
+- required_technology_node_id uuid nullable references technology_nodes(id)
 - requirements jsonb nullable
 - notes text nullable
 - is_available boolean default true
 ```
+
+### 16.10.1 technology_nodes
+
+```sql
+technology_nodes
+- id uuid primary key
+- slug text unique
+- tree_key text
+- name text
+- description text
+- branch text
+- tier integer
+- position_x integer
+- position_y integer
+- cost_technology integer
+- research_time_seconds integer
+- icon_key text nullable
+- effect_summary text nullable
+- is_starter boolean default false
+- created_at timestamptz
+```
+
+### 16.10.2 technology_prerequisites
+
+```sql
+technology_prerequisites
+- technology_node_id uuid references technology_nodes(id)
+- required_node_id uuid references technology_nodes(id)
+- primary key (technology_node_id, required_node_id)
+```
+
+### 16.10.3 faction_technologies
+
+```sql
+faction_technologies
+- faction_id uuid references factions(id)
+- technology_node_id uuid references technology_nodes(id)
+- status text check in ('available', 'researching', 'unlocked')
+- started_at timestamptz nullable
+- finishes_at timestamptz nullable
+- unlocked_at timestamptz nullable
+- primary key (faction_id, technology_node_id)
+```
+
+### 16.10.4 technology_effects
+
+```sql
+technology_effects
+- id uuid primary key
+- technology_node_id uuid references technology_nodes(id)
+- effect_type text
+- payload jsonb
+- created_at timestamptz
+```
+
+Los efectos se consultan al calcular acciones. No se copian como datos permanentes en la facción salvo que una regla futura lo necesite.
+
+### 16.10.5 building_templates
+
+```sql
+building_templates
+- id uuid primary key
+- slug text unique
+- name text
+- description text
+- category text
+- required_technology_node_id uuid nullable references technology_nodes(id)
+- is_available boolean default true
+- created_at timestamptz
+```
+
+La construcción aún no está implementada, pero el árbol ya puede desbloquear plantillas de edificios futuros.
 
 ### 16.11 recruitment_queue
 
@@ -1583,10 +1801,13 @@ Funciones implementadas para backend autoritativo:
 resolve_resource_ticks()
 resolve_movement_orders()
 resolve_recruitment_queue()
+resolve_technology_research()
 recruit_unit(unit_template_id, quantity)
-create_movement_order(unit_ids, path_system_ids)
+start_technology_research(technology_node_id)
+create_movement_order(unit_selections, path_system_ids)
 submit_battle_report(conflict_id, report_payload)
-admin_resolve_battle(target_conflict_id, winner_faction_id, final_controller_faction_id, post_battle_blocked_until, narrative_notes)
+merge_campaign_units(unit_ids)
+admin_resolve_battle(target_conflict_id, winner_faction_id, final_controller_faction_id, survivors, post_battle_blocked_until, narrative_notes)
 ```
 
 Supabase Studio en `http://127.0.0.1:54323` es la herramienta recomendada para ver y editar la base local durante desarrollo.
@@ -1610,6 +1831,7 @@ Contiene:
 - Barra superior de recursos.
 - Mapa PixiJS fullscreen.
 - Botón/panel de reclutamiento.
+- Botón/panel de tecnología.
 - Botón/panel de tropas.
 - Botón/panel de recursos.
 - Panel lateral de sistema.
@@ -1638,8 +1860,23 @@ Muestra:
 - Catálogo de unidades.
 - Costes.
 - Tiempo.
+- Requisitos tecnológicos.
+- Unidades bloqueadas mostradas en gris con su requisito.
 - Cola activa.
 - Cuenta atrás.
+
+### 17.4.1 Panel de tecnología
+
+Muestra:
+
+- Árbol tecnológico común `common-v1`.
+- Progreso propio de la facción.
+- Coste en Componentes tecnológicos.
+- Tiempo de investigación.
+- Requisitos entre nodos.
+- Efectos y desbloqueos.
+- Estado visual: bloqueada, disponible, investigando, desbloqueada.
+- Botón para iniciar investigación mediante RPC segura.
 
 ### 17.5 Panel de recursos
 
@@ -1648,7 +1885,7 @@ Muestra:
 - Recursos actuales.
 - Producción diaria.
 - Cadencia temporal de producción.
-- Sistemas que producen.
+- Sistemas que producen recursos planetarios.
 - Reliquias.
 - Tecnología.
 - Objetos especiales.
@@ -1924,9 +2161,21 @@ Sin login todavía.
 - Unit templates.
 - Menú de reclutamiento.
 - Descuento de recursos vía RPC.
+- Validación de tecnologías requeridas.
 - Cola temporizada.
 - Cron/lazy resolve.
 - Aparición en capital.
+
+### Fase 5.5: Árbol tecnológico
+
+- Componentes tecnológicos como quinto recurso.
+- Tabla de nodos, prerequisitos, progreso por facción y efectos.
+- Pantalla visual de árbol tecnológico.
+- `start_technology_research()`.
+- `resolve_technology_research()`.
+- Desbloqueo real de unidades reclutables.
+- Bonos pasivos de coste y tiempo de reclutamiento.
+- Catálogo mínimo de edificios futuros desbloqueables.
 
 ### Fase 6: Tropas y movimiento
 
@@ -1969,31 +2218,12 @@ Sin login todavía.
 ### Fase 10: Futuro
 
 - Espionaje.
-- Tecnología.
 - Reliquias con efectos.
 - Mejoras de sistemas.
 - Construcciones.
 - Eventos narrativos.
 - Diplomacia.
 - Historial de campaña público.
-
----
-
-## 22. No objetivos actuales
-
-No implementar por ahora:
-
-- Editor interno de mapas narrativos.
-- Simulador de combate de Warhammer 40K.
-- Automatización de bajas.
-- Sistema complejo de heridas/reparación.
-- Espionaje.
-- IA de enemigos.
-- Generación procedural completa del mapa de campaña.
-- Mercado entre jugadores.
-- Monetización.
-- Uso público.
-- Integración oficial con Games Workshop.
 
 ---
 
@@ -2020,7 +2250,7 @@ Usar estos nombres de recursos:
 - `Mineral`
 - `Piedra ancestral`
 - `Uridium`
-- `Tecnología` como recurso secundario/futuro
+- `Componentes tecnológicos`
 
 Estados de sistema:
 
@@ -2058,6 +2288,14 @@ Estados de movimiento:
 moving
 arrived
 cancelled
+```
+
+Estados de tecnología:
+
+```text
+available
+researching
+unlocked
 ```
 
 ---
@@ -2098,9 +2336,11 @@ Construir una aplicación web privada de campaña Warhammer 40K con:
   - Suministro vital,
   - Mineral,
   - Piedra ancestral,
-  - Uridium.
+  - Uridium,
+  - Componentes tecnológicos.
 - Producción diaria por sistemas controlados mediante tick backend de 24h.
 - Reclutamiento temporizado.
+- Árbol tecnológico con desbloqueo de unidades, edificios futuros y bonos.
 - Movimiento temporizado.
 - Reportes de batalla por jugadores/admin.
 - Sistemas bloqueados mientras haya batalla pendiente.

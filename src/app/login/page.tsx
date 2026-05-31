@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { clearSupabaseAuthStorage, getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 const localUsers = [
   "admin@rol40k.local",
@@ -35,6 +35,7 @@ export default function LoginPage() {
     }
 
     setIsSubmitting(true);
+    clearSupabaseAuthStorage();
     const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
     setIsSubmitting(false);
 

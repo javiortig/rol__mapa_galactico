@@ -8,10 +8,18 @@ import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
 import { ResourceAmount, ResourceIcon, resourceLabels } from "@/components/ui/resource-icon";
 import { canUseRecruitmentRpc, recruitUnit } from "@/features/recruitment/api/recruitment-api";
+import {
+  getBaseRecruitmentCost,
+  getRecruitmentCost,
+  getRecruitmentDuration,
+  getRequiredTechnologyName,
+  getVisibleRecruitmentCostResources,
+  isUnitTemplateUnlocked
+} from "@/features/technology/lib/technology-state";
 import { formatCountdown } from "@/lib/time";
 import type { CampaignSnapshot, FactionResources, ResourceKey, UnitTemplate } from "@/domain/campaign";
 
-const costResources = ["supply", "minerals", "ancestralStone", "uridium"] as const;
+const resourceSummaryKeys: ResourceKey[] = ["supply", "minerals", "ancestralStone", "uridium", "technology"];
 
 export function RecruitmentModal({
   snapshot,
@@ -37,7 +45,14 @@ export function RecruitmentModal({
   const selectedTemplate = templates.find((template) => template.id === selectedTemplateId) ?? templates[0] ?? null;
   const queue = snapshot.recruitmentQueue.filter((item) => item.factionId === snapshot.currentUser.factionId);
   const rpcReady = canUseRecruitmentRpc();
-  const hasResources = selectedTemplate && resources ? canAfford(resources, selectedTemplate, quantity) : false;
+  const selectedTemplateUnlocked = selectedTemplate ? isUnitTemplateUnlocked(snapshot, selectedTemplate) : false;
+  const hasResources = selectedTemplate && resources ? canAfford(snapshot, resources, selectedTemplate, quantity) : false;
+  const canRecruitSelected = Boolean(selectedTemplate && selectedTemplateUnlocked && hasResources);
+  const selectedCostResources = selectedTemplate ? getVisibleRecruitmentCostResources(snapshot, selectedTemplate) : [];
+  const selectedRequiredTechnologyName = selectedTemplate
+    ? getRequiredTechnologyName(snapshot, selectedTemplate.requiredTechnologyNodeId)
+    : null;
+  const selectedDurationSeconds = selectedTemplate ? getRecruitmentDuration(snapshot, selectedTemplate, quantity) : 0;
 
   const mutation = useMutation({
     mutationFn: () => {
@@ -82,14 +97,20 @@ export function RecruitmentModal({
             <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
               {templates.map((template) => {
                 const selected = template.id === selectedTemplate?.id;
-                const affordable = resources ? canAfford(resources, template, quantity) : false;
+                const unlocked = isUnitTemplateUnlocked(snapshot, template);
+                const affordable = resources ? canAfford(snapshot, resources, template, quantity) : false;
+                const requiredTechnologyName = getRequiredTechnologyName(snapshot, template.requiredTechnologyNodeId);
+                const visibleCostResources = getVisibleRecruitmentCostResources(snapshot, template);
+                const durationSeconds = getRecruitmentDuration(snapshot, template, 1);
 
                 return (
                   <button
                     className={`rounded-lg border p-4 text-left transition ${
                       selected
                         ? "border-cyan-200/55 bg-cyan-300/12 shadow-[0_0_24px_rgba(34,211,238,0.14)]"
-                        : "border-cyan-200/15 bg-slate-950/35 hover:border-cyan-200/35"
+                        : unlocked
+                          ? "border-cyan-200/15 bg-slate-950/35 hover:border-cyan-200/35"
+                          : "border-slate-500/20 bg-slate-950/25 opacity-70 hover:border-violet-200/25"
                     }`}
                     key={template.id}
                     onClick={() => setSelectedTemplateId(template.id)}
@@ -98,25 +119,36 @@ export function RecruitmentModal({
                     <div className="mb-3 flex items-start justify-between gap-3">
                       <div>
                         <div className="font-semibold text-cyan-50">{template.name}</div>
-                        <div className="mt-1 text-xs text-slate-400">{template.points} pts</div>
+                        <div className="mt-1 text-xs text-slate-400">
+                          {template.points} pts · {template.defaultQuantity} miniaturas
+                        </div>
                       </div>
-                      <Badge tone={affordable ? "cyan" : "rose"}>{template.category}</Badge>
+                      <Badge tone={!unlocked ? "violet" : affordable ? "cyan" : "rose"}>
+                        {!unlocked ? "Tecnologia" : template.category}
+                      </Badge>
                     </div>
 
                     <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
-                      {costResources.map((resource) => (
+                      {visibleCostResources.map((resource) => (
                         <CostPill
                           key={resource}
                           resource={resource}
-                          value={getTemplateCost(template, resource)}
+                          baseValue={getBaseRecruitmentCost(template, resource)}
+                          value={getRecruitmentCost(snapshot, template, resource)}
                         />
                       ))}
                     </div>
 
+                    {!unlocked && requiredTechnologyName ? (
+                      <div className="mb-3 rounded border border-violet-300/20 bg-violet-400/8 px-2 py-1 text-xs text-violet-100">
+                        Requiere {requiredTechnologyName}
+                      </div>
+                    ) : null}
+
                     <div className="flex items-center justify-between gap-3 text-xs text-slate-400">
                       <span className="inline-flex items-center gap-1.5">
                         <Clock3 size={13} />
-                        {formatDuration(template.recruitmentTimeSeconds)}
+                        {formatDuration(durationSeconds)}
                       </span>
                       <span>{template.notes}</span>
                     </div>
@@ -134,7 +166,10 @@ export function RecruitmentModal({
                   <div>
                     <div className="text-lg font-semibold text-slate-100">{selectedTemplate.name}</div>
                     <div className="mt-1 text-sm text-slate-400">
-                      {selectedTemplate.category} · {selectedTemplate.points * quantity} pts
+                      {selectedTemplate.category} · {selectedTemplate.points * quantity} pts · {selectedTemplate.defaultQuantity * quantity} miniaturas
+                    </div>
+                    <div className="mt-1 text-xs text-slate-500">
+                      Tiempo estimado: {formatDuration(selectedDurationSeconds)}
                     </div>
                   </div>
 
@@ -161,29 +196,44 @@ export function RecruitmentModal({
                     </Button>
                   </div>
 
+                  {!selectedTemplateUnlocked && selectedRequiredTechnologyName ? (
+                    <div className="rounded-md border border-violet-300/25 bg-violet-400/10 p-3 text-sm text-violet-100">
+                      Requiere investigar {selectedRequiredTechnologyName}.
+                    </div>
+                  ) : null}
+
                   <div className="space-y-2">
-                    {costResources.map((resource) => (
+                    {selectedCostResources.map((resource) => {
+                      const baseValue = getBaseRecruitmentCost(selectedTemplate, resource) * quantity;
+                      const value = getRecruitmentCost(snapshot, selectedTemplate, resource) * quantity;
+                      const enough = resources && hasEnough(resources, resource, value);
+
+                      return (
                       <div className="flex items-center justify-between text-sm" key={resource}>
                         <span className="text-slate-400">{resourceLabels[resource]}</span>
-                        <ResourceAmount
-                          className={resources && hasEnough(resources, resource, getTemplateCost(selectedTemplate, resource) * quantity) ? "text-slate-100" : "text-rose-100"}
-                          resource={resource}
-                          value={getTemplateCost(selectedTemplate, resource) * quantity}
-                        />
+                        <span className="inline-flex items-center gap-2">
+                          {baseValue !== value ? <span className="text-xs text-slate-500 line-through">{baseValue}</span> : null}
+                          <ResourceAmount
+                            className={enough ? "text-slate-100" : "text-rose-100"}
+                            resource={resource}
+                            value={value}
+                          />
+                        </span>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
 
                   <Button
                     className="w-full"
-                    disabled={!rpcReady || !hasResources || mutation.isPending}
+                    disabled={!rpcReady || !canRecruitSelected || mutation.isPending}
                     onClick={() => mutation.mutate()}
                   >
                     {mutation.isPending ? "Enviando orden..." : "Reclutar"}
                   </Button>
 
                   {mutation.error ? <p className="text-sm text-rose-200">{mutation.error.message}</p> : null}
-                  {!hasResources ? <p className="text-sm text-rose-200">Recursos insuficientes.</p> : null}
+                  {selectedTemplateUnlocked && !hasResources ? <p className="text-sm text-rose-200">Recursos insuficientes.</p> : null}
                 </div>
               ) : (
                 <p className="mt-3 text-sm text-slate-400">No hay unidades disponibles.</p>
@@ -221,8 +271,8 @@ export function RecruitmentModal({
 
 function ResourceSummary({ resources }: { resources?: FactionResources }) {
   return (
-    <div className="mb-4 grid grid-cols-2 gap-2 md:grid-cols-4">
-      {costResources.map((resource) => (
+    <div className="mb-4 grid grid-cols-2 gap-2 md:grid-cols-5">
+      {resourceSummaryKeys.map((resource) => (
         <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 p-3" key={resource}>
           <div className="mb-2 flex items-center gap-2 text-[11px] text-slate-400">
             <ResourceIcon className="size-5" resource={resource} />
@@ -237,37 +287,36 @@ function ResourceSummary({ resources }: { resources?: FactionResources }) {
 
 function CostPill({
   resource,
+  baseValue,
   value
 }: {
-  resource: Exclude<ResourceKey, "technology">;
+  resource: ResourceKey;
+  baseValue: number;
   value: number;
 }) {
   return (
     <span className="inline-flex items-center justify-between gap-2 rounded border border-cyan-200/10 bg-slate-950/45 px-2 py-1 text-slate-200">
       <ResourceIcon className="size-4" resource={resource} />
-      {value}
+      <span className="inline-flex items-center gap-1.5">
+        {baseValue !== value ? <span className="text-[11px] text-slate-500 line-through">{baseValue}</span> : null}
+        {value}
+      </span>
     </span>
   );
 }
 
-function getTemplateCost(template: UnitTemplate, resource: Exclude<ResourceKey, "technology">) {
-  const costs = {
-    supply: template.supplyCost,
-    minerals: template.mineralsCost,
-    ancestralStone: template.ancestralStoneCost,
-    uridium: template.uridiumCost
-  };
-
-  return costs[resource];
-}
-
-function canAfford(resources: FactionResources, template: UnitTemplate, quantity: number) {
-  return costResources.every((resource) =>
-    hasEnough(resources, resource, getTemplateCost(template, resource) * quantity)
+function canAfford(
+  snapshot: CampaignSnapshot,
+  resources: FactionResources,
+  template: UnitTemplate,
+  quantity: number
+) {
+  return getVisibleRecruitmentCostResources(snapshot, template).every((resource) =>
+    hasEnough(resources, resource, getRecruitmentCost(snapshot, template, resource) * quantity)
   );
 }
 
-function hasEnough(resources: FactionResources, resource: Exclude<ResourceKey, "technology">, value: number) {
+function hasEnough(resources: FactionResources, resource: ResourceKey, value: number) {
   return resources[resource] >= value;
 }
 

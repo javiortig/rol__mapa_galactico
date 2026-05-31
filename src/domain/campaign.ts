@@ -2,11 +2,13 @@ export type Role = "admin" | "player" | "spectator";
 
 export type SystemStatus = "neutral" | "controlled" | "war";
 
-export type UnitStatus = "ready" | "moving" | "in_war";
+export type UnitStatus = "ready" | "moving" | "in_war" | "destroyed" | "retreat_pending";
 
 export type RecruitmentStatus = "queued" | "completed" | "cancelled";
 
 export type MovementStatus = "moving" | "arrived" | "cancelled";
+
+export type TechnologyStatus = "available" | "researching" | "unlocked";
 
 export type StarClass = "blue" | "white" | "yellow" | "orange" | "red" | "violet" | "green";
 
@@ -83,16 +85,25 @@ export interface CampaignUnit {
   category: UnitCategory;
   points: number;
   quantity: number;
+  startingQuantity: number;
   experience: number;
   isVisiblePublicly: boolean;
+  parentUnitId?: string | null;
+  destroyedAt?: string | null;
   rank?: string | null;
   enhancementText?: string | null;
   notes?: string | null;
 }
 
+export interface UnitMovementSelection {
+  unitId: string;
+  quantity: number;
+}
+
 export interface MovementOrder {
   id: string;
   unitIds: string[];
+  unitSelections: UnitMovementSelection[];
   factionId: string;
   fromSystemId: string;
   toSystemId: string;
@@ -122,6 +133,7 @@ export interface UnitTemplate {
   name: string;
   category: UnitCategory;
   points: number;
+  defaultQuantity: number;
   supplyCost: number;
   mineralsCost: number;
   ancestralStoneCost: number;
@@ -129,6 +141,54 @@ export interface UnitTemplate {
   technologyCost: number;
   recruitmentTimeSeconds: number;
   notes?: string | null;
+  isAvailable: boolean;
+  requiredTechnologyNodeId?: string | null;
+}
+
+export interface TechnologyNode {
+  id: string;
+  slug: string;
+  treeKey: string;
+  name: string;
+  description: string;
+  branch: string;
+  tier: number;
+  positionX: number;
+  positionY: number;
+  costTechnology: number;
+  researchTimeSeconds: number;
+  iconKey?: string | null;
+  effectSummary?: string | null;
+  isStarter: boolean;
+}
+
+export interface TechnologyPrerequisite {
+  technologyNodeId: string;
+  requiredNodeId: string;
+}
+
+export interface FactionTechnology {
+  factionId: string;
+  technologyNodeId: string;
+  status: TechnologyStatus;
+  startedAt?: string | null;
+  finishesAt?: string | null;
+  unlockedAt?: string | null;
+}
+
+export interface TechnologyEffect {
+  id: string;
+  technologyNodeId: string;
+  effectType: string;
+  payload: Record<string, unknown>;
+}
+
+export interface BuildingTemplate {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  requiredTechnologyNodeId?: string | null;
   isAvailable: boolean;
 }
 
@@ -150,6 +210,8 @@ export interface BattleReport {
   winnerFactionId?: string | null;
   finalControllerFactionId?: string | null;
   status: "submitted" | "auto_confirmed" | "admin_confirmed" | "disputed" | "rejected";
+  casualties?: Record<string, number> | null;
+  survivors?: Record<string, number> | null;
   narrativeNotes?: string | null;
 }
 
@@ -181,6 +243,11 @@ export interface CampaignSnapshot {
   movements: MovementOrder[];
   unitTemplates: UnitTemplate[];
   recruitmentQueue: RecruitmentQueueItem[];
+  technologyNodes: TechnologyNode[];
+  technologyPrerequisites: TechnologyPrerequisite[];
+  factionTechnologies: FactionTechnology[];
+  technologyEffects: TechnologyEffect[];
+  buildingTemplates: BuildingTemplate[];
   conflicts: Conflict[];
   battleReports: BattleReport[];
   missions: Mission[];

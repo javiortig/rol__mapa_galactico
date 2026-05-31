@@ -1,9 +1,11 @@
 import type {
   BattleReport,
+  BuildingTemplate,
   CampaignUnit,
   CampaignSnapshot,
   Conflict,
   Faction,
+  FactionTechnology,
   FactionResources,
   Mission,
   MovementOrder,
@@ -13,10 +15,18 @@ import type {
   StarSystem,
   SystemEdge,
   SystemSpecialObject,
+  TechnologyEffect,
+  TechnologyNode,
+  TechnologyPrerequisite,
   UnitCategory,
+  UnitMovementSelection,
   UnitTemplate
 } from "@/domain/campaign";
-import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import {
+  clearSupabaseAuthStorage,
+  getSupabaseBrowserClient,
+  isStaleSupabaseRefreshTokenError
+} from "@/lib/supabase/client";
 import { mockCampaignSnapshot } from "@/mocks/campaign-data";
 
 type DbRow = Record<string, unknown>;
@@ -36,19 +46,20 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
     return mockCampaignSnapshot;
   }
 
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return mockCampaignSnapshot;
-  }
-
   try {
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return mockCampaignSnapshot;
+    }
+
     await Promise.allSettled([
       supabase.rpc("resolve_resource_ticks"),
       supabase.rpc("resolve_movement_orders"),
-      supabase.rpc("resolve_recruitment_queue")
+      supabase.rpc("resolve_recruitment_queue"),
+      supabase.rpc("resolve_technology_research")
     ]);
 
     const [
@@ -66,6 +77,11 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       movementUnitsResult,
       unitTemplatesResult,
       recruitmentQueueResult,
+      technologyNodesResult,
+      technologyPrerequisitesResult,
+      factionTechnologiesResult,
+      technologyEffectsResult,
+      buildingTemplatesResult,
       conflictsResult,
       battleReportsResult,
       missionsResult
@@ -84,6 +100,11 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       supabase.from("movement_order_units").select("*"),
       supabase.from("unit_templates").select("*").order("name"),
       supabase.from("recruitment_queue").select("*, unit_templates(name)").order("finishes_at"),
+      supabase.from("technology_nodes").select("*").order("position_y").order("position_x"),
+      supabase.from("technology_prerequisites").select("*"),
+      supabase.from("faction_technologies").select("*"),
+      supabase.from("technology_effects").select("*"),
+      supabase.from("building_templates").select("*").order("name"),
       supabase.from("conflicts").select("*").order("created_at"),
       supabase.from("battle_reports").select("*").order("created_at"),
       supabase.from("missions").select("*").order("title")
@@ -144,11 +165,22 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       ),
       unitTemplates: getRows(unitTemplatesResult, "unit_templates").map(mapUnitTemplate),
       recruitmentQueue: getRows(recruitmentQueueResult, "recruitment_queue").map(mapRecruitmentQueueItem),
+      technologyNodes: getRows(technologyNodesResult, "technology_nodes").map(mapTechnologyNode),
+      technologyPrerequisites: getRows(technologyPrerequisitesResult, "technology_prerequisites").map(mapTechnologyPrerequisite),
+      factionTechnologies: getRows(factionTechnologiesResult, "faction_technologies").map(mapFactionTechnology),
+      technologyEffects: getRows(technologyEffectsResult, "technology_effects").map(mapTechnologyEffect),
+      buildingTemplates: getRows(buildingTemplatesResult, "building_templates").map(mapBuildingTemplate),
       conflicts: getRows(conflictsResult, "conflicts").map(mapConflict),
       battleReports: getRows(battleReportsResult, "battle_reports").map(mapBattleReport),
       missions: getRows(missionsResult, "missions").map(mapMission)
     };
   } catch (error) {
+    if (isStaleSupabaseRefreshTokenError(error)) {
+      clearSupabaseAuthStorage();
+      console.warn("Sesion local de Supabase caducada tras reset; se limpio el token local.");
+      return mockCampaignSnapshot;
+    }
+
     console.warn("No se pudo cargar Supabase; usando datos mock.", error);
     return mockCampaignSnapshot;
   }
@@ -255,8 +287,11 @@ function mapCampaignUnit(row: Record<string, unknown>): CampaignUnit {
     category: row.category as CampaignUnit["category"],
     points: Number(row.points ?? 0),
     quantity: Number(row.quantity ?? 1),
+    startingQuantity: Number(row.starting_quantity ?? row.quantity ?? 1),
     experience: Number(row.experience ?? 0),
     isVisiblePublicly: Boolean(row.is_visible_publicly),
+    parentUnitId: (row.parent_unit_id as string | null) ?? null,
+    destroyedAt: (row.destroyed_at as string | null) ?? null,
     unitTemplateId: (row.unit_template_id as string | null) ?? null,
     rank: (row.rank as string | null) ?? null,
     enhancementText: (row.enhancement_text as string | null) ?? null,
@@ -267,14 +302,16 @@ function mapCampaignUnit(row: Record<string, unknown>): CampaignUnit {
 function mapMovementUnit(row: Record<string, unknown>) {
   return {
     movementOrderId: row.movement_order_id as string,
-    unitId: row.unit_id as string
+    unitId: row.unit_id as string,
+    quantity: Number(row.quantity_at_departure ?? 1)
   };
 }
 
-function mapMovement(row: Record<string, unknown>, movementUnits: Array<{ unitId: string }> = []): MovementOrder {
+function mapMovement(row: Record<string, unknown>, movementUnits: UnitMovementSelection[] = []): MovementOrder {
   return {
     id: row.id as string,
     unitIds: movementUnits.map((item) => item.unitId),
+    unitSelections: movementUnits,
     factionId: row.faction_id as string,
     fromSystemId: row.from_system_id as string,
     toSystemId: row.to_system_id as string,
@@ -297,6 +334,7 @@ function mapUnitTemplate(row: Record<string, unknown>): UnitTemplate {
     name: row.name as string,
     category: row.category as UnitCategory,
     points: Number(row.points ?? 0),
+    defaultQuantity: Number(row.default_quantity ?? 1),
     supplyCost: Number(row.supply_cost ?? 0),
     mineralsCost: Number(row.minerals_cost ?? 0),
     ancestralStoneCost: Number(row.ancestral_stone_cost ?? 0),
@@ -304,6 +342,64 @@ function mapUnitTemplate(row: Record<string, unknown>): UnitTemplate {
     technologyCost: Number(row.technology_cost ?? 0),
     recruitmentTimeSeconds: Number(row.recruitment_time_seconds ?? 0),
     notes: (row.notes as string | null) ?? null,
+    isAvailable: Boolean(row.is_available),
+    requiredTechnologyNodeId: (row.required_technology_node_id as string | null) ?? null
+  };
+}
+
+function mapTechnologyNode(row: Record<string, unknown>): TechnologyNode {
+  return {
+    id: row.id as string,
+    slug: row.slug as string,
+    treeKey: row.tree_key as string,
+    name: row.name as string,
+    description: row.description as string,
+    branch: row.branch as string,
+    tier: Number(row.tier ?? 0),
+    positionX: Number(row.position_x ?? 0),
+    positionY: Number(row.position_y ?? 0),
+    costTechnology: Number(row.cost_technology ?? 0),
+    researchTimeSeconds: Number(row.research_time_seconds ?? 0),
+    iconKey: (row.icon_key as string | null) ?? null,
+    effectSummary: (row.effect_summary as string | null) ?? null,
+    isStarter: Boolean(row.is_starter)
+  };
+}
+
+function mapTechnologyPrerequisite(row: Record<string, unknown>): TechnologyPrerequisite {
+  return {
+    technologyNodeId: row.technology_node_id as string,
+    requiredNodeId: row.required_node_id as string
+  };
+}
+
+function mapFactionTechnology(row: Record<string, unknown>): FactionTechnology {
+  return {
+    factionId: row.faction_id as string,
+    technologyNodeId: row.technology_node_id as string,
+    status: row.status as FactionTechnology["status"],
+    startedAt: (row.started_at as string | null) ?? null,
+    finishesAt: (row.finishes_at as string | null) ?? null,
+    unlockedAt: (row.unlocked_at as string | null) ?? null
+  };
+}
+
+function mapTechnologyEffect(row: Record<string, unknown>): TechnologyEffect {
+  return {
+    id: row.id as string,
+    technologyNodeId: row.technology_node_id as string,
+    effectType: row.effect_type as string,
+    payload: mapObject(row.payload)
+  };
+}
+
+function mapBuildingTemplate(row: Record<string, unknown>): BuildingTemplate {
+  return {
+    id: row.id as string,
+    name: row.name as string,
+    category: row.category as string,
+    description: row.description as string,
+    requiredTechnologyNodeId: (row.required_technology_node_id as string | null) ?? null,
     isAvailable: Boolean(row.is_available)
   };
 }
@@ -344,8 +440,28 @@ function mapBattleReport(row: Record<string, unknown>): BattleReport {
     winnerFactionId: (row.winner_faction_id as string | null) ?? null,
     finalControllerFactionId: (row.final_controller_faction_id as string | null) ?? null,
     status: row.status as BattleReport["status"],
+    casualties: mapNumberRecord(row.casualties),
+    survivors: mapNumberRecord(row.survivors),
     narrativeNotes: (row.narrative_notes as string | null) ?? null
   };
+}
+
+function mapNumberRecord(value: unknown): Record<string, number> | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).map(([key, amount]) => [key, Number(amount ?? 0)])
+  );
+}
+
+function mapObject(value: unknown): Record<string, unknown> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return {};
+  }
+
+  return value as Record<string, unknown>;
 }
 
 function mapMission(row: Record<string, unknown>): Mission {

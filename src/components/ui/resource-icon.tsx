@@ -3,6 +3,7 @@ import ancestralStoneIcon from "../../../icons/resources/acestral_stone.png";
 import uridiumIcon from "../../../icons/resources/iridium.png";
 import supplyIcon from "../../../icons/resources/life_essense.png";
 import mineralIcon from "../../../icons/resources/mineral.png";
+import technologyIcon from "../../../icons/resources/tech_component.png";
 import { cn } from "@/lib/utils";
 import type { ResourceKey } from "@/domain/campaign";
 
@@ -11,21 +12,22 @@ export const resourceLabels: Record<ResourceKey, string> = {
   minerals: "Mineral",
   ancestralStone: "Piedra ancestral",
   uridium: "Uridium",
-  technology: "Tecnología"
+  technology: "Componentes tecnologicos"
 };
 
 const resourceIcons = {
   supply: supplyIcon,
   minerals: mineralIcon,
   ancestralStone: ancestralStoneIcon,
-  uridium: uridiumIcon
+  uridium: uridiumIcon,
+  technology: technologyIcon
 };
 
 export function ResourceIcon({
   resource,
   className
 }: {
-  resource: Exclude<ResourceKey, "technology">;
+  resource: ResourceKey;
   className?: string;
 }) {
   return (
@@ -45,7 +47,7 @@ export function ResourceAmount({
   className,
   prefix
 }: {
-  resource: Exclude<ResourceKey, "technology">;
+  resource: ResourceKey;
   value: number;
   className?: string;
   prefix?: string;

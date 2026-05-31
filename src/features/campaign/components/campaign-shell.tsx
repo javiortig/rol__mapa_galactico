@@ -3,14 +3,15 @@
 import dynamic from "next/dynamic";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { AlertTriangle, Check, Clock3, Crosshair, MousePointer2, RadioTower, Route, Shield, Swords, Undo2, X } from "lucide-react";
+import { AlertTriangle, Check, Clock3, Cpu, Crosshair, Minus, MousePointer2, Plus, RadioTower, Route, Shield, Swords, Undo2, X } from "lucide-react";
 import { getCampaignSnapshot } from "@/features/campaign/api/campaign-repository";
 import { useCampaignUiStore } from "@/features/campaign/store/campaign-ui-store";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
 import { ResourceIcon, resourceLabels } from "@/components/ui/resource-icon";
-import { canUseMovementRpc, createMovementOrder } from "@/features/movement/api/movement-api";
+import { canUseMovementRpc, createMovementOrder, mergeCampaignUnits } from "@/features/movement/api/movement-api";
+import { canUseBattleReportRpc, submitBattleReport } from "@/features/battle-reports/api/battle-report-api";
 import {
   calculateRoutePlan,
   canAppendManualStep,
@@ -19,8 +20,10 @@ import {
   isSystemBlockedForMovement
 } from "@/features/movement/lib/pathfinding";
 import { RecruitmentModal } from "@/features/recruitment/components/recruitment-modal";
+import { TechnologyTreeModal } from "@/features/technology/components/technology-tree-modal";
+import { getActiveTechnologyResearch } from "@/features/technology/lib/technology-state";
 import { formatCountdown } from "@/lib/time";
-import type { CampaignSnapshot, CampaignUnit, StarSystem } from "@/domain/campaign";
+import type { CampaignSnapshot, CampaignUnit, Conflict, StarSystem, UnitMovementSelection } from "@/domain/campaign";
 
 const GalaxyMap = dynamic(
   () => import("@/features/galaxy-map/components/galaxy-map").then((mod) => mod.GalaxyMap),
@@ -30,23 +33,33 @@ const GalaxyMap = dynamic(
   }
 );
 
-const mainResources = ["supply", "minerals", "ancestralStone", "uridium"] as const;
+const mainResources = ["supply", "minerals", "ancestralStone", "uridium", "technology"] as const;
+const planetProductionResources = ["supply", "minerals", "ancestralStone", "uridium"] as const;
 
 export function CampaignShell() {
+  const queryClient = useQueryClient();
   const selectedSystemId = useCampaignUiStore((state) => state.selectedSystemId);
   const hoveredSystemId = useCampaignUiStore((state) => state.hoveredSystemId);
   const tooltipPosition = useCampaignUiStore((state) => state.tooltipPosition);
   const startMovementMode = useCampaignUiStore((state) => state.startMovementMode);
   const cancelMovementMode = useCampaignUiStore((state) => state.cancelMovementMode);
   const [recruitmentOpen, setRecruitmentOpen] = useState(false);
+  const [technologyOpen, setTechnologyOpen] = useState(false);
+  const [battleReportSystemId, setBattleReportSystemId] = useState<string | null>(null);
   const [movementOriginSystemId, setMovementOriginSystemId] = useState<string | null>(null);
-  const [movementUnitIds, setMovementUnitIds] = useState<string[]>([]);
+  const [movementUnitQuantities, setMovementUnitQuantities] = useState<Record<string, number>>({});
   const [movementRouteMode, setMovementRouteMode] = useState<"optimal" | "manual">("optimal");
   const [movementPathSystemIds, setMovementPathSystemIds] = useState<string[]>([]);
   const [movementHoverPathSystemIds, setMovementHoverPathSystemIds] = useState<string[]>([]);
   const { data } = useQuery({
     queryKey: ["campaign-snapshot"],
     queryFn: getCampaignSnapshot
+  });
+  const mergeMutation = useMutation({
+    mutationFn: mergeCampaignUnits,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
   });
 
   if (!data) {
@@ -56,6 +69,11 @@ export function CampaignShell() {
   const selectedSystem = data.systems.find(
     (system) => system.id === selectedSystemId
   );
+  const battleReportSystem = data.systems.find((system) => system.id === battleReportSystemId) ?? null;
+  const battleReportConflict =
+    battleReportSystem
+      ? data.conflicts.find((conflict) => conflict.systemId === battleReportSystem.id && conflict.status === "pending") ?? null
+      : null;
   const movementOriginSystem = data.systems.find((system) => system.id === movementOriginSystemId) ?? null;
   const movementDisplayPath =
     movementHoverPathSystemIds.length > 1 ? movementHoverPathSystemIds : movementPathSystemIds;
@@ -63,17 +81,8 @@ export function CampaignShell() {
     movementDisplayPath.length > 1 ? calculateRoutePlan(movementDisplayPath, data.edges) : null;
 
   const openMovement = (system: StarSystem) => {
-    const readyUnitIds = data.units
-      .filter(
-        (unit) =>
-          unit.factionId === data.currentUser.factionId &&
-          unit.currentSystemId === system.id &&
-          unit.status === "ready"
-      )
-      .map((unit) => unit.id);
-
     setMovementOriginSystemId(system.id);
-    setMovementUnitIds(readyUnitIds);
+    setMovementUnitQuantities({});
     setMovementRouteMode("optimal");
     setMovementPathSystemIds([system.id]);
     setMovementHoverPathSystemIds([]);
@@ -82,7 +91,7 @@ export function CampaignShell() {
 
   const closeMovement = () => {
     setMovementOriginSystemId(null);
-    setMovementUnitIds([]);
+    setMovementUnitQuantities({});
     setMovementPathSystemIds([]);
     setMovementHoverPathSystemIds([]);
     cancelMovementMode();
@@ -177,8 +186,12 @@ export function CampaignShell() {
         </div>
 
         <div className="flex min-h-0 flex-1 items-stretch justify-between gap-4 px-4 pb-4">
-          <CommandDock snapshot={data} />
+          <CommandDock onOpenTechnology={() => setTechnologyOpen(true)} snapshot={data} />
           <SystemPanel
+            mergeError={mergeMutation.error?.message}
+            mergePending={mergeMutation.isPending}
+            onMergeUnits={(unitIds) => mergeMutation.mutate(unitIds)}
+            onOpenBattleReport={(system) => setBattleReportSystemId(system.id)}
             onOpenMovement={openMovement}
             onOpenRecruitment={() => setRecruitmentOpen(true)}
             snapshot={data}
@@ -194,6 +207,15 @@ export function CampaignShell() {
       />
 
       <RecruitmentModal onClose={() => setRecruitmentOpen(false)} open={recruitmentOpen} snapshot={data} />
+      <TechnologyTreeModal onClose={() => setTechnologyOpen(false)} open={technologyOpen} snapshot={data} />
+      {battleReportSystem && battleReportConflict ? (
+        <BattleReportModal
+          conflict={battleReportConflict}
+          onClose={() => setBattleReportSystemId(null)}
+          snapshot={data}
+          system={battleReportSystem}
+        />
+      ) : null}
       {movementOriginSystem ? (
         <MovementPlanner
           activePathSystemIds={movementDisplayPath}
@@ -207,10 +229,16 @@ export function CampaignShell() {
             setMovementPathSystemIds(movementOriginSystemId ? [movementOriginSystemId] : []);
             setMovementHoverPathSystemIds([]);
           }}
-          onToggleUnit={(unitId) =>
-            setMovementUnitIds((current) =>
-              current.includes(unitId) ? current.filter((id) => id !== unitId) : [...current, unitId]
-            )
+          onSetUnitQuantity={(unitId, quantity) =>
+            setMovementUnitQuantities((current) => {
+              if (quantity <= 0) {
+                const next = { ...current };
+                delete next[unitId];
+                return next;
+              }
+
+              return { ...current, [unitId]: quantity };
+            })
           }
           onUndoPath={() => {
             setMovementPathSystemIds((current) => (current.length > 1 ? current.slice(0, -1) : current));
@@ -219,7 +247,7 @@ export function CampaignShell() {
           originSystem={movementOriginSystem}
           routeMode={movementRouteMode}
           routePlan={movementRoutePlan}
-          selectedUnitIds={movementUnitIds}
+          selectedQuantities={movementUnitQuantities}
           snapshot={data}
         />
       ) : null}
@@ -252,10 +280,22 @@ function ResourceBar({ snapshot }: { snapshot: CampaignSnapshot }) {
   );
 }
 
-function CommandDock({ snapshot }: { snapshot: CampaignSnapshot }) {
-  const ownUnits = snapshot.units.filter((unit) => unit.factionId === snapshot.currentUser.factionId);
+function CommandDock({
+  snapshot,
+  onOpenTechnology
+}: {
+  snapshot: CampaignSnapshot;
+  onOpenTechnology: () => void;
+}) {
+  const ownUnits = snapshot.units.filter(
+    (unit) => unit.factionId === snapshot.currentUser.factionId && unit.status !== "destroyed" && unit.quantity > 0
+  );
   const activeMovements = snapshot.movements.filter((movement) => movement.status === "moving");
   const pendingConflicts = snapshot.conflicts.filter((conflict) => conflict.status === "pending");
+  const activeTechnology = getActiveTechnologyResearch(snapshot);
+  const activeTechnologyNode = activeTechnology
+    ? snapshot.technologyNodes.find((node) => node.id === activeTechnology.technologyNodeId)
+    : null;
 
   return (
     <div className="pointer-events-auto hidden w-80 flex-col gap-3 self-end lg:flex">
@@ -274,9 +314,9 @@ function CommandDock({ snapshot }: { snapshot: CampaignSnapshot }) {
             <Shield size={15} />
             Tropas
           </Button>
-          <Button size="sm" variant="ghost">
-            <Clock3 size={15} />
-            Reclutar
+          <Button onClick={onOpenTechnology} size="sm" variant="ghost">
+            <Cpu size={15} />
+            Tecnologia
           </Button>
           <Button size="sm" variant="ghost">
             <Swords size={15} />
@@ -312,6 +352,14 @@ function CommandDock({ snapshot }: { snapshot: CampaignSnapshot }) {
               </div>
             </div>
           ))}
+          {activeTechnology?.finishesAt ? (
+            <div className="rounded-md border border-violet-300/20 bg-violet-400/8 p-3" key={activeTechnology.technologyNodeId}>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-violet-50">{activeTechnologyNode?.name ?? "Investigacion"}</span>
+                <Badge tone="violet">{formatCountdown(activeTechnology.finishesAt)}</Badge>
+              </div>
+            </div>
+          ) : null}
         </div>
       </Panel>
 
@@ -321,9 +369,7 @@ function CommandDock({ snapshot }: { snapshot: CampaignSnapshot }) {
           {ownUnits.slice(0, 6).map((unit) => (
             <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={unit.id}>
               <div className="font-medium text-slate-100">{unit.name}</div>
-              <div className="mt-1 text-xs text-slate-400">
-                x{unit.quantity} · {unit.points * unit.quantity} pts · {unit.status}
-              </div>
+              <div className="mt-1 text-xs text-slate-400">{formatUnitStrength(unit)} · {getUnitStatusLabel(unit.status)}</div>
             </div>
           ))}
         </div>
@@ -401,18 +447,28 @@ function GalaxyTooltip({
 function SystemPanel({
   snapshot,
   system,
+  mergeError,
+  mergePending,
+  onMergeUnits,
+  onOpenBattleReport,
   onOpenMovement,
   onOpenRecruitment
 }: {
   snapshot: CampaignSnapshot;
   system: StarSystem;
+  mergeError?: string;
+  mergePending: boolean;
+  onMergeUnits: (unitIds: string[]) => void;
+  onOpenBattleReport: (system: StarSystem) => void;
   onOpenMovement: (system: StarSystem) => void;
   onOpenRecruitment: () => void;
 }) {
   const faction = snapshot.factions.find((item) => item.id === system.controllerFactionId);
-  const relatedUnits = snapshot.units.filter((unit) => unit.currentSystemId === system.id);
+  const relatedUnits = snapshot.units.filter(
+    (unit) => unit.currentSystemId === system.id && unit.status !== "destroyed" && unit.quantity > 0
+  );
   const ownReadyUnits = relatedUnits.filter(
-    (unit) => unit.factionId === snapshot.currentUser.factionId && unit.status === "ready"
+    (unit) => unit.factionId === snapshot.currentUser.factionId && unit.status === "ready" && unit.quantity > 0
   );
   const conflict = snapshot.conflicts.find(
     (item) => item.systemId === system.id && item.status === "pending"
@@ -429,6 +485,12 @@ function SystemPanel({
     system.status !== "war" &&
     !isSystemBlockedForMovement(system) &&
     (snapshot.currentUser.role === "admin" || snapshot.currentUser.role === "player");
+  const canReport =
+    Boolean(conflict) &&
+    (snapshot.currentUser.role === "admin" ||
+      conflict?.attackerFactionId === snapshot.currentUser.factionId ||
+      conflict?.defenderFactionId === snapshot.currentUser.factionId);
+  const mergeGroups = getMergeableUnitGroups(ownReadyUnits);
 
   return (
     <Panel className="pointer-events-auto w-full max-w-md self-stretch overflow-hidden">
@@ -483,7 +545,7 @@ function SystemPanel({
           <section>
             <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Producción diaria</h2>
             <div className="grid grid-cols-2 gap-2">
-              {mainResources.map((key) => (
+              {planetProductionResources.map((key) => (
                 <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={key}>
                   <div className="mb-1 flex items-center gap-2 text-[11px] text-slate-400">
                     <ResourceIcon className="size-4" resource={key} />
@@ -503,13 +565,9 @@ function SystemPanel({
                   <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={unit.id}>
                     <div className="flex items-center justify-between gap-3">
                       <div className="text-sm font-medium text-slate-100">{unit.name}</div>
-                      <Badge tone={unit.status === "ready" ? "cyan" : unit.status === "moving" ? "amber" : "rose"}>
-                        {unit.status}
-                      </Badge>
+                      <Badge tone={getUnitStatusTone(unit.status)}>{getUnitStatusLabel(unit.status)}</Badge>
                     </div>
-                    <div className="mt-1 text-xs text-slate-400">
-                      x{unit.quantity} · {unit.points * unit.quantity} pts
-                    </div>
+                    <div className="mt-1 text-xs text-slate-400">{formatUnitStrength(unit)}</div>
                   </div>
                 ))
               ) : (
@@ -519,6 +577,35 @@ function SystemPanel({
               )}
             </div>
           </section>
+
+          {mergeGroups.length > 0 ? (
+            <section>
+              <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Reorganizar unidades</h2>
+              <div className="space-y-2">
+                {mergeGroups.map((group) => (
+                  <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={getUnitCompatibilityKey(group[0])}>
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <div className="text-sm font-medium text-slate-100">{group[0].name}</div>
+                        <div className="mt-1 text-xs text-slate-400">
+                          {group.length} grupos compatibles · {group.reduce((total, unit) => total + unit.quantity, 0)} miniaturas
+                        </div>
+                      </div>
+                      <Button
+                        disabled={mergePending}
+                        onClick={() => onMergeUnits(group.map((unit) => unit.id))}
+                        size="sm"
+                        variant="ghost"
+                      >
+                        Fusionar
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+                {mergeError ? <p className="text-xs text-rose-200">{mergeError}</p> : null}
+              </div>
+            </section>
+          ) : null}
 
           {conflict ? (
             <section>
@@ -539,8 +626,13 @@ function SystemPanel({
             </Button>
           ) : null}
           <Button
-            disabled={!canMove && system.status !== "war"}
+            disabled={system.status === "war" ? !canReport : !canMove}
             onClick={() => {
+              if (system.status === "war" && canReport) {
+                onOpenBattleReport(system);
+                return;
+              }
+
               if (canMove) {
                 onOpenMovement(system);
               }
@@ -559,10 +651,10 @@ function MovementPlanner({
   activePathSystemIds,
   snapshot,
   originSystem,
-  selectedUnitIds,
+  selectedQuantities,
   routeMode,
   routePlan,
-  onToggleUnit,
+  onSetUnitQuantity,
   onChangeRouteMode,
   onUndoPath,
   onResetPath,
@@ -571,10 +663,10 @@ function MovementPlanner({
   activePathSystemIds: string[];
   snapshot: CampaignSnapshot;
   originSystem: StarSystem;
-  selectedUnitIds: string[];
+  selectedQuantities: Record<string, number>;
   routeMode: "optimal" | "manual";
   routePlan: NonNullable<ReturnType<typeof calculateRoutePlan>> | null;
-  onToggleUnit: (unitId: string) => void;
+  onSetUnitQuantity: (unitId: string, quantity: number) => void;
   onChangeRouteMode: (mode: "optimal" | "manual") => void;
   onUndoPath: () => void;
   onResetPath: () => void;
@@ -588,17 +680,22 @@ function MovementPlanner({
         (unit) =>
           unit.factionId === snapshot.currentUser.factionId &&
           unit.currentSystemId === originSystem.id &&
-          unit.status === "ready"
+          unit.status === "ready" &&
+          unit.quantity > 0
       ),
     [originSystem.id, snapshot.currentUser.factionId, snapshot.units]
   );
   const systemById = useMemo(() => new Map(snapshot.systems.map((system) => [system.id, system])), [snapshot.systems]);
   const rpcReady = canUseMovementRpc();
-  const selectedUnits = availableUnits.filter((unit) => selectedUnitIds.includes(unit.id));
+  const selectedSelections = availableUnits.flatMap<UnitMovementSelection>((unit) => {
+    const quantity = clampInteger(selectedQuantities[unit.id] ?? 0, 0, unit.quantity);
+    return quantity > 0 ? [{ unitId: unit.id, quantity }] : [];
+  });
+  const selectedMiniatures = selectedSelections.reduce((total, selection) => total + selection.quantity, 0);
   const hasEnoughUridium = resources && routePlan ? resources.uridium >= routePlan.uridiumCost : false;
   const canConfirm =
     rpcReady &&
-    selectedUnitIds.length > 0 &&
+    selectedSelections.length > 0 &&
     Boolean(routePlan && routePlan.segmentCount > 0) &&
     Boolean(hasEnoughUridium);
 
@@ -608,7 +705,7 @@ function MovementPlanner({
         throw new Error("Selecciona una ruta valida.");
       }
 
-      return createMovementOrder(selectedUnitIds, routePlan.pathSystemIds);
+      return createMovementOrder(selectedSelections, routePlan.pathSystemIds);
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
@@ -651,8 +748,8 @@ function MovementPlanner({
           {availableUnits.map((unit) => (
             <UnitSelectionCard
               key={unit.id}
-              onToggle={() => onToggleUnit(unit.id)}
-              selected={selectedUnitIds.includes(unit.id)}
+              onSetQuantity={(quantity) => onSetUnitQuantity(unit.id, quantity)}
+              selectedQuantity={clampInteger(selectedQuantities[unit.id] ?? 0, 0, unit.quantity)}
               unit={unit}
             />
           ))}
@@ -698,8 +795,8 @@ function MovementPlanner({
         </div>
 
         <div className="mb-4 rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-xs text-slate-300">
-          {selectedUnits.length > 0
-            ? `${selectedUnits.length} unidades seleccionadas`
+          {selectedSelections.length > 0
+            ? `${selectedSelections.length} unidades · ${selectedMiniatures} miniaturas seleccionadas`
             : "Sin unidades seleccionadas"}
         </div>
 
@@ -722,32 +819,338 @@ function MovementPlanner({
 
 function UnitSelectionCard({
   unit,
-  selected,
-  onToggle
+  selectedQuantity,
+  onSetQuantity
 }: {
   unit: CampaignUnit;
-  selected: boolean;
-  onToggle: () => void;
+  selectedQuantity: number;
+  onSetQuantity: (quantity: number) => void;
 }) {
+  const selected = selectedQuantity > 0;
+
   return (
-    <button
+    <div
       className={`rounded-md border p-3 text-left transition ${
         selected
           ? "border-cyan-200/55 bg-cyan-300/12 shadow-[0_0_20px_rgba(34,211,238,0.12)]"
           : "border-cyan-200/15 bg-slate-950/35 hover:border-cyan-200/35"
       }`}
-      onClick={onToggle}
-      type="button"
     >
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="font-medium text-slate-100">{unit.name}</div>
           <div className="mt-1 text-xs text-slate-400">
-            x{unit.quantity} · {unit.points * unit.quantity} pts · {unit.category}
+            {formatUnitStrength(unit)} · {unit.category}
           </div>
         </div>
-        <Badge tone={selected ? "cyan" : "slate"}>{selected ? "Lista" : "Libre"}</Badge>
+        <Badge tone={selected ? "cyan" : "slate"}>{selected ? `${selectedQuantity}/${unit.quantity}` : "Libre"}</Badge>
       </div>
-    </button>
+
+      <div className="mt-3 flex items-center justify-between rounded-md border border-cyan-200/10 bg-slate-950/40 p-2">
+        <Button
+          disabled={selectedQuantity <= 0}
+          onClick={() => onSetQuantity(selectedQuantity - 1)}
+          size="icon"
+          variant="ghost"
+        >
+          <Minus size={15} />
+        </Button>
+        <div className="text-center">
+          <div className="text-[11px] text-slate-400">Miniaturas a mover</div>
+          <div className="text-base font-semibold text-cyan-50">{selectedQuantity}</div>
+        </div>
+        <Button
+          disabled={selectedQuantity >= unit.quantity}
+          onClick={() => onSetQuantity(selectedQuantity + 1)}
+          size="icon"
+          variant="ghost"
+        >
+          <Plus size={15} />
+        </Button>
+      </div>
+
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        <Button disabled={selectedQuantity === 0} onClick={() => onSetQuantity(0)} size="sm" variant="ghost">
+          Limpiar
+        </Button>
+        <Button disabled={selectedQuantity === unit.quantity} onClick={() => onSetQuantity(unit.quantity)} size="sm" variant="ghost">
+          Todo
+        </Button>
+      </div>
+    </div>
   );
+}
+
+function BattleReportModal({
+  snapshot,
+  system,
+  conflict,
+  onClose
+}: {
+  snapshot: CampaignSnapshot;
+  system: StarSystem;
+  conflict: Conflict;
+  onClose: () => void;
+}) {
+  const queryClient = useQueryClient();
+  const warUnits = useMemo(
+    () =>
+      snapshot.units.filter(
+        (unit) => unit.currentSystemId === system.id && unit.status === "in_war" && unit.quantity > 0
+      ),
+    [snapshot.units, system.id]
+  );
+  const factionOptions = snapshot.factions.filter(
+    (faction) => faction.id === conflict.attackerFactionId || faction.id === conflict.defenderFactionId
+  );
+  const defaultWinner =
+    factionOptions.find((faction) => faction.id === snapshot.currentUser.factionId)?.id ??
+    conflict.attackerFactionId;
+  const [winnerFactionId, setWinnerFactionId] = useState<string | null>(defaultWinner);
+  const [finalControllerFactionId, setFinalControllerFactionId] = useState<string | null>(defaultWinner);
+  const [postBlockMinutes, setPostBlockMinutes] = useState(0);
+  const [narrativeNotes, setNarrativeNotes] = useState("");
+  const [survivors, setSurvivors] = useState<Record<string, number>>(() =>
+    Object.fromEntries(warUnits.map((unit) => [unit.id, unit.quantity]))
+  );
+  const rpcReady = canUseBattleReportRpc();
+  const mutation = useMutation({
+    mutationFn: () =>
+      submitBattleReport(conflict.id, {
+        winnerFactionId,
+        finalControllerFactionId,
+        survivors,
+        postBattleBlockedUntil:
+          postBlockMinutes > 0 ? new Date(Date.now() + postBlockMinutes * 60_000).toISOString() : null,
+        narrativeNotes: narrativeNotes.trim() || null
+      }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+      onClose();
+    }
+  });
+
+  return (
+    <div className="pointer-events-auto fixed inset-0 z-50 grid place-items-center bg-black/60 px-4 py-6 backdrop-blur-sm">
+      <Panel className="flex max-h-[88vh] w-full max-w-4xl flex-col overflow-hidden">
+        <div className="flex items-center justify-between gap-4 border-b border-rose-200/15 p-5">
+          <div>
+            <div className="text-xs uppercase tracking-[0.24em] text-rose-200/70">Reporte de batalla</div>
+            <h2 className="mt-1 text-2xl font-semibold text-cyan-50">{system.name}</h2>
+          </div>
+          <Button aria-label="Cerrar reporte" onClick={onClose} size="icon" variant="ghost">
+            <X size={18} />
+          </Button>
+        </div>
+
+        <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[1fr_300px]">
+          <div className="min-h-0 overflow-y-auto p-5">
+            <div className="mb-4 grid gap-3 md:grid-cols-2">
+              {factionOptions.map((faction) => (
+                <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={faction.id}>
+                  <div className="inline-flex items-center gap-2 text-sm font-medium text-slate-100">
+                    <span className="size-2 rounded-full" style={{ backgroundColor: faction.color }} />
+                    {faction.name}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <h3 className="mb-3 text-sm font-semibold text-cyan-50">Supervivientes por unidad</h3>
+            <div className="space-y-2">
+              {warUnits.map((unit) => {
+                const value = clampInteger(survivors[unit.id] ?? unit.quantity, 0, unit.quantity);
+                const faction = snapshot.factions.find((item) => item.id === unit.factionId);
+
+                return (
+                  <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={unit.id}>
+                    <div className="mb-3 flex items-start justify-between gap-3">
+                      <div>
+                        <div className="font-medium text-slate-100">{unit.name}</div>
+                        <div className="mt-1 text-xs text-slate-400">
+                          {faction?.name ?? "Faccion"} · {unit.quantity}/{unit.startingQuantity} miniaturas actuales
+                        </div>
+                      </div>
+                      <Badge tone={value === 0 ? "rose" : value < unit.quantity ? "amber" : "cyan"}>
+                        {value} sobreviven
+                      </Badge>
+                    </div>
+
+                    <div className="flex items-center justify-between rounded-md border border-cyan-200/10 bg-slate-950/40 p-2">
+                      <Button
+                        disabled={value <= 0 || mutation.isPending}
+                        onClick={() => setSurvivors((current) => ({ ...current, [unit.id]: value - 1 }))}
+                        size="icon"
+                        variant="ghost"
+                      >
+                        <Minus size={15} />
+                      </Button>
+                      <div className="text-center">
+                        <div className="text-[11px] text-slate-400">Bajas: {unit.quantity - value}</div>
+                        <div className="text-base font-semibold text-cyan-50">{value}</div>
+                      </div>
+                      <Button
+                        disabled={value >= unit.quantity || mutation.isPending}
+                        onClick={() => setSurvivors((current) => ({ ...current, [unit.id]: value + 1 }))}
+                        size="icon"
+                        variant="ghost"
+                      >
+                        <Plus size={15} />
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <aside className="border-t border-cyan-200/15 bg-slate-950/35 p-5 lg:border-l lg:border-t-0">
+            <div className="space-y-4">
+              <label className="block text-sm">
+                <span className="mb-2 block text-slate-300">Ganador</span>
+                <select
+                  className="w-full rounded-md border border-cyan-200/15 bg-slate-950/70 px-3 py-2 text-sm text-cyan-50 outline-none"
+                  onChange={(event) => setWinnerFactionId(event.target.value || null)}
+                  value={winnerFactionId ?? ""}
+                >
+                  {factionOptions.map((faction) => (
+                    <option key={faction.id} value={faction.id}>
+                      {faction.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="block text-sm">
+                <span className="mb-2 block text-slate-300">Control final</span>
+                <select
+                  className="w-full rounded-md border border-cyan-200/15 bg-slate-950/70 px-3 py-2 text-sm text-cyan-50 outline-none"
+                  onChange={(event) => setFinalControllerFactionId(event.target.value || null)}
+                  value={finalControllerFactionId ?? ""}
+                >
+                  <option value="">Neutral</option>
+                  {factionOptions.map((faction) => (
+                    <option key={faction.id} value={faction.id}>
+                      {faction.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="block text-sm">
+                <span className="mb-2 block text-slate-300">Bloqueo posterior</span>
+                <select
+                  className="w-full rounded-md border border-cyan-200/15 bg-slate-950/70 px-3 py-2 text-sm text-cyan-50 outline-none"
+                  onChange={(event) => setPostBlockMinutes(Number(event.target.value))}
+                  value={postBlockMinutes}
+                >
+                  <option value={0}>Sin bloqueo</option>
+                  <option value={10}>10 minutos</option>
+                  <option value={30}>30 minutos</option>
+                  <option value={60}>60 minutos</option>
+                </select>
+              </label>
+
+              <label className="block text-sm">
+                <span className="mb-2 block text-slate-300">Notas narrativas</span>
+                <textarea
+                  className="min-h-24 w-full resize-none rounded-md border border-cyan-200/15 bg-slate-950/70 px-3 py-2 text-sm text-cyan-50 outline-none"
+                  onChange={(event) => setNarrativeNotes(event.target.value)}
+                  value={narrativeNotes}
+                />
+              </label>
+
+              {!rpcReady ? (
+                <div className="rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
+                  Supabase no esta configurado.
+                </div>
+              ) : null}
+
+              {mutation.error ? <p className="text-sm text-rose-200">{mutation.error.message}</p> : null}
+
+              <Button
+                className="w-full"
+                disabled={!rpcReady || warUnits.length === 0 || mutation.isPending}
+                onClick={() => mutation.mutate()}
+                variant="danger"
+              >
+                <Check size={16} />
+                {mutation.isPending ? "Enviando..." : "Enviar reporte"}
+              </Button>
+            </div>
+          </aside>
+        </div>
+      </Panel>
+    </div>
+  );
+}
+
+function formatUnitStrength(unit: CampaignUnit) {
+  return `${unit.quantity}/${unit.startingQuantity} miniaturas · ${getCurrentUnitPoints(unit)} pts`;
+}
+
+function getCurrentUnitPoints(unit: CampaignUnit) {
+  if (unit.quantity <= 0) {
+    return 0;
+  }
+
+  return Math.max(1, Math.ceil((unit.points * unit.quantity) / Math.max(unit.startingQuantity, 1)));
+}
+
+function getUnitStatusLabel(status: CampaignUnit["status"]) {
+  const labels: Record<CampaignUnit["status"], string> = {
+    ready: "Lista",
+    moving: "En movimiento",
+    in_war: "En guerra",
+    destroyed: "Destruida",
+    retreat_pending: "Retirada"
+  };
+
+  return labels[status];
+}
+
+function getUnitStatusTone(status: CampaignUnit["status"]): "cyan" | "rose" | "amber" | "slate" | "violet" {
+  if (status === "ready") {
+    return "cyan";
+  }
+
+  if (status === "moving") {
+    return "amber";
+  }
+
+  if (status === "in_war") {
+    return "rose";
+  }
+
+  if (status === "retreat_pending") {
+    return "violet";
+  }
+
+  return "slate";
+}
+
+function getMergeableUnitGroups(units: CampaignUnit[]) {
+  const groups = new Map<string, CampaignUnit[]>();
+
+  for (const unit of units) {
+    const key = getUnitCompatibilityKey(unit);
+    groups.set(key, [...(groups.get(key) ?? []), unit]);
+  }
+
+  return [...groups.values()].filter((group) => group.length > 1);
+}
+
+function getUnitCompatibilityKey(unit: CampaignUnit) {
+  return [
+    unit.factionId,
+    unit.currentSystemId,
+    unit.unitTemplateId ?? unit.name,
+    unit.category,
+    unit.rank ?? "",
+    unit.enhancementText ?? ""
+  ].join("|");
+}
+
+function clampInteger(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, Math.trunc(Number.isFinite(value) ? value : min)));
 }

@@ -80,7 +80,7 @@ const systems: CampaignSnapshot["systems"] = [
     controllerFactionId: "sombra-emperador",
     isCapital: true,
     publicDescription: "Estacion de paso con matrices de navegacion de largo alcance.",
-    production: dailyProduction({ supply: 5, minerals: 4, uridium: 5, technology: 1 })
+    production: dailyProduction({ supply: 5, minerals: 4, uridium: 5 })
   },
   {
     id: "lyra-terminus",
@@ -164,7 +164,7 @@ const systems: CampaignSnapshot["systems"] = [
     controllerFactionId: "necrones",
     isCapital: true,
     publicDescription: "Cripta silenciosa rodeada de energia verdosa.",
-    production: dailyProduction({ minerals: 8, ancestralStone: 3, uridium: 2, technology: 1 })
+    production: dailyProduction({ minerals: 8, ancestralStone: 3, uridium: 2 })
   },
   {
     id: "novem",
@@ -192,7 +192,7 @@ const systems: CampaignSnapshot["systems"] = [
     controllerFactionId: "necrones",
     isCapital: false,
     publicDescription: "Faro de navegacion que parpadea con luz fria.",
-    production: dailyProduction({ minerals: 2, ancestralStone: 1, uridium: 3, technology: 1 })
+    production: dailyProduction({ minerals: 2, ancestralStone: 1, uridium: 3 })
   },
   {
     id: "mordax",
@@ -262,7 +262,7 @@ const systems: CampaignSnapshot["systems"] = [
     controllerFactionId: "orcos",
     isCapital: false,
     publicDescription: "Estructuras de manufactura latentes convertidas en talleres orkos.",
-    production: dailyProduction({ supply: 1, minerals: 6, uridium: 1, technology: 1 })
+    production: dailyProduction({ supply: 1, minerals: 6, uridium: 1 })
   },
   {
     id: "rustmaw-run",
@@ -319,7 +319,7 @@ const systems: CampaignSnapshot["systems"] = [
     blockedUntil: inMinutes(30),
     isCapital: false,
     publicDescription: "Santuario velado donde la Sombra del Emperador combate una revuelta genestelar.",
-    production: dailyProduction({ supply: 2, ancestralStone: 2, uridium: 2, technology: 1 }),
+    production: dailyProduction({ supply: 2, ancestralStone: 2, uridium: 2 }),
     specialObjects: [{ id: "obj-saint-veil", name: "Reliquia velada", type: "relic", isPublic: true }]
   },
   {
@@ -346,7 +346,7 @@ const systems: CampaignSnapshot["systems"] = [
     status: "neutral",
     isCapital: false,
     publicDescription: "Ruinas orbitales con ecos de tecnologia antigua.",
-    production: dailyProduction({ minerals: 2, ancestralStone: 1, uridium: 2, technology: 1 })
+    production: dailyProduction({ minerals: 2, ancestralStone: 1, uridium: 2 })
   },
   {
     id: "pale-choir",
@@ -398,7 +398,7 @@ const systems: CampaignSnapshot["systems"] = [
     status: "neutral",
     isCapital: false,
     publicDescription: "Interseccion de corrientes de salto que todas las facciones desean controlar.",
-    production: dailyProduction({ supply: 2, minerals: 2, ancestralStone: 1, uridium: 3, technology: 1 }),
+    production: dailyProduction({ supply: 2, minerals: 2, ancestralStone: 1, uridium: 3 }),
     specialObjects: [{ id: "obj-nexus-aster", name: "Baliza del Nexus", type: "technology", isPublic: true }]
   },
   {
@@ -425,7 +425,7 @@ const systems: CampaignSnapshot["systems"] = [
     status: "neutral",
     isCapital: false,
     publicDescription: "Macroestructura que estabiliza saltos en el borde inferior del mapa.",
-    production: dailyProduction({ supply: 1, minerals: 2, uridium: 3, technology: 1 })
+    production: dailyProduction({ supply: 1, minerals: 2, uridium: 3 })
   },
   {
     id: "goregate",
@@ -492,7 +492,7 @@ const resources: CampaignSnapshot["resources"] = [
     minerals: 130,
     ancestralStone: 12,
     uridium: 24,
-    technology: 2,
+    technology: 16,
     updatedAt: new Date(now).toISOString()
   },
   {
@@ -501,7 +501,7 @@ const resources: CampaignSnapshot["resources"] = [
     minerals: 135,
     ancestralStone: 7,
     uridium: 20,
-    technology: 1,
+    technology: 16,
     updatedAt: new Date(now).toISOString()
   },
   {
@@ -510,7 +510,7 @@ const resources: CampaignSnapshot["resources"] = [
     minerals: 155,
     ancestralStone: 18,
     uridium: 22,
-    technology: 3,
+    technology: 16,
     updatedAt: new Date(now).toISOString()
   },
   {
@@ -519,7 +519,7 @@ const resources: CampaignSnapshot["resources"] = [
     minerals: 115,
     ancestralStone: 13,
     uridium: 22,
-    technology: 2,
+    technology: 16,
     updatedAt: new Date(now).toISOString()
   },
   {
@@ -528,7 +528,7 @@ const resources: CampaignSnapshot["resources"] = [
     minerals: 130,
     ancestralStone: 18,
     uridium: 26,
-    technology: 4,
+    technology: 16,
     updatedAt: new Date(now).toISOString()
   },
   {
@@ -537,7 +537,7 @@ const resources: CampaignSnapshot["resources"] = [
     minerals: 135,
     ancestralStone: 15,
     uridium: 20,
-    technology: 2,
+    technology: 16,
     updatedAt: new Date(now).toISOString()
   }
 ];
@@ -547,7 +547,7 @@ type MockUnitGroup = {
   factionId: string;
   name: string;
   currentSystemId: string;
-  status: "ready" | "moving" | "in_war";
+  status: CampaignSnapshot["units"][number]["status"];
   pointsTotal: number;
   isVisiblePublicly: boolean;
   units: Array<{
@@ -555,6 +555,7 @@ type MockUnitGroup = {
     name: string;
     points: number;
     quantity: number;
+    startingQuantity?: number;
     experience: number;
     rank?: string | null;
     enhancementText?: string | null;
@@ -1027,28 +1028,36 @@ const unitGroups: MockUnitGroup[] = [
 ];
 
 const units: CampaignSnapshot["units"] = unitGroups.flatMap((group) =>
-  group.units.map((unit) => ({
-    id: unit.id,
-    factionId: group.factionId,
-    unitTemplateId: null,
-    name: unit.name,
-    currentSystemId: group.currentSystemId,
-    status: group.status,
-    category: getMockUnitCategory(unit.name),
-    points: unit.points,
-    quantity: unit.quantity,
-    experience: unit.experience,
-    isVisiblePublicly: group.isVisiblePublicly,
-    rank: unit.rank ?? null,
-    enhancementText: unit.enhancementText ?? null,
-    notes: null
-  }))
+  group.units.map((unit) => {
+    const startingQuantity = unit.startingQuantity ?? getMockDefaultQuantity(unit.name);
+
+    return {
+      id: unit.id,
+      factionId: group.factionId,
+      unitTemplateId: null,
+      name: unit.name,
+      currentSystemId: group.currentSystemId,
+      status: group.status,
+      category: getMockUnitCategory(unit.name),
+      points: unit.points,
+      quantity: unit.quantity,
+      startingQuantity,
+      experience: unit.experience,
+      isVisiblePublicly: group.isVisiblePublicly,
+      parentUnitId: null,
+      destroyedAt: null,
+      rank: unit.rank ?? null,
+      enhancementText: unit.enhancementText ?? null,
+      notes: null
+    };
+  })
 );
 
 const movements: CampaignSnapshot["movements"] = [
   {
     id: "move-imperial-helios",
     unitIds: ["imperial-helios-cadians"],
+    unitSelections: [{ unitId: "imperial-helios-cadians", quantity: 2 }],
     factionId: "guardia-imperial",
     fromSystemId: "kharon-prime",
     toSystemId: "helios-drift",
@@ -1063,6 +1072,7 @@ const movements: CampaignSnapshot["movements"] = [
   {
     id: "move-ork-eclipse",
     unitIds: ["ork-eclipse-boyz"],
+    unitSelections: [{ unitId: "ork-eclipse-boyz", quantity: 3 }],
     factionId: "orcos",
     fromSystemId: "cinder-maw",
     toSystemId: "eclipse-forge",
@@ -1077,6 +1087,7 @@ const movements: CampaignSnapshot["movements"] = [
   {
     id: "move-sombra-lyra",
     unitIds: ["sombra-lyra-intercessors"],
+    unitSelections: [{ unitId: "sombra-lyra-intercessors", quantity: 1 }],
     factionId: "sombra-emperador",
     fromSystemId: "sa-cea-gate",
     toSystemId: "lyra-terminus",
@@ -1091,6 +1102,7 @@ const movements: CampaignSnapshot["movements"] = [
   {
     id: "move-cult-sabbath",
     unitIds: ["cult-sabbath-ridgerunner"],
+    unitSelections: [{ unitId: "cult-sabbath-ridgerunner", quantity: 1 }],
     factionId: "culto-genestelar",
     fromSystemId: "blackglass",
     toSystemId: "red-sabbath",
@@ -1105,6 +1117,7 @@ const movements: CampaignSnapshot["movements"] = [
   {
     id: "move-necron-novem",
     unitIds: ["necron-novem-immortals"],
+    unitSelections: [{ unitId: "necron-novem-immortals", quantity: 2 }],
     factionId: "necrones",
     fromSystemId: "thokt-vault",
     toSystemId: "novem",
@@ -1119,6 +1132,7 @@ const movements: CampaignSnapshot["movements"] = [
   {
     id: "move-death-drusus",
     unitIds: ["death-drusus-drone"],
+    unitSelections: [{ unitId: "death-drusus-drone", quantity: 1 }],
     factionId: "guardia-muerte",
     fromSystemId: "mordax",
     toSystemId: "drusus",
@@ -1132,7 +1146,9 @@ const movements: CampaignSnapshot["movements"] = [
   }
 ];
 
-const unitTemplates: CampaignSnapshot["unitTemplates"] = [
+type MockUnitTemplate = Omit<CampaignSnapshot["unitTemplates"][number], "defaultQuantity">;
+
+const unitTemplateBase: MockUnitTemplate[] = [
   {
     id: "unit-orcos-boyz",
     factionId: "orcos",
@@ -1405,6 +1421,12 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = [
   }
 ];
 
+const unitTemplates: CampaignSnapshot["unitTemplates"] = unitTemplateBase.map((template) => ({
+  ...template,
+  defaultQuantity: getMockDefaultQuantity(template.name),
+  requiredTechnologyNodeId: getRequiredTechnologyForUnit(template.name)
+}));
+
 const conflicts: CampaignSnapshot["conflicts"] = [
   {
     id: "conflict-azur-trench",
@@ -1465,6 +1487,80 @@ const missions: CampaignSnapshot["missions"] = [
   }
 ];
 
+const technologyNodes: CampaignSnapshot["technologyNodes"] = [
+  { id: "doctrina-campana", slug: "doctrina-campana", treeKey: "common-v1", name: "Doctrina de campana", description: "Protocolos basicos para sostener una campana galactica.", branch: "Mando y doctrina", tier: 0, positionX: 10, positionY: 15, costTechnology: 0, researchTimeSeconds: 0, iconKey: "command", effectSummary: "Base doctrinal desbloqueada.", isStarter: true },
+  { id: "logistica-frente", slug: "logistica-frente", treeKey: "common-v1", name: "Logistica de frente", description: "Convoyes y reservas para mantener infanteria en movimiento.", branch: "Mando y doctrina", tier: 1, positionX: 30, positionY: 11, costTechnology: 4, researchTimeSeconds: 120, iconKey: "supply", effectSummary: "-10% Suministro al reclutar Infanteria.", isStarter: false },
+  { id: "cadenas-mando", slug: "cadenas-mando", treeKey: "common-v1", name: "Cadenas de mando", description: "Vox y oficiales de enlace reducen demoras de despliegue.", branch: "Mando y doctrina", tier: 1, positionX: 30, positionY: 19, costTechnology: 4, researchTimeSeconds: 120, iconKey: "command", effectSummary: "-10% tiempo al reclutar Infanteria.", isStarter: false },
+  { id: "estado-mayor-cruzada", slug: "estado-mayor-cruzada", treeKey: "common-v1", name: "Estado mayor de cruzada", description: "Coordinacion estable para una campana prolongada.", branch: "Mando y doctrina", tier: 3, positionX: 72, positionY: 15, costTechnology: 12, researchTimeSeconds: 360, iconKey: "command", effectSummary: "Desbloquea Bastion de mando.", isStarter: false },
+  { id: "entrenamiento-linea", slug: "entrenamiento-linea", treeKey: "common-v1", name: "Entrenamiento de linea", description: "Organizacion minima para tropas basicas.", branch: "Infanteria y elite", tier: 0, positionX: 10, positionY: 34, costTechnology: 0, researchTimeSeconds: 0, iconKey: "infantry", effectSummary: "Unidades basicas desbloqueadas.", isStarter: true },
+  { id: "veteranos-guerra", slug: "veteranos-guerra", treeKey: "common-v1", name: "Veteranos de guerra", description: "Cuadros veteranos, elites y tropas endurecidas.", branch: "Infanteria y elite", tier: 1, positionX: 30, positionY: 34, costTechnology: 4, researchTimeSeconds: 120, iconKey: "elite", effectSummary: "Desbloquea unidades elite actuales.", isStarter: false },
+  { id: "especializacion-elite", slug: "especializacion-elite", treeKey: "common-v1", name: "Especializacion de elite", description: "Equipo y entrenamiento para unidades de alto valor.", branch: "Infanteria y elite", tier: 2, positionX: 51, positionY: 34, costTechnology: 8, researchTimeSeconds: 240, iconKey: "elite", effectSummary: "-10% Mineral al reclutar Elite.", isStarter: false },
+  { id: "honores-batalla", slug: "honores-batalla", treeKey: "common-v1", name: "Honores de batalla", description: "Registros y juramentos para mejoras narrativas futuras.", branch: "Infanteria y elite", tier: 3, positionX: 72, positionY: 34, costTechnology: 12, researchTimeSeconds: 360, iconKey: "honor", effectSummary: "Reserva para mejoras narrativas.", isStarter: false },
+  { id: "talleres-campana", slug: "talleres-campana", treeKey: "common-v1", name: "Talleres de campana", description: "Mantenimiento para maquinas, vehiculos y andadores.", branch: "Blindados y maquinas", tier: 1, positionX: 30, positionY: 50, costTechnology: 4, researchTimeSeconds: 120, iconKey: "forge", effectSummary: "Desbloquea Taller de campana.", isStarter: false },
+  { id: "motores-guerra", slug: "motores-guerra", treeKey: "common-v1", name: "Motores de guerra", description: "Habilita blindados, dreadnoughts y maquinas de guerra.", branch: "Blindados y maquinas", tier: 2, positionX: 51, positionY: 50, costTechnology: 8, researchTimeSeconds: 240, iconKey: "vehicle", effectSummary: "Desbloquea vehiculos actuales.", isStarter: false },
+  { id: "blindaje-reforzado", slug: "blindaje-reforzado", treeKey: "common-v1", name: "Blindaje reforzado", description: "Estandariza placas, chasis y blindajes de campana.", branch: "Blindados y maquinas", tier: 3, positionX: 72, positionY: 50, costTechnology: 12, researchTimeSeconds: 360, iconKey: "vehicle", effectSummary: "-10% Mineral al reclutar Vehiculos.", isStarter: false },
+  { id: "arsenal-pesado", slug: "arsenal-pesado", treeKey: "common-v1", name: "Arsenal pesado", description: "Infraestructura reservada para superpesados futuros.", branch: "Blindados y maquinas", tier: 4, positionX: 90, positionY: 50, costTechnology: 18, researchTimeSeconds: 600, iconKey: "arsenal", effectSummary: "Reserva para superpesados futuros.", isStarter: false },
+  { id: "nodo-logistico", slug: "nodo-logistico", treeKey: "common-v1", name: "Nodo logistico", description: "Hangares, almacenes y puntos de transferencia orbital.", branch: "Infraestructura", tier: 1, positionX: 30, positionY: 66, costTechnology: 4, researchTimeSeconds: 120, iconKey: "infrastructure", effectSummary: "Desbloquea Nodo logistico.", isStarter: false },
+  { id: "manufactorum-local", slug: "manufactorum-local", treeKey: "common-v1", name: "Manufactorum local", description: "Fabricacion y ensamblaje en sistemas controlados.", branch: "Infraestructura", tier: 2, positionX: 51, positionY: 66, costTechnology: 8, researchTimeSeconds: 240, iconKey: "factory", effectSummary: "Desbloquea Manufactorum.", isStarter: false },
+  { id: "red-suministro", slug: "red-suministro", treeKey: "common-v1", name: "Red de suministro", description: "Futura mejora de produccion territorial.", branch: "Infraestructura", tier: 3, positionX: 72, positionY: 66, costTechnology: 12, researchTimeSeconds: 360, iconKey: "supply", effectSummary: "Reserva para bonus de produccion.", isStarter: false },
+  { id: "puerto-uridium", slug: "puerto-uridium", treeKey: "common-v1", name: "Puerto de Uridium", description: "Optimizacion futura de rutas de salto.", branch: "Infraestructura", tier: 4, positionX: 90, positionY: 66, costTechnology: 18, researchTimeSeconds: 600, iconKey: "uridium", effectSummary: "Reserva para bonus de movimiento.", isStarter: false },
+  { id: "auspex-reliquias", slug: "auspex-reliquias", treeKey: "common-v1", name: "Auspex de reliquias", description: "Patrones de lectura para artefactos antiguos.", branch: "Arqueotecnologia", tier: 1, positionX: 30, positionY: 84, costTechnology: 4, researchTimeSeconds: 120, iconKey: "auspex", effectSummary: "Reserva para deteccion de reliquias.", isStarter: false },
+  { id: "nucleos-datos", slug: "nucleos-datos", treeKey: "common-v1", name: "Nucleos de datos", description: "Matrices para exprimir componentes recuperados.", branch: "Arqueotecnologia", tier: 2, positionX: 51, positionY: 84, costTechnology: 8, researchTimeSeconds: 240, iconKey: "data", effectSummary: "Reserva para bonus tecnologico.", isStarter: false },
+  { id: "matrices-eficiencia", slug: "matrices-eficiencia", treeKey: "common-v1", name: "Matrices de eficiencia", description: "Optimizacion transversal de costes militares.", branch: "Arqueotecnologia", tier: 3, positionX: 72, positionY: 84, costTechnology: 12, researchTimeSeconds: 360, iconKey: "matrix", effectSummary: "-5% coste general de reclutamiento.", isStarter: false },
+  { id: "cifra-negra", slug: "cifra-negra", treeKey: "common-v1", name: "Cifra negra", description: "Tecnologia avanzada sellada para fases futuras.", branch: "Arqueotecnologia", tier: 4, positionX: 90, positionY: 84, costTechnology: 18, researchTimeSeconds: 600, iconKey: "cipher", effectSummary: "Reserva avanzada futura.", isStarter: false }
+];
+
+const prerequisitePairs = [
+  ["logistica-frente", "doctrina-campana"],
+  ["cadenas-mando", "doctrina-campana"],
+  ["estado-mayor-cruzada", "cadenas-mando"],
+  ["veteranos-guerra", "entrenamiento-linea"],
+  ["especializacion-elite", "veteranos-guerra"],
+  ["honores-batalla", "especializacion-elite"],
+  ["talleres-campana", "doctrina-campana"],
+  ["motores-guerra", "talleres-campana"],
+  ["blindaje-reforzado", "motores-guerra"],
+  ["arsenal-pesado", "blindaje-reforzado"],
+  ["nodo-logistico", "doctrina-campana"],
+  ["manufactorum-local", "nodo-logistico"],
+  ["red-suministro", "manufactorum-local"],
+  ["puerto-uridium", "red-suministro"],
+  ["auspex-reliquias", "doctrina-campana"],
+  ["nucleos-datos", "auspex-reliquias"],
+  ["matrices-eficiencia", "nucleos-datos"],
+  ["cifra-negra", "matrices-eficiencia"]
+] as const;
+
+const technologyPrerequisites: CampaignSnapshot["technologyPrerequisites"] = prerequisitePairs.map(
+  ([technologyNodeId, requiredNodeId]) => ({ technologyNodeId, requiredNodeId })
+);
+
+const factionTechnologies: CampaignSnapshot["factionTechnologies"] = factions.flatMap((faction) => [
+  { factionId: faction.id, technologyNodeId: "doctrina-campana", status: "unlocked", unlockedAt: new Date(now).toISOString() },
+  { factionId: faction.id, technologyNodeId: "entrenamiento-linea", status: "unlocked", unlockedAt: new Date(now).toISOString() },
+  { factionId: faction.id, technologyNodeId: "logistica-frente", status: "available" },
+  { factionId: faction.id, technologyNodeId: "cadenas-mando", status: "available" },
+  { factionId: faction.id, technologyNodeId: "veteranos-guerra", status: "available" },
+  { factionId: faction.id, technologyNodeId: "talleres-campana", status: "available" },
+  { factionId: faction.id, technologyNodeId: "nodo-logistico", status: "available" },
+  { factionId: faction.id, technologyNodeId: "auspex-reliquias", status: "available" }
+]);
+
+const technologyEffects: CampaignSnapshot["technologyEffects"] = [
+  { id: "effect-logistica-frente", technologyNodeId: "logistica-frente", effectType: "recruitment_cost_discount", payload: { category: "Infanteria", resource: "supply", percent: 10 } },
+  { id: "effect-cadenas-mando", technologyNodeId: "cadenas-mando", effectType: "recruitment_time_discount", payload: { category: "Infanteria", percent: 10 } },
+  { id: "effect-especializacion-elite", technologyNodeId: "especializacion-elite", effectType: "recruitment_cost_discount", payload: { category: "Elite", resource: "minerals", percent: 10 } },
+  { id: "effect-blindaje-reforzado", technologyNodeId: "blindaje-reforzado", effectType: "recruitment_cost_discount", payload: { category: "Vehiculo", resource: "minerals", percent: 10 } },
+  { id: "effect-matrices-eficiencia", technologyNodeId: "matrices-eficiencia", effectType: "recruitment_cost_discount", payload: { category: "all", resource: "all", percent: 5 } }
+];
+
+const buildingTemplates: CampaignSnapshot["buildingTemplates"] = [
+  { id: "bastion-mando", name: "Bastion de mando", category: "Mando", description: "Centro de coordinacion militar para futuras acciones administrativas.", requiredTechnologyNodeId: "estado-mayor-cruzada", isAvailable: true },
+  { id: "taller-campana", name: "Taller de campana", category: "Militar", description: "Instalacion de mantenimiento para vehiculos y maquinas.", requiredTechnologyNodeId: "talleres-campana", isAvailable: true },
+  { id: "nodo-logistico", name: "Nodo logistico", category: "Infraestructura", description: "Red de almacenaje y transferencia orbital.", requiredTechnologyNodeId: "nodo-logistico", isAvailable: true },
+  { id: "manufactorum", name: "Manufactorum", category: "Industrial", description: "Complejo industrial futuro para produccion y construccion.", requiredTechnologyNodeId: "manufactorum-local", isAvailable: true }
+];
+
 export const mockCampaignSnapshot: CampaignSnapshot = {
   currentUser: {
     id: "user-cadia",
@@ -1482,6 +1578,11 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
   movements,
   unitTemplates,
   recruitmentQueue: [],
+  technologyNodes,
+  technologyPrerequisites,
+  factionTechnologies,
+  technologyEffects,
+  buildingTemplates,
   conflicts,
   battleReports: [],
   missions
@@ -1497,4 +1598,58 @@ function getMockUnitCategory(name: string): CampaignSnapshot["units"][number]["c
   }
 
   return "Infanteria";
+}
+
+function getMockDefaultQuantity(name: string) {
+  const defaultQuantities: Record<string, number> = {
+    Boyz: 10,
+    Meganobz: 3,
+    "Deff Dread": 1,
+    "Necron Warriors": 10,
+    Immortals: 5,
+    "Skorpekh Destroyers": 3,
+    "Cadian Shock Troops": 10,
+    Kasrkin: 10,
+    "Leman Russ Battle Tank": 1,
+    "Neophyte Hybrids": 10,
+    "Acolyte Hybrids": 5,
+    "Achilles Ridgerunner": 1,
+    "Intercessor Squad": 5,
+    "Terminator Squad": 5,
+    "Redemptor Dreadnought": 1,
+    Poxwalkers: 10,
+    "Plague Marines": 7,
+    "Foetid Bloat-drone": 1
+  };
+
+  return defaultQuantities[name] ?? 1;
+}
+
+function getRequiredTechnologyForUnit(name: string) {
+  const veteranUnits = new Set([
+    "Meganobz",
+    "Immortals",
+    "Skorpekh Destroyers",
+    "Kasrkin",
+    "Acolyte Hybrids",
+    "Terminator Squad",
+    "Plague Marines"
+  ]);
+  const vehicleUnits = new Set([
+    "Deff Dread",
+    "Leman Russ Battle Tank",
+    "Achilles Ridgerunner",
+    "Redemptor Dreadnought",
+    "Foetid Bloat-drone"
+  ]);
+
+  if (veteranUnits.has(name)) {
+    return "veteranos-guerra";
+  }
+
+  if (vehicleUnits.has(name)) {
+    return "motores-guerra";
+  }
+
+  return null;
 }
