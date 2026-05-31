@@ -1,5 +1,73 @@
 # Especificación del proyecto: Mapa Estelar de Campaña Warhammer 40K
 
+## Arranque local de esta versión
+
+Esta versión del proyecto usa **Next.js** para la web y **Supabase local/Postgres** como base de datos real de desarrollo.
+
+Requisitos previos:
+
+- Tener Docker Desktop abierto.
+- Tener Node.js instalado.
+- Ejecutar los comandos desde la carpeta raíz del proyecto:
+
+```bash
+cd "c:\Users\soyun\Desktop\rol 40k"
+```
+
+Abrir docker
+
+Primer arranque o arranque después de clonar el proyecto:
+
+```bash
+npm install
+npm run supabase:start
+npm run db:sync-env
+npm run db:reset
+npm run db:seed:users
+npm run dev
+```
+
+Arranque normal si la base ya está preparada:
+
+```bash
+npm run supabase:start
+npm run dev
+```
+
+Si se cambian migraciones o `supabase/seed.sql`, resetear la base local:
+
+```bash
+npm run db:reset
+npm run db:seed:users
+```
+
+Aviso: `npm run db:reset` borra y recrea la base local. Es correcto para desarrollo, pero elimina cambios manuales hechos en Studio.
+
+URLs locales:
+
+```text
+Web: http://localhost:3000
+Supabase API: http://127.0.0.1:54321
+Supabase Studio: http://127.0.0.1:54323
+Base de datos: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+```
+
+Usuarios locales de prueba:
+
+```text
+admin@rol40k.local / admin-local-123
+orcos@rol40k.local / rol40k-local-123
+necrones@rol40k.local / rol40k-local-123
+guardia-imperial@rol40k.local / rol40k-local-123
+culto-genestelar@rol40k.local / rol40k-local-123
+sombra-emperador@rol40k.local / rol40k-local-123
+guardia-muerte@rol40k.local / rol40k-local-123
+```
+
+Si aparece un error de refresh token después de resetear Supabase, entrar de nuevo desde `/login`. Si el navegador conserva una sesión antigua, cerrar sesión o borrar el almacenamiento local del sitio.
+
+---
+
 ## 0. Contexto general
 
 Este documento describe una aplicación web privada para gestionar una campaña narrativa de Warhammer 40K entre amigos.
@@ -974,10 +1042,14 @@ Ramas del árbol común v1:
 
 La pantalla de tecnología debe sentirse como interfaz de videojuego:
 
-- Modal grande.
-- Fondo táctico oscuro.
-- Nodos por ramas.
-- Conectores luminosos.
+- Modal grande, casi a pantalla completa.
+- Fondo espacial táctico oscuro.
+- Árbol tipo constelación tecnológica, no tabla lineal.
+- Nodos circulares o hexagonales basados en iconos PNG propios.
+- Iconos coherentes por tecnología en `public/tech-icons/common-v1/{slug}.png`.
+- Conectores curvos luminosos tipo rutas estelares.
+- Hover que resalta prerequisitos y dependientes directos.
+- Tooltip breve al pasar el ratón.
 - Estados visuales claros.
 - Panel lateral con descripción, coste, tiempo, requisitos y efectos.
 - Botón `Tecnología` en el dock de mando.

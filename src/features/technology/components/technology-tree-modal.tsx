@@ -1,9 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
-import type { ReactNode } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Check, Clock3, Cpu, Factory, FlaskConical, Lock, RadioTower, Shield, Sparkles, Swords, X } from "lucide-react";
+import { Check, Clock3, Lock, Sparkles, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
@@ -15,19 +15,27 @@ import {
   getTechnologyStatus,
   type DerivedTechnologyStatus
 } from "@/features/technology/lib/technology-state";
+import { cn } from "@/lib/utils";
 import { formatCountdown } from "@/lib/time";
 import type { CampaignSnapshot, TechnologyNode } from "@/domain/campaign";
 
-const branchStyles: Record<string, { color: string; soft: string; icon: ReactNode }> = {
-  "Mando y doctrina": { color: "#38bdf8", soft: "rgba(56,189,248,0.14)", icon: <RadioTower size={18} /> },
-  "Infanteria y elite": { color: "#facc15", soft: "rgba(250,204,21,0.14)", icon: <Swords size={18} /> },
-  "Blindados y maquinas": { color: "#fb923c", soft: "rgba(251,146,60,0.14)", icon: <Shield size={18} /> },
-  Infraestructura: { color: "#34d399", soft: "rgba(52,211,153,0.14)", icon: <Factory size={18} /> },
-  Arqueotecnologia: { color: "#c084fc", soft: "rgba(192,132,252,0.14)", icon: <FlaskConical size={18} /> }
+type BranchStyle = {
+  color: string;
+  glow: string;
+  labelX: number;
+  labelY: number;
 };
 
-const treeWidth = 1680;
-const treeHeight = 900;
+const branchStyles: Record<string, BranchStyle> = {
+  "Mando y doctrina": { color: "#38bdf8", glow: "rgba(56,189,248,0.24)", labelX: 18, labelY: 21 },
+  "Infanteria y elite": { color: "#facc15", glow: "rgba(250,204,21,0.22)", labelX: 10, labelY: 84 },
+  "Blindados y maquinas": { color: "#fb923c", glow: "rgba(251,146,60,0.24)", labelX: 72, labelY: 84 },
+  Infraestructura: { color: "#34d399", glow: "rgba(52,211,153,0.22)", labelX: 77, labelY: 22 },
+  Arqueotecnologia: { color: "#c084fc", glow: "rgba(192,132,252,0.24)", labelX: 47, labelY: 92 }
+};
+
+const treeWidth = 1560;
+const treeHeight = 980;
 
 export function TechnologyTreeModal({
   snapshot,
@@ -40,6 +48,7 @@ export function TechnologyTreeModal({
 }) {
   const queryClient = useQueryClient();
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const currentResources = snapshot.resources.find((item) => item.factionId === snapshot.currentUser.factionId);
   const activeResearch = getActiveTechnologyResearch(snapshot);
   const selectedNode =
@@ -47,6 +56,16 @@ export function TechnologyTreeModal({
     snapshot.technologyNodes.find((node) => getTechnologyStatus(snapshot, node) === "available") ??
     snapshot.technologyNodes[0] ??
     null;
+  const focusNodeId = hoveredNodeId ?? selectedNode?.id ?? null;
+  const relatedNodeIds = useMemo(
+    () => (focusNodeId ? getRelatedNodeIds(snapshot, focusNodeId) : new Set<string>()),
+    [focusNodeId, snapshot]
+  );
+  const nodeById = useMemo(
+    () => new Map(snapshot.technologyNodes.map((node) => [node.id, node])),
+    [snapshot.technologyNodes]
+  );
+  const hoveredNode = hoveredNodeId ? nodeById.get(hoveredNodeId) ?? null : null;
   const rpcReady = canUseTechnologyRpc();
   const mutation = useMutation({
     mutationFn: (technologyNodeId: string) => startTechnologyResearch(technologyNodeId),
@@ -55,22 +74,17 @@ export function TechnologyTreeModal({
     }
   });
 
-  const nodeById = useMemo(
-    () => new Map(snapshot.technologyNodes.map((node) => [node.id, node])),
-    [snapshot.technologyNodes]
-  );
-
   if (!open) {
     return null;
   }
 
   return (
-    <div className="pointer-events-auto fixed inset-0 z-50 grid place-items-center bg-black/76 p-2 backdrop-blur-md md:p-3">
+    <div className="pointer-events-auto fixed inset-0 z-50 grid place-items-center bg-black/78 p-2 backdrop-blur-md md:p-3">
       <Panel className="flex h-[96vh] w-[98vw] max-w-none flex-col overflow-hidden border-cyan-200/20 shadow-[0_0_70px_rgba(8,145,178,0.18)]">
-        <div className="flex items-center justify-between gap-4 border-b border-cyan-200/15 bg-slate-950/60 px-5 py-4">
+        <header className="flex items-center justify-between gap-4 border-b border-cyan-200/15 bg-slate-950/65 px-5 py-4">
           <div>
             <div className="text-xs uppercase tracking-[0.24em] text-cyan-200/70">Arbol tecnologico</div>
-            <h2 className="mt-1 text-2xl font-semibold text-cyan-50">Doctrinas de campana</h2>
+            <h2 className="mt-1 text-2xl font-semibold text-cyan-50">Constelacion doctrinal</h2>
           </div>
           <div className="flex items-center gap-3">
             <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 px-3 py-2">
@@ -80,26 +94,38 @@ export function TechnologyTreeModal({
               <X size={18} />
             </Button>
           </div>
-        </div>
+        </header>
 
         <div className="grid min-h-0 flex-1 overflow-hidden xl:grid-cols-[minmax(0,1fr)_420px]">
-          <div className="relative min-h-0 overflow-auto bg-[radial-gradient(circle_at_18%_18%,rgba(14,165,233,0.18),transparent_28%),radial-gradient(circle_at_74%_68%,rgba(192,132,252,0.14),transparent_34%),linear-gradient(180deg,rgba(2,6,23,0.98),rgba(8,13,31,0.98))] p-3">
+          <div className="relative min-h-0 overflow-auto bg-[radial-gradient(circle_at_18%_22%,rgba(14,165,233,0.18),transparent_26%),radial-gradient(circle_at_78%_64%,rgba(192,132,252,0.14),transparent_34%),linear-gradient(180deg,rgba(2,6,23,0.98),rgba(8,13,31,0.98))] p-3">
             <div
-              className="relative overflow-hidden rounded border border-cyan-200/10 bg-slate-950/38 shadow-[inset_0_0_120px_rgba(8,145,178,0.10)]"
+              className="relative overflow-hidden rounded border border-cyan-200/10 bg-slate-950/40 shadow-[inset_0_0_130px_rgba(8,145,178,0.11)]"
               style={{ height: treeHeight, width: treeWidth }}
             >
-              <BranchLanes branches={[...new Set(snapshot.technologyNodes.map((node) => node.branch))]} />
-              <TechnologyConnections snapshot={snapshot} nodeById={nodeById} />
+              <ConstellationBackdrop />
+              <BranchConstellations branches={[...new Set(snapshot.technologyNodes.map((node) => node.branch))]} />
+              <TechnologyConnections
+                focusNodeId={focusNodeId}
+                nodeById={nodeById}
+                relatedNodeIds={relatedNodeIds}
+                snapshot={snapshot}
+              />
 
               {snapshot.technologyNodes.map((node) => (
-                <TechnologyNodeButton
+                <TechnologyNodeOrb
+                  focused={Boolean(focusNodeId && relatedNodeIds.has(node.id))}
                   key={node.id}
+                  muted={Boolean(focusNodeId && !relatedNodeIds.has(node.id))}
                   node={node}
+                  onHoverChange={(hovered) => setHoveredNodeId(hovered ? node.id : null)}
                   onSelect={() => setSelectedNodeId(node.id)}
                   selected={selectedNode?.id === node.id}
                   status={getTechnologyStatus(snapshot, node)}
                 />
               ))}
+
+              {hoveredNode ? <TechnologyTooltip node={hoveredNode} snapshot={snapshot} /> : null}
+              <TechnologyLegend />
             </div>
           </div>
 
@@ -119,23 +145,34 @@ export function TechnologyTreeModal({
   );
 }
 
-function BranchLanes({ branches }: { branches: string[] }) {
+function ConstellationBackdrop() {
+  return (
+    <div className="pointer-events-none absolute inset-0">
+      <div className="absolute inset-0 opacity-45 [background-image:radial-gradient(circle,rgba(148,163,184,0.55)_1px,transparent_1px)] [background-size:34px_34px]" />
+      <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(103,232,249,0.09)_1px,transparent_1px),linear-gradient(90deg,rgba(103,232,249,0.08)_1px,transparent_1px)] [background-size:120px_120px]" />
+    </div>
+  );
+}
+
+function BranchConstellations({ branches }: { branches: string[] }) {
   return (
     <div className="pointer-events-none absolute inset-0 z-0">
       {branches.map((branch) => {
-        const style = branchStyles[branch] ?? branchStyles["Mando y doctrina"];
-        const top = getBranchTop(branch);
+        const style = getBranchStyle(branch);
 
         return (
           <div
-            className="absolute left-0 right-0 h-32 border-y border-white/5"
+            className="absolute rounded-full border border-white/5 px-3 py-2 text-xs uppercase tracking-[0.2em] text-slate-300"
             key={branch}
-            style={{ top, background: `linear-gradient(90deg, ${style.soft}, transparent 48%)` }}
+            style={{
+              background: `linear-gradient(90deg, ${style.glow}, rgba(15,23,42,0.18))`,
+              boxShadow: `0 0 42px ${style.glow}`,
+              color: style.color,
+              left: `${style.labelX}%`,
+              top: `${style.labelY}%`
+            }}
           >
-            <div className="ml-6 mt-3 inline-flex items-center gap-2 rounded border border-white/5 bg-slate-950/35 px-3 py-2 text-xs uppercase tracking-[0.2em] text-slate-300">
-              <span style={{ color: style.color }}>{style.icon}</span>
-              {branch}
-            </div>
+            {branch}
           </div>
         );
       })}
@@ -145,10 +182,14 @@ function BranchLanes({ branches }: { branches: string[] }) {
 
 function TechnologyConnections({
   snapshot,
-  nodeById
+  nodeById,
+  focusNodeId,
+  relatedNodeIds
 }: {
   snapshot: CampaignSnapshot;
   nodeById: Map<string, TechnologyNode>;
+  focusNodeId: string | null;
+  relatedNodeIds: Set<string>;
 }) {
   return (
     <svg
@@ -157,6 +198,15 @@ function TechnologyConnections({
       viewBox={`0 0 ${treeWidth} ${treeHeight}`}
       width={treeWidth}
     >
+      <defs>
+        <filter id="tech-connection-glow">
+          <feGaussianBlur result="blur" stdDeviation="4" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
       {snapshot.technologyPrerequisites.map((prerequisite) => {
         const from = nodeById.get(prerequisite.requiredNodeId);
         const to = nodeById.get(prerequisite.technologyNodeId);
@@ -166,64 +216,161 @@ function TechnologyConnections({
         }
 
         const status = getTechnologyStatus(snapshot, to);
-        const color = status === "locked" ? "rgba(148,163,184,0.22)" : "rgba(103,232,249,0.58)";
-        const fromPoint = getNodePoint(from);
-        const toPoint = getNodePoint(to);
-        const midX = fromPoint.x + (toPoint.x - fromPoint.x) * 0.52;
+        const toStyle = getBranchStyle(to.branch);
+        const related = !focusNodeId || (relatedNodeIds.has(from.id) && relatedNodeIds.has(to.id));
+        const color = status === "locked" ? "rgba(100,116,139,0.38)" : toStyle.color;
+        const path = getConnectionPath(from, to);
 
         return (
-          <path
-            d={`M ${fromPoint.x} ${fromPoint.y} C ${midX} ${fromPoint.y}, ${midX} ${toPoint.y}, ${toPoint.x} ${toPoint.y}`}
-            key={`${prerequisite.requiredNodeId}-${prerequisite.technologyNodeId}`}
-            fill="none"
-            stroke={color}
-            strokeLinecap="round"
-            strokeWidth={status === "researching" ? 5 : 3}
-          />
+          <g key={`${prerequisite.requiredNodeId}-${prerequisite.technologyNodeId}`} opacity={related ? 1 : 0.16}>
+            <path d={path} fill="none" stroke={toStyle.color} strokeLinecap="round" strokeOpacity={0.16} strokeWidth={12} />
+            <path
+              d={path}
+              fill="none"
+              filter={status === "locked" ? undefined : "url(#tech-connection-glow)"}
+              stroke={color}
+              strokeDasharray={status === "locked" ? "14 14" : undefined}
+              strokeLinecap="round"
+              strokeOpacity={status === "locked" ? 0.45 : 0.82}
+              strokeWidth={status === "researching" ? 5 : 3}
+            />
+          </g>
         );
       })}
     </svg>
   );
 }
 
-function TechnologyNodeButton({
+function TechnologyNodeOrb({
   node,
-  selected,
   status,
-  onSelect
+  selected,
+  focused,
+  muted,
+  onSelect,
+  onHoverChange
 }: {
   node: TechnologyNode;
-  selected: boolean;
   status: DerivedTechnologyStatus;
+  selected: boolean;
+  focused: boolean;
+  muted: boolean;
   onSelect: () => void;
+  onHoverChange: (hovered: boolean) => void;
 }) {
-  const style = branchStyles[node.branch] ?? branchStyles["Mando y doctrina"];
+  const style = getBranchStyle(node.branch);
   const point = getNodePoint(node);
-  const statusClass = {
-    locked: "border-slate-500/20 bg-slate-950/80 text-slate-500",
-    available: "border-cyan-200/45 bg-cyan-300/12 text-cyan-50 shadow-[0_0_22px_rgba(34,211,238,0.12)]",
-    researching: "border-amber-200/55 bg-amber-300/14 text-amber-50 shadow-[0_0_24px_rgba(251,191,36,0.16)]",
-    unlocked: "border-emerald-200/50 bg-emerald-300/12 text-emerald-50 shadow-[0_0_22px_rgba(52,211,153,0.14)]"
-  }[status];
+  const locked = status === "locked";
+  const researching = status === "researching";
+  const unlocked = status === "unlocked";
+  const available = status === "available";
 
   return (
     <button
-      className={`absolute z-10 w-44 -translate-x-1/2 -translate-y-1/2 rounded-md border p-3 text-left transition hover:scale-[1.03] ${statusClass} ${
-        selected ? "ring-2 ring-cyan-200/60" : ""
-      }`}
+      aria-label={node.name}
+      className={cn(
+        "absolute z-10 grid size-24 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full transition duration-200 hover:scale-110 focus:outline-none",
+        selected && "scale-110",
+        focused && "scale-105",
+        muted && "opacity-25 grayscale"
+      )}
       onClick={onSelect}
-      style={{ left: point.x, top: point.y }}
+      onMouseEnter={() => onHoverChange(true)}
+      onMouseLeave={() => onHoverChange(false)}
+      style={{
+        left: point.x,
+        top: point.y
+      }}
       type="button"
     >
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <span className="grid size-8 place-items-center rounded border border-white/10" style={{ color: style.color }}>
-          {getNodeIcon(node.iconKey)}
+      <span
+        className={cn(
+          "absolute inset-0 rounded-full border bg-slate-950/70",
+          researching && "animate-pulse",
+          selected && "ring-2 ring-cyan-100/70",
+          available && "border-cyan-100/70",
+          unlocked && "border-emerald-100/70",
+          locked && "border-slate-500/30"
+        )}
+        style={{
+          boxShadow: locked
+            ? "inset 0 0 24px rgba(15,23,42,0.8)"
+            : `0 0 34px ${style.glow}, inset 0 0 26px rgba(15,23,42,0.86)`
+        }}
+      />
+      <span
+        className="absolute inset-2 rounded-full border border-white/10"
+        style={{ borderColor: locked ? "rgba(100,116,139,0.3)" : style.color }}
+      />
+      <TechnologyIconImage
+        className={cn("relative z-10 size-[78px] object-contain drop-shadow-[0_0_12px_rgba(103,232,249,0.32)]", locked && "opacity-45")}
+        node={node}
+        size={96}
+      />
+      <span className="absolute right-0 top-0 z-20 grid size-7 place-items-center rounded-full border border-slate-950 bg-slate-950/92">
+        {locked ? (
+          <Lock className="text-slate-400" size={15} />
+        ) : unlocked ? (
+          <Check className="text-emerald-200" size={16} />
+        ) : researching ? (
+          <Sparkles className="text-amber-200" size={15} />
+        ) : (
+          <Sparkles className="text-cyan-100" size={15} />
+        )}
+      </span>
+      {(selected || node.isStarter) && (
+        <span
+          className="absolute left-1/2 top-[104%] z-20 max-w-36 -translate-x-1/2 whitespace-nowrap rounded border border-cyan-100/15 bg-slate-950/82 px-2 py-1 text-[11px] font-medium text-cyan-50 shadow-lg"
+          style={{ color: locked ? "#94a3b8" : style.color }}
+        >
+          {node.name}
         </span>
-        {status === "locked" ? <Lock size={15} /> : status === "unlocked" ? <Check size={15} /> : <Cpu size={15} />}
-      </div>
-      <div className="text-sm font-semibold leading-tight">{node.name}</div>
-      <div className="mt-1 text-[11px] text-slate-400">Tier {node.tier}</div>
+      )}
     </button>
+  );
+}
+
+function TechnologyTooltip({ node, snapshot }: { node: TechnologyNode; snapshot: CampaignSnapshot }) {
+  const point = getNodePoint(node);
+  const status = getTechnologyStatus(snapshot, node);
+  const style = getBranchStyle(node.branch);
+
+  return (
+    <div
+      className="pointer-events-none absolute z-30 w-64 rounded-md border bg-slate-950/94 p-3 text-sm shadow-2xl backdrop-blur"
+      style={{
+        borderColor: `${style.color}66`,
+        boxShadow: `0 0 28px ${style.glow}`,
+        left: Math.min(point.x + 58, treeWidth - 300),
+        top: Math.max(16, point.y - 64)
+      }}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span className="font-semibold text-cyan-50">{node.name}</span>
+        <Badge tone={getStatusTone(status)}>{getStatusLabel(status)}</Badge>
+      </div>
+      <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-300">{node.effectSummary ?? node.description}</p>
+    </div>
+  );
+}
+
+function TechnologyLegend() {
+  const items: Array<{ label: string; tone: string; className: string }> = [
+    { label: "Disponible", tone: "cyan", className: "border-cyan-200 bg-cyan-300/20" },
+    { label: "Investigando", tone: "amber", className: "border-amber-200 bg-amber-300/20" },
+    { label: "Desbloqueada", tone: "emerald", className: "border-emerald-200 bg-emerald-300/20" },
+    { label: "Bloqueada", tone: "slate", className: "border-slate-500 bg-slate-700/20" }
+  ];
+
+  return (
+    <div className="absolute bottom-4 left-4 z-20 flex flex-wrap gap-2 rounded-md border border-cyan-200/10 bg-slate-950/72 p-2 text-xs text-slate-300 backdrop-blur">
+      {items.map((item) => (
+        <span className="inline-flex items-center gap-2 px-2 py-1" key={item.label}>
+          <span className={cn("size-3 rounded-full border", item.className)} />
+          {item.label}
+        </span>
+      ))}
+    </div>
   );
 }
 
@@ -248,7 +395,7 @@ function TechnologyDetailsPanel({
 }) {
   if (!node) {
     return (
-      <aside className="border-t border-cyan-200/15 bg-slate-950/55 p-5 lg:border-l lg:border-t-0">
+      <aside className="border-t border-cyan-200/15 bg-slate-950/55 p-5 xl:border-l xl:border-t-0">
         <p className="text-sm text-slate-400">No hay tecnologias definidas.</p>
       </aside>
     );
@@ -256,6 +403,7 @@ function TechnologyDetailsPanel({
 
   const status = getTechnologyStatus(snapshot, node);
   const progress = getFactionTechnology(snapshot, node.id);
+  const style = getBranchStyle(node.branch);
   const prerequisites = snapshot.technologyPrerequisites
     .filter((item) => item.technologyNodeId === node.id)
     .map((item) => snapshot.technologyNodes.find((candidate) => candidate.id === item.requiredNodeId))
@@ -268,16 +416,24 @@ function TechnologyDetailsPanel({
     !pending;
 
   return (
-    <aside className="min-h-0 overflow-y-auto border-t border-cyan-200/15 bg-slate-950/55 p-5 lg:border-l lg:border-t-0">
-      <div className="mb-4 flex items-start justify-between gap-3">
-        <div>
-          <Badge tone={getStatusTone(status)}>{getStatusLabel(status)}</Badge>
-          <h3 className="mt-3 text-2xl font-semibold text-cyan-50">{node.name}</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-300">{node.description}</p>
+    <aside className="min-h-0 overflow-y-auto border-t border-cyan-200/15 bg-slate-950/62 p-5 xl:border-l xl:border-t-0">
+      <div className="mb-5 rounded-md border border-cyan-200/15 bg-slate-950/42 p-4">
+        <div className="flex items-start gap-4">
+          <div
+            className="grid size-28 shrink-0 place-items-center rounded-full border bg-slate-950/70"
+            style={{ borderColor: `${style.color}99`, boxShadow: `0 0 34px ${style.glow}` }}
+          >
+            <TechnologyIconImage className="size-24 object-contain" node={node} size={112} />
+          </div>
+          <div className="min-w-0">
+            <Badge tone={getStatusTone(status)}>{getStatusLabel(status)}</Badge>
+            <h3 className="mt-3 text-2xl font-semibold leading-tight text-cyan-50">{node.name}</h3>
+            <div className="mt-2 text-xs uppercase tracking-[0.18em]" style={{ color: style.color }}>
+              {node.branch}
+            </div>
+          </div>
         </div>
-        <span className="grid size-12 place-items-center rounded-md border border-cyan-200/20 bg-cyan-300/10 text-cyan-100">
-          {getNodeIcon(node.iconKey)}
-        </span>
+        <p className="mt-4 text-sm leading-6 text-slate-300">{node.description}</p>
       </div>
 
       <div className="mb-4 grid grid-cols-2 gap-2">
@@ -322,7 +478,10 @@ function TechnologyDetailsPanel({
         <div className="space-y-2">
           {prerequisites.length > 0 ? (
             prerequisites.map((prerequisite) => (
-              <div className="flex items-center justify-between rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-sm" key={prerequisite.id}>
+              <div
+                className="flex items-center justify-between gap-3 rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-sm"
+                key={prerequisite.id}
+              >
                 <span className="text-slate-200">{prerequisite.name}</span>
                 <Badge tone={getTechnologyStatus(snapshot, prerequisite) === "unlocked" ? "cyan" : "slate"}>
                   {getStatusLabel(getTechnologyStatus(snapshot, prerequisite))}
@@ -353,16 +512,16 @@ function TechnologyDetailsPanel({
   );
 }
 
-function getBranchTop(branch: string) {
-  const positions: Record<string, number> = {
-    "Mando y doctrina": 52,
-    "Infanteria y elite": 225,
-    "Blindados y maquinas": 369,
-    Infraestructura: 513,
-    Arqueotecnologia: 675
-  };
+function getConnectionPath(from: TechnologyNode, to: TechnologyNode) {
+  const fromPoint = getNodePoint(from);
+  const toPoint = getNodePoint(to);
+  const dx = toPoint.x - fromPoint.x;
+  const dy = toPoint.y - fromPoint.y;
+  const curve = Math.min(160, Math.max(70, Math.abs(dx) * 0.32 + Math.abs(dy) * 0.18));
+  const c1 = { x: fromPoint.x + dx * 0.36, y: fromPoint.y + dy * 0.08 - curve * Math.sign(dx || 1) * 0.12 };
+  const c2 = { x: fromPoint.x + dx * 0.68, y: fromPoint.y + dy * 0.92 + curve * Math.sign(dy || 1) * 0.08 };
 
-  return positions[branch] ?? 52;
+  return `M ${fromPoint.x} ${fromPoint.y} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${toPoint.x} ${toPoint.y}`;
 }
 
 function getNodePoint(node: TechnologyNode) {
@@ -372,20 +531,51 @@ function getNodePoint(node: TechnologyNode) {
   };
 }
 
-function getNodeIcon(iconKey?: string | null) {
-  if (iconKey === "factory" || iconKey === "forge" || iconKey === "infrastructure") {
-    return <Factory size={18} />;
+function getRelatedNodeIds(snapshot: CampaignSnapshot, nodeId: string) {
+  const related = new Set<string>([nodeId]);
+
+  for (const prerequisite of snapshot.technologyPrerequisites) {
+    if (prerequisite.technologyNodeId === nodeId) {
+      related.add(prerequisite.requiredNodeId);
+    }
+
+    if (prerequisite.requiredNodeId === nodeId) {
+      related.add(prerequisite.technologyNodeId);
+    }
   }
 
-  if (iconKey === "elite" || iconKey === "vehicle" || iconKey === "arsenal") {
-    return <Swords size={18} />;
-  }
+  return related;
+}
 
-  if (iconKey === "auspex" || iconKey === "data" || iconKey === "matrix" || iconKey === "cipher") {
-    return <FlaskConical size={18} />;
-  }
+function getBranchStyle(branch: string) {
+  return branchStyles[branch] ?? branchStyles["Mando y doctrina"];
+}
 
-  return <Cpu size={18} />;
+function getTechnologyIconSrc(node: TechnologyNode) {
+  return `/tech-icons/common-v1/${node.slug}.png`;
+}
+
+function TechnologyIconImage({
+  node,
+  className,
+  size
+}: {
+  node: TechnologyNode;
+  className?: string;
+  size: number;
+}) {
+  const [fallback, setFallback] = useState(false);
+
+  return (
+    <Image
+      alt=""
+      className={className}
+      height={size}
+      onError={() => setFallback(true)}
+      src={fallback ? "/tech-icons/common-v1/fallback.png" : getTechnologyIconSrc(node)}
+      width={size}
+    />
+  );
 }
 
 function getStatusLabel(status: DerivedTechnologyStatus) {
