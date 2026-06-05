@@ -84,7 +84,7 @@ export function RecruitmentModal({
           </Button>
         </div>
 
-        <div className="grid min-h-0 flex-1 gap-0 overflow-hidden lg:grid-cols-[1fr_320px]">
+        <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] gap-0 overflow-hidden lg:grid-cols-[1fr_320px] lg:grid-rows-none">
           <div className="min-h-0 overflow-y-auto p-4 md:p-5">
             <ResourceSummary resources={resources} />
 
@@ -158,8 +158,8 @@ export function RecruitmentModal({
             </div>
           </div>
 
-          <aside className="flex min-h-0 flex-col border-t border-cyan-200/15 bg-slate-950/32 lg:border-l lg:border-t-0">
-            <div className="border-b border-cyan-200/15 p-4 md:p-5">
+          <aside className="flex max-h-[42dvh] min-h-0 flex-col border-t border-cyan-200/15 bg-slate-950/32 lg:max-h-none lg:border-l lg:border-t-0">
+            <div className="shrink-0 border-b border-cyan-200/15 p-4 md:p-5">
               <h3 className="text-sm font-semibold text-cyan-50">Confirmación</h3>
               {selectedTemplate ? (
                 <div className="mt-4 space-y-4">
@@ -225,7 +225,7 @@ export function RecruitmentModal({
                   </div>
 
                   <Button
-                    className="w-full"
+                    className="sticky bottom-0 w-full"
                     disabled={!rpcReady || !canRecruitSelected || mutation.isPending}
                     onClick={() => mutation.mutate()}
                   >
@@ -271,18 +271,32 @@ export function RecruitmentModal({
 
 function ResourceSummary({ resources }: { resources?: FactionResources }) {
   return (
-    <div className="mb-4 grid grid-cols-2 gap-2 md:grid-cols-5">
+    <div className="mb-4 grid grid-cols-5 gap-1.5 md:gap-2">
       {resourceSummaryKeys.map((resource) => (
-        <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 p-3" key={resource}>
-          <div className="mb-2 flex items-center gap-2 text-[11px] text-slate-400">
-            <ResourceIcon className="size-5" resource={resource} />
-            {resourceLabels[resource]}
+        <div className="min-w-0 rounded-md border border-cyan-200/15 bg-slate-950/45 px-1.5 py-2 text-center md:p-3 md:text-left" key={resource}>
+          <div className="mb-1 flex items-center justify-center gap-1.5 text-[10px] text-slate-400 md:mb-2 md:justify-start md:text-[11px]">
+            <ResourceIcon className="size-4 shrink-0 md:size-5" resource={resource} />
+            <span className="hidden md:inline">{resourceLabels[resource]}</span>
           </div>
-          <div className="text-lg font-semibold text-cyan-50">{resources?.[resource] ?? 0}</div>
+          <div className="truncate text-[clamp(0.68rem,2.8vw,1rem)] font-semibold tabular-nums text-cyan-50 md:text-lg">
+            {formatCompactResource(resources?.[resource] ?? 0)}
+          </div>
         </div>
       ))}
     </div>
   );
+}
+
+function formatCompactResource(value: number) {
+  if (Math.abs(value) >= 1000000) {
+    return `${(value / 1000000).toFixed(value >= 10000000 ? 0 : 1)}M`;
+  }
+
+  if (Math.abs(value) >= 1000) {
+    return `${(value / 1000).toFixed(value >= 10000 ? 0 : 1)}k`;
+  }
+
+  return String(value);
 }
 
 function CostPill({

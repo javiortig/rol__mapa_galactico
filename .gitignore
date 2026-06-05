@@ -14,3 +14,4 @@ pnpm-debug.log*
 *.tsbuildinfo
 supabase/.branches/
 supabase/.temp/
+recovery_vercel.txt

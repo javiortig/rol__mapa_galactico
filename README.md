@@ -34,6 +34,19 @@ npm run dev
 
 Supabase Studio local queda en `http://127.0.0.1:54323`.
 
+### Entornos local y cloud
+
+- `.env.local` se usa para probar en local. Para regenerarlo con Supabase local:
+
+```bash
+npm run supabase:start
+npm run db:sync-env
+```
+
+- `.env.cloud.local` queda como copia privada de las claves cloud para consultarlas o copiarlas a Vercel.
+- Ambos archivos estan ignorados por Git.
+- En Vercel hay que configurar las variables manualmente desde la web de Vercel.
+
 ## Despliegue v1
 
 La primera version web se publica como campana privada en Vercel + Supabase Cloud.
@@ -90,3 +103,14 @@ guardia-muerte@rol40k.local / rol40k-local-123
 ```
 
 La produccion de recursos funciona con tick diario de backend, no por turno estrategico.
+
+## Uso movil v1
+
+En movil la experiencia es mapa primero:
+
+- Al entrar se ve el mapa libre, sin sistema seleccionado.
+- Tocar una estrella abre la hoja del sistema; la X cierra la hoja y devuelve al mapa.
+- La barra superior muestra los 5 recursos como icono + numero compacto, sin scroll horizontal.
+- Para mover tropas: seleccionar sistema, pulsar `Mover tropas`, elegir miniaturas y despues `Trazar ruta en el mapa`.
+- En modo ruta se toca el destino para ruta optima, o sistemas conectados si se usa ruta manual, y se confirma desde la barra inferior.
+- Reclutamiento y tecnologia usan modales/drawers a pantalla completa para que los botones principales queden accesibles con el pulgar.

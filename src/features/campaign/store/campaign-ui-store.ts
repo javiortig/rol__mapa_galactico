@@ -13,7 +13,7 @@ interface CampaignUiState {
 }
 
 export const useCampaignUiStore = create<CampaignUiState>((set) => ({
-  selectedSystemId: "kharon-prime",
+  selectedSystemId: null,
   hoveredSystemId: null,
   tooltipPosition: null,
   movementOriginSystemId: null,

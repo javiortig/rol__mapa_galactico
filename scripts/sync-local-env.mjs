@@ -39,6 +39,9 @@ writeFileSync(
   [
     `NEXT_PUBLIC_SUPABASE_URL=${url}`,
     `NEXT_PUBLIC_SUPABASE_ANON_KEY=${anonKey}`,
+    "NEXT_PUBLIC_SITE_URL=http://localhost:3000",
+    "NEXT_PUBLIC_ALLOW_MOCK_FALLBACK=true",
+    `SUPABASE_URL=${url}`,
     `SUPABASE_SERVICE_ROLE_KEY=${serviceRoleKey}`,
     ""
   ].join("\n")

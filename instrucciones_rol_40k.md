@@ -43,6 +43,19 @@ npm run db:seed:users
 
 Aviso: `npm run db:reset` borra y recrea la base local. Es correcto para desarrollo, pero elimina cambios manuales hechos en Studio.
 
+Entornos:
+
+- `.env.local` debe apuntar al Supabase local para testear en este ordenador.
+- Para regenerarlo, usar:
+
+```bash
+npm run supabase:start
+npm run db:sync-env
+```
+
+- `.env.cloud.local` guarda una copia privada de las claves cloud para consultarlas o copiarlas a Vercel.
+- `.env.local` y `.env.cloud.local` no se suben a GitHub.
+
 URLs locales:
 
 ```text
@@ -111,6 +124,16 @@ Configurar en Supabase Auth:
 - Redirect URL de previews Vercel si se usan ramas de preview.
 
 La version movil debe ser completamente utilizable: mapa tactil, panel de sistema como hoja inferior, barra de mando inferior, modales a pantalla completa y controles sin depender de hover.
+
+Navegacion movil actual:
+
+- La campana entra en modo mapa primero: no hay sistema seleccionado al cargar.
+- Tocar una estrella abre la hoja del sistema; cerrar con X vuelve al mapa libre.
+- La barra de recursos superior debe caber completa, con icono y numero compacto para los 5 recursos.
+- El movimiento movil funciona en dos fases: seleccion de unidades desde el sistema y trazado de ruta en el mapa.
+- Al trazar ruta, el panel de sistema se cierra y queda una barra inferior con coste de Uridium, tiempo, cancelar, deshacer, reiniciar y confirmar.
+- Tecnologia abre la constelacion a pantalla completa; tocar un nodo abre el detalle como drawer inferior.
+- Reclutamiento usa modal a pantalla completa con recursos compactos, lista tactil y confirmacion siempre accesible.
 
 ---
 

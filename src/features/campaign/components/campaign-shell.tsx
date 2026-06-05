@@ -24,6 +24,7 @@ import { RecruitmentModal } from "@/features/recruitment/components/recruitment-
 import { TechnologyTreeModal } from "@/features/technology/components/technology-tree-modal";
 import { getActiveTechnologyResearch } from "@/features/technology/lib/technology-state";
 import { formatCountdown } from "@/lib/time";
+import { useMediaQuery } from "@/lib/use-media-query";
 import type { CampaignSnapshot, CampaignUnit, Conflict, StarSystem, UnitMovementSelection } from "@/domain/campaign";
 
 const GalaxyMap = dynamic(
@@ -43,14 +44,18 @@ export function CampaignShell() {
   const selectedSystemId = useCampaignUiStore((state) => state.selectedSystemId);
   const hoveredSystemId = useCampaignUiStore((state) => state.hoveredSystemId);
   const tooltipPosition = useCampaignUiStore((state) => state.tooltipPosition);
+  const setSelectedSystem = useCampaignUiStore((state) => state.setSelectedSystem);
   const startMovementMode = useCampaignUiStore((state) => state.startMovementMode);
   const cancelMovementMode = useCampaignUiStore((state) => state.cancelMovementMode);
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const isMobile = !isDesktop;
   const [recruitmentOpen, setRecruitmentOpen] = useState(false);
   const [technologyOpen, setTechnologyOpen] = useState(false);
   const [battleReportSystemId, setBattleReportSystemId] = useState<string | null>(null);
   const [movementOriginSystemId, setMovementOriginSystemId] = useState<string | null>(null);
   const [movementUnitQuantities, setMovementUnitQuantities] = useState<Record<string, number>>({});
   const [movementRouteMode, setMovementRouteMode] = useState<"optimal" | "manual">("optimal");
+  const [movementMobileStage, setMovementMobileStage] = useState<"select" | "route">("select");
   const [movementPathSystemIds, setMovementPathSystemIds] = useState<string[]>([]);
   const [movementHoverPathSystemIds, setMovementHoverPathSystemIds] = useState<string[]>([]);
   const { data, error } = useQuery({
@@ -85,6 +90,9 @@ export function CampaignShell() {
   const selectedSystem = data.systems.find(
     (system) => system.id === selectedSystemId
   );
+  const panelSystem = selectedSystem ?? (!isMobile ? data.systems[0] : null);
+  const showSystemPanel = Boolean(panelSystem) && !(isMobile && movementOriginSystemId && movementMobileStage === "route");
+  const showCommandDock = !(isMobile && movementOriginSystemId);
   const battleReportSystem = data.systems.find((system) => system.id === battleReportSystemId) ?? null;
   const battleReportConflict =
     battleReportSystem
@@ -100,17 +108,33 @@ export function CampaignShell() {
     setMovementOriginSystemId(system.id);
     setMovementUnitQuantities({});
     setMovementRouteMode("optimal");
+    setMovementMobileStage("select");
     setMovementPathSystemIds([system.id]);
     setMovementHoverPathSystemIds([]);
-    startMovementMode(system.id);
+    if (!isMobile) {
+      startMovementMode(system.id);
+    }
   };
 
   const closeMovement = () => {
     setMovementOriginSystemId(null);
     setMovementUnitQuantities({});
+    setMovementMobileStage("select");
     setMovementPathSystemIds([]);
     setMovementHoverPathSystemIds([]);
     cancelMovementMode();
+  };
+
+  const startMobileRoutePlanning = () => {
+    if (!movementOriginSystemId) {
+      return;
+    }
+
+    setMovementMobileStage("route");
+    setMovementPathSystemIds([movementOriginSystemId]);
+    setMovementHoverPathSystemIds([]);
+    setSelectedSystem(null);
+    startMovementMode(movementOriginSystemId);
   };
 
   const handleMovementHover = (systemId: string | null) => {
@@ -183,7 +207,7 @@ export function CampaignShell() {
         factions={data.factions}
         movements={data.movements}
         movementPlanning={
-          movementOriginSystemId
+          movementOriginSystemId && (!isMobile || movementMobileStage === "route")
             ? {
                 active: true,
                 originSystemId: movementOriginSystemId,
@@ -202,17 +226,20 @@ export function CampaignShell() {
         </div>
 
         <div className="flex min-h-0 flex-1 items-stretch justify-end gap-4 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:px-4 md:pb-4 lg:justify-between">
-          <CommandDock onOpenTechnology={() => setTechnologyOpen(true)} snapshot={data} />
-          <SystemPanel
-            mergeError={mergeMutation.error?.message}
-            mergePending={mergeMutation.isPending}
-            onMergeUnits={(unitIds) => mergeMutation.mutate(unitIds)}
-            onOpenBattleReport={(system) => setBattleReportSystemId(system.id)}
-            onOpenMovement={openMovement}
-            onOpenRecruitment={() => setRecruitmentOpen(true)}
-            snapshot={data}
-            system={selectedSystem ?? data.systems[0]}
-          />
+          {showCommandDock ? <CommandDock onOpenTechnology={() => setTechnologyOpen(true)} snapshot={data} /> : null}
+          {showSystemPanel && panelSystem ? (
+            <SystemPanel
+              mergeError={mergeMutation.error?.message}
+              mergePending={mergeMutation.isPending}
+              onClose={() => setSelectedSystem(null)}
+              onMergeUnits={(unitIds) => mergeMutation.mutate(unitIds)}
+              onOpenBattleReport={(system) => setBattleReportSystemId(system.id)}
+              onOpenMovement={openMovement}
+              onOpenRecruitment={() => setRecruitmentOpen(true)}
+              snapshot={data}
+              system={panelSystem}
+            />
+          ) : null}
         </div>
       </div>
 
@@ -261,6 +288,9 @@ export function CampaignShell() {
             setMovementHoverPathSystemIds([]);
           }}
           originSystem={movementOriginSystem}
+          isMobile={isMobile}
+          mobileStage={movementMobileStage}
+          onStartMobileRoutePlanning={startMobileRoutePlanning}
           routeMode={movementRouteMode}
           routePlan={movementRoutePlan}
           selectedQuantities={movementUnitQuantities}
@@ -291,23 +321,37 @@ function ResourceBar({ snapshot }: { snapshot: CampaignSnapshot }) {
   );
 
   return (
-    <Panel className="mx-auto flex w-full max-w-full items-center justify-center overflow-x-auto px-2 py-2 md:w-fit md:px-4 md:py-3">
-      <div className="flex min-w-max items-center gap-2">
+    <Panel className="mx-auto w-full max-w-[23rem] overflow-hidden px-1.5 py-1.5 sm:max-w-lg md:w-fit md:max-w-full md:px-4 md:py-3">
+      <div className="grid grid-cols-5 gap-1 sm:gap-2">
         {mainResources.map((key) => (
           <div
-            className="min-w-20 rounded-md border border-cyan-200/15 bg-slate-950/45 px-2.5 py-2 md:min-w-24 md:px-3"
+            className="min-w-0 rounded-md border border-cyan-200/15 bg-slate-950/45 px-1.5 py-1.5 text-center md:min-w-24 md:px-3 md:py-2 md:text-left"
             key={key}
           >
-            <div className="mb-1 flex items-center gap-1.5 text-[10px] text-slate-400 md:gap-2 md:text-[11px]">
-              <ResourceIcon className="size-4" resource={key} />
-              <span className="hidden sm:inline">{resourceLabels[key]}</span>
+            <div className="mb-0.5 flex items-center justify-center gap-1 text-[10px] text-slate-400 md:mb-1 md:justify-start md:gap-2 md:text-[11px]">
+              <ResourceIcon className="size-4 shrink-0" resource={key} />
+              <span className="hidden md:inline">{resourceLabels[key]}</span>
             </div>
-            <div className="text-sm font-semibold text-cyan-50">{currentResources?.[key] ?? 0}</div>
+            <div className="truncate text-[clamp(0.68rem,2.7vw,0.9rem)] font-semibold tabular-nums text-cyan-50 md:text-sm">
+              {formatCompactNumber(currentResources?.[key] ?? 0)}
+            </div>
           </div>
         ))}
       </div>
     </Panel>
   );
+}
+
+function formatCompactNumber(value: number) {
+  if (Math.abs(value) >= 1000000) {
+    return `${(value / 1000000).toFixed(value >= 10000000 ? 0 : 1)}M`;
+  }
+
+  if (Math.abs(value) >= 1000) {
+    return `${(value / 1000).toFixed(value >= 10000 ? 0 : 1)}k`;
+  }
+
+  return String(value);
 }
 
 function CommandDock({
@@ -509,6 +553,7 @@ function SystemPanel({
   system,
   mergeError,
   mergePending,
+  onClose,
   onMergeUnits,
   onOpenBattleReport,
   onOpenMovement,
@@ -518,6 +563,7 @@ function SystemPanel({
   system: StarSystem;
   mergeError?: string;
   mergePending: boolean;
+  onClose: () => void;
   onMergeUnits: (unitIds: string[]) => void;
   onOpenBattleReport: (system: StarSystem) => void;
   onOpenMovement: (system: StarSystem) => void;
@@ -553,7 +599,7 @@ function SystemPanel({
   const mergeGroups = getMergeableUnitGroups(ownReadyUnits);
 
   return (
-    <Panel className="pointer-events-auto fixed inset-x-3 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-20 max-h-[44dvh] w-auto max-w-none overflow-hidden lg:static lg:z-auto lg:w-full lg:max-w-md lg:max-h-none lg:self-stretch">
+    <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-20 max-h-[76dvh] w-auto max-w-none overflow-hidden lg:static lg:z-auto lg:w-full lg:max-w-md lg:max-h-none lg:self-stretch">
       <div className="flex h-full flex-col">
         <div className="border-b border-cyan-200/15 p-4 md:p-5">
           <div className="mb-3 flex items-start justify-between gap-3">
@@ -565,15 +611,20 @@ function SystemPanel({
               <h1 className="text-xl font-semibold text-cyan-50 md:text-2xl">{system.name}</h1>
               <p className="mt-1 text-sm text-slate-300">{system.type}</p>
             </div>
-            {system.status === "war" ? (
-              <div className="grid size-11 place-items-center rounded-md border border-rose-300/30 bg-rose-400/12 text-rose-100">
-                <AlertTriangle size={20} />
-              </div>
-            ) : (
-              <div className="grid size-11 place-items-center rounded-md border border-cyan-300/30 bg-cyan-400/10 text-cyan-100">
-                <Crosshair size={20} />
-              </div>
-            )}
+            <div className="flex items-center gap-2">
+              {system.status === "war" ? (
+                <div className="grid size-11 place-items-center rounded-md border border-rose-300/30 bg-rose-400/12 text-rose-100">
+                  <AlertTriangle size={20} />
+                </div>
+              ) : (
+                <div className="grid size-11 place-items-center rounded-md border border-cyan-300/30 bg-cyan-400/10 text-cyan-100">
+                  <Crosshair size={20} />
+                </div>
+              )}
+              <Button aria-label="Cerrar sistema" className="lg:hidden" onClick={onClose} size="icon" variant="ghost">
+                <X size={17} />
+              </Button>
+            </div>
           </div>
           <p className="hidden text-sm leading-6 text-slate-300 sm:block">{system.publicDescription}</p>
         </div>
@@ -719,6 +770,9 @@ function MovementPlanner({
   onChangeRouteMode,
   onUndoPath,
   onResetPath,
+  onStartMobileRoutePlanning,
+  isMobile,
+  mobileStage,
   onClose
 }: {
   activePathSystemIds: string[];
@@ -731,6 +785,9 @@ function MovementPlanner({
   onChangeRouteMode: (mode: "optimal" | "manual") => void;
   onUndoPath: () => void;
   onResetPath: () => void;
+  onStartMobileRoutePlanning: () => void;
+  isMobile: boolean;
+  mobileStage: "select" | "route";
   onClose: () => void;
 }) {
   const queryClient = useQueryClient();
@@ -754,6 +811,10 @@ function MovementPlanner({
   });
   const selectedMiniatures = selectedSelections.reduce((total, selection) => total + selection.quantity, 0);
   const hasEnoughUridium = resources && routePlan ? resources.uridium >= routePlan.uridiumCost : false;
+  const routeText =
+    activePathSystemIds.length > 1
+      ? activePathSystemIds.map((id) => systemById.get(id)?.name ?? id).join(" -> ")
+      : "Sin destino fijado";
   const canConfirm =
     rpcReady &&
     selectedSelections.length > 0 &&
@@ -773,6 +834,134 @@ function MovementPlanner({
       onClose();
     }
   });
+
+  if (isMobile && mobileStage === "select") {
+    return (
+      <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 flex max-h-[82dvh] flex-col overflow-hidden lg:hidden">
+        <div className="border-b border-cyan-200/15 p-4">
+          <div className="mb-3 flex items-start justify-between gap-3">
+            <div>
+              <div className="text-xs uppercase tracking-[0.22em] text-cyan-200/70">Movimiento de unidades</div>
+              <h2 className="mt-1 text-lg font-semibold text-cyan-50">{originSystem.name}</h2>
+            </div>
+            <Button aria-label="Cerrar movimiento" onClick={onClose} size="icon" variant="ghost">
+              <X size={17} />
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              onClick={() => onChangeRouteMode("optimal")}
+              size="sm"
+              variant={routeMode === "optimal" ? "primary" : "ghost"}
+            >
+              <MousePointer2 size={15} />
+              Optima
+            </Button>
+            <Button
+              onClick={() => onChangeRouteMode("manual")}
+              size="sm"
+              variant={routeMode === "manual" ? "primary" : "ghost"}
+            >
+              <Route size={15} />
+              Manual
+            </Button>
+          </div>
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-y-auto p-3">
+          <div className="grid gap-2">
+            {availableUnits.map((unit) => (
+              <UnitSelectionCard
+                key={unit.id}
+                onSetQuantity={(quantity) => onSetUnitQuantity(unit.id, quantity)}
+                selectedQuantity={clampInteger(selectedQuantities[unit.id] ?? 0, 0, unit.quantity)}
+                unit={unit}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="border-t border-cyan-200/15 bg-slate-950/60 p-3">
+          <div className="mb-3 rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-xs text-slate-300">
+            {selectedSelections.length > 0
+              ? `${selectedSelections.length} unidades - ${selectedMiniatures} miniaturas seleccionadas`
+              : "Selecciona una o varias unidades para trazar una ruta."}
+          </div>
+          <Button className="w-full" disabled={selectedSelections.length === 0} onClick={onStartMobileRoutePlanning}>
+            <Route size={16} />
+            Trazar ruta en el mapa
+          </Button>
+        </div>
+      </Panel>
+    );
+  }
+
+  if (isMobile && mobileStage === "route") {
+    return (
+      <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 overflow-hidden lg:hidden">
+        <div className="border-b border-cyan-200/15 p-3">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <div className="text-[10px] uppercase tracking-[0.2em] text-cyan-200/70">Ruta de movimiento</div>
+              <div className="mt-1 truncate text-sm font-semibold text-cyan-50">{routeText}</div>
+            </div>
+            <Button aria-label="Cancelar movimiento" onClick={onClose} size="icon" variant="ghost">
+              <X size={17} />
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 p-2">
+              <div className="text-slate-400">Unidades</div>
+              <div className="font-semibold text-cyan-50">{selectedMiniatures}</div>
+            </div>
+            <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 p-2">
+              <div className="flex items-center gap-1 text-slate-400">
+                <ResourceIcon className="size-3.5" resource="uridium" />
+                Uridium
+              </div>
+              <div className={hasEnoughUridium ? "font-semibold text-cyan-50" : "font-semibold text-rose-100"}>
+                {routePlan?.uridiumCost ?? 0}/{resources?.uridium ?? 0}
+              </div>
+            </div>
+            <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 p-2">
+              <div className="text-slate-400">Tiempo</div>
+              <div className="font-semibold text-cyan-50">{formatTravelDuration(routePlan?.durationSeconds ?? 0)}</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-4 gap-2 p-3">
+          <Button className="min-w-0 px-1 text-[11px]" disabled={activePathSystemIds.length <= 1} onClick={onUndoPath} size="sm" variant="ghost">
+            <Undo2 size={15} />
+            Deshacer
+          </Button>
+          <Button className="min-w-0 px-1 text-[11px]" onClick={onResetPath} size="sm" variant="ghost">
+            Reiniciar
+          </Button>
+          <Button className="min-w-0 px-1 text-[11px]" onClick={onClose} size="sm" variant="ghost">
+            Cancelar
+          </Button>
+          <Button className="min-w-0 px-1 text-[11px]" disabled={!canConfirm || mutation.isPending} onClick={() => mutation.mutate()} size="sm">
+            <Check size={15} />
+            {mutation.isPending ? "..." : "Mover"}
+          </Button>
+        </div>
+
+        {!rpcReady ? (
+          <div className="border-t border-amber-300/20 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
+            Supabase no esta configurado.
+          </div>
+        ) : null}
+        {mutation.error ? (
+          <div className="border-t border-rose-300/20 bg-rose-400/10 px-3 py-2 text-xs text-rose-100">
+            {mutation.error.message}
+          </div>
+        ) : null}
+      </Panel>
+    );
+  }
 
   return (
     <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 mx-auto grid max-h-[78dvh] max-w-6xl grid-cols-1 overflow-hidden md:inset-x-4 md:bottom-4 md:max-h-[58vh] md:grid-cols-[1fr_340px] lg:max-h-[42vh]">

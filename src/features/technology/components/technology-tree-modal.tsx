@@ -17,6 +17,7 @@ import {
 } from "@/features/technology/lib/technology-state";
 import { cn } from "@/lib/utils";
 import { formatCountdown } from "@/lib/time";
+import { useMediaQuery } from "@/lib/use-media-query";
 import type { CampaignSnapshot, TechnologyNode } from "@/domain/campaign";
 
 type BranchStyle = {
@@ -47,15 +48,21 @@ export function TechnologyTreeModal({
   onClose: () => void;
 }) {
   const queryClient = useQueryClient();
+  const isTechnologyDesktop = useMediaQuery("(min-width: 768px)");
+  const isMobile = !isTechnologyDesktop;
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const currentResources = snapshot.resources.find((item) => item.factionId === snapshot.currentUser.factionId);
   const activeResearch = getActiveTechnologyResearch(snapshot);
-  const selectedNode =
-    snapshot.technologyNodes.find((node) => node.id === selectedNodeId) ??
+  const fallbackSelectedNode =
     snapshot.technologyNodes.find((node) => getTechnologyStatus(snapshot, node) === "available") ??
     snapshot.technologyNodes[0] ??
     null;
+  const selectedNode = selectedNodeId
+    ? snapshot.technologyNodes.find((node) => node.id === selectedNodeId) ?? null
+    : isMobile
+      ? null
+      : fallbackSelectedNode;
   const focusNodeId = hoveredNodeId ?? selectedNode?.id ?? null;
   const relatedNodeIds = useMemo(
     () => (focusNodeId ? getRelatedNodeIds(snapshot, focusNodeId) : new Set<string>()),
@@ -96,7 +103,7 @@ export function TechnologyTreeModal({
           </div>
         </header>
 
-        <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] overflow-hidden xl:grid-cols-[minmax(0,1fr)_420px] xl:grid-rows-none">
+        <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] overflow-hidden md:grid-rows-[minmax(0,1fr)_auto] xl:grid-cols-[minmax(0,1fr)_420px] xl:grid-rows-none">
           <div className="relative min-h-0 overflow-auto bg-[radial-gradient(circle_at_18%_22%,rgba(14,165,233,0.18),transparent_26%),radial-gradient(circle_at_78%_64%,rgba(192,132,252,0.14),transparent_34%),linear-gradient(180deg,rgba(2,6,23,0.98),rgba(8,13,31,0.98))] p-3">
             <div
               className="relative overflow-hidden rounded border border-cyan-200/10 bg-slate-950/40 shadow-[inset_0_0_130px_rgba(8,145,178,0.11)]"
@@ -129,16 +136,19 @@ export function TechnologyTreeModal({
             </div>
           </div>
 
-          <TechnologyDetailsPanel
-            activeResearch={activeResearch}
-            currentTechnology={currentResources?.technology ?? 0}
-            error={mutation.error?.message}
-            node={selectedNode}
-            onResearch={(node) => mutation.mutate(node.id)}
-            pending={mutation.isPending}
-            rpcReady={rpcReady}
-            snapshot={snapshot}
-          />
+          {!isMobile || selectedNode ? (
+            <TechnologyDetailsPanel
+              activeResearch={activeResearch}
+              currentTechnology={currentResources?.technology ?? 0}
+              error={mutation.error?.message}
+              node={selectedNode}
+              onCloseNode={isMobile ? () => setSelectedNodeId(null) : undefined}
+              onResearch={(node) => mutation.mutate(node.id)}
+              pending={mutation.isPending}
+              rpcReady={rpcReady}
+              snapshot={snapshot}
+            />
+          ) : null}
         </div>
       </Panel>
     </div>
@@ -382,6 +392,7 @@ function TechnologyDetailsPanel({
   rpcReady,
   pending,
   error,
+  onCloseNode,
   onResearch
 }: {
   snapshot: CampaignSnapshot;
@@ -391,6 +402,7 @@ function TechnologyDetailsPanel({
   rpcReady: boolean;
   pending: boolean;
   error?: string;
+  onCloseNode?: () => void;
   onResearch: (node: TechnologyNode) => void;
 }) {
   if (!node) {
@@ -416,7 +428,7 @@ function TechnologyDetailsPanel({
     !pending;
 
   return (
-    <aside className="max-h-[42dvh] min-h-0 overflow-y-auto border-t border-cyan-200/15 bg-slate-950/62 p-4 md:p-5 xl:max-h-none xl:border-l xl:border-t-0">
+    <aside className="max-h-[52dvh] min-h-0 overflow-y-auto border-t border-cyan-200/15 bg-slate-950/86 p-4 md:max-h-[42dvh] md:p-5 xl:max-h-none xl:border-l xl:border-t-0">
       <div className="mb-5 rounded-md border border-cyan-200/15 bg-slate-950/42 p-4">
         <div className="flex items-start gap-4">
           <div
@@ -432,6 +444,11 @@ function TechnologyDetailsPanel({
               {node.branch}
             </div>
           </div>
+          {onCloseNode ? (
+            <Button aria-label="Cerrar detalle" className="ml-auto shrink-0" onClick={onCloseNode} size="icon" variant="ghost">
+              <X size={17} />
+            </Button>
+          ) : null}
         </div>
         <p className="mt-4 text-sm leading-6 text-slate-300">{node.description}</p>
       </div>
@@ -504,7 +521,7 @@ function TechnologyDetailsPanel({
 
       {error ? <p className="mb-3 text-sm text-rose-200">{error}</p> : null}
 
-      <Button className="w-full" disabled={!canResearch} onClick={() => onResearch(node)}>
+      <Button className="sticky bottom-0 w-full" disabled={!canResearch} onClick={() => onResearch(node)}>
         <Sparkles size={16} />
         {pending ? "Iniciando..." : "Investigar"}
       </Button>
