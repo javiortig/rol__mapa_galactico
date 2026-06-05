@@ -34,6 +34,49 @@ npm run dev
 
 Supabase Studio local queda en `http://127.0.0.1:54323`.
 
+## Despliegue v1
+
+La primera version web se publica como campana privada en Vercel + Supabase Cloud.
+
+1. Crear un proyecto Supabase Cloud.
+2. Vincular el proyecto local:
+
+```bash
+npx supabase link
+npm run db:push:prod
+```
+
+3. Sembrar usuarios contra Supabase Cloud usando `SUPABASE_SERVICE_ROLE_KEY` del proyecto cloud:
+
+```bash
+SUPABASE_URL=https://tu-proyecto.supabase.co SUPABASE_SERVICE_ROLE_KEY=... npm run db:seed:users
+```
+
+En PowerShell:
+
+```powershell
+$env:SUPABASE_URL="https://tu-proyecto.supabase.co"
+$env:SUPABASE_SERVICE_ROLE_KEY="..."
+npm run db:seed:users
+```
+
+4. Ejecutar `supabase/production-cron.sql` en Supabase SQL Editor para programar resolvers cada minuto.
+5. Importar el repositorio GitHub en Vercel y configurar:
+
+```text
+NEXT_PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+NEXT_PUBLIC_SITE_URL=https://tu-app.vercel.app
+NEXT_PUBLIC_ALLOW_MOCK_FALLBACK=false
+```
+
+6. En Supabase Auth, configurar Site URL con la URL de Vercel y permitir `http://localhost:3000/**` para desarrollo.
+7. Validar antes de publicar:
+
+```bash
+npm run deploy:check
+```
+
 Usuarios locales:
 
 ```text

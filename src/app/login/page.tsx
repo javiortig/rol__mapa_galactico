@@ -30,7 +30,7 @@ export default function LoginPage() {
     const supabase = getSupabaseBrowserClient();
 
     if (!supabase) {
-      setError("Supabase no esta configurado. Ejecuta npm run db:sync-env con Supabase local arrancado.");
+      setError("Supabase no esta configurado para esta campana.");
       return;
     }
 
@@ -49,7 +49,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4">
+    <main className="flex min-h-dvh items-center justify-center px-4">
       <section className="hud-panel w-full max-w-md rounded-lg p-6">
         <div className="mb-6 flex items-center gap-3">
           <div className="grid size-10 place-items-center rounded-md border border-cyan-300/30 bg-cyan-300/10 text-cyan-200">
@@ -57,7 +57,7 @@ export default function LoginPage() {
           </div>
           <div>
             <h1 className="text-xl font-semibold">Acceso de campana</h1>
-            <p className="text-sm text-slate-300">Login local con Supabase Auth.</p>
+            <p className="text-sm text-slate-300">Acceso privado con Supabase Auth.</p>
           </div>
         </div>
 

@@ -68,6 +68,52 @@ Si aparece un error de refresh token después de resetear Supabase, entrar de nu
 
 ---
 
+## Publicacion web de esta version
+
+La primera publicacion se hara como campana privada en **Vercel + Supabase Cloud**, usando inicialmente la URL generada por Vercel.
+
+Flujo de publicacion:
+
+```bash
+npm run deploy:check
+npx supabase link
+npm run db:push:prod
+```
+
+Despues de aplicar migraciones y seed en Supabase Cloud:
+
+- Sembrar usuarios con `npm run db:seed:users` usando `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` del proyecto cloud.
+- Ejecutar el archivo `supabase/production-cron.sql` en el SQL Editor de Supabase Cloud.
+- Importar el repositorio GitHub en Vercel.
+- Configurar en Vercel:
+
+```text
+NEXT_PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+NEXT_PUBLIC_SITE_URL=https://tu-app.vercel.app
+NEXT_PUBLIC_ALLOW_MOCK_FALLBACK=false
+```
+
+En PowerShell, para sembrar usuarios cloud:
+
+```powershell
+$env:SUPABASE_URL="https://tu-proyecto.supabase.co"
+$env:SUPABASE_SERVICE_ROLE_KEY="..."
+npm run db:seed:users
+```
+
+En produccion `NEXT_PUBLIC_ALLOW_MOCK_FALLBACK=false` es obligatorio para que la web no muestre datos mock si Supabase falla o si no hay sesion.
+
+Configurar en Supabase Auth:
+
+- Site URL: URL final de Vercel.
+- Redirect URL de desarrollo: `http://localhost:3000/**`.
+- Redirect URL de previews Vercel si se usan ramas de preview.
+
+La version movil debe ser completamente utilizable: mapa tactil, panel de sistema como hoja inferior, barra de mando inferior, modales a pantalla completa y controles sin depender de hover.
+
+---
+
 ## 0. Contexto general
 
 Este documento describe una aplicación web privada para gestionar una campaña narrativa de Warhammer 40K entre amigos.

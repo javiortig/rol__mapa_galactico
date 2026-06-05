@@ -79,12 +79,12 @@ export function TechnologyTreeModal({
   }
 
   return (
-    <div className="pointer-events-auto fixed inset-0 z-50 grid place-items-center bg-black/78 p-2 backdrop-blur-md md:p-3">
-      <Panel className="flex h-[96vh] w-[98vw] max-w-none flex-col overflow-hidden border-cyan-200/20 shadow-[0_0_70px_rgba(8,145,178,0.18)]">
-        <header className="flex items-center justify-between gap-4 border-b border-cyan-200/15 bg-slate-950/65 px-5 py-4">
+    <div className="pointer-events-auto fixed inset-0 z-50 grid place-items-center bg-black/78 p-0 backdrop-blur-md md:p-3">
+      <Panel className="flex h-dvh w-full max-w-none flex-col overflow-hidden rounded-none border-cyan-200/20 shadow-[0_0_70px_rgba(8,145,178,0.18)] md:h-[96vh] md:w-[98vw] md:rounded-lg">
+        <header className="flex items-center justify-between gap-4 border-b border-cyan-200/15 bg-slate-950/65 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] md:px-5 md:py-4">
           <div>
             <div className="text-xs uppercase tracking-[0.24em] text-cyan-200/70">Arbol tecnologico</div>
-            <h2 className="mt-1 text-2xl font-semibold text-cyan-50">Constelacion doctrinal</h2>
+            <h2 className="mt-1 text-xl font-semibold text-cyan-50 md:text-2xl">Constelacion doctrinal</h2>
           </div>
           <div className="flex items-center gap-3">
             <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 px-3 py-2">
@@ -96,7 +96,7 @@ export function TechnologyTreeModal({
           </div>
         </header>
 
-        <div className="grid min-h-0 flex-1 overflow-hidden xl:grid-cols-[minmax(0,1fr)_420px]">
+        <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] overflow-hidden xl:grid-cols-[minmax(0,1fr)_420px] xl:grid-rows-none">
           <div className="relative min-h-0 overflow-auto bg-[radial-gradient(circle_at_18%_22%,rgba(14,165,233,0.18),transparent_26%),radial-gradient(circle_at_78%_64%,rgba(192,132,252,0.14),transparent_34%),linear-gradient(180deg,rgba(2,6,23,0.98),rgba(8,13,31,0.98))] p-3">
             <div
               className="relative overflow-hidden rounded border border-cyan-200/10 bg-slate-950/40 shadow-[inset_0_0_130px_rgba(8,145,178,0.11)]"
@@ -395,7 +395,7 @@ function TechnologyDetailsPanel({
 }) {
   if (!node) {
     return (
-      <aside className="border-t border-cyan-200/15 bg-slate-950/55 p-5 xl:border-l xl:border-t-0">
+      <aside className="border-t border-cyan-200/15 bg-slate-950/55 p-4 md:p-5 xl:border-l xl:border-t-0">
         <p className="text-sm text-slate-400">No hay tecnologias definidas.</p>
       </aside>
     );
@@ -416,7 +416,7 @@ function TechnologyDetailsPanel({
     !pending;
 
   return (
-    <aside className="min-h-0 overflow-y-auto border-t border-cyan-200/15 bg-slate-950/62 p-5 xl:border-l xl:border-t-0">
+    <aside className="max-h-[42dvh] min-h-0 overflow-y-auto border-t border-cyan-200/15 bg-slate-950/62 p-4 md:p-5 xl:max-h-none xl:border-l xl:border-t-0">
       <div className="mb-5 rounded-md border border-cyan-200/15 bg-slate-950/42 p-4">
         <div className="flex items-start gap-4">
           <div

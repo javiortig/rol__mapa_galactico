@@ -251,7 +251,7 @@ export function GalaxyMap({ systems, edges, factions, movements, movementPlannin
     };
   }, [edges, factionColorById, factions, movements, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems]);
 
-  return <div className="absolute inset-0" ref={containerRef} />;
+  return <div className="absolute inset-0 touch-none" ref={containerRef} />;
 }
 
 function createLayers(): MapLayers {
@@ -277,23 +277,72 @@ function bindMapInput({
 }) {
   let dragging = false;
   let lastPoint = { x: 0, y: 0 };
+  const activePointers = new Map<number, { x: number; y: number }>();
+  let pinchStart:
+    | {
+        distance: number;
+        view: ViewState;
+        worldPoint: { x: number; y: number };
+      }
+    | null = null;
 
   const onPointerDown = (event: PIXI.FederatedPointerEvent) => {
-    dragging = true;
+    const point = { x: event.global.x, y: event.global.y };
+    activePointers.set(event.pointerId, point);
     state.targetView = null;
-    lastPoint = { x: event.global.x, y: event.global.y };
+
+    if (activePointers.size >= 2) {
+      dragging = false;
+      pinchStart = getPinchStart(activePointers, state.view);
+      return;
+    }
+
+    dragging = true;
+    lastPoint = point;
   };
 
-  const onPointerUp = () => {
+  const onPointerUp = (event: PIXI.FederatedPointerEvent) => {
+    activePointers.delete(event.pointerId);
+    pinchStart = null;
+
+    if (activePointers.size === 1) {
+      dragging = true;
+      lastPoint = [...activePointers.values()][0];
+      return;
+    }
+
     dragging = false;
   };
 
   const onPointerMove = (event: PIXI.FederatedPointerEvent) => {
+    const nextPoint = { x: event.global.x, y: event.global.y };
+
+    if (activePointers.has(event.pointerId)) {
+      activePointers.set(event.pointerId, nextPoint);
+    }
+
+    if (activePointers.size >= 2 && pinchStart) {
+      const pinch = getPinchMetrics(activePointers);
+
+      if (pinch) {
+        const nextScale = clamp(
+          pinchStart.view.scale * (pinch.distance / Math.max(pinchStart.distance, 1)),
+          0.42,
+          2
+        );
+        state.view.scale = nextScale;
+        state.view.x = pinch.midpoint.x - pinchStart.worldPoint.x * nextScale;
+        state.view.y = pinch.midpoint.y - pinchStart.worldPoint.y * nextScale;
+        applyView(state.world, state.view);
+      }
+
+      return;
+    }
+
     if (!dragging) {
       return;
     }
 
-    const nextPoint = { x: event.global.x, y: event.global.y };
     state.view.x += nextPoint.x - lastPoint.x;
     state.view.y += nextPoint.y - lastPoint.y;
     lastPoint = nextPoint;
@@ -325,6 +374,7 @@ function bindMapInput({
   app.stage.on("pointerdown", onPointerDown);
   app.stage.on("pointerup", onPointerUp);
   app.stage.on("pointerupoutside", onPointerUp);
+  app.stage.on("pointercancel", onPointerUp);
   app.stage.on("pointermove", onPointerMove);
   container.addEventListener("wheel", wheelHandler, { passive: false });
 
@@ -332,8 +382,44 @@ function bindMapInput({
     app.stage.off("pointerdown", onPointerDown);
     app.stage.off("pointerup", onPointerUp);
     app.stage.off("pointerupoutside", onPointerUp);
+    app.stage.off("pointercancel", onPointerUp);
     app.stage.off("pointermove", onPointerMove);
     container.removeEventListener("wheel", wheelHandler);
+  };
+}
+
+function getPinchStart(activePointers: Map<number, { x: number; y: number }>, view: ViewState) {
+  const pinch = getPinchMetrics(activePointers);
+
+  if (!pinch) {
+    return null;
+  }
+
+  return {
+    distance: pinch.distance,
+    view: { ...view },
+    worldPoint: {
+      x: (pinch.midpoint.x - view.x) / view.scale,
+      y: (pinch.midpoint.y - view.y) / view.scale
+    }
+  };
+}
+
+function getPinchMetrics(activePointers: Map<number, { x: number; y: number }>) {
+  const points = [...activePointers.values()];
+
+  if (points.length < 2) {
+    return null;
+  }
+
+  const [first, second] = points;
+
+  return {
+    distance: Math.hypot(second.x - first.x, second.y - first.y),
+    midpoint: {
+      x: (first.x + second.x) / 2,
+      y: (first.y + second.y) / 2
+    }
   };
 }
 

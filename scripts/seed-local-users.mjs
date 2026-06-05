@@ -207,7 +207,7 @@ async function seedUsers() {
     }
 
     seeded.set(seedUser.email, { id: authUser.id, factionId });
-    console.log(`Usuario local listo: ${seedUser.email}`);
+    console.log(`Usuario de campana listo: ${seedUser.email}`);
   }
 
   await seedDemoBattleReport(seeded);
@@ -269,4 +269,4 @@ async function seedDemoBattleReport(seeded) {
 }
 
 await seedUsers();
-console.log("Usuarios, perfiles y facciones locales sembrados.");
+console.log("Usuarios, perfiles y facciones de campana sembrados.");

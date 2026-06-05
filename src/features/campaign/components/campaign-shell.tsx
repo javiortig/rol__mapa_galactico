@@ -1,10 +1,11 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, Check, Clock3, Cpu, Crosshair, Minus, MousePointer2, Plus, RadioTower, Route, Shield, Swords, Undo2, X } from "lucide-react";
-import { getCampaignSnapshot } from "@/features/campaign/api/campaign-repository";
+import { getCampaignSnapshot, isCampaignAuthRequiredError } from "@/features/campaign/api/campaign-repository";
 import { useCampaignUiStore } from "@/features/campaign/store/campaign-ui-store";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,7 @@ const mainResources = ["supply", "minerals", "ancestralStone", "uridium", "techn
 const planetProductionResources = ["supply", "minerals", "ancestralStone", "uridium"] as const;
 
 export function CampaignShell() {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const selectedSystemId = useCampaignUiStore((state) => state.selectedSystemId);
   const hoveredSystemId = useCampaignUiStore((state) => state.hoveredSystemId);
@@ -51,7 +53,7 @@ export function CampaignShell() {
   const [movementRouteMode, setMovementRouteMode] = useState<"optimal" | "manual">("optimal");
   const [movementPathSystemIds, setMovementPathSystemIds] = useState<string[]>([]);
   const [movementHoverPathSystemIds, setMovementHoverPathSystemIds] = useState<string[]>([]);
-  const { data } = useQuery({
+  const { data, error } = useQuery({
     queryKey: ["campaign-snapshot"],
     queryFn: getCampaignSnapshot
   });
@@ -61,6 +63,20 @@ export function CampaignShell() {
       await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
     }
   });
+
+  useEffect(() => {
+    if (isCampaignAuthRequiredError(error)) {
+      router.replace("/login");
+    }
+  }, [error, router]);
+
+  if (isCampaignAuthRequiredError(error)) {
+    return <PrivateCampaignNotice title="Acceso privado" message="Redirigiendo al acceso de campana..." />;
+  }
+
+  if (error) {
+    return <PrivateCampaignNotice title="Campana no disponible" message={error.message} />;
+  }
 
   if (!data) {
     return <main className="grid min-h-screen place-items-center text-cyan-100">Cargando campaña...</main>;
@@ -161,7 +177,7 @@ export function CampaignShell() {
   };
 
   return (
-    <main className="relative h-screen overflow-hidden">
+    <main className="relative h-dvh overflow-hidden">
       <GalaxyMap
         edges={data.edges}
         factions={data.factions}
@@ -181,11 +197,11 @@ export function CampaignShell() {
       />
 
       <div className="pointer-events-none absolute inset-0 flex flex-col">
-        <div className="pointer-events-auto p-4">
+        <div className="pointer-events-auto px-3 pb-2 pt-[max(0.75rem,env(safe-area-inset-top))] md:p-4">
           <ResourceBar snapshot={data} />
         </div>
 
-        <div className="flex min-h-0 flex-1 items-stretch justify-between gap-4 px-4 pb-4">
+        <div className="flex min-h-0 flex-1 items-stretch justify-end gap-4 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:px-4 md:pb-4 lg:justify-between">
           <CommandDock onOpenTechnology={() => setTechnologyOpen(true)} snapshot={data} />
           <SystemPanel
             mergeError={mergeMutation.error?.message}
@@ -255,22 +271,36 @@ export function CampaignShell() {
   );
 }
 
+function PrivateCampaignNotice({ title, message }: { title: string; message: string }) {
+  return (
+    <main className="grid min-h-dvh place-items-center px-4 text-cyan-50">
+      <Panel className="w-full max-w-md p-6 text-center">
+        <div className="mx-auto mb-4 grid size-12 place-items-center rounded-md border border-cyan-300/30 bg-cyan-300/10 text-cyan-100">
+          <Shield size={22} />
+        </div>
+        <h1 className="text-xl font-semibold">{title}</h1>
+        <p className="mt-2 text-sm leading-6 text-slate-300">{message}</p>
+      </Panel>
+    </main>
+  );
+}
+
 function ResourceBar({ snapshot }: { snapshot: CampaignSnapshot }) {
   const currentResources = snapshot.resources.find(
     (resources) => resources.factionId === snapshot.currentUser.factionId
   );
 
   return (
-    <Panel className="mx-auto flex w-fit max-w-full flex-wrap items-center justify-center gap-2 px-4 py-3">
-      <div className="flex flex-wrap items-center gap-2">
+    <Panel className="mx-auto flex w-full max-w-full items-center justify-center overflow-x-auto px-2 py-2 md:w-fit md:px-4 md:py-3">
+      <div className="flex min-w-max items-center gap-2">
         {mainResources.map((key) => (
           <div
-            className="rounded-md border border-cyan-200/15 bg-slate-950/45 px-3 py-2"
+            className="min-w-20 rounded-md border border-cyan-200/15 bg-slate-950/45 px-2.5 py-2 md:min-w-24 md:px-3"
             key={key}
           >
-            <div className="mb-1 flex items-center gap-2 text-[11px] text-slate-400">
+            <div className="mb-1 flex items-center gap-1.5 text-[10px] text-slate-400 md:gap-2 md:text-[11px]">
               <ResourceIcon className="size-4" resource={key} />
-              {resourceLabels[key]}
+              <span className="hidden sm:inline">{resourceLabels[key]}</span>
             </div>
             <div className="text-sm font-semibold text-cyan-50">{currentResources?.[key] ?? 0}</div>
           </div>
@@ -296,8 +326,37 @@ function CommandDock({
   const activeTechnologyNode = activeTechnology
     ? snapshot.technologyNodes.find((node) => node.id === activeTechnology.technologyNodeId)
     : null;
+  const activeChronosCount =
+    activeMovements.length +
+    snapshot.recruitmentQueue.length +
+    pendingConflicts.length +
+    (activeTechnology ? 1 : 0);
 
   return (
+    <>
+    <div className="pointer-events-auto fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-30 lg:hidden">
+      <Panel className="p-2">
+        <div className="grid grid-cols-4 gap-1.5">
+          <Button className="h-12 flex-col gap-1 px-1 text-[11px]" size="sm" variant="ghost">
+            <RadioTower size={16} />
+            Recursos
+          </Button>
+          <Button className="h-12 flex-col gap-1 px-1 text-[11px]" size="sm" variant="ghost">
+            <Shield size={16} />
+            Tropas
+          </Button>
+          <Button className="h-12 flex-col gap-1 px-1 text-[11px]" onClick={onOpenTechnology} size="sm" variant="ghost">
+            <Cpu size={16} />
+            Tecno.
+          </Button>
+          <Button className="h-12 flex-col gap-1 px-1 text-[11px]" size="sm" variant="ghost">
+            <Swords size={16} />
+            {activeChronosCount > 0 ? `${activeChronosCount} avisos` : "Estado"}
+          </Button>
+        </div>
+      </Panel>
+    </div>
+
     <div className="pointer-events-auto hidden w-80 flex-col gap-3 self-end lg:flex">
       <Panel className="p-4">
         <div className="mb-3 flex items-center justify-between">
@@ -375,6 +434,7 @@ function CommandDock({
         </div>
       </Panel>
     </div>
+    </>
   );
 }
 
@@ -493,16 +553,16 @@ function SystemPanel({
   const mergeGroups = getMergeableUnitGroups(ownReadyUnits);
 
   return (
-    <Panel className="pointer-events-auto w-full max-w-md self-stretch overflow-hidden">
+    <Panel className="pointer-events-auto fixed inset-x-3 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-20 max-h-[44dvh] w-auto max-w-none overflow-hidden lg:static lg:z-auto lg:w-full lg:max-w-md lg:max-h-none lg:self-stretch">
       <div className="flex h-full flex-col">
-        <div className="border-b border-cyan-200/15 p-5">
+        <div className="border-b border-cyan-200/15 p-4 md:p-5">
           <div className="mb-3 flex items-start justify-between gap-3">
             <div>
               <div className="mb-2 flex items-center gap-2">
                 <Badge tone={tone}>{system.status}</Badge>
                 {system.isCapital ? <Badge tone="amber">capital</Badge> : null}
               </div>
-              <h1 className="text-2xl font-semibold text-cyan-50">{system.name}</h1>
+              <h1 className="text-xl font-semibold text-cyan-50 md:text-2xl">{system.name}</h1>
               <p className="mt-1 text-sm text-slate-300">{system.type}</p>
             </div>
             {system.status === "war" ? (
@@ -515,10 +575,10 @@ function SystemPanel({
               </div>
             )}
           </div>
-          <p className="text-sm leading-6 text-slate-300">{system.publicDescription}</p>
+          <p className="hidden text-sm leading-6 text-slate-300 sm:block">{system.publicDescription}</p>
         </div>
 
-        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto p-5">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4 md:space-y-5 md:p-5">
           <section>
             <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Control</h2>
             <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-sm text-slate-200">
@@ -617,15 +677,16 @@ function SystemPanel({
           ) : null}
         </div>
 
-        <div className={`grid gap-2 border-t border-cyan-200/15 p-5 ${canRecruit ? "grid-cols-3" : "grid-cols-2"}`}>
+        <div className={`grid gap-2 border-t border-cyan-200/15 p-3 md:p-5 ${canRecruit ? "grid-cols-3" : "grid-cols-2"}`}>
           <Button>Ver misión</Button>
           {canRecruit ? (
-            <Button onClick={onOpenRecruitment}>
+            <Button className="min-w-0 text-xs sm:text-sm" onClick={onOpenRecruitment}>
               <Clock3 size={16} />
               Reclutar
             </Button>
           ) : null}
           <Button
+            className="min-w-0 text-xs sm:text-sm"
             disabled={system.status === "war" ? !canReport : !canMove}
             onClick={() => {
               if (system.status === "war" && canReport) {
@@ -714,14 +775,14 @@ function MovementPlanner({
   });
 
   return (
-    <Panel className="pointer-events-auto fixed inset-x-4 bottom-4 z-40 mx-auto grid max-h-[42vh] max-w-6xl grid-cols-1 overflow-hidden md:grid-cols-[1fr_340px]">
+    <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 mx-auto grid max-h-[78dvh] max-w-6xl grid-cols-1 overflow-hidden md:inset-x-4 md:bottom-4 md:max-h-[58vh] md:grid-cols-[1fr_340px] lg:max-h-[42vh]">
       <div className="min-h-0 overflow-y-auto p-4">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="text-xs uppercase tracking-[0.22em] text-cyan-200/70">Movimiento de unidades</div>
             <h2 className="mt-1 text-lg font-semibold text-cyan-50">{originSystem.name}</h2>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button
               onClick={() => onChangeRouteMode("optimal")}
               size="sm"
@@ -769,7 +830,7 @@ function MovementPlanner({
           </div>
         </div>
 
-        <div className="mb-4 rounded-md border border-cyan-200/15 bg-slate-950/45 p-3 text-sm text-slate-200">
+        <div className="mb-4 rounded-md border border-cyan-200/15 bg-slate-950/45 p-3 text-sm text-slate-200 break-words">
           {activePathSystemIds.length > 1
             ? activePathSystemIds.map((id) => systemById.get(id)?.name ?? id).join(" -> ")
             : "Sin destino fijado"}
@@ -931,9 +992,9 @@ function BattleReportModal({
   });
 
   return (
-    <div className="pointer-events-auto fixed inset-0 z-50 grid place-items-center bg-black/60 px-4 py-6 backdrop-blur-sm">
-      <Panel className="flex max-h-[88vh] w-full max-w-4xl flex-col overflow-hidden">
-        <div className="flex items-center justify-between gap-4 border-b border-rose-200/15 p-5">
+    <div className="pointer-events-auto fixed inset-0 z-50 grid place-items-center bg-black/60 p-0 backdrop-blur-sm md:px-4 md:py-6">
+      <Panel className="flex h-dvh w-full max-w-4xl flex-col overflow-hidden rounded-none md:h-auto md:max-h-[88vh] md:rounded-lg">
+        <div className="flex items-center justify-between gap-4 border-b border-rose-200/15 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] md:p-5">
           <div>
             <div className="text-xs uppercase tracking-[0.24em] text-rose-200/70">Reporte de batalla</div>
             <h2 className="mt-1 text-2xl font-semibold text-cyan-50">{system.name}</h2>
@@ -944,7 +1005,7 @@ function BattleReportModal({
         </div>
 
         <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[1fr_300px]">
-          <div className="min-h-0 overflow-y-auto p-5">
+          <div className="min-h-0 overflow-y-auto p-4 md:p-5">
             <div className="mb-4 grid gap-3 md:grid-cols-2">
               {factionOptions.map((faction) => (
                 <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={faction.id}>
@@ -1004,7 +1065,7 @@ function BattleReportModal({
             </div>
           </div>
 
-          <aside className="border-t border-cyan-200/15 bg-slate-950/35 p-5 lg:border-l lg:border-t-0">
+          <aside className="border-t border-cyan-200/15 bg-slate-950/35 p-4 md:p-5 lg:border-l lg:border-t-0">
             <div className="space-y-4">
               <label className="block text-sm">
                 <span className="mb-2 block text-slate-300">Ganador</span>

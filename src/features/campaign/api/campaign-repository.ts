@@ -31,6 +31,20 @@ import { mockCampaignSnapshot } from "@/mocks/campaign-data";
 
 type DbRow = Record<string, unknown>;
 
+export class CampaignAuthRequiredError extends Error {
+  constructor(message = "Necesitas iniciar sesion para acceder a la campana.") {
+    super(message);
+    this.name = "CampaignAuthRequiredError";
+  }
+}
+
+export class CampaignDataUnavailableError extends Error {
+  constructor(message = "No se pudo cargar la campana desde Supabase.") {
+    super(message);
+    this.name = "CampaignDataUnavailableError";
+  }
+}
+
 const emptyResources: ResourceBundle = {
   supply: 0,
   minerals: 0,
@@ -41,9 +55,10 @@ const emptyResources: ResourceBundle = {
 
 export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
   const supabase = getSupabaseBrowserClient();
+  const allowMockFallback = canUseMockFallback();
 
   if (!supabase) {
-    return mockCampaignSnapshot;
+    return getFallbackSnapshotOrThrow(allowMockFallback, "Supabase no esta configurado.");
   }
 
   try {
@@ -52,7 +67,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return mockCampaignSnapshot;
+      return getFallbackSnapshotOrThrow(allowMockFallback, "Necesitas iniciar sesion para acceder a la campana.", "auth");
     }
 
     await Promise.allSettled([
@@ -117,7 +132,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
     const profile = profileResult.data as DbRow | null;
 
     if (!profile) {
-      return mockCampaignSnapshot;
+      return getFallbackSnapshotOrThrow(allowMockFallback, "Tu usuario no tiene perfil de campana configurado.");
     }
 
     const playerFactions = getRows(playerFactionsResult, "player_factions");
@@ -126,7 +141,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       (playerFactions[0]?.faction_id as string | undefined) ?? (factionRows[0]?.id as string | undefined);
 
     if (!currentFactionId) {
-      return mockCampaignSnapshot;
+      return getFallbackSnapshotOrThrow(allowMockFallback, "Tu usuario no tiene faccion asignada.");
     }
 
     const productionBySystem = new Map(
@@ -178,12 +193,51 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
     if (isStaleSupabaseRefreshTokenError(error)) {
       clearSupabaseAuthStorage();
       console.warn("Sesion local de Supabase caducada tras reset; se limpio el token local.");
-      return mockCampaignSnapshot;
+      return getFallbackSnapshotOrThrow(allowMockFallback, "La sesion ha caducado. Vuelve a iniciar sesion.", "auth");
     }
 
-    console.warn("No se pudo cargar Supabase; usando datos mock.", error);
+    if (error instanceof CampaignAuthRequiredError || error instanceof CampaignDataUnavailableError) {
+      throw error;
+    }
+
+    console.warn(
+      allowMockFallback ? "No se pudo cargar Supabase; usando datos mock." : "No se pudo cargar Supabase.",
+      error
+    );
+    return getFallbackSnapshotOrThrow(allowMockFallback);
+  }
+}
+
+export function isCampaignAuthRequiredError(error: unknown): boolean {
+  return error instanceof CampaignAuthRequiredError;
+}
+
+function canUseMockFallback() {
+  if (process.env.NEXT_PUBLIC_ALLOW_MOCK_FALLBACK === "true") {
+    return true;
+  }
+
+  if (process.env.NEXT_PUBLIC_ALLOW_MOCK_FALLBACK === "false") {
+    return false;
+  }
+
+  return process.env.NODE_ENV !== "production";
+}
+
+function getFallbackSnapshotOrThrow(
+  allowMockFallback: boolean,
+  message = "No se pudo cargar la campana desde Supabase.",
+  kind: "auth" | "data" = "data"
+) {
+  if (allowMockFallback) {
     return mockCampaignSnapshot;
   }
+
+  if (kind === "auth") {
+    throw new CampaignAuthRequiredError(message);
+  }
+
+  throw new CampaignDataUnavailableError(message);
 }
 
 function getRows(result: { data: unknown; error: unknown }, label: string): DbRow[] {

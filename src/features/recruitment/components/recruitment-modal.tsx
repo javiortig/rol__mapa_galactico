@@ -72,9 +72,9 @@ export function RecruitmentModal({
   }
 
   return (
-    <div className="pointer-events-auto fixed inset-0 z-40 grid place-items-center bg-black/58 px-4 py-6 backdrop-blur-sm">
-      <Panel className="flex max-h-[88vh] w-full max-w-5xl flex-col overflow-hidden">
-        <div className="flex items-center justify-between gap-4 border-b border-cyan-200/15 p-5">
+    <div className="pointer-events-auto fixed inset-0 z-40 grid place-items-center bg-black/58 p-0 backdrop-blur-sm md:px-4 md:py-6">
+      <Panel className="flex h-dvh w-full max-w-5xl flex-col overflow-hidden rounded-none md:h-auto md:max-h-[88vh] md:rounded-lg">
+        <div className="flex items-center justify-between gap-4 border-b border-cyan-200/15 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] md:p-5">
           <div>
             <div className="text-xs uppercase tracking-[0.24em] text-cyan-200/70">Reclutamiento orbital</div>
             <h2 className="mt-1 text-2xl font-semibold text-cyan-50">{ownFaction?.name ?? "Facción"}</h2>
@@ -85,7 +85,7 @@ export function RecruitmentModal({
         </div>
 
         <div className="grid min-h-0 flex-1 gap-0 overflow-hidden lg:grid-cols-[1fr_320px]">
-          <div className="min-h-0 overflow-y-auto p-5">
+          <div className="min-h-0 overflow-y-auto p-4 md:p-5">
             <ResourceSummary resources={resources} />
 
             {!rpcReady ? (
@@ -94,7 +94,7 @@ export function RecruitmentModal({
               </div>
             ) : null}
 
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {templates.map((template) => {
                 const selected = template.id === selectedTemplate?.id;
                 const unlocked = isUnitTemplateUnlocked(snapshot, template);
@@ -159,7 +159,7 @@ export function RecruitmentModal({
           </div>
 
           <aside className="flex min-h-0 flex-col border-t border-cyan-200/15 bg-slate-950/32 lg:border-l lg:border-t-0">
-            <div className="border-b border-cyan-200/15 p-5">
+            <div className="border-b border-cyan-200/15 p-4 md:p-5">
               <h3 className="text-sm font-semibold text-cyan-50">Confirmación</h3>
               {selectedTemplate ? (
                 <div className="mt-4 space-y-4">
@@ -240,7 +240,7 @@ export function RecruitmentModal({
               )}
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto p-5">
+            <div className="min-h-0 flex-1 overflow-y-auto p-4 md:p-5">
               <h3 className="mb-3 text-sm font-semibold text-cyan-50">Cola activa</h3>
               <div className="space-y-2">
                 {queue.length > 0 ? (
