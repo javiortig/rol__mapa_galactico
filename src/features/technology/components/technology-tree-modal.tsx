@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Check, Clock3, Lock, Sparkles, X } from "lucide-react";
+import { Check, Clock3, Crosshair, Lock, Minus, Plus, Sparkles, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
@@ -48,22 +48,25 @@ export function TechnologyTreeModal({
   onClose: () => void;
 }) {
   const queryClient = useQueryClient();
-  const isTechnologyDesktop = useMediaQuery("(min-width: 768px)");
+  const treeViewportRef = useRef<HTMLDivElement | null>(null);
+  const isNarrowTechnology = useMediaQuery("(max-width: 430px)");
+  const isTechnologyDesktop = useMediaQuery("(min-width: 1024px)");
   const isMobile = !isTechnologyDesktop;
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
+  const [treeZoom, setTreeZoom] = useState<number | null>(null);
   const currentResources = snapshot.resources.find((item) => item.factionId === snapshot.currentUser.factionId);
   const activeResearch = getActiveTechnologyResearch(snapshot);
-  const fallbackSelectedNode =
+  const centerNode =
+    snapshot.technologyNodes.find((node) => node.slug === "doctrina-campana") ??
+    snapshot.technologyNodes.find((node) => node.isStarter) ??
     snapshot.technologyNodes.find((node) => getTechnologyStatus(snapshot, node) === "available") ??
     snapshot.technologyNodes[0] ??
     null;
-  const selectedNode = selectedNodeId
-    ? snapshot.technologyNodes.find((node) => node.id === selectedNodeId) ?? null
-    : isMobile
-      ? null
-      : fallbackSelectedNode;
+  const selectedNode = selectedNodeId ? snapshot.technologyNodes.find((node) => node.id === selectedNodeId) ?? null : null;
   const focusNodeId = hoveredNodeId ?? selectedNode?.id ?? null;
+  const defaultTreeZoom = isTechnologyDesktop ? 0.9 : isNarrowTechnology ? 0.62 : 0.74;
+  const currentTreeZoom = treeZoom ?? defaultTreeZoom;
   const relatedNodeIds = useMemo(
     () => (focusNodeId ? getRelatedNodeIds(snapshot, focusNodeId) : new Set<string>()),
     [focusNodeId, snapshot]
@@ -81,13 +84,44 @@ export function TechnologyTreeModal({
     }
   });
 
+  const centerTechnologyTree = useCallback((behavior: ScrollBehavior = "auto") => {
+    const viewport = treeViewportRef.current;
+
+    if (!viewport || !centerNode) {
+      return;
+    }
+
+    const point = getNodePoint(centerNode);
+    viewport.scrollTo({
+      behavior,
+      left: Math.max(0, point.x * currentTreeZoom - viewport.clientWidth / 2),
+      top: Math.max(0, point.y * currentTreeZoom - viewport.clientHeight / 2)
+    });
+  }, [centerNode, currentTreeZoom]);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const frame = window.requestAnimationFrame(() => centerTechnologyTree("auto"));
+    return () => window.cancelAnimationFrame(frame);
+  }, [centerTechnologyTree, open]);
+
+  const handleClose = () => {
+    setSelectedNodeId(null);
+    setHoveredNodeId(null);
+    setTreeZoom(null);
+    onClose();
+  };
+
   if (!open) {
     return null;
   }
 
   return (
     <div className="pointer-events-auto fixed inset-0 z-50 grid place-items-center bg-black/78 p-0 backdrop-blur-md md:p-3">
-      <Panel className="flex h-dvh w-full max-w-none flex-col overflow-hidden rounded-none border-cyan-200/20 shadow-[0_0_70px_rgba(8,145,178,0.18)] md:h-[96vh] md:w-[98vw] md:rounded-lg">
+      <Panel className="flex h-[var(--app-height)] w-full max-w-none flex-col overflow-hidden rounded-none border-cyan-200/20 shadow-[0_0_70px_rgba(8,145,178,0.18)] md:h-[96vh] md:w-[98vw] md:rounded-lg">
         <header className="flex items-center justify-between gap-4 border-b border-cyan-200/15 bg-slate-950/65 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] md:px-5 md:py-4">
           <div>
             <div className="text-xs uppercase tracking-[0.24em] text-cyan-200/70">Arbol tecnologico</div>
@@ -97,43 +131,61 @@ export function TechnologyTreeModal({
             <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 px-3 py-2">
               <ResourceAmount resource="technology" value={currentResources?.technology ?? 0} />
             </div>
-            <Button aria-label="Cerrar tecnologia" onClick={onClose} size="icon" variant="ghost">
+            <Button aria-label="Cerrar tecnologia" onClick={handleClose} size="icon" variant="ghost">
               <X size={18} />
             </Button>
           </div>
         </header>
 
         <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] overflow-hidden md:grid-rows-[minmax(0,1fr)_auto] xl:grid-cols-[minmax(0,1fr)_420px] xl:grid-rows-none">
-          <div className="relative min-h-0 overflow-auto bg-[radial-gradient(circle_at_18%_22%,rgba(14,165,233,0.18),transparent_26%),radial-gradient(circle_at_78%_64%,rgba(192,132,252,0.14),transparent_34%),linear-gradient(180deg,rgba(2,6,23,0.98),rgba(8,13,31,0.98))] p-3">
-            <div
-              className="relative overflow-hidden rounded border border-cyan-200/10 bg-slate-950/40 shadow-[inset_0_0_130px_rgba(8,145,178,0.11)]"
-              style={{ height: treeHeight, width: treeWidth }}
-            >
-              <ConstellationBackdrop />
-              <BranchConstellations branches={[...new Set(snapshot.technologyNodes.map((node) => node.branch))]} />
-              <TechnologyConnections
-                focusNodeId={focusNodeId}
-                nodeById={nodeById}
-                relatedNodeIds={relatedNodeIds}
-                snapshot={snapshot}
-              />
+          <div className="relative min-h-0 overflow-hidden bg-[radial-gradient(circle_at_18%_22%,rgba(14,165,233,0.18),transparent_26%),radial-gradient(circle_at_78%_64%,rgba(192,132,252,0.14),transparent_34%),linear-gradient(180deg,rgba(2,6,23,0.98),rgba(8,13,31,0.98))]">
+            <div className="tech-scroll h-full p-3" ref={treeViewportRef}>
+              <div
+                className="relative"
+                style={{ height: treeHeight * currentTreeZoom, width: treeWidth * currentTreeZoom }}
+              >
+                <div
+                  className="relative origin-top-left overflow-hidden rounded border border-cyan-200/10 bg-slate-950/40 shadow-[inset_0_0_130px_rgba(8,145,178,0.11)]"
+                  style={{
+                    height: treeHeight,
+                    transform: `scale(${currentTreeZoom})`,
+                    transformOrigin: "top left",
+                    width: treeWidth
+                  }}
+                >
+                  <ConstellationBackdrop />
+                  <BranchConstellations branches={[...new Set(snapshot.technologyNodes.map((node) => node.branch))]} />
+                  <TechnologyConnections
+                    focusNodeId={focusNodeId}
+                    nodeById={nodeById}
+                    relatedNodeIds={relatedNodeIds}
+                    snapshot={snapshot}
+                  />
 
-              {snapshot.technologyNodes.map((node) => (
-                <TechnologyNodeOrb
-                  focused={Boolean(focusNodeId && relatedNodeIds.has(node.id))}
-                  key={node.id}
-                  muted={Boolean(focusNodeId && !relatedNodeIds.has(node.id))}
-                  node={node}
-                  onHoverChange={(hovered) => setHoveredNodeId(hovered ? node.id : null)}
-                  onSelect={() => setSelectedNodeId(node.id)}
-                  selected={selectedNode?.id === node.id}
-                  status={getTechnologyStatus(snapshot, node)}
-                />
-              ))}
+                  {snapshot.technologyNodes.map((node) => (
+                    <TechnologyNodeOrb
+                      focused={Boolean(focusNodeId && relatedNodeIds.has(node.id))}
+                      key={node.id}
+                      muted={Boolean(focusNodeId && !relatedNodeIds.has(node.id))}
+                      node={node}
+                      onHoverChange={(hovered) => setHoveredNodeId(hovered ? node.id : null)}
+                      onSelect={() => setSelectedNodeId(node.id)}
+                      selected={selectedNode?.id === node.id}
+                      status={getTechnologyStatus(snapshot, node)}
+                    />
+                  ))}
 
-              {hoveredNode ? <TechnologyTooltip node={hoveredNode} snapshot={snapshot} /> : null}
-              <TechnologyLegend />
+                  {hoveredNode ? <TechnologyTooltip node={hoveredNode} snapshot={snapshot} /> : null}
+                  <TechnologyLegend />
+                </div>
+              </div>
             </div>
+            <TechnologyZoomControls
+              onCenter={() => centerTechnologyTree("smooth")}
+              onZoomIn={() => setTreeZoom(clampNumber(currentTreeZoom + 0.08, 0.5, 1.08))}
+              onZoomOut={() => setTreeZoom(clampNumber(currentTreeZoom - 0.08, 0.5, 1.08))}
+              zoom={currentTreeZoom}
+            />
           </div>
 
           {!isMobile || selectedNode ? (
@@ -384,6 +436,35 @@ function TechnologyLegend() {
   );
 }
 
+function TechnologyZoomControls({
+  zoom,
+  onZoomIn,
+  onZoomOut,
+  onCenter
+}: {
+  zoom: number;
+  onZoomIn: () => void;
+  onZoomOut: () => void;
+  onCenter: () => void;
+}) {
+  return (
+    <div className="pointer-events-auto absolute right-3 top-3 z-30 flex items-center gap-1.5 rounded-md border border-cyan-200/15 bg-slate-950/78 p-1.5 shadow-[0_0_24px_rgba(8,145,178,0.16)] backdrop-blur">
+      <Button aria-label="Alejar arbol" onClick={onZoomOut} size="icon" variant="ghost">
+        <Minus size={15} />
+      </Button>
+      <div className="min-w-12 text-center text-xs font-semibold tabular-nums text-cyan-50">
+        {Math.round(zoom * 100)}%
+      </div>
+      <Button aria-label="Acercar arbol" onClick={onZoomIn} size="icon" variant="ghost">
+        <Plus size={15} />
+      </Button>
+      <Button aria-label="Centrar arbol" onClick={onCenter} size="icon" variant="ghost">
+        <Crosshair size={15} />
+      </Button>
+    </div>
+  );
+}
+
 function TechnologyDetailsPanel({
   snapshot,
   node,
@@ -407,8 +488,13 @@ function TechnologyDetailsPanel({
 }) {
   if (!node) {
     return (
-      <aside className="border-t border-cyan-200/15 bg-slate-950/55 p-4 md:p-5 xl:border-l xl:border-t-0">
-        <p className="text-sm text-slate-400">No hay tecnologias definidas.</p>
+      <aside className="mobile-scroll border-t border-cyan-200/15 bg-slate-950/55 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-4 md:p-5 xl:border-l xl:border-t-0">
+        <div className="rounded-md border border-cyan-200/15 bg-slate-950/42 p-4">
+          <div className="text-sm font-semibold text-cyan-50">Selecciona una tecnologia</div>
+          <p className="mt-2 text-sm leading-6 text-slate-400">
+            El arbol se abre centrado en la doctrina principal. Toca un nodo para consultar requisitos, coste y efecto.
+          </p>
+        </div>
       </aside>
     );
   }
@@ -428,7 +514,7 @@ function TechnologyDetailsPanel({
     !pending;
 
   return (
-    <aside className="max-h-[52dvh] min-h-0 overflow-y-auto border-t border-cyan-200/15 bg-slate-950/86 p-4 md:max-h-[42dvh] md:p-5 xl:max-h-none xl:border-l xl:border-t-0">
+    <aside className="mobile-scroll max-h-[calc(var(--app-height)-8rem)] border-t border-cyan-200/15 bg-slate-950/86 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-4 md:max-h-[42vh] md:p-5 xl:max-h-none xl:border-l xl:border-t-0">
       <div className="mb-5 rounded-md border border-cyan-200/15 bg-slate-950/42 p-4">
         <div className="flex items-start gap-4">
           <div
@@ -629,4 +715,8 @@ function formatDuration(seconds: number) {
 
   const minutes = Math.ceil(seconds / 60);
   return `${minutes}m`;
+}
+
+function clampNumber(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value));
 }

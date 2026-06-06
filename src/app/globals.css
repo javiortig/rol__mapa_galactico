@@ -9,6 +9,7 @@
   --accent: #67e8f9;
   --danger: #fb7185;
   --warning: #fbbf24;
+  --app-height: 100dvh;
 }
 
 * {
@@ -62,4 +63,20 @@ select {
     linear-gradient(rgba(125, 211, 252, 0.06) 1px, transparent 1px),
     linear-gradient(90deg, rgba(125, 211, 252, 0.06) 1px, transparent 1px);
   background-size: 42px 42px;
+}
+
+.mobile-scroll {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+.tech-scroll {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
 }

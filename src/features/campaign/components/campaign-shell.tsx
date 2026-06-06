@@ -24,7 +24,7 @@ import { RecruitmentModal } from "@/features/recruitment/components/recruitment-
 import { TechnologyTreeModal } from "@/features/technology/components/technology-tree-modal";
 import { getActiveTechnologyResearch } from "@/features/technology/lib/technology-state";
 import { formatCountdown } from "@/lib/time";
-import { useMediaQuery } from "@/lib/use-media-query";
+import { useMediaQuery, useViewportHeightCssVar } from "@/lib/use-media-query";
 import type { CampaignSnapshot, CampaignUnit, Conflict, StarSystem, UnitMovementSelection } from "@/domain/campaign";
 
 const GalaxyMap = dynamic(
@@ -41,6 +41,7 @@ const planetProductionResources = ["supply", "minerals", "ancestralStone", "urid
 export function CampaignShell() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  useViewportHeightCssVar();
   const selectedSystemId = useCampaignUiStore((state) => state.selectedSystemId);
   const hoveredSystemId = useCampaignUiStore((state) => state.hoveredSystemId);
   const tooltipPosition = useCampaignUiStore((state) => state.tooltipPosition);
@@ -92,7 +93,10 @@ export function CampaignShell() {
   );
   const panelSystem = selectedSystem ?? (!isMobile ? data.systems[0] : null);
   const showSystemPanel = Boolean(panelSystem) && !(isMobile && movementOriginSystemId && movementMobileStage === "route");
-  const showCommandDock = !(isMobile && movementOriginSystemId);
+  const showCommandDock = !(
+    isMobile &&
+    (showSystemPanel || movementOriginSystemId || recruitmentOpen || technologyOpen || battleReportSystemId)
+  );
   const battleReportSystem = data.systems.find((system) => system.id === battleReportSystemId) ?? null;
   const battleReportConflict =
     battleReportSystem
@@ -201,7 +205,7 @@ export function CampaignShell() {
   };
 
   return (
-    <main className="relative h-dvh overflow-hidden">
+    <main className="relative overflow-hidden" style={{ height: "var(--app-height)" }}>
       <GalaxyMap
         edges={data.edges}
         factions={data.factions}
@@ -599,9 +603,9 @@ function SystemPanel({
   const mergeGroups = getMergeableUnitGroups(ownReadyUnits);
 
   return (
-    <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-20 max-h-[76dvh] w-auto max-w-none overflow-hidden lg:static lg:z-auto lg:w-full lg:max-w-md lg:max-h-none lg:self-stretch">
+    <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-30 max-h-[calc(var(--app-height)-5rem)] w-auto max-w-none overflow-hidden lg:static lg:z-auto lg:w-full lg:max-w-md lg:max-h-none lg:self-stretch">
       <div className="flex h-full flex-col">
-        <div className="border-b border-cyan-200/15 p-4 md:p-5">
+        <div className="shrink-0 border-b border-cyan-200/15 p-4 md:p-5">
           <div className="mb-3 flex items-start justify-between gap-3">
             <div>
               <div className="mb-2 flex items-center gap-2">
@@ -629,7 +633,7 @@ function SystemPanel({
           <p className="hidden text-sm leading-6 text-slate-300 sm:block">{system.publicDescription}</p>
         </div>
 
-        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4 md:space-y-5 md:p-5">
+        <div className="mobile-scroll flex-1 space-y-4 p-4 md:space-y-5 md:p-5">
           <section>
             <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Control</h2>
             <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-sm text-slate-200">
@@ -728,7 +732,7 @@ function SystemPanel({
           ) : null}
         </div>
 
-        <div className={`grid gap-2 border-t border-cyan-200/15 p-3 md:p-5 ${canRecruit ? "grid-cols-3" : "grid-cols-2"}`}>
+        <div className={`grid shrink-0 gap-2 border-t border-cyan-200/15 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 md:p-5 ${canRecruit ? "grid-cols-3" : "grid-cols-2"}`}>
           <Button>Ver misión</Button>
           {canRecruit ? (
             <Button className="min-w-0 text-xs sm:text-sm" onClick={onOpenRecruitment}>
@@ -837,8 +841,8 @@ function MovementPlanner({
 
   if (isMobile && mobileStage === "select") {
     return (
-      <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 flex max-h-[82dvh] flex-col overflow-hidden lg:hidden">
-        <div className="border-b border-cyan-200/15 p-4">
+      <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 flex max-h-[calc(var(--app-height)-2rem)] flex-col overflow-hidden lg:hidden">
+        <div className="shrink-0 border-b border-cyan-200/15 p-4">
           <div className="mb-3 flex items-start justify-between gap-3">
             <div>
               <div className="text-xs uppercase tracking-[0.22em] text-cyan-200/70">Movimiento de unidades</div>
@@ -869,7 +873,7 @@ function MovementPlanner({
           </div>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto p-3">
+        <div className="mobile-scroll flex-1 p-3">
           <div className="grid gap-2">
             {availableUnits.map((unit) => (
               <UnitSelectionCard
@@ -882,7 +886,7 @@ function MovementPlanner({
           </div>
         </div>
 
-        <div className="border-t border-cyan-200/15 bg-slate-950/60 p-3">
+        <div className="shrink-0 border-t border-cyan-200/15 bg-slate-950/60 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3">
           <div className="mb-3 rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-xs text-slate-300">
             {selectedSelections.length > 0
               ? `${selectedSelections.length} unidades - ${selectedMiniatures} miniaturas seleccionadas`
@@ -932,7 +936,7 @@ function MovementPlanner({
           </div>
         </div>
 
-        <div className="grid grid-cols-4 gap-2 p-3">
+        <div className="grid grid-cols-4 gap-2 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3">
           <Button className="min-w-0 px-1 text-[11px]" disabled={activePathSystemIds.length <= 1} onClick={onUndoPath} size="sm" variant="ghost">
             <Undo2 size={15} />
             Deshacer
@@ -964,8 +968,8 @@ function MovementPlanner({
   }
 
   return (
-    <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 mx-auto grid max-h-[78dvh] max-w-6xl grid-cols-1 overflow-hidden md:inset-x-4 md:bottom-4 md:max-h-[58vh] md:grid-cols-[1fr_340px] lg:max-h-[42vh]">
-      <div className="min-h-0 overflow-y-auto p-4">
+    <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 mx-auto grid max-h-[calc(var(--app-height)-2rem)] max-w-6xl grid-cols-1 overflow-hidden md:inset-x-4 md:bottom-4 md:max-h-[58vh] md:grid-cols-[1fr_340px] lg:max-h-[42vh]">
+      <div className="mobile-scroll p-4 md:min-h-0 md:overflow-y-auto">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="text-xs uppercase tracking-[0.22em] text-cyan-200/70">Movimiento de unidades</div>
@@ -1182,8 +1186,8 @@ function BattleReportModal({
 
   return (
     <div className="pointer-events-auto fixed inset-0 z-50 grid place-items-center bg-black/60 p-0 backdrop-blur-sm md:px-4 md:py-6">
-      <Panel className="flex h-dvh w-full max-w-4xl flex-col overflow-hidden rounded-none md:h-auto md:max-h-[88vh] md:rounded-lg">
-        <div className="flex items-center justify-between gap-4 border-b border-rose-200/15 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] md:p-5">
+      <Panel className="flex h-[var(--app-height)] w-full max-w-4xl flex-col overflow-hidden rounded-none md:h-auto md:max-h-[88vh] md:rounded-lg">
+        <div className="shrink-0 flex items-center justify-between gap-4 border-b border-rose-200/15 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] md:p-5">
           <div>
             <div className="text-xs uppercase tracking-[0.24em] text-rose-200/70">Reporte de batalla</div>
             <h2 className="mt-1 text-2xl font-semibold text-cyan-50">{system.name}</h2>
@@ -1193,8 +1197,8 @@ function BattleReportModal({
           </Button>
         </div>
 
-        <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[1fr_300px]">
-          <div className="min-h-0 overflow-y-auto p-4 md:p-5">
+        <div className="mobile-scroll flex-1 lg:grid lg:overflow-hidden lg:grid-cols-[1fr_300px]">
+          <div className="p-4 md:p-5 lg:min-h-0 lg:overflow-y-auto">
             <div className="mb-4 grid gap-3 md:grid-cols-2">
               {factionOptions.map((faction) => (
                 <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={faction.id}>
@@ -1254,7 +1258,7 @@ function BattleReportModal({
             </div>
           </div>
 
-          <aside className="border-t border-cyan-200/15 bg-slate-950/35 p-4 md:p-5 lg:border-l lg:border-t-0">
+          <aside className="border-t border-cyan-200/15 bg-slate-950/35 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-4 md:p-5 lg:border-l lg:border-t-0">
             <div className="space-y-4">
               <label className="block text-sm">
                 <span className="mb-2 block text-slate-300">Ganador</span>
@@ -1319,7 +1323,7 @@ function BattleReportModal({
               {mutation.error ? <p className="text-sm text-rose-200">{mutation.error.message}</p> : null}
 
               <Button
-                className="w-full"
+                className="sticky bottom-0 w-full"
                 disabled={!rpcReady || warUnits.length === 0 || mutation.isPending}
                 onClick={() => mutation.mutate()}
                 variant="danger"

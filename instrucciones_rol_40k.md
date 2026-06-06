@@ -132,8 +132,9 @@ Navegacion movil actual:
 - La barra de recursos superior debe caber completa, con icono y numero compacto para los 5 recursos.
 - El movimiento movil funciona en dos fases: seleccion de unidades desde el sistema y trazado de ruta en el mapa.
 - Al trazar ruta, el panel de sistema se cierra y queda una barra inferior con coste de Uridium, tiempo, cancelar, deshacer, reiniciar y confirmar.
-- Tecnologia abre la constelacion a pantalla completa; tocar un nodo abre el detalle como drawer inferior.
-- Reclutamiento usa modal a pantalla completa con recursos compactos, lista tactil y confirmacion siempre accesible.
+- Tecnologia abre la constelacion a pantalla completa centrada en `doctrina-campana`, sin nodo seleccionado; tocar un nodo abre el detalle como drawer inferior.
+- Reclutamiento, reportes, movimiento y tecnologia usan paneles con scroll tactil real compatible con iPhone Safari y Android Chrome.
+- Cualquier cambio de UI movil debe probarse en iPhone Safari y Android Chrome, verificando que los paneles scrollean hasta el final y que los botones principales no quedan bajo las barras del navegador.
 
 ---
 
