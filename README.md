@@ -1,6 +1,6 @@
 # Mapa Estelar de Campana 40K
 
-Interfaz web privada para gestionar una campana narrativa de Warhammer 40K con mapa estelar, recursos, movimiento, reclutamiento y reportes de batalla.
+Interfaz web privada para gestionar una campana narrativa de Warhammer 40K con mapa estelar, recursos, comercio, movimiento, reclutamiento, tecnologia y reportes de batalla.
 
 ## Stack
 
@@ -110,7 +110,9 @@ En movil la experiencia es mapa primero:
 
 - Al entrar se ve el mapa libre, sin sistema seleccionado.
 - Tocar una estrella abre la hoja del sistema; la X cierra la hoja y devuelve al mapa.
-- La barra superior muestra los 5 recursos como icono + numero compacto, sin scroll horizontal.
+- La barra superior muestra Suministro, Mineral, Piedra ancestral, Oro y Uridium como icono + numero compacto, sin scroll horizontal.
+- Los Componentes tecnologicos solo se ven dentro del panel de Tecnologia.
+- El panel `Comercio` permite usar el mercader o publicar/aceptar ofertas estelares entre facciones.
 - Para mover tropas: seleccionar sistema, pulsar `Mover tropas`, elegir miniaturas y despues `Trazar ruta en el mapa`.
 - En modo ruta se toca el destino para ruta optima, o sistemas conectados si se usa ruta manual, y se confirma desde la barra inferior.
 - Reclutamiento, reportes, movimiento y tecnologia usan paneles con scroll tactil real compatible con iPhone Safari y Android Chrome.

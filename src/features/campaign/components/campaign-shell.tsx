@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { AlertTriangle, Check, Clock3, Cpu, Crosshair, Minus, MousePointer2, Plus, RadioTower, Route, Shield, Swords, Undo2, X } from "lucide-react";
+import { AlertTriangle, Check, Clock3, Cpu, Crosshair, HandCoins, Minus, MousePointer2, Plus, Route, Shield, Swords, Undo2, X } from "lucide-react";
 import { getCampaignSnapshot, isCampaignAuthRequiredError } from "@/features/campaign/api/campaign-repository";
 import { useCampaignUiStore } from "@/features/campaign/store/campaign-ui-store";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +22,7 @@ import {
 } from "@/features/movement/lib/pathfinding";
 import { RecruitmentModal } from "@/features/recruitment/components/recruitment-modal";
 import { TechnologyTreeModal } from "@/features/technology/components/technology-tree-modal";
+import { TradeModal } from "@/features/trade/components/trade-modal";
 import { getActiveTechnologyResearch } from "@/features/technology/lib/technology-state";
 import { formatCountdown } from "@/lib/time";
 import { useMediaQuery, useViewportHeightCssVar } from "@/lib/use-media-query";
@@ -35,8 +36,8 @@ const GalaxyMap = dynamic(
   }
 );
 
-const mainResources = ["supply", "minerals", "ancestralStone", "uridium", "technology"] as const;
-const planetProductionResources = ["supply", "minerals", "ancestralStone", "uridium"] as const;
+const mainResources = ["supply", "minerals", "ancestralStone", "gold", "uridium"] as const;
+const planetProductionResources = ["supply", "minerals", "ancestralStone", "gold", "uridium"] as const;
 
 export function CampaignShell() {
   const router = useRouter();
@@ -51,6 +52,7 @@ export function CampaignShell() {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const isMobile = !isDesktop;
   const [recruitmentOpen, setRecruitmentOpen] = useState(false);
+  const [tradeOpen, setTradeOpen] = useState(false);
   const [technologyOpen, setTechnologyOpen] = useState(false);
   const [battleReportSystemId, setBattleReportSystemId] = useState<string | null>(null);
   const [movementOriginSystemId, setMovementOriginSystemId] = useState<string | null>(null);
@@ -95,7 +97,7 @@ export function CampaignShell() {
   const showSystemPanel = Boolean(panelSystem) && !(isMobile && movementOriginSystemId && movementMobileStage === "route");
   const showCommandDock = !(
     isMobile &&
-    (showSystemPanel || movementOriginSystemId || recruitmentOpen || technologyOpen || battleReportSystemId)
+    (showSystemPanel || movementOriginSystemId || recruitmentOpen || tradeOpen || technologyOpen || battleReportSystemId)
   );
   const battleReportSystem = data.systems.find((system) => system.id === battleReportSystemId) ?? null;
   const battleReportConflict =
@@ -230,7 +232,13 @@ export function CampaignShell() {
         </div>
 
         <div className="flex min-h-0 flex-1 items-stretch justify-end gap-4 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:px-4 md:pb-4 lg:justify-between">
-          {showCommandDock ? <CommandDock onOpenTechnology={() => setTechnologyOpen(true)} snapshot={data} /> : null}
+          {showCommandDock ? (
+            <CommandDock
+              onOpenTechnology={() => setTechnologyOpen(true)}
+              onOpenTrade={() => setTradeOpen(true)}
+              snapshot={data}
+            />
+          ) : null}
           {showSystemPanel && panelSystem ? (
             <SystemPanel
               mergeError={mergeMutation.error?.message}
@@ -254,6 +262,7 @@ export function CampaignShell() {
       />
 
       <RecruitmentModal onClose={() => setRecruitmentOpen(false)} open={recruitmentOpen} snapshot={data} />
+      <TradeModal onClose={() => setTradeOpen(false)} open={tradeOpen} snapshot={data} />
       <TechnologyTreeModal onClose={() => setTechnologyOpen(false)} open={technologyOpen} snapshot={data} />
       {battleReportSystem && battleReportConflict ? (
         <BattleReportModal
@@ -360,9 +369,11 @@ function formatCompactNumber(value: number) {
 
 function CommandDock({
   snapshot,
+  onOpenTrade,
   onOpenTechnology
 }: {
   snapshot: CampaignSnapshot;
+  onOpenTrade: () => void;
   onOpenTechnology: () => void;
 }) {
   const ownUnits = snapshot.units.filter(
@@ -385,9 +396,9 @@ function CommandDock({
     <div className="pointer-events-auto fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-30 lg:hidden">
       <Panel className="p-2">
         <div className="grid grid-cols-4 gap-1.5">
-          <Button className="h-12 flex-col gap-1 px-1 text-[11px]" size="sm" variant="ghost">
-            <RadioTower size={16} />
-            Recursos
+          <Button className="h-12 flex-col gap-1 px-1 text-[11px]" onClick={onOpenTrade} size="sm" variant="ghost">
+            <HandCoins size={16} />
+            Comercio
           </Button>
           <Button className="h-12 flex-col gap-1 px-1 text-[11px]" size="sm" variant="ghost">
             <Shield size={16} />
@@ -413,9 +424,9 @@ function CommandDock({
         </div>
 
         <div className="grid grid-cols-2 gap-2">
-          <Button size="sm" variant="ghost">
-            <RadioTower size={15} />
-            Recursos
+          <Button onClick={onOpenTrade} size="sm" variant="ghost">
+            <HandCoins size={15} />
+            Comercio
           </Button>
           <Button size="sm" variant="ghost">
             <Shield size={15} />
@@ -504,6 +515,7 @@ function GalaxyTooltip({
     system.production.supply +
     system.production.minerals +
     system.production.ancestralStone +
+    system.production.gold +
     system.production.uridium;
   const stateText =
     system.status === "war" ? "En guerra" : system.status === "controlled" ? "Controlado" : "Neutral";

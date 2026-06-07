@@ -23,6 +23,7 @@ delete from public.relics;
 delete from public.recruitment_queue;
 delete from public.movement_order_units;
 delete from public.movement_orders;
+delete from public.trade_offers;
 delete from public.campaign_units;
 delete from public.conflicts;
 delete from public.campaign_logs;
@@ -151,51 +152,51 @@ values
 on conflict (slug) do update
 set from_system_id = excluded.from_system_id, to_system_id = excluded.to_system_id, uridium_cost = excluded.uridium_cost, is_blocked = excluded.is_blocked;
 
-insert into public.faction_resources (faction_id, supply, minerals, ancestral_stone, uridium, technology)
+insert into public.faction_resources (faction_id, supply, minerals, ancestral_stone, gold, uridium, technology)
 values
-  (public.seed_uuid('faction', 'guardia-imperial'), 180, 130, 12, 24, 16),
-  (public.seed_uuid('faction', 'orcos'), 190, 135, 7, 20, 16),
-  (public.seed_uuid('faction', 'necrones'), 115, 155, 18, 22, 16),
-  (public.seed_uuid('faction', 'culto-genestelar'), 185, 115, 13, 22, 16),
-  (public.seed_uuid('faction', 'sombra-emperador'), 135, 130, 18, 26, 16),
-  (public.seed_uuid('faction', 'guardia-muerte'), 155, 135, 15, 20, 16)
+  (public.seed_uuid('faction', 'guardia-imperial'), 180, 130, 12, 34, 24, 16),
+  (public.seed_uuid('faction', 'orcos'), 190, 135, 7, 26, 20, 16),
+  (public.seed_uuid('faction', 'necrones'), 115, 155, 18, 32, 22, 16),
+  (public.seed_uuid('faction', 'culto-genestelar'), 185, 115, 13, 30, 22, 16),
+  (public.seed_uuid('faction', 'sombra-emperador'), 135, 130, 18, 38, 26, 16),
+  (public.seed_uuid('faction', 'guardia-muerte'), 155, 135, 15, 28, 20, 16)
 on conflict (faction_id) do update
-set supply = excluded.supply, minerals = excluded.minerals, ancestral_stone = excluded.ancestral_stone, uridium = excluded.uridium, technology = excluded.technology, updated_at = now();
+set supply = excluded.supply, minerals = excluded.minerals, ancestral_stone = excluded.ancestral_stone, gold = excluded.gold, uridium = excluded.uridium, technology = excluded.technology, updated_at = now();
 
-insert into public.system_production (system_id, supply_per_tick, minerals_per_tick, ancestral_stone_per_tick, uridium_per_tick, technology_per_tick)
+insert into public.system_production (system_id, supply_per_tick, minerals_per_tick, ancestral_stone_per_tick, gold_per_tick, uridium_per_tick, technology_per_tick)
 values
-  (public.seed_uuid('system', 'kharon-prime'), 9, 6, 0, 2, 0),
-  (public.seed_uuid('system', 'helios-drift'), 1, 7, 0, 1, 0),
-  (public.seed_uuid('system', 'arx-solum'), 5, 3, 0, 1, 0),
-  (public.seed_uuid('system', 'sa-cea-gate'), 5, 4, 0, 5, 0),
-  (public.seed_uuid('system', 'lyra-terminus'), 3, 1, 0, 4, 0),
-  (public.seed_uuid('system', 'narthex'), 2, 0, 2, 1, 0),
-  (public.seed_uuid('system', 'blackglass'), 3, 4, 2, 1, 0),
-  (public.seed_uuid('system', 'red-sabbath'), 5, 2, 1, 1, 0),
-  (public.seed_uuid('system', 'mirrorcoil'), 2, 2, 1, 3, 0),
-  (public.seed_uuid('system', 'thokt-vault'), 0, 8, 3, 2, 0),
-  (public.seed_uuid('system', 'novem'), 0, 7, 0, 1, 0),
-  (public.seed_uuid('system', 'ghostlight'), 0, 2, 1, 3, 0),
-  (public.seed_uuid('system', 'mordax'), 5, 6, 1, 2, 0),
-  (public.seed_uuid('system', 'drusus'), 4, 4, 0, 1, 0),
-  (public.seed_uuid('system', 'plaguefall-bastion'), 3, 5, 1, 1, 0),
-  (public.seed_uuid('system', 'cinder-maw'), 4, 7, 0, 1, 0),
-  (public.seed_uuid('system', 'eclipse-forge'), 1, 6, 0, 1, 0),
-  (public.seed_uuid('system', 'rustmaw-run'), 3, 5, 0, 2, 0),
-  (public.seed_uuid('system', 'azur-trench'), 0, 0, 0, 5, 0),
-  (public.seed_uuid('system', 'ossuary-reach'), 0, 2, 2, 2, 0),
-  (public.seed_uuid('system', 'saint-veil'), 2, 0, 2, 2, 0),
-  (public.seed_uuid('system', 'orison'), 7, 1, 0, 0, 0),
-  (public.seed_uuid('system', 'vesper-halo'), 0, 2, 1, 2, 0),
-  (public.seed_uuid('system', 'pale-choir'), 0, 0, 2, 2, 0),
-  (public.seed_uuid('system', 'ashen-road'), 1, 1, 0, 4, 0),
-  (public.seed_uuid('system', 'sepulchre-nine'), 0, 2, 2, 0, 0),
-  (public.seed_uuid('system', 'nexus-aster'), 2, 2, 1, 3, 0),
-  (public.seed_uuid('system', 'argent-rift'), 0, 1, 0, 4, 0),
-  (public.seed_uuid('system', 'voidfall-anchor'), 1, 2, 0, 3, 0),
-  (public.seed_uuid('system', 'goregate'), 2, 3, 0, 2, 0)
+  (public.seed_uuid('system', 'kharon-prime'), 9, 6, 0, 0, 2, 0),
+  (public.seed_uuid('system', 'helios-drift'), 1, 7, 0, 0, 1, 0),
+  (public.seed_uuid('system', 'arx-solum'), 5, 3, 0, 0, 1, 0),
+  (public.seed_uuid('system', 'sa-cea-gate'), 5, 4, 0, 0, 5, 0),
+  (public.seed_uuid('system', 'lyra-terminus'), 3, 1, 0, 0, 4, 0),
+  (public.seed_uuid('system', 'narthex'), 2, 0, 2, 0, 1, 0),
+  (public.seed_uuid('system', 'blackglass'), 3, 4, 2, 0, 1, 0),
+  (public.seed_uuid('system', 'red-sabbath'), 5, 2, 1, 0, 1, 0),
+  (public.seed_uuid('system', 'mirrorcoil'), 2, 2, 1, 0, 3, 0),
+  (public.seed_uuid('system', 'thokt-vault'), 0, 8, 3, 0, 2, 0),
+  (public.seed_uuid('system', 'novem'), 0, 7, 0, 0, 1, 0),
+  (public.seed_uuid('system', 'ghostlight'), 0, 2, 1, 0, 3, 0),
+  (public.seed_uuid('system', 'mordax'), 5, 6, 1, 0, 2, 0),
+  (public.seed_uuid('system', 'drusus'), 4, 4, 0, 0, 1, 0),
+  (public.seed_uuid('system', 'plaguefall-bastion'), 3, 5, 1, 0, 1, 0),
+  (public.seed_uuid('system', 'cinder-maw'), 4, 7, 0, 0, 1, 0),
+  (public.seed_uuid('system', 'eclipse-forge'), 1, 6, 0, 0, 1, 0),
+  (public.seed_uuid('system', 'rustmaw-run'), 3, 5, 0, 0, 2, 0),
+  (public.seed_uuid('system', 'azur-trench'), 0, 0, 0, 0, 5, 0),
+  (public.seed_uuid('system', 'ossuary-reach'), 0, 2, 2, 0, 2, 0),
+  (public.seed_uuid('system', 'saint-veil'), 2, 0, 2, 0, 2, 0),
+  (public.seed_uuid('system', 'orison'), 7, 1, 0, 0, 0, 0),
+  (public.seed_uuid('system', 'vesper-halo'), 0, 2, 1, 0, 2, 0),
+  (public.seed_uuid('system', 'pale-choir'), 0, 0, 2, 0, 2, 0),
+  (public.seed_uuid('system', 'ashen-road'), 1, 1, 0, 0, 4, 0),
+  (public.seed_uuid('system', 'sepulchre-nine'), 0, 2, 2, 0, 0, 0),
+  (public.seed_uuid('system', 'nexus-aster'), 2, 2, 1, 0, 3, 0),
+  (public.seed_uuid('system', 'argent-rift'), 0, 1, 0, 0, 4, 0),
+  (public.seed_uuid('system', 'voidfall-anchor'), 1, 2, 0, 0, 3, 0),
+  (public.seed_uuid('system', 'goregate'), 2, 3, 0, 0, 2, 0)
 on conflict (system_id) do update
-set supply_per_tick = excluded.supply_per_tick, minerals_per_tick = excluded.minerals_per_tick, ancestral_stone_per_tick = excluded.ancestral_stone_per_tick, uridium_per_tick = excluded.uridium_per_tick, technology_per_tick = excluded.technology_per_tick;
+set supply_per_tick = excluded.supply_per_tick, minerals_per_tick = excluded.minerals_per_tick, ancestral_stone_per_tick = excluded.ancestral_stone_per_tick, gold_per_tick = excluded.gold_per_tick, uridium_per_tick = excluded.uridium_per_tick, technology_per_tick = excluded.technology_per_tick;
 
 insert into public.technology_nodes (
   id, slug, tree_key, name, description, branch, tier, position_x, position_y, cost_technology, research_time_seconds, icon_key, effect_summary, is_starter
@@ -292,29 +293,29 @@ on conflict (faction_id, technology_node_id) do update
 set status = excluded.status, started_at = null, finishes_at = null, unlocked_at = null, updated_at = now();
 
 insert into public.unit_templates (
-  id, slug, faction_id, name, category, points, default_quantity, supply_cost, minerals_cost, ancestral_stone_cost, uridium_cost, technology_cost, recruitment_time_seconds, notes, is_available, required_technology_node_id
+  id, slug, faction_id, name, category, points, default_quantity, supply_cost, minerals_cost, ancestral_stone_cost, gold_cost, uridium_cost, technology_cost, recruitment_time_seconds, notes, is_available, required_technology_node_id
 )
 values
-  (public.seed_uuid('unit_template', 'unit-orcos-boyz'), 'unit-orcos-boyz', public.seed_uuid('faction', 'orcos'), 'Boyz', 'Infanteria', 80, 10, 12, 2, 0, 0, 0, 120, 'Masa brutal de combate cercano.', true, null),
-  (public.seed_uuid('unit_template', 'unit-orcos-meganobz'), 'unit-orcos-meganobz', public.seed_uuid('faction', 'orcos'), 'Meganobz', 'Elite', 105, 3, 6, 5, 1, 0, 0, 240, 'Noblez armados con servoarmaduras improvisadas.', true, public.seed_uuid('technology_node', 'veteranos-guerra')),
-  (public.seed_uuid('unit_template', 'unit-orcos-deff-dread'), 'unit-orcos-deff-dread', public.seed_uuid('faction', 'orcos'), 'Deff Dread', 'Vehiculo', 135, 1, 2, 10, 1, 0, 0, 360, 'Maquina andante de metal, humo y mala intencion.', true, public.seed_uuid('technology_node', 'motores-guerra')),
-  (public.seed_uuid('unit_template', 'unit-necrones-warriors'), 'unit-necrones-warriors', public.seed_uuid('faction', 'necrones'), 'Necron Warriors', 'Infanteria', 80, 10, 8, 4, 0, 0, 0, 120, 'Linea inmortal reanimada desde las criptas.', true, null),
-  (public.seed_uuid('unit_template', 'unit-necrones-immortals'), 'unit-necrones-immortals', public.seed_uuid('faction', 'necrones'), 'Immortals', 'Elite', 105, 5, 6, 5, 1, 0, 0, 240, 'Guerreros superiores con protocolos de elite.', true, public.seed_uuid('technology_node', 'veteranos-guerra')),
-  (public.seed_uuid('unit_template', 'unit-necrones-skorpekh'), 'unit-necrones-skorpekh', public.seed_uuid('faction', 'necrones'), 'Skorpekh Destroyers', 'Elite', 140, 3, 4, 7, 2, 0, 0, 360, 'Asesinos de fase con cuerpos disenados para la destruccion.', true, public.seed_uuid('technology_node', 'veteranos-guerra')),
-  (public.seed_uuid('unit_template', 'unit-guardia-cadian'), 'unit-guardia-cadian', public.seed_uuid('faction', 'guardia-imperial'), 'Cadian Shock Troops', 'Infanteria', 80, 10, 12, 2, 0, 0, 0, 120, 'Infanteria disciplinada lista para sostener la linea.', true, null),
-  (public.seed_uuid('unit_template', 'unit-guardia-kasrkin'), 'unit-guardia-kasrkin', public.seed_uuid('faction', 'guardia-imperial'), 'Kasrkin', 'Elite', 105, 10, 8, 4, 1, 0, 0, 240, 'Veteranos de asalto con equipo especializado.', true, public.seed_uuid('technology_node', 'veteranos-guerra')),
-  (public.seed_uuid('unit_template', 'unit-guardia-leman-russ'), 'unit-guardia-leman-russ', public.seed_uuid('faction', 'guardia-imperial'), 'Leman Russ Battle Tank', 'Vehiculo', 145, 1, 2, 11, 1, 0, 0, 420, 'Blindado pesado de batalla para romper frentes.', true, public.seed_uuid('technology_node', 'motores-guerra')),
-  (public.seed_uuid('unit_template', 'unit-culto-neophytes'), 'unit-culto-neophytes', public.seed_uuid('faction', 'culto-genestelar'), 'Neophyte Hybrids', 'Infanteria', 80, 10, 12, 2, 0, 0, 0, 120, 'Celulas insurgentes armadas desde las profundidades.', true, null),
-  (public.seed_uuid('unit_template', 'unit-culto-acolytes'), 'unit-culto-acolytes', public.seed_uuid('faction', 'culto-genestelar'), 'Acolyte Hybrids', 'Elite', 95, 5, 8, 3, 1, 0, 0, 240, 'Fanaticos hibridos preparados para ataques decisivos.', true, public.seed_uuid('technology_node', 'veteranos-guerra')),
-  (public.seed_uuid('unit_template', 'unit-culto-ridgerunner'), 'unit-culto-ridgerunner', public.seed_uuid('faction', 'culto-genestelar'), 'Achilles Ridgerunner', 'Vehiculo', 120, 1, 3, 8, 1, 0, 0, 360, 'Vehiculo de incursion y reconocimiento rapido.', true, public.seed_uuid('technology_node', 'motores-guerra')),
-  (public.seed_uuid('unit_template', 'unit-sombra-intercessors'), 'unit-sombra-intercessors', public.seed_uuid('faction', 'sombra-emperador'), 'Intercessor Squad', 'Infanteria', 105, 5, 8, 4, 1, 0, 0, 180, 'Astartes de linea con doctrina flexible.', true, null),
-  (public.seed_uuid('unit_template', 'unit-sombra-terminators'), 'unit-sombra-terminators', public.seed_uuid('faction', 'sombra-emperador'), 'Terminator Squad', 'Elite', 160, 5, 5, 6, 3, 0, 0, 360, 'Veteranos con armadura tactica dreadnought.', true, public.seed_uuid('technology_node', 'veteranos-guerra')),
-  (public.seed_uuid('unit_template', 'unit-sombra-redemptor'), 'unit-sombra-redemptor', public.seed_uuid('faction', 'sombra-emperador'), 'Redemptor Dreadnought', 'Vehiculo', 185, 1, 2, 10, 3, 0, 0, 480, 'Dreadnought pesado para rupturas de linea.', true, public.seed_uuid('technology_node', 'motores-guerra')),
-  (public.seed_uuid('unit_template', 'unit-muerte-poxwalkers'), 'unit-muerte-poxwalkers', public.seed_uuid('faction', 'guardia-muerte'), 'Poxwalkers', 'Infanteria', 70, 10, 12, 1, 0, 0, 0, 120, 'Multitud infectada que avanza sin miedo.', true, null),
-  (public.seed_uuid('unit_template', 'unit-muerte-plague-marines'), 'unit-muerte-plague-marines', public.seed_uuid('faction', 'guardia-muerte'), 'Plague Marines', 'Infanteria', 115, 7, 8, 5, 1, 0, 0, 240, 'Marines de plaga resistentes y metodicos.', true, public.seed_uuid('technology_node', 'veteranos-guerra')),
-  (public.seed_uuid('unit_template', 'unit-muerte-bloat-drone'), 'unit-muerte-bloat-drone', public.seed_uuid('faction', 'guardia-muerte'), 'Foetid Bloat-drone', 'Vehiculo', 145, 1, 3, 8, 2, 0, 0, 420, 'Dron demoniaco de apoyo y hostigamiento.', true, public.seed_uuid('technology_node', 'motores-guerra'))
+  (public.seed_uuid('unit_template', 'unit-orcos-boyz'), 'unit-orcos-boyz', public.seed_uuid('faction', 'orcos'), 'Boyz', 'Infanteria', 80, 10, 12, 2, 0, 0, 0, 0, 120, 'Masa brutal de combate cercano.', true, null),
+  (public.seed_uuid('unit_template', 'unit-orcos-meganobz'), 'unit-orcos-meganobz', public.seed_uuid('faction', 'orcos'), 'Meganobz', 'Elite', 105, 3, 6, 5, 1, 1, 0, 0, 240, 'Noblez armados con servoarmaduras improvisadas.', true, public.seed_uuid('technology_node', 'veteranos-guerra')),
+  (public.seed_uuid('unit_template', 'unit-orcos-deff-dread'), 'unit-orcos-deff-dread', public.seed_uuid('faction', 'orcos'), 'Deff Dread', 'Vehiculo', 135, 1, 2, 10, 1, 0, 0, 0, 360, 'Maquina andante de metal, humo y mala intencion.', true, public.seed_uuid('technology_node', 'motores-guerra')),
+  (public.seed_uuid('unit_template', 'unit-necrones-warriors'), 'unit-necrones-warriors', public.seed_uuid('faction', 'necrones'), 'Necron Warriors', 'Infanteria', 80, 10, 8, 4, 0, 0, 0, 0, 120, 'Linea inmortal reanimada desde las criptas.', true, null),
+  (public.seed_uuid('unit_template', 'unit-necrones-immortals'), 'unit-necrones-immortals', public.seed_uuid('faction', 'necrones'), 'Immortals', 'Elite', 105, 5, 6, 5, 1, 0, 0, 0, 240, 'Guerreros superiores con protocolos de elite.', true, public.seed_uuid('technology_node', 'veteranos-guerra')),
+  (public.seed_uuid('unit_template', 'unit-necrones-skorpekh'), 'unit-necrones-skorpekh', public.seed_uuid('faction', 'necrones'), 'Skorpekh Destroyers', 'Elite', 140, 3, 4, 7, 2, 1, 0, 0, 360, 'Asesinos de fase con cuerpos disenados para la destruccion.', true, public.seed_uuid('technology_node', 'veteranos-guerra')),
+  (public.seed_uuid('unit_template', 'unit-guardia-cadian'), 'unit-guardia-cadian', public.seed_uuid('faction', 'guardia-imperial'), 'Cadian Shock Troops', 'Infanteria', 80, 10, 12, 2, 0, 0, 0, 0, 120, 'Infanteria disciplinada lista para sostener la linea.', true, null),
+  (public.seed_uuid('unit_template', 'unit-guardia-kasrkin'), 'unit-guardia-kasrkin', public.seed_uuid('faction', 'guardia-imperial'), 'Kasrkin', 'Elite', 105, 10, 8, 4, 1, 1, 0, 0, 240, 'Veteranos de asalto con equipo especializado.', true, public.seed_uuid('technology_node', 'veteranos-guerra')),
+  (public.seed_uuid('unit_template', 'unit-guardia-leman-russ'), 'unit-guardia-leman-russ', public.seed_uuid('faction', 'guardia-imperial'), 'Leman Russ Battle Tank', 'Vehiculo', 145, 1, 2, 11, 1, 0, 0, 0, 420, 'Blindado pesado de batalla para romper frentes.', true, public.seed_uuid('technology_node', 'motores-guerra')),
+  (public.seed_uuid('unit_template', 'unit-culto-neophytes'), 'unit-culto-neophytes', public.seed_uuid('faction', 'culto-genestelar'), 'Neophyte Hybrids', 'Infanteria', 80, 10, 12, 2, 0, 0, 0, 0, 120, 'Celulas insurgentes armadas desde las profundidades.', true, null),
+  (public.seed_uuid('unit_template', 'unit-culto-acolytes'), 'unit-culto-acolytes', public.seed_uuid('faction', 'culto-genestelar'), 'Acolyte Hybrids', 'Elite', 95, 5, 8, 3, 1, 0, 0, 0, 240, 'Fanaticos hibridos preparados para ataques decisivos.', true, public.seed_uuid('technology_node', 'veteranos-guerra')),
+  (public.seed_uuid('unit_template', 'unit-culto-ridgerunner'), 'unit-culto-ridgerunner', public.seed_uuid('faction', 'culto-genestelar'), 'Achilles Ridgerunner', 'Vehiculo', 120, 1, 3, 8, 1, 0, 0, 0, 360, 'Vehiculo de incursion y reconocimiento rapido.', true, public.seed_uuid('technology_node', 'motores-guerra')),
+  (public.seed_uuid('unit_template', 'unit-sombra-intercessors'), 'unit-sombra-intercessors', public.seed_uuid('faction', 'sombra-emperador'), 'Intercessor Squad', 'Infanteria', 105, 5, 8, 4, 1, 0, 0, 0, 180, 'Astartes de linea con doctrina flexible.', true, null),
+  (public.seed_uuid('unit_template', 'unit-sombra-terminators'), 'unit-sombra-terminators', public.seed_uuid('faction', 'sombra-emperador'), 'Terminator Squad', 'Elite', 160, 5, 5, 6, 3, 2, 0, 0, 360, 'Veteranos con armadura tactica dreadnought.', true, public.seed_uuid('technology_node', 'veteranos-guerra')),
+  (public.seed_uuid('unit_template', 'unit-sombra-redemptor'), 'unit-sombra-redemptor', public.seed_uuid('faction', 'sombra-emperador'), 'Redemptor Dreadnought', 'Vehiculo', 185, 1, 2, 10, 3, 0, 0, 0, 480, 'Dreadnought pesado para rupturas de linea.', true, public.seed_uuid('technology_node', 'motores-guerra')),
+  (public.seed_uuid('unit_template', 'unit-muerte-poxwalkers'), 'unit-muerte-poxwalkers', public.seed_uuid('faction', 'guardia-muerte'), 'Poxwalkers', 'Infanteria', 70, 10, 12, 1, 0, 0, 0, 0, 120, 'Multitud infectada que avanza sin miedo.', true, null),
+  (public.seed_uuid('unit_template', 'unit-muerte-plague-marines'), 'unit-muerte-plague-marines', public.seed_uuid('faction', 'guardia-muerte'), 'Plague Marines', 'Infanteria', 115, 7, 8, 5, 1, 1, 0, 0, 240, 'Marines de plaga resistentes y metodicos.', true, public.seed_uuid('technology_node', 'veteranos-guerra')),
+  (public.seed_uuid('unit_template', 'unit-muerte-bloat-drone'), 'unit-muerte-bloat-drone', public.seed_uuid('faction', 'guardia-muerte'), 'Foetid Bloat-drone', 'Vehiculo', 145, 1, 3, 8, 2, 0, 0, 0, 420, 'Dron demoniaco de apoyo y hostigamiento.', true, public.seed_uuid('technology_node', 'motores-guerra'))
 on conflict (slug) do update
-set faction_id = excluded.faction_id, name = excluded.name, category = excluded.category, points = excluded.points, default_quantity = excluded.default_quantity, supply_cost = excluded.supply_cost, minerals_cost = excluded.minerals_cost, ancestral_stone_cost = excluded.ancestral_stone_cost, uridium_cost = excluded.uridium_cost, technology_cost = excluded.technology_cost, recruitment_time_seconds = excluded.recruitment_time_seconds, notes = excluded.notes, is_available = excluded.is_available, required_technology_node_id = excluded.required_technology_node_id;
+set faction_id = excluded.faction_id, name = excluded.name, category = excluded.category, points = excluded.points, default_quantity = excluded.default_quantity, supply_cost = excluded.supply_cost, minerals_cost = excluded.minerals_cost, ancestral_stone_cost = excluded.ancestral_stone_cost, gold_cost = excluded.gold_cost, uridium_cost = excluded.uridium_cost, technology_cost = excluded.technology_cost, recruitment_time_seconds = excluded.recruitment_time_seconds, notes = excluded.notes, is_available = excluded.is_available, required_technology_node_id = excluded.required_technology_node_id;
 
 insert into public.campaign_units (
   id, slug, faction_id, unit_template_id, name, category, points, quantity, starting_quantity, experience, rank, enhancement_text, current_system_id, status, is_visible_publicly
@@ -370,6 +371,26 @@ values
   (public.seed_uuid('movement_order', 'move-death-drusus'), public.seed_uuid('campaign_unit', 'death-drusus-drone'), 1)
 on conflict (movement_order_id, unit_id) do update
 set quantity_at_departure = excluded.quantity_at_departure;
+
+insert into public.trade_offers (
+  id, creator_faction_id, offer_type, resource_key, resource_amount, gold_amount, fee_gold, status, created_at, updated_at
+)
+values
+  (public.seed_uuid('trade_offer', 'imperial-sell-minerals'), public.seed_uuid('faction', 'guardia-imperial'), 'sell', 'minerals', 15, 8, 3, 'open', now() - interval '8 minutes', now() - interval '8 minutes'),
+  (public.seed_uuid('trade_offer', 'orcos-buy-supply'), public.seed_uuid('faction', 'orcos'), 'buy', 'supply', 20, 5, 2, 'open', now() - interval '4 minutes', now() - interval '4 minutes')
+on conflict (id) do update
+set
+  creator_faction_id = excluded.creator_faction_id,
+  offer_type = excluded.offer_type,
+  resource_key = excluded.resource_key,
+  resource_amount = excluded.resource_amount,
+  gold_amount = excluded.gold_amount,
+  fee_gold = excluded.fee_gold,
+  status = excluded.status,
+  accepted_by_faction_id = null,
+  accepted_at = null,
+  cancelled_at = null,
+  updated_at = excluded.updated_at;
 
 insert into public.conflicts (id, slug, system_id, attacker_faction_id, defender_faction_id, status, blocked_until, notes)
 values

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import ancestralStoneIcon from "../../../icons/resources/acestral_stone.png";
+import goldIcon from "../../../icons/resources/gold.png";
 import uridiumIcon from "../../../icons/resources/iridium.png";
 import supplyIcon from "../../../icons/resources/life_essense.png";
 import mineralIcon from "../../../icons/resources/mineral.png";
@@ -11,6 +12,7 @@ export const resourceLabels: Record<ResourceKey, string> = {
   supply: "Suministro vital",
   minerals: "Mineral",
   ancestralStone: "Piedra ancestral",
+  gold: "Oro",
   uridium: "Uridium",
   technology: "Componentes tecnologicos"
 };
@@ -19,6 +21,7 @@ const resourceIcons = {
   supply: supplyIcon,
   minerals: mineralIcon,
   ancestralStone: ancestralStoneIcon,
+  gold: goldIcon,
   uridium: uridiumIcon,
   technology: technologyIcon
 };

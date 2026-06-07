@@ -129,12 +129,84 @@ Navegacion movil actual:
 
 - La campana entra en modo mapa primero: no hay sistema seleccionado al cargar.
 - Tocar una estrella abre la hoja del sistema; cerrar con X vuelve al mapa libre.
-- La barra de recursos superior debe caber completa, con icono y numero compacto para los 5 recursos.
+- La barra de recursos superior debe caber completa, con icono y numero compacto para los 5 recursos visibles: Suministro, Mineral, Piedra ancestral, Oro y Uridium.
 - El movimiento movil funciona en dos fases: seleccion de unidades desde el sistema y trazado de ruta en el mapa.
 - Al trazar ruta, el panel de sistema se cierra y queda una barra inferior con coste de Uridium, tiempo, cancelar, deshacer, reiniciar y confirmar.
 - Tecnologia abre la constelacion a pantalla completa centrada en `doctrina-campana`, sin nodo seleccionado; tocar un nodo abre el detalle como drawer inferior.
 - Reclutamiento, reportes, movimiento y tecnologia usan paneles con scroll tactil real compatible con iPhone Safari y Android Chrome.
 - Cualquier cambio de UI movil debe probarse en iPhone Safari y Android Chrome, verificando que los paneles scrollean hasta el final y que los botones principales no quedan bajo las barras del navegador.
+
+---
+
+## Estado actual implementado para agentes IA
+
+Ultima auditoria del documento: 2026-06-07. La ultima version de Git que modifico este documento antes de esta actualizacion era `54a9265` (`fix scrolls para IOS`). No habia commits posteriores sin documentar; esta seccion consolida el estado actual para que otro agente pueda orientarse rapido.
+
+Estado tecnico actual:
+
+- Proyecto Next.js + React + TypeScript con App Router.
+- Mapa galactico WebGL en PixiJS.
+- UI con Tailwind CSS y componentes locales.
+- Estado local de mapa/UI con Zustand.
+- Server state con TanStack Query.
+- Backend autoritativo en Supabase/Postgres/Auth/RLS/RPC.
+- Supabase local para desarrollo y Supabase Cloud + Vercel para produccion.
+- Mocks siguen existiendo como fallback de desarrollo, pero produccion debe usar `NEXT_PUBLIC_ALLOW_MOCK_FALLBACK=false`.
+
+Estado jugable actual:
+
+- Campana en tiempo real, sin turnos estrategicos.
+- Produccion diaria por tick temporal configurable.
+- Movimiento, reclutamiento e investigacion funcionan por timestamps y resolvers backend/lazy processing.
+- Unidades jugables son `campaign_units`, no ejercitos abstractos.
+- Las unidades tienen miniaturas actuales y miniaturas iniciales; pueden separarse al mover una cantidad parcial.
+- Reclutamiento solo desde la capital propia en v1.
+- Reclutamiento usa `unit_templates`, costes, tiempos, cola y validacion tecnologica.
+- Arbol tecnologico comun `common-v1` con progreso independiente por faccion.
+- Oro es un recurso principal visible en la barra superior y se usa sobre todo para comercio.
+- Componentes tecnologicos son un recurso especial del arbol tecnologico; no aparecen en la barra superior y no se producen en planetas ni por `system_production`.
+- El panel de mando operativo tiene entrada `Comercio`, no `Recursos`; abre Mercader y Comercio estelar.
+- Batallas se juegan fuera de la app; la web gestiona conflicto, bloqueo, reportes, bajas y control final.
+
+Estado visual actual:
+
+- El mapa inicial tiene 30 sistemas, capitales en bordes del grafo, territorios iniciales contiguos, movimientos iniciales y 3 conflictos de prueba.
+- Las aristas no muestran numeros por defecto; el coste de Uridium aparece en el flujo de movimiento.
+- Si una arista no esta bloqueada y une dos sistemas controlados por la misma faccion, se colorea con el color de esa faccion.
+- La animacion direccional de aristas se reserva solo para movimientos reales visibles para el usuario o admin.
+- Capitales no tienen animacion ni marcador especial en el mapa; se distinguen en datos y panel.
+- Sistemas con `specialObjects` publicos muestran un pequeno diamante/marcador bajo la estrella.
+- La barra superior de recursos esta centrada y compacta; en movil muestra icono + numero.
+
+Estado movil actual:
+
+- En movil la experiencia es mapa primero.
+- El panel de sistema no se abre al cargar; se abre solo al tocar una estrella.
+- El dock inferior se oculta cuando hay panel de sistema, movimiento, reclutamiento, tecnologia o reporte abierto.
+- La app usa `--app-height` calculado con `visualViewport` para Safari iOS.
+- Paneles largos usan scroll tactil real mediante clase `mobile-scroll`.
+- El arbol tecnologico usa `tech-scroll`, abre centrado en `doctrina-campana`, sin nodo seleccionado, con zoom inicial reducido y controles de zoom/centrado.
+
+Archivos clave actuales:
+
+- `src/features/campaign/components/campaign-shell.tsx`: shell principal, recursos, panel sistema, movimiento y reportes.
+- `src/features/galaxy-map/components/galaxy-map.tsx`: render PixiJS del mapa, rutas, sistemas, marcadores, movimientos y efectos.
+- `src/features/recruitment/components/recruitment-modal.tsx`: reclutamiento y cola.
+- `src/features/technology/components/technology-tree-modal.tsx`: arbol tecnologico tipo constelacion.
+- `src/lib/use-media-query.ts`: media queries cliente y `useViewportHeightCssVar`.
+- `supabase/migrations`: esquema/RLS/RPCs.
+- `supabase/seed.sql`: estado inicial jugable.
+- `scripts/seed-local-users.mjs`: usuarios locales/cloud de prueba mediante service role.
+
+Comprobaciones obligatorias antes de entregar cambios:
+
+```bash
+npm run typecheck
+npm run lint
+npm run build
+```
+
+Para cambios moviles, probar ademas en Android Chrome e iPhone Safari. En iPhone hay que validar especificamente scroll hasta el final en sistema, reclutamiento, movimiento, reportes y tecnologia.
 
 ---
 
@@ -173,6 +245,7 @@ Crear una aplicación web privada con:
    - Suministro vital.
    - Mineral.
    - Piedra ancestral.
+   - Oro.
    - Uridium.
    - Componentes tecnológicos.
 7. **Producción de recursos por sistemas controlados.**
@@ -344,6 +417,8 @@ Los sistemas NO se representarán como planetas grandes. Se representarán como 
 - Icono pequeño flotante.
 - Brillo diferenciado, por ejemplo violeta para Piedra ancestral o dorado/violeta para reliquia.
 
+Nota implementada: en el mapa actual, si un sistema tiene algun `specialObjects` publico, PixiJS dibuja un pequeno diamante bajo la estrella. Ese diamante significa objeto especial, reliquia, anomalia o punto narrativo publico; no representa control, capital, bloqueo ni tropas.
+
 ### 3.4 Rutas/aristas
 
 Las rutas entre sistemas se dibujan con PixiJS:
@@ -398,15 +473,16 @@ El seed local inicial debe representar una campana viva, no un reparto aleatorio
 
 ## 4. Recursos de campaña
 
-Hay cinco recursos de campaña:
+Hay seis recursos de campaña:
 
 | Recurso | Uso |
 |---|---|
 | Suministro vital | Reclutar y sostener tropas, especialmente infantería y presencia militar. |
 | Mineral | Construir armamento, blindajes, vehículos, fortificaciones y equipamiento pesado. |
 | Piedra ancestral | Recurso raro para unidades importantes, élites, personajes, superpesados, reliquias y elementos especiales. |
+| Oro | Recurso económico usado principalmente para comercio. También puede usarse puntualmente en unidades de élite muy concretas. |
 | Uridium | Recurso de movimiento estratégico entre sistemas. |
-| Componentes tecnológicos | Investigar tecnologías del árbol de campaña. No se usa para movimiento ni reclutamiento normal salvo reglas futuras específicas. |
+| Componentes tecnológicos | Investigar tecnologías del árbol de campaña. No se muestra en la barra superior y no se usa para movimiento ni reclutamiento normal salvo reglas futuras específicas. |
 
 Más adelante se añadirán recursos secundarios, como:
 
@@ -422,17 +498,19 @@ La conversión para coste de unidades será:
 
 | Recurso | Valor equivalente |
 |---|---:|
-| 1 Suministro vital | 5 puntos |
-| 1 Mineral | 10 puntos |
-| 1 Piedra ancestral | 25 puntos |
+| 1 Suministro vital | 1 punto |
+| 1 Mineral | 2 puntos |
+| 1 Uridium | 2 puntos |
+| 1 Piedra ancestral | 5 puntos |
+| 1 Oro | 5 puntos |
 
 Fórmula:
 
 ```text
-Coste en puntos = 5*Suministro + 10*Mineral + 25*PiedraAncestral
+Coste en puntos = Suministro + 2*Mineral + 5*PiedraAncestral + 5*Oro
 ```
 
-Uridium no se usa para comprar unidades normales. Uridium se usa principalmente para movimiento.
+Uridium equivale a 2 puntos a efectos económicos/comerciales, pero no se usa para generar tropas normales. Uridium se usa principalmente para movimiento.
 
 ### 4.2 Uso de Piedra ancestral
 
@@ -457,7 +535,10 @@ Cada sistema produce una cantidad diaria de recursos. En base de datos estos val
 - `supply_per_tick`
 - `minerals_per_tick`
 - `ancestral_stone_per_tick`
+- `gold_per_tick`
 - `uridium_per_tick`
+
+En el seed actual `gold_per_tick` empieza en 0 para todos los sistemas; el oro existe sobre todo como recurso de comercio, aunque la base permite producción de oro si la campaña lo decide más adelante.
 
 Los Componentes tecnológicos no se producen en planetas ni sistemas estelares.
 
@@ -471,7 +552,13 @@ La cadencia de usuario para la v1 es diaria:
 
 El admin podrá cambiar esta cadencia más adelante si la campaña necesita avanzar más rápido o más lento.
 
-El panel superior debe mostrar solo los recursos actuales, centrados y sin texto de siguiente tick.
+El panel superior debe mostrar solo los recursos actuales visibles, centrados y sin texto de siguiente tick:
+
+```text
+Suministro vital | Mineral | Piedra ancestral | Oro | Uridium
+```
+
+Los Componentes tecnológicos no aparecen en la barra superior. Solo se muestran dentro del panel/árbol de tecnologías.
 
 El panel detallado de recursos debe mostrar también:
 
@@ -484,7 +571,7 @@ El panel detallado de recursos debe mostrar también:
 
 ### 4.4 Componentes tecnológicos
 
-Los Componentes tecnológicos son el quinto recurso de la campaña.
+Los Componentes tecnológicos son un recurso especial de la campaña.
 
 Uso principal:
 
@@ -501,6 +588,57 @@ Reglas v1:
 - No se producen mediante `system_production` ni ticks diarios de recursos.
 - Deben obtenerse mediante recompensas narrativas, reliquias, eventos, misiones, hallazgos, comercio futuro o edición/admin.
 - El backend valida siempre que la tecnología necesaria esté desbloqueada antes de permitir `recruit_unit()`.
+
+### 4.5 Oro y comercio
+
+El Oro es un recurso principal visible en la barra superior.
+
+Uso principal:
+
+- Comerciar con el mercader.
+- Comerciar con otros jugadores.
+- Pagar costes puntuales de unidades de élite muy concretas.
+
+Reglas de valor económico:
+
+- 1 Oro equivale a 5 puntos.
+- 1 Uridium equivale a 2 puntos, aunque no se usa para generar tropas normales.
+- Los Componentes tecnológicos no son comerciables en v1.
+
+#### Mercader
+
+El panel de mando operativo muestra `Comercio` en lugar de `Recursos`.
+
+Al abrir comercio, la pestaña por defecto es `Mercader`.
+
+El mercader:
+
+- Usa el avatar `icons/resources/merchant1.png`.
+- Permite comprar y vender `supply`, `minerals`, `ancestralStone` y `uridium`.
+- No comercia Componentes tecnológicos.
+- Vende recursos al doble de su valor.
+- Compra recursos a mitad de precio, redondeando hacia arriba.
+
+Ejemplos de fórmulas:
+
+```text
+Compra al mercader = ceil(valor_puntos_recurso * cantidad * 2 / 5) Oro
+Venta al mercader = ceil(valor_puntos_recurso * cantidad * 0.5 / 5) Oro
+```
+
+#### Comercio estelar entre jugadores
+
+El comercio entre jugadores usa ofertas abiertas de recurso contra Oro:
+
+- Oferta de compra: "Compro X de recurso por Y de Oro".
+- Oferta de venta: "Vendo X de recurso por Y de Oro".
+- Recursos comerciables: Suministro, Mineral, Piedra ancestral y Uridium.
+- No se comercia Oro como recurso objetivo; Oro es la moneda.
+- No se comercian Componentes tecnológicos.
+- Cada transacción cobra una comisión del 30% del Oro de la oferta, redondeada hacia arriba.
+- Cada jugador paga su propia comisión en Oro.
+
+En v1 las ofertas no reservan recursos al publicarse. El backend valida al crear y vuelve a validar de forma atómica al aceptar.
 
 ---
 
@@ -991,6 +1129,7 @@ Cada unidad debe tener:
 - Coste en Suministro vital.
 - Coste en Mineral.
 - Coste en Piedra ancestral.
+- Coste en Oro si es una unidad de élite o especial que lo requiera.
 - Coste en Uridium si alguna unidad especial lo requiere, aunque normalmente no.
 - Tiempo de producción.
 - Requisitos opcionales.
@@ -1224,21 +1363,43 @@ Tabla `missions` guarda URL pública/privada según diseño.
 
 ---
 
-## 12. Panel de recursos
+## 12. Barra superior y comercio
 
 ### 12.1 Barra superior
 
 Siempre visible:
 
 ```text
-Suministro vital: 120 | Mineral: 85 | Piedra ancestral: 8 | Uridium: 14 | Componentes tecnológicos: 16
+Suministro vital: 120 | Mineral: 85 | Piedra ancestral: 8 | Oro: 30 | Uridium: 14
 ```
 
-Debe tener iconos bonitos.
+Debe tener iconos bonitos. La version implementada muestra: Suministro vital, Mineral, Piedra ancestral, Oro y Uridium. Los Componentes tecnologicos solo se ven dentro del panel de Tecnologia.
 
-### 12.2 Panel detallado
+### 12.2 Panel de comercio
 
-Al hacer click, abrir panel:
+El panel de mando operativo muestra `Comercio` en lugar de `Recursos`.
+
+Al abrir comercio:
+
+- La pestana por defecto es `Mercader`.
+- La segunda pestana es `Comercio estelar`.
+
+Mercader:
+
+- Avatar en `icons/resources/merchant1.png`.
+- Compra y venta de Suministro, Mineral, Piedra ancestral y Uridium usando Oro.
+- No comercia Componentes tecnologicos.
+- Vende al doble de valor.
+- Compra a mitad de valor, redondeando hacia arriba.
+
+Comercio estelar:
+
+- Crear oferta de compra o venta de recurso contra Oro.
+- Aceptar ofertas de otras facciones.
+- Cancelar ofertas propias.
+- Cada transaccion cobra una comision en Oro del 30%, redondeada hacia arriba, a cada jugador por separado.
+
+El bloque antiguo de panel detallado de recursos queda solo como referencia historica y no debe implementarse como vista principal:
 
 ```text
 Recursos actuales
@@ -1323,6 +1484,8 @@ Puede:
 - Ver movimientos propios.
 - Reclutar unidades disponibles.
 - Investigar tecnologías disponibles.
+- Comerciar con el mercader.
+- Crear, aceptar y cancelar ofertas propias de comercio estelar.
 - Mover tropas propias.
 - Ver misiones públicas.
 - Ver paneles de sus sistemas.
@@ -1359,6 +1522,10 @@ Crear funciones RPC o endpoints equivalentes:
 create_movement_order(unit_selections, path_system_ids)
 recruit_unit(unit_template_id, quantity)
 start_technology_research(technology_node_id)
+merchant_trade(resource_key, direction, trade_quantity)
+create_trade_offer(offer_type, resource_key, resource_amount, gold_amount)
+accept_trade_offer(offer_id)
+cancel_trade_offer(offer_id)
 resolve_resource_ticks()
 resolve_movement_orders()
 resolve_recruitment_queue()
@@ -1404,6 +1571,17 @@ Para tecnología:
 - Componentes tecnológicos suficientes.
 - Solo una investigación activa por facción.
 - `finishes_at` calculado por backend.
+
+Para comercio:
+
+- FacciÃ³n correcta.
+- Recurso comerciable: Suministro, Mineral, Piedra ancestral o Uridium.
+- Componentes tecnologicos no comerciables.
+- Oro suficiente para compras y comisiones.
+- Recursos suficientes para ventas.
+- Comision de 30% calculada por backend.
+- Aceptacion atomica: se revalidan recursos antes de aplicar transferencia.
+- Un jugador no puede aceptar su propia oferta.
 
 Para reportes de batalla:
 
@@ -1566,6 +1744,7 @@ faction_resources
 - supply integer default 0
 - minerals integer default 0
 - ancestral_stone integer default 0
+- gold integer default 0
 - uridium integer default 0
 - technology integer default 0 -- Componentes tecnológicos
 - updated_at timestamptz
@@ -1581,6 +1760,7 @@ system_production
 - supply_per_tick integer default 0
 - minerals_per_tick integer default 0
 - ancestral_stone_per_tick integer default 0
+- gold_per_tick integer default 0 -- en seed v1 empieza a 0; oro es principalmente comercial
 - uridium_per_tick integer default 0
 - technology_per_tick integer default 0 -- debe permanecer en 0; los Componentes tecnológicos no son producción planetaria
 ```
@@ -1650,6 +1830,7 @@ unit_templates
 - supply_cost integer
 - minerals_cost integer
 - ancestral_stone_cost integer
+- gold_cost integer default 0
 - uridium_cost integer default 0
 - technology_cost integer default 0
 - recruitment_time_seconds integer
@@ -1742,6 +1923,7 @@ recruitment_queue
 - supply_cost integer
 - minerals_cost integer
 - ancestral_stone_cost integer
+- gold_cost integer default 0
 - uridium_cost integer
 - technology_cost integer default 0
 - started_at timestamptz
@@ -1750,7 +1932,28 @@ recruitment_queue
 - created_at timestamptz
 ```
 
-### 16.12 movement_orders
+### 16.12 trade_offers
+
+```sql
+trade_offers
+- id uuid primary key
+- creator_faction_id uuid references factions(id)
+- offer_type text check in ('buy', 'sell')
+- resource_key text check in ('supply', 'minerals', 'ancestral_stone', 'uridium')
+- resource_amount integer
+- gold_amount integer
+- fee_gold integer -- ceil(gold_amount * 0.30)
+- status text check in ('open', 'accepted', 'cancelled')
+- accepted_by_faction_id uuid nullable references factions(id)
+- created_at timestamptz
+- accepted_at timestamptz nullable
+- cancelled_at timestamptz nullable
+- updated_at timestamptz
+```
+
+`trade_offers` no reserva recursos en v1. Crear y aceptar ofertas valida recursos en backend. Aceptar una oferta aplica la transferencia de recurso/Oro y descuenta la comision de Oro a ambas facciones.
+
+### 16.13 movement_orders
 
 ```sql
 movement_orders
@@ -1768,7 +1971,7 @@ movement_orders
 - created_at timestamptz
 ```
 
-### 16.13 conflicts
+### 16.14 conflicts
 
 ```sql
 conflicts
@@ -1784,7 +1987,7 @@ conflicts
 - notes text nullable
 ```
 
-### 16.14 battle_reports
+### 16.15 battle_reports
 
 ```sql
 battle_reports
@@ -1807,7 +2010,7 @@ battle_reports
 
 Si los reportes de los participantes coinciden, el backend puede marcarlos como `auto_confirmed` y aplicar el resultado. Si no coinciden, quedan como `disputed` hasta que el admin confirme el resultado final.
 
-### 16.15 missions
+### 16.16 missions
 
 ```sql
 missions
@@ -1826,7 +2029,7 @@ missions
 - updated_at timestamptz
 ```
 
-### 16.16 relics / special objects
+### 16.17 relics / special objects
 
 ```sql
 relics
@@ -1854,7 +2057,7 @@ system_special_objects
 - created_at timestamptz
 ```
 
-### 16.17 logs
+### 16.18 logs
 
 ```sql
 campaign_logs
@@ -1866,7 +2069,7 @@ campaign_logs
 - created_at timestamptz
 ```
 
-### 16.18 Implementacion local real
+### 16.19 Implementacion local real
 
 El proyecto debe poder ejecutarse contra una base Supabase/Postgres local equivalente a produccion para que el despliegue cloud sea sencillo.
 
@@ -1947,6 +2150,10 @@ resolve_technology_research()
 recruit_unit(unit_template_id, quantity)
 start_technology_research(technology_node_id)
 create_movement_order(unit_selections, path_system_ids)
+merchant_trade(resource_key, direction, trade_quantity)
+create_trade_offer(offer_type, resource_key, resource_amount, gold_amount)
+accept_trade_offer(offer_id)
+cancel_trade_offer(offer_id)
 submit_battle_report(conflict_id, report_payload)
 merge_campaign_units(unit_ids)
 admin_resolve_battle(target_conflict_id, winner_faction_id, final_controller_faction_id, survivors, post_battle_blocked_until, narrative_notes)
@@ -2020,9 +2227,26 @@ Muestra:
 - Estado visual: bloqueada, disponible, investigando, desbloqueada.
 - Botón para iniciar investigación mediante RPC segura.
 
-### 17.5 Panel de recursos
+Comportamiento implementado actual del arbol:
+
+- El arbol se abre centrado en `doctrina-campana`.
+- No debe abrir con ningun nodo seleccionado por defecto; el usuario decide que nodo consultar.
+- Incluye controles compactos de zoom, alejamiento y recentrado.
+- En movil el detalle del nodo se abre como drawer/panel inferior con scroll tactil real y boton de investigar accesible.
+
+### 17.5 Panel de comercio
 
 Muestra:
+
+- Mercader con avatar.
+- Compra/venta de Suministro, Mineral, Piedra ancestral y Uridium contra Oro.
+- Comercio estelar entre jugadores.
+- Creacion de ofertas de compra/venta.
+- Listado de ofertas abiertas.
+- Aceptar o cancelar ofertas segun permisos.
+- Comision de Oro visible.
+
+El listado antiguo de recursos detallados queda obsoleto:
 
 - Recursos actuales.
 - Producción diaria.
@@ -2292,7 +2516,10 @@ Sin login todavía.
 ### Fase 4: Recursos
 
 - Barra superior.
-- Panel de recursos.
+- Oro como recurso visible.
+- Comercio en el panel de mando operativo.
+- Mercader con compra/venta contra Oro.
+- Comercio estelar entre jugadores con ofertas y comision.
 - Producción diaria por tick backend de 24h.
 - Cron/lazy processing de recursos.
 - Admin puede configurar cadencia de producción.
@@ -2310,7 +2537,7 @@ Sin login todavía.
 
 ### Fase 5.5: Árbol tecnológico
 
-- Componentes tecnológicos como quinto recurso.
+- Componentes tecnologicos como recurso especial del arbol.
 - Tabla de nodos, prerequisitos, progreso por facción y efectos.
 - Pantalla visual de árbol tecnológico.
 - `start_technology_research()`.

@@ -18,6 +18,7 @@ import type {
   TechnologyEffect,
   TechnologyNode,
   TechnologyPrerequisite,
+  TradeOffer,
   UnitCategory,
   UnitMovementSelection,
   UnitTemplate
@@ -49,6 +50,7 @@ const emptyResources: ResourceBundle = {
   supply: 0,
   minerals: 0,
   ancestralStone: 0,
+  gold: 0,
   uridium: 0,
   technology: 0
 };
@@ -97,6 +99,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       factionTechnologiesResult,
       technologyEffectsResult,
       buildingTemplatesResult,
+      tradeOffersResult,
       conflictsResult,
       battleReportsResult,
       missionsResult
@@ -120,6 +123,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       supabase.from("faction_technologies").select("*"),
       supabase.from("technology_effects").select("*"),
       supabase.from("building_templates").select("*").order("name"),
+      supabase.from("trade_offers").select("*").order("created_at", { ascending: false }),
       supabase.from("conflicts").select("*").order("created_at"),
       supabase.from("battle_reports").select("*").order("created_at"),
       supabase.from("missions").select("*").order("title")
@@ -185,6 +189,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       factionTechnologies: getRows(factionTechnologiesResult, "faction_technologies").map(mapFactionTechnology),
       technologyEffects: getRows(technologyEffectsResult, "technology_effects").map(mapTechnologyEffect),
       buildingTemplates: getRows(buildingTemplatesResult, "building_templates").map(mapBuildingTemplate),
+      tradeOffers: getRows(tradeOffersResult, "trade_offers").map(mapTradeOffer),
       conflicts: getRows(conflictsResult, "conflicts").map(mapConflict),
       battleReports: getRows(battleReportsResult, "battle_reports").map(mapBattleReport),
       missions: getRows(missionsResult, "missions").map(mapMission)
@@ -314,6 +319,7 @@ function mapResourceProduction(row: Record<string, unknown>): ResourceBundle {
     supply: Number(row.supply_per_tick ?? 0),
     minerals: Number(row.minerals_per_tick ?? 0),
     ancestralStone: Number(row.ancestral_stone_per_tick ?? 0),
+    gold: Number(row.gold_per_tick ?? 0),
     uridium: Number(row.uridium_per_tick ?? 0),
     technology: Number(row.technology_per_tick ?? 0)
   };
@@ -325,6 +331,7 @@ function mapFactionResources(row: Record<string, unknown>): FactionResources {
     supply: Number(row.supply ?? 0),
     minerals: Number(row.minerals ?? 0),
     ancestralStone: Number(row.ancestral_stone ?? 0),
+    gold: Number(row.gold ?? 0),
     uridium: Number(row.uridium ?? 0),
     technology: Number(row.technology ?? 0),
     updatedAt: row.updated_at as string
@@ -392,6 +399,7 @@ function mapUnitTemplate(row: Record<string, unknown>): UnitTemplate {
     supplyCost: Number(row.supply_cost ?? 0),
     mineralsCost: Number(row.minerals_cost ?? 0),
     ancestralStoneCost: Number(row.ancestral_stone_cost ?? 0),
+    goldCost: Number(row.gold_cost ?? 0),
     uridiumCost: Number(row.uridium_cost ?? 0),
     technologyCost: Number(row.technology_cost ?? 0),
     recruitmentTimeSeconds: Number(row.recruitment_time_seconds ?? 0),
@@ -399,6 +407,35 @@ function mapUnitTemplate(row: Record<string, unknown>): UnitTemplate {
     isAvailable: Boolean(row.is_available),
     requiredTechnologyNodeId: (row.required_technology_node_id as string | null) ?? null
   };
+}
+
+function mapTradeOffer(row: Record<string, unknown>): TradeOffer {
+  return {
+    id: row.id as string,
+    creatorFactionId: row.creator_faction_id as string,
+    offerType: row.offer_type as TradeOffer["offerType"],
+    resourceKey: mapTradeableResource(row.resource_key),
+    resourceAmount: Number(row.resource_amount ?? 0),
+    goldAmount: Number(row.gold_amount ?? 0),
+    feeGold: Number(row.fee_gold ?? 0),
+    status: row.status as TradeOffer["status"],
+    acceptedByFactionId: (row.accepted_by_faction_id as string | null) ?? null,
+    createdAt: row.created_at as string,
+    acceptedAt: (row.accepted_at as string | null) ?? null,
+    cancelledAt: (row.cancelled_at as string | null) ?? null
+  };
+}
+
+function mapTradeableResource(value: unknown): TradeOffer["resourceKey"] {
+  if (value === "ancestral_stone") {
+    return "ancestralStone";
+  }
+
+  if (value === "supply" || value === "minerals" || value === "ancestralStone" || value === "uridium") {
+    return value;
+  }
+
+  return "supply";
 }
 
 function mapTechnologyNode(row: Record<string, unknown>): TechnologyNode {

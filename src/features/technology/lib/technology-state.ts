@@ -2,7 +2,7 @@ import type { CampaignSnapshot, ResourceKey, TechnologyNode, UnitCategory, UnitT
 
 export type DerivedTechnologyStatus = "locked" | "available" | "researching" | "unlocked";
 
-const resources: ResourceKey[] = ["supply", "minerals", "ancestralStone", "uridium", "technology"];
+const resources: ResourceKey[] = ["supply", "minerals", "ancestralStone", "gold", "uridium", "technology"];
 
 export function getFactionTechnology(snapshot: CampaignSnapshot, technologyNodeId: string) {
   return snapshot.factionTechnologies.find(
@@ -83,6 +83,7 @@ export function getBaseRecruitmentCost(template: UnitTemplate, resource: Resourc
     supply: template.supplyCost,
     minerals: template.mineralsCost,
     ancestralStone: template.ancestralStoneCost,
+    gold: template.goldCost,
     uridium: template.uridiumCost,
     technology: template.technologyCost
   };

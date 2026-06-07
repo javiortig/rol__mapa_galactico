@@ -4,6 +4,7 @@ const emptyResources: ResourceBundle = {
   supply: 0,
   minerals: 0,
   ancestralStone: 0,
+  gold: 0,
   uridium: 0,
   technology: 0
 };
@@ -491,6 +492,7 @@ const resources: CampaignSnapshot["resources"] = [
     supply: 180,
     minerals: 130,
     ancestralStone: 12,
+    gold: 34,
     uridium: 24,
     technology: 16,
     updatedAt: new Date(now).toISOString()
@@ -500,6 +502,7 @@ const resources: CampaignSnapshot["resources"] = [
     supply: 190,
     minerals: 135,
     ancestralStone: 7,
+    gold: 26,
     uridium: 20,
     technology: 16,
     updatedAt: new Date(now).toISOString()
@@ -509,6 +512,7 @@ const resources: CampaignSnapshot["resources"] = [
     supply: 115,
     minerals: 155,
     ancestralStone: 18,
+    gold: 32,
     uridium: 22,
     technology: 16,
     updatedAt: new Date(now).toISOString()
@@ -518,6 +522,7 @@ const resources: CampaignSnapshot["resources"] = [
     supply: 185,
     minerals: 115,
     ancestralStone: 13,
+    gold: 30,
     uridium: 22,
     technology: 16,
     updatedAt: new Date(now).toISOString()
@@ -527,6 +532,7 @@ const resources: CampaignSnapshot["resources"] = [
     supply: 135,
     minerals: 130,
     ancestralStone: 18,
+    gold: 38,
     uridium: 26,
     technology: 16,
     updatedAt: new Date(now).toISOString()
@@ -536,6 +542,7 @@ const resources: CampaignSnapshot["resources"] = [
     supply: 155,
     minerals: 135,
     ancestralStone: 15,
+    gold: 28,
     uridium: 20,
     technology: 16,
     updatedAt: new Date(now).toISOString()
@@ -1158,6 +1165,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 12,
     mineralsCost: 2,
     ancestralStoneCost: 0,
+    goldCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 120,
@@ -1173,6 +1181,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 6,
     mineralsCost: 5,
     ancestralStoneCost: 1,
+    goldCost: 1,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 240,
@@ -1188,6 +1197,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 2,
     mineralsCost: 10,
     ancestralStoneCost: 1,
+    goldCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 360,
@@ -1203,6 +1213,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 8,
     mineralsCost: 4,
     ancestralStoneCost: 0,
+    goldCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 120,
@@ -1218,6 +1229,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 6,
     mineralsCost: 5,
     ancestralStoneCost: 1,
+    goldCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 240,
@@ -1233,6 +1245,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 4,
     mineralsCost: 7,
     ancestralStoneCost: 2,
+    goldCost: 1,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 360,
@@ -1248,6 +1261,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 12,
     mineralsCost: 2,
     ancestralStoneCost: 0,
+    goldCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 120,
@@ -1263,6 +1277,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 8,
     mineralsCost: 4,
     ancestralStoneCost: 1,
+    goldCost: 1,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 240,
@@ -1278,6 +1293,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 2,
     mineralsCost: 11,
     ancestralStoneCost: 1,
+    goldCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 420,
@@ -1293,6 +1309,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 12,
     mineralsCost: 2,
     ancestralStoneCost: 0,
+    goldCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 120,
@@ -1308,6 +1325,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 8,
     mineralsCost: 3,
     ancestralStoneCost: 1,
+    goldCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 240,
@@ -1323,6 +1341,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 3,
     mineralsCost: 8,
     ancestralStoneCost: 1,
+    goldCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 360,
@@ -1338,6 +1357,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 8,
     mineralsCost: 4,
     ancestralStoneCost: 1,
+    goldCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 180,
@@ -1353,6 +1373,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 5,
     mineralsCost: 6,
     ancestralStoneCost: 3,
+    goldCost: 2,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 360,
@@ -1368,6 +1389,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 2,
     mineralsCost: 10,
     ancestralStoneCost: 3,
+    goldCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 480,
@@ -1383,6 +1405,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 12,
     mineralsCost: 1,
     ancestralStoneCost: 0,
+    goldCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 120,
@@ -1398,6 +1421,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 8,
     mineralsCost: 5,
     ancestralStoneCost: 1,
+    goldCost: 1,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 240,
@@ -1413,6 +1437,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     supplyCost: 3,
     mineralsCost: 8,
     ancestralStoneCost: 2,
+    goldCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 420,
@@ -1561,6 +1586,31 @@ const buildingTemplates: CampaignSnapshot["buildingTemplates"] = [
   { id: "manufactorum", name: "Manufactorum", category: "Industrial", description: "Complejo industrial futuro para produccion y construccion.", requiredTechnologyNodeId: "manufactorum-local", isAvailable: true }
 ];
 
+const tradeOffers: CampaignSnapshot["tradeOffers"] = [
+  {
+    id: "trade-imperial-sell-minerals",
+    creatorFactionId: "guardia-imperial",
+    offerType: "sell",
+    resourceKey: "minerals",
+    resourceAmount: 15,
+    goldAmount: 8,
+    feeGold: 3,
+    status: "open",
+    createdAt: inMinutes(-8)
+  },
+  {
+    id: "trade-orcos-buy-supply",
+    creatorFactionId: "orcos",
+    offerType: "buy",
+    resourceKey: "supply",
+    resourceAmount: 20,
+    goldAmount: 5,
+    feeGold: 2,
+    status: "open",
+    createdAt: inMinutes(-4)
+  }
+];
+
 export const mockCampaignSnapshot: CampaignSnapshot = {
   currentUser: {
     id: "user-cadia",
@@ -1583,6 +1633,7 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
   factionTechnologies,
   technologyEffects,
   buildingTemplates,
+  tradeOffers,
   conflicts,
   battleReports: [],
   missions

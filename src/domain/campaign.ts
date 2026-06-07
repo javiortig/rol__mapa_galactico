@@ -24,7 +24,13 @@ export type UnitCategory =
   | "Superpesado"
   | "Otro";
 
-export type ResourceKey = "supply" | "minerals" | "ancestralStone" | "uridium" | "technology";
+export type ResourceKey = "supply" | "minerals" | "ancestralStone" | "gold" | "uridium" | "technology";
+
+export type TradeableResourceKey = "supply" | "minerals" | "ancestralStone" | "uridium";
+
+export type TradeOfferType = "buy" | "sell";
+
+export type TradeOfferStatus = "open" | "accepted" | "cancelled";
 
 export type ResourceBundle = Record<ResourceKey, number>;
 
@@ -137,12 +143,28 @@ export interface UnitTemplate {
   supplyCost: number;
   mineralsCost: number;
   ancestralStoneCost: number;
+  goldCost: number;
   uridiumCost: number;
   technologyCost: number;
   recruitmentTimeSeconds: number;
   notes?: string | null;
   isAvailable: boolean;
   requiredTechnologyNodeId?: string | null;
+}
+
+export interface TradeOffer {
+  id: string;
+  creatorFactionId: string;
+  offerType: TradeOfferType;
+  resourceKey: TradeableResourceKey;
+  resourceAmount: number;
+  goldAmount: number;
+  feeGold: number;
+  status: TradeOfferStatus;
+  acceptedByFactionId?: string | null;
+  createdAt: string;
+  acceptedAt?: string | null;
+  cancelledAt?: string | null;
 }
 
 export interface TechnologyNode {
@@ -248,6 +270,7 @@ export interface CampaignSnapshot {
   factionTechnologies: FactionTechnology[];
   technologyEffects: TechnologyEffect[];
   buildingTemplates: BuildingTemplate[];
+  tradeOffers: TradeOffer[];
   conflicts: Conflict[];
   battleReports: BattleReport[];
   missions: Mission[];

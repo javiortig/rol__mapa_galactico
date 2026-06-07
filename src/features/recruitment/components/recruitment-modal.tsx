@@ -19,7 +19,7 @@ import {
 import { formatCountdown } from "@/lib/time";
 import type { CampaignSnapshot, FactionResources, ResourceKey, UnitTemplate } from "@/domain/campaign";
 
-const resourceSummaryKeys: ResourceKey[] = ["supply", "minerals", "ancestralStone", "uridium", "technology"];
+const resourceSummaryKeys: ResourceKey[] = ["supply", "minerals", "ancestralStone", "gold", "uridium"];
 
 export function RecruitmentModal({
   snapshot,
