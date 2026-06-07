@@ -104,15 +104,27 @@ guardia-muerte@rol40k.local / rol40k-local-123
 
 La produccion de recursos funciona con tick diario de backend, no por turno estrategico.
 
+## Construcciones v1
+
+- Los sistemas tienen slots de edificio: 6 en capitales y 3 en el resto.
+- La produccion diaria sale de edificios activos, no de valores planetarios manuales.
+- El reclutamiento se hace clicando un edificio militar activo: Barracon, Cuartel, Taller o Nido.
+- Las unidades heridas pueden curarse desde edificios militares compatibles a mitad de coste proporcional.
+- La Camara de Comercio desbloquea el acceso al mercader y comercio estelar.
+- Honor sustituye a Piedra ancestral en UI/reglas; columnas legacy pueden existir solo por compatibilidad.
+- Material Industrial se produce en Planta de Fundicion y se usa principalmente para construir.
+
+Antes de desplegar frontend que lea estos campos, aplica migraciones Supabase incluida `0009_buildings_honor_industrial_material.sql` y despues actualiza/ejecuta `supabase/production-cron.sql`.
+
 ## Uso movil v1
 
 En movil la experiencia es mapa primero:
 
 - Al entrar se ve el mapa libre, sin sistema seleccionado.
 - Tocar una estrella abre la hoja del sistema; la X cierra la hoja y devuelve al mapa.
-- La barra superior muestra Suministro, Mineral, Piedra ancestral, Oro y Uridium como icono + numero compacto, sin scroll horizontal.
+- La barra superior muestra Suministro, Mineral, Honor, Oro, Material Industrial y Uridium como icono + numero compacto, sin scroll horizontal.
 - Los Componentes tecnologicos solo se ven dentro del panel de Tecnologia.
-- El panel `Comercio` permite usar el mercader o publicar/aceptar ofertas estelares entre facciones.
+- El panel `Comercio` permite usar el mercader o publicar/aceptar ofertas estelares entre facciones si la faccion tiene Camara de Comercio activa.
 - Para mover tropas: seleccionar sistema, pulsar `Mover tropas`, elegir miniaturas y despues `Trazar ruta en el mapa`.
 - En modo ruta se toca el destino para ruta optima, o sistemas conectados si se usa ruta manual, y se confirma desde la barra inferior.
 - Reclutamiento, reportes, movimiento y tecnologia usan paneles con scroll tactil real compatible con iPhone Safari y Android Chrome.

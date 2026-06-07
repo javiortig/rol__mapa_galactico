@@ -8,8 +8,10 @@ select cron.unschedule(jobname)
 from cron.job
 where jobname in (
   'rol40k-resolve-resource-ticks',
+  'rol40k-resolve-building-construction',
   'rol40k-resolve-movement-orders',
   'rol40k-resolve-recruitment-queue',
+  'rol40k-resolve-unit-recovery-queue',
   'rol40k-resolve-technology-research'
 );
 
@@ -17,6 +19,12 @@ select cron.schedule(
   'rol40k-resolve-resource-ticks',
   '* * * * *',
   $$select public.resolve_resource_ticks();$$
+);
+
+select cron.schedule(
+  'rol40k-resolve-building-construction',
+  '* * * * *',
+  $$select public.resolve_building_construction();$$
 );
 
 select cron.schedule(
@@ -29,6 +37,12 @@ select cron.schedule(
   'rol40k-resolve-recruitment-queue',
   '* * * * *',
   $$select public.resolve_recruitment_queue();$$
+);
+
+select cron.schedule(
+  'rol40k-resolve-unit-recovery-queue',
+  '* * * * *',
+  $$select public.resolve_unit_recovery_queue();$$
 );
 
 select cron.schedule(

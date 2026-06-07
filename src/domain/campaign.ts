@@ -2,7 +2,7 @@ export type Role = "admin" | "player" | "spectator";
 
 export type SystemStatus = "neutral" | "controlled" | "war";
 
-export type UnitStatus = "ready" | "moving" | "in_war" | "destroyed" | "retreat_pending";
+export type UnitStatus = "ready" | "moving" | "in_war" | "destroyed" | "retreat_pending" | "recovering";
 
 export type RecruitmentStatus = "queued" | "completed" | "cancelled";
 
@@ -24,15 +24,21 @@ export type UnitCategory =
   | "Superpesado"
   | "Otro";
 
-export type ResourceKey = "supply" | "minerals" | "ancestralStone" | "gold" | "uridium" | "technology";
+export type ResourceKey = "supply" | "minerals" | "honor" | "gold" | "industrialMaterial" | "uridium" | "technology";
 
-export type TradeableResourceKey = "supply" | "minerals" | "ancestralStone" | "uridium";
+export type TradeableResourceKey = "supply" | "minerals" | "industrialMaterial" | "uridium";
 
 export type TradeOfferType = "buy" | "sell";
 
 export type TradeOfferStatus = "open" | "accepted" | "cancelled";
 
 export type ResourceBundle = Record<ResourceKey, number>;
+
+export type BuildingStatus = "constructing" | "active" | "disabled";
+
+export type BuildingKind = "recruitment" | "commerce" | "intelligence" | "production";
+
+export type RecoveryStatus = "queued" | "completed" | "cancelled";
 
 export interface Faction {
   id: string;
@@ -57,6 +63,7 @@ export interface StarSystem {
   secretAdminNotes?: string | null;
   missionId?: string | null;
   isCapital: boolean;
+  buildingSlots?: number;
   production: ResourceBundle;
   specialObjects?: SystemSpecialObject[];
 }
@@ -128,6 +135,8 @@ export interface RecruitmentQueueItem {
   unitTemplateId: string;
   unitName: string;
   quantity: number;
+  systemBuildingId?: string | null;
+  originSystemId?: string | null;
   startedAt: string;
   finishesAt: string;
   status: RecruitmentStatus;
@@ -142,11 +151,13 @@ export interface UnitTemplate {
   defaultQuantity: number;
   supplyCost: number;
   mineralsCost: number;
-  ancestralStoneCost: number;
+  honorCost: number;
   goldCost: number;
+  industrialMaterialCost: number;
   uridiumCost: number;
   technologyCost: number;
   recruitmentTimeSeconds: number;
+  recruitmentBuildingType?: string | null;
   notes?: string | null;
   isAvailable: boolean;
   requiredTechnologyNodeId?: string | null;
@@ -207,11 +218,53 @@ export interface TechnologyEffect {
 
 export interface BuildingTemplate {
   id: string;
+  slug: string;
   name: string;
   category: string;
   description: string;
+  buildingKind: BuildingKind;
+  supplyCost: number;
+  mineralsCost: number;
+  honorCost: number;
+  goldCost: number;
+  industrialMaterialCost: number;
+  uridiumCost: number;
+  technologyCost: number;
+  constructionTimeSeconds: number;
+  producedResourceKey?: ResourceKey | null;
+  producedAmount: number;
+  allowedUnitCategories: UnitCategory[];
+  iconKey?: string | null;
   requiredTechnologyNodeId?: string | null;
   isAvailable: boolean;
+}
+
+export interface SystemBuilding {
+  id: string;
+  systemId: string;
+  buildingTemplateId: string;
+  status: BuildingStatus;
+  startedAt?: string | null;
+  finishesAt?: string | null;
+  constructedAt?: string | null;
+}
+
+export interface SystemResourceCapability {
+  systemId: string;
+  resourceKey: ResourceKey;
+  productionAmount: number;
+}
+
+export interface UnitRecoveryQueueItem {
+  id: string;
+  factionId: string;
+  systemBuildingId: string;
+  campaignUnitId: string;
+  unitName: string;
+  healQuantity: number;
+  startedAt: string;
+  finishesAt: string;
+  status: RecoveryStatus;
 }
 
 export interface Conflict {
@@ -270,6 +323,9 @@ export interface CampaignSnapshot {
   factionTechnologies: FactionTechnology[];
   technologyEffects: TechnologyEffect[];
   buildingTemplates: BuildingTemplate[];
+  systemBuildings: SystemBuilding[];
+  systemResourceCapabilities: SystemResourceCapability[];
+  unitRecoveryQueue: UnitRecoveryQueueItem[];
   tradeOffers: TradeOffer[];
   conflicts: Conflict[];
   battleReports: BattleReport[];

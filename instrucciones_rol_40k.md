@@ -129,7 +129,7 @@ Navegacion movil actual:
 
 - La campana entra en modo mapa primero: no hay sistema seleccionado al cargar.
 - Tocar una estrella abre la hoja del sistema; cerrar con X vuelve al mapa libre.
-- La barra de recursos superior debe caber completa, con icono y numero compacto para los 5 recursos visibles: Suministro, Mineral, Piedra ancestral, Oro y Uridium.
+- La barra de recursos superior debe caber completa, con icono y numero compacto para los 6 recursos visibles: Suministro, Mineral, Honor, Oro, Material Industrial y Uridium.
 - El movimiento movil funciona en dos fases: seleccion de unidades desde el sistema y trazado de ruta en el mapa.
 - Al trazar ruta, el panel de sistema se cierra y queda una barra inferior con coste de Uridium, tiempo, cancelar, deshacer, reiniciar y confirmar.
 - Tecnologia abre la constelacion a pantalla completa centrada en `doctrina-campana`, sin nodo seleccionado; tocar un nodo abre el detalle como drawer inferior.
@@ -156,15 +156,19 @@ Estado tecnico actual:
 Estado jugable actual:
 
 - Campana en tiempo real, sin turnos estrategicos.
-- Produccion diaria por tick temporal configurable.
+- Produccion diaria por tick temporal configurable, calculada desde edificios activos.
 - Movimiento, reclutamiento e investigacion funcionan por timestamps y resolvers backend/lazy processing.
 - Unidades jugables son `campaign_units`, no ejercitos abstractos.
 - Las unidades tienen miniaturas actuales y miniaturas iniciales; pueden separarse al mover una cantidad parcial.
-- Reclutamiento solo desde la capital propia en v1.
-- Reclutamiento usa `unit_templates`, costes, tiempos, cola y validacion tecnologica.
+- Construccion planetaria con slots por sistema: 6 en capitales y 3 en el resto.
+- Reclutamiento desde edificios militares activos, no desde un boton global de capital.
+- Reclutamiento usa `unit_templates`, costes, tiempos, cola, edificios compatibles y validacion tecnologica.
+- Curacion de unidades heridas desde edificios militares a mitad del coste proporcional por miniatura.
 - Arbol tecnologico comun `common-v1` con progreso independiente por faccion.
 - Oro es un recurso principal visible en la barra superior y se usa sobre todo para comercio.
-- Componentes tecnologicos son un recurso especial del arbol tecnologico; no aparecen en la barra superior y no se producen en planetas ni por `system_production`.
+- Material Industrial es un recurso visible y comerciable usado principalmente para construccion.
+- Componentes tecnologicos son un recurso especial del arbol tecnologico; no aparecen en la barra superior y no se producen en planetas ni por edificios de produccion.
+- Honor sustituye a Piedra ancestral como recurso especial visible; las columnas SQL legacy `ancestral_stone` pueden existir temporalmente solo por compatibilidad de migraciones.
 - El panel de mando operativo tiene entrada `Comercio`, no `Recursos`; abre Mercader y Comercio estelar.
 - Batallas se juegan fuera de la app; la web gestiona conflicto, bloqueo, reportes, bajas y control final.
 
@@ -191,7 +195,9 @@ Archivos clave actuales:
 
 - `src/features/campaign/components/campaign-shell.tsx`: shell principal, recursos, panel sistema, movimiento y reportes.
 - `src/features/galaxy-map/components/galaxy-map.tsx`: render PixiJS del mapa, rutas, sistemas, marcadores, movimientos y efectos.
-- `src/features/recruitment/components/recruitment-modal.tsx`: reclutamiento y cola.
+- `src/features/buildings/components/construction-modal.tsx`: construccion de edificios.
+- `src/features/buildings/components/building-action-modal.tsx`: acciones de edificio, reclutamiento, curacion, cola y placeholders.
+- `src/features/recruitment/components/recruitment-modal.tsx`: componente legacy/fallback; el flujo principal actual recluta desde edificios.
 - `src/features/technology/components/technology-tree-modal.tsx`: arbol tecnologico tipo constelacion.
 - `src/lib/use-media-query.ts`: media queries cliente y `useViewportHeightCssVar`.
 - `supabase/migrations`: esquema/RLS/RPCs.
@@ -244,20 +250,22 @@ Crear una aplicación web privada con:
 6. **Recursos por facción**:
    - Suministro vital.
    - Mineral.
-   - Piedra ancestral.
+   - Honor.
    - Oro.
+   - Material Industrial.
    - Uridium.
    - Componentes tecnológicos.
-7. **Producción de recursos por sistemas controlados.**
+7. **Produccion de recursos por edificios activos en sistemas controlados.**
 8. **Movimiento de tropas entre sistemas.**
-9. **Reclutamiento de tropas con cola temporizada estilo Grepolis.**
-10. **Tropas reclutadas aparecen en la capital de la facción.**
-11. **Árbol tecnológico por facción**, con desbloqueo de unidades, edificios futuros y bonos.
-12. **Misiones narrativas asociadas a sistemas**, con imagen del mapa de misión y explicación.
-13. **Niebla de guerra para tropas y movimientos.**
-14. **Panel de admin para resolver resultados, editar mapas, recursos, tropas, experiencia y bloqueos.**
-15. **Backend autoritativo**: las reglas críticas nunca deben depender solo del frontend.
-16. **Cronos gestionados por backend** para producción, movimiento, reclutamiento e investigación.
+9. **Construccion de edificios con slots y cola temporizada.**
+10. **Reclutamiento de tropas desde edificios militares con cola temporizada estilo Grepolis.**
+11. **Tropas reclutadas aparecen en el sistema del edificio.**
+12. **Arbol tecnologico por faccion**, con desbloqueo de unidades, edificios y bonos.
+13. **Misiones narrativas asociadas a sistemas**, con imagen del mapa de mision y explicacion.
+14. **Niebla de guerra para tropas y movimientos.**
+15. **Panel de admin para resolver resultados, editar mapas, recursos, tropas, experiencia y bloqueos.**
+16. **Backend autoritativo**: las reglas criticas nunca deben depender solo del frontend.
+17. **Cronos gestionados por backend** para produccion, construccion, movimiento, reclutamiento, curacion e investigacion.
 
 ---
 
@@ -415,7 +423,7 @@ Los sistemas NO se representarán como planetas grandes. Se representarán como 
 #### Sistema con recurso especial/reliquia avistada
 
 - Icono pequeño flotante.
-- Brillo diferenciado, por ejemplo violeta para Piedra ancestral o dorado/violeta para reliquia.
+- Brillo diferenciado, por ejemplo violeta para Honor o dorado/violeta para reliquia.
 
 Nota implementada: en el mapa actual, si un sistema tiene algun `specialObjects` publico, PixiJS dibuja un pequeno diamante bajo la estrella. Ese diamante significa objeto especial, reliquia, anomalia o punto narrativo publico; no representa control, capital, bloqueo ni tropas.
 
@@ -473,24 +481,19 @@ El seed local inicial debe representar una campana viva, no un reparto aleatorio
 
 ## 4. Recursos de campaña
 
-Hay seis recursos de campaña:
+Hay seis recursos visibles de campaña y un recurso tecnológico especial:
 
 | Recurso | Uso |
 |---|---|
 | Suministro vital | Reclutar y sostener tropas, especialmente infantería y presencia militar. |
-| Mineral | Construir armamento, blindajes, vehículos, fortificaciones y equipamiento pesado. |
-| Piedra ancestral | Recurso raro para unidades importantes, élites, personajes, superpesados, reliquias y elementos especiales. |
+| Mineral | Armamento, blindajes, vehículos, fortificaciones y equipamiento pesado. |
+| Honor | Recurso especial para personajes, élites, monstruos importantes, dreadnoughts, reliquias y efectos narrativos. Sustituye completamente a Piedra ancestral en producto, UI y reglas. |
 | Oro | Recurso económico usado principalmente para comercio. También puede usarse puntualmente en unidades de élite muy concretas. |
+| Material Industrial | Recurso de construcción producido por edificios. También es comerciable. |
 | Uridium | Recurso de movimiento estratégico entre sistemas. |
-| Componentes tecnológicos | Investigar tecnologías del árbol de campaña. No se muestra en la barra superior y no se usa para movimiento ni reclutamiento normal salvo reglas futuras específicas. |
+| Componentes tecnológicos | Recurso especial solo del árbol tecnológico. No se muestra en la barra superior y no se produce en planetas. |
 
-Más adelante se añadirán recursos secundarios, como:
-
-- Reliquias.
-- Enhancements narrativos.
-- Objetos especiales.
-- Intel/espionaje.
-- Otros recursos narrativos.
+Más adelante se añadirán recursos secundarios, como reliquias, enhancements narrativos, objetos especiales, intel/espionaje y otros recursos narrativos.
 
 ### 4.1 Conversión inicial a puntos
 
@@ -501,20 +504,20 @@ La conversión para coste de unidades será:
 | 1 Suministro vital | 1 punto |
 | 1 Mineral | 2 puntos |
 | 1 Uridium | 2 puntos |
-| 1 Piedra ancestral | 5 puntos |
+| 1 Honor | 5 puntos |
 | 1 Oro | 5 puntos |
 
 Fórmula:
 
 ```text
-Coste en puntos = Suministro + 2*Mineral + 5*PiedraAncestral + 5*Oro
+Coste en puntos = Suministro + 2*Mineral + 5*Honor + 5*Oro
 ```
 
-Uridium equivale a 2 puntos a efectos económicos/comerciales, pero no se usa para generar tropas normales. Uridium se usa principalmente para movimiento.
+Uridium equivale a 2 puntos a efectos económicos/comerciales, pero no se usa para generar tropas normales. Material Industrial no tiene conversión a puntos de ejército en v1; sirve principalmente para construcción.
 
-### 4.2 Uso de Piedra ancestral
+### 4.2 Uso de Honor
 
-Piedra ancestral debe ser rara y usarse para:
+Honor debe ser raro y usarse para:
 
 - Personajes.
 - Élites.
@@ -526,25 +529,26 @@ Piedra ancestral debe ser rara y usarse para:
 - Reliquias.
 - Desbloqueos narrativos.
 
-No todas las unidades básicas deben costar Piedra ancestral.
+No todas las unidades básicas deben costar Honor. Honor se genera mediante el edificio `Senado` y no es comerciable ni con el mercader ni entre jugadores.
+
+Nota técnica: las columnas SQL legacy `ancestral_stone` y `ancestral_stone_cost` pueden seguir existiendo temporalmente para despliegues seguros en cloud, pero no deben usarse como contrato nuevo. El frontend debe mapear valores legacy a `honor` solo como compatibilidad.
 
 ### 4.3 Producción
 
-Cada sistema produce una cantidad diaria de recursos. En base de datos estos valores se guardan como campos `*_per_tick`, pero en la v1 del juego cada tick equivale a 24 horas reales:
+La producción diaria real ya no sale de producción planetaria manual. Sale de edificios activos construidos en sistemas controlados:
 
-- `supply_per_tick`
-- `minerals_per_tick`
-- `ancestral_stone_per_tick`
-- `gold_per_tick`
-- `uridium_per_tick`
+- `Granja Biológica` -> Suministro vital.
+- `Complejo Minero` -> Mineral.
+- `Refinería de Iridium` -> Uridium.
+- `Mina de Oro` -> Oro.
+- `Planta de Fundición` -> Material Industrial.
+- `Senado` -> Honor.
 
-En el seed actual `gold_per_tick` empieza en 0 para todos los sistemas; el oro existe sobre todo como recurso de comercio, aunque la base permite producción de oro si la campaña lo decide más adelante.
+En base de datos, `system_production` queda como proyección visible/derivada de edificios activos, no como fuente de verdad manual. El resolver `refresh_system_production_from_buildings()` reconstruye esos valores desde `system_buildings`.
 
-Los Componentes tecnológicos no se producen en planetas ni sistemas estelares.
+Los Componentes tecnológicos no se producen en planetas, sistemas ni edificios de producción.
 
-La producción diaria total de una facción es la suma de los sistemas que controla.
-
-La cadencia de usuario para la v1 es diaria:
+La producción diaria total de una facción es la suma de los edificios de producción activos en sistemas que controla. La cadencia de usuario para la v1 es diaria:
 
 ```text
 24 horas
@@ -552,22 +556,15 @@ La cadencia de usuario para la v1 es diaria:
 
 El admin podrá cambiar esta cadencia más adelante si la campaña necesita avanzar más rápido o más lento.
 
-El panel superior debe mostrar solo los recursos actuales visibles, centrados y sin texto de siguiente tick:
+El panel superior debe mostrar solo los recursos visibles, centrados y sin texto de siguiente tick:
 
 ```text
-Suministro vital | Mineral | Piedra ancestral | Oro | Uridium
+Suministro vital | Mineral | Honor | Oro | Material Industrial | Uridium
 ```
 
 Los Componentes tecnológicos no aparecen en la barra superior. Solo se muestran dentro del panel/árbol de tecnologías.
 
-El panel detallado de recursos debe mostrar también:
-
-- Producción diaria total.
-- Cadencia actual de producción.
-- Sistemas que producen cada recurso planetario.
-- Reliquias poseídas.
-- Componentes tecnológicos y tecnologías desbloqueadas.
-- Objetos especiales.
+El panel de sistema debe mostrar producción diaria derivada de sus edificios activos.
 
 ### 4.4 Componentes tecnológicos
 
@@ -587,7 +584,7 @@ Reglas v1:
 - No se gastan directamente al reclutar unidades normales.
 - No se producen mediante `system_production` ni ticks diarios de recursos.
 - Deben obtenerse mediante recompensas narrativas, reliquias, eventos, misiones, hallazgos, comercio futuro o edición/admin.
-- El backend valida siempre que la tecnología necesaria esté desbloqueada antes de permitir `recruit_unit()`.
+- El backend valida siempre que la tecnología necesaria esté desbloqueada antes de permitir `recruit_unit_at_building()`.
 
 ### 4.5 Oro y comercio
 
@@ -614,8 +611,9 @@ Al abrir comercio, la pestaña por defecto es `Mercader`.
 El mercader:
 
 - Usa el avatar `icons/resources/merchant1.png`.
-- Permite comprar y vender `supply`, `minerals`, `ancestralStone` y `uridium`.
-- No comercia Componentes tecnológicos.
+- Permite comprar y vender `supply`, `minerals`, `industrialMaterial` y `uridium`.
+- No comercia Honor ni Componentes tecnológicos.
+- Requiere que la facción tenga al menos una `Cámara de Comercio` activa.
 - Vende recursos al doble de su valor.
 - Compra recursos a mitad de precio, redondeando hacia arriba.
 
@@ -632,9 +630,10 @@ El comercio entre jugadores usa ofertas abiertas de recurso contra Oro:
 
 - Oferta de compra: "Compro X de recurso por Y de Oro".
 - Oferta de venta: "Vendo X de recurso por Y de Oro".
-- Recursos comerciables: Suministro, Mineral, Piedra ancestral y Uridium.
+- Recursos comerciables: Suministro, Mineral, Material Industrial y Uridium.
 - No se comercia Oro como recurso objetivo; Oro es la moneda.
-- No se comercian Componentes tecnológicos.
+- No se comercian Honor ni Componentes tecnológicos.
+- Requiere que la facción tenga al menos una `Cámara de Comercio` activa.
 - Cada transacción cobra una comisión del 30% del Oro de la oferta, redondeada hacia arriba.
 - Cada jugador paga su propia comisión en Oro.
 
@@ -681,11 +680,12 @@ Valor inicial recomendado:
 
 En cada tick:
 
-1. Se calcula producción de todos los sistemas controlados.
-2. Se suma producción a cada facción.
-3. Se registra un log de producción.
-4. Se actualizan los paneles de recursos.
-5. Se actualizan bloqueos vencidos si aplica.
+1. Se completa cualquier construcción vencida.
+2. Se calcula producción desde edificios activos de todos los sistemas controlados.
+3. Se suma producción a cada facción.
+4. Se registra un log de producción.
+5. Se actualizan los paneles de recursos.
+6. Se actualizan bloqueos vencidos si aplica.
 
 La producción debe poder resolverse mediante cron y también mediante lazy processing al cargar la app o paneles importantes.
 
@@ -695,8 +695,10 @@ El backend debe exponer funciones seguras para procesar tiempo vencido:
 
 ```text
 resolve_resource_ticks()
+resolve_building_construction()
 resolve_movement_orders()
 resolve_recruitment_queue()
+resolve_unit_recovery_queue()
 resolve_technology_research()
 ```
 
@@ -812,14 +814,18 @@ Debe mostrar:
 - Producción:
   - Suministro vital.
   - Mineral.
-  - Piedra ancestral.
+  - Honor.
+  - Oro.
+  - Material Industrial.
   - Uridium.
+- Slots de edificio usados/libres.
+- Edificios activos o en construcción.
 - Información pública.
 - Recursos u objetos especiales avistados.
 - Botones de acción según permisos:
   - Mover tropas.
   - Ver misión.
-  - Reclutar si aplica.
+  - Construir si aplica.
   - Administrar si es admin.
 
 ### 7.2 Si el sistema es propio
@@ -853,6 +859,52 @@ El jugador ve:
 - Posibles reliquias avistadas si públicas.
 - Misión.
 - Si puede mover tropas allí para disputar/conquistar.
+
+### 7.5 Construcciones y edificios
+
+Cada sistema tiene slots limitados de edificios:
+
+- Capitales: 6 slots.
+- Resto de sistemas: 3 slots.
+
+Reglas v1:
+
+- Solo se puede construir en sistemas controlados por la facción del jugador.
+- No se puede construir en sistemas neutrales, enemigos, en guerra o bloqueados.
+- Solo se permite un edificio de cada tipo por sistema.
+- Las capitales pueden construir cualquier edificio si la tecnología está desbloqueada y hay slot.
+- En sistemas no capitales, los edificios de producción solo pueden construirse si `system_resource_capabilities` permite ese recurso.
+- Los edificios pertenecen al sistema. Si cambia el controlador, el nuevo controlador puede usar los edificios activos.
+- No hay demolición, mejoras ni destrucción de edificios en v1 salvo edición admin/base de datos.
+
+Catálogo inicial:
+
+| Edificio | Tipo | Uso |
+|---|---|---|
+| Barracón de Infantería | Reclutamiento | Recluta Infantería y Élite compatible. |
+| Cuartel de Mando | Reclutamiento | Recluta Personajes. |
+| Taller de Guerra | Reclutamiento | Recluta Vehículos. |
+| Nido de Bestias | Reclutamiento | Recluta Monstruos. |
+| Cámara de Comercio | Comercio | Abre Mercader y Comercio estelar. |
+| Nexo de Inteligencia | Inteligencia | Placeholder de espionaje futuro. |
+| Antenas de Reconocimiento | Inteligencia | Placeholder de información/espionaje futuro. |
+| Granja Biológica | Producción | Genera Suministro vital. |
+| Complejo Minero | Producción | Genera Mineral. |
+| Refinería de Iridium | Producción | Genera Uridium. |
+| Mina de Oro | Producción | Genera Oro. |
+| Planta de Fundición | Producción | Genera Material Industrial. |
+| Senado | Producción | Genera Honor. |
+
+Las capitales del seed empiezan con 4 edificios activos: Barracón de Infantería, Cámara de Comercio, Planta de Fundición y Senado.
+
+RPCs principales:
+
+```text
+start_building_construction(system_id, building_template_id)
+resolve_building_construction()
+```
+
+Los iconos propios de edificios quedan pendientes para una iteración posterior; mientras tanto se usan placeholders coherentes con Tailwind/Lucide.
 
 ---
 
@@ -1093,31 +1145,49 @@ Al aplicar el resultado:
 
 ### 9.1 Principio general
 
-Los jugadores pueden gastar recursos para crear tropas.
+Los jugadores pueden gastar recursos para crear tropas desde edificios militares activos.
 
 El reclutamiento tarda tiempo real, estilo Grepolis.
 
 Para test local, los tiempos iniciales son de minutos, no horas.
 
-Al completarse, las tropas aparecen en la capital de la facción.
+Al completarse, las tropas aparecen en el sistema donde está el edificio que inició el reclutamiento.
+
+El flujo legacy `recruit_unit(unit_template_id, quantity)` queda bloqueado con error claro. El flujo principal es:
+
+```text
+recruit_unit_at_building(system_building_id, unit_template_id, quantity)
+```
 
 ### 9.2 Menú de reclutamiento
 
-Debe haber un icono/botón fijo, por ejemplo:
+El reclutamiento ya no se abre desde un botón global de capital.
+
+Flujo actual:
 
 ```text
-Reclutamiento
+Seleccionar sistema propio -> clicar edificio militar activo -> pestaña Reclutar
 ```
 
-Al pulsarlo se abre un panel con:
+El panel del edificio militar muestra:
 
 - Recursos actuales.
-- Lista de unidades disponibles.
+- Lista de unidades disponibles para ese edificio.
 - Coste.
 - Tiempo de producción.
-- Requisitos.
+- Requisitos tecnológicos.
 - Botón de reclutar.
-- Cola actual.
+- Pestaña de cola.
+- Pestaña de curación.
+
+Edificios de reclutamiento v1:
+
+| Edificio | Permite |
+|---|---|
+| Barracón de Infantería | Infantería y élites de infantería. |
+| Cuartel de Mando | Personajes. |
+| Taller de Guerra | Vehículos. |
+| Nido de Bestias | Monstruos. |
 
 ### 9.3 Datos de una unidad reclutable
 
@@ -1128,11 +1198,13 @@ Cada unidad debe tener:
 - Puntos.
 - Coste en Suministro vital.
 - Coste en Mineral.
-- Coste en Piedra ancestral.
+- Coste en Honor.
 - Coste en Oro si es una unidad de élite o especial que lo requiera.
+- Coste en Material Industrial si alguna unidad especial lo requiere.
 - Coste en Uridium si alguna unidad especial lo requiere, aunque normalmente no.
 - Tiempo de producción.
 - Requisitos opcionales.
+- Edificio/categoría de reclutamiento compatible.
 - Categoría:
   - Infantería.
   - Élite.
@@ -1150,7 +1222,10 @@ El backend valida:
 - Usuario/facción correcta.
 - Recursos suficientes.
 - Unidad disponible para esa facción.
-- Requisitos cumplidos.
+- Edificio activo.
+- Sistema controlado por la facción.
+- Categoría compatible con el edificio.
+- Requisitos tecnológicos cumplidos.
 - No se exceden reglas de campaña si existen.
 - Coste correcto.
 
@@ -1158,6 +1233,8 @@ Si todo es válido:
 
 - Descuenta recursos.
 - Crea fila en `recruitment_queue`.
+- Guarda `system_building_id`.
+- Guarda `origin_system_id`.
 - Guarda `started_at`.
 - Guarda `finishes_at`.
 - Estado `queued`.
@@ -1167,7 +1244,7 @@ Si todo es válido:
 Cuando `now() >= finishes_at`:
 
 - Backend marca la cola como `completed`.
-- Crea una fila nueva en `campaign_units` en la capital.
+- Crea una fila nueva en `campaign_units` en el sistema del edificio.
 - La fila se crea con `quantity = unit_templates.default_quantity` y `starting_quantity = unit_templates.default_quantity`.
 - La unidad queda `ready` y disponible para movimiento.
 - Frontend actualiza por Realtime o refetch.
@@ -1179,8 +1256,16 @@ Si una unidad sufre bajas en batalla:
 - El reporte confirmado indica cuantas miniaturas sobreviven por unidad.
 - Backend actualiza `campaign_units.quantity`.
 - Si `quantity` queda en `0`, la unidad pasa a `destroyed` y conserva `destroyed_at`.
-- No se automatiza sistema de heridas/reparacion.
-- No se recuperan automaticamente.
+- Las unidades heridas pueden curarse desde edificios militares compatibles.
+
+Curación v1:
+
+- RPC: `heal_unit_at_building(system_building_id, campaign_unit_id, heal_quantity)`.
+- La unidad debe ser propia, estar `ready`, estar en el mismo sistema que el edificio y tener `quantity < starting_quantity`.
+- El edificio debe ser militar y compatible con la categoría de la unidad.
+- Coste = mitad del coste normal proporcional por miniatura, redondeado hacia arriba por recurso.
+- La unidad queda `recovering` mientras dura la cola.
+- `resolve_unit_recovery_queue()` completa curaciones vencidas y aumenta `quantity` sin superar `starting_quantity`.
 
 ### 9.7 Árbol tecnológico y desbloqueos de reclutamiento
 
@@ -1370,10 +1455,10 @@ Tabla `missions` guarda URL pública/privada según diseño.
 Siempre visible:
 
 ```text
-Suministro vital: 120 | Mineral: 85 | Piedra ancestral: 8 | Oro: 30 | Uridium: 14
+Suministro vital: 120 | Mineral: 85 | Honor: 8 | Oro: 30 | Material Industrial: 90 | Uridium: 14
 ```
 
-Debe tener iconos bonitos. La version implementada muestra: Suministro vital, Mineral, Piedra ancestral, Oro y Uridium. Los Componentes tecnologicos solo se ven dentro del panel de Tecnologia.
+Debe tener iconos bonitos. La version implementada muestra: Suministro vital, Mineral, Honor, Oro, Material Industrial y Uridium. Los Componentes tecnologicos solo se ven dentro del panel de Tecnologia.
 
 ### 12.2 Panel de comercio
 
@@ -1387,8 +1472,9 @@ Al abrir comercio:
 Mercader:
 
 - Avatar en `icons/resources/merchant1.png`.
-- Compra y venta de Suministro, Mineral, Piedra ancestral y Uridium usando Oro.
-- No comercia Componentes tecnologicos.
+- Compra y venta de Suministro, Mineral, Material Industrial y Uridium usando Oro.
+- No comercia Honor ni Componentes tecnologicos.
+- Requiere al menos una Camara de Comercio activa de la faccion.
 - Vende al doble de valor.
 - Compra a mitad de valor, redondeando hacia arriba.
 
@@ -1397,6 +1483,9 @@ Comercio estelar:
 - Crear oferta de compra o venta de recurso contra Oro.
 - Aceptar ofertas de otras facciones.
 - Cancelar ofertas propias.
+- Solo se comercian Suministro, Mineral, Material Industrial y Uridium.
+- No se comercian Honor ni Componentes tecnologicos.
+- Requiere al menos una Camara de Comercio activa de la faccion.
 - Cada transaccion cobra una comision en Oro del 30%, redondeada hacia arriba, a cada jugador por separado.
 
 El bloque antiguo de panel detallado de recursos queda solo como referencia historica y no debe implementarse como vista principal:
@@ -1410,8 +1499,11 @@ Producción diaria: +18
 Mineral: 85
 Producción diaria: +11
 
-Piedra ancestral: 8
+Honor: 8
 Producción diaria: +2
+
+Material Industrial: 90
+Produccion diaria: +5
 
 Uridium: 14
 Producción diaria: +4
@@ -1442,6 +1534,8 @@ La producción debe calcularse a partir de sistemas controlados.
 No confiar en el frontend.
 
 La cadencia de producción debe ser configurable por admin y gestionada por backend.
+
+Nota actual de v1: aunque este bloque historico hable de sistemas, la regla vigente es que `resolve_resource_ticks()` suma produccion desde edificios activos en sistemas controlados. `system_production` es una proyeccion visible derivada, no la fuente de verdad manual.
 
 ---
 
@@ -1482,9 +1576,10 @@ Puede:
 - Ver recursos propios.
 - Ver tropas propias.
 - Ver movimientos propios.
-- Reclutar unidades disponibles.
+- Construir edificios en sistemas propios.
+- Reclutar y curar unidades desde edificios compatibles.
 - Investigar tecnologías disponibles.
-- Comerciar con el mercader.
+- Comerciar con el mercader si tiene Camara de Comercio activa.
 - Crear, aceptar y cancelar ofertas propias de comercio estelar.
 - Mover tropas propias.
 - Ver misiones públicas.
@@ -1520,7 +1615,11 @@ Crear funciones RPC o endpoints equivalentes:
 
 ```text
 create_movement_order(unit_selections, path_system_ids)
-recruit_unit(unit_template_id, quantity)
+start_building_construction(system_id, building_template_id)
+resolve_building_construction()
+recruit_unit_at_building(system_building_id, unit_template_id, quantity)
+heal_unit_at_building(system_building_id, campaign_unit_id, heal_quantity)
+resolve_unit_recovery_queue()
 start_technology_research(technology_node_id)
 merchant_trade(resource_key, direction, trade_quantity)
 create_trade_offer(offer_type, resource_key, resource_amount, gold_amount)
@@ -1539,6 +1638,8 @@ admin_add_experience(unit_id, amount)
 admin_delete_unit(unit_id)
 admin_create_or_update_mission(...)
 ```
+
+`recruit_unit(unit_template_id, quantity)` existe solo como RPC legacy temporal y debe devolver error claro: "El reclutamiento ahora requiere seleccionar un edificio activo".
 
 ### 14.3 Validaciones mínimas
 
@@ -1575,8 +1676,9 @@ Para tecnología:
 Para comercio:
 
 - FacciÃ³n correcta.
-- Recurso comerciable: Suministro, Mineral, Piedra ancestral o Uridium.
-- Componentes tecnologicos no comerciables.
+- Recurso comerciable: Suministro, Mineral, Material Industrial o Uridium.
+- Honor y Componentes tecnologicos no comerciables.
+- Camara de Comercio activa para la faccion.
 - Oro suficiente para compras y comisiones.
 - Recursos suficientes para ventas.
 - Comision de 30% calculada por backend.
@@ -1664,6 +1766,69 @@ Así, aunque un cron se retrase, el estado se corrige.
 ## 16. Modelo de datos recomendado
 
 Este es un esquema inicial. Puede adaptarse.
+
+### 16.0 Contrato vigente de construcciones y recursos
+
+La version actual añade el sistema de edificios en `supabase/migrations/0009_buildings_honor_industrial_material.sql`.
+
+Recursos vigentes en frontend:
+
+```text
+supply
+minerals
+honor
+gold
+industrialMaterial
+uridium
+technology
+```
+
+Recursos comerciables:
+
+```text
+supply
+minerals
+industrialMaterial
+uridium
+```
+
+`technology` solo se muestra dentro del arbol tecnologico. `honor` no es comerciable. `ancestral_stone` y `ancestral_stone_cost` son columnas legacy temporales para compatibilidad y no deben usarse como contrato nuevo.
+
+Tablas nuevas/vigentes:
+
+- `system_resource_capabilities`: recursos que un sistema no capital puede explotar mediante edificios de produccion.
+- `building_templates`: catalogo de edificios con coste, tipo, duracion, tecnologia requerida, recurso producido y categorias reclutables.
+- `system_buildings`: edificios construidos/en construccion por sistema.
+- `unit_recovery_queue`: cola de curacion de miniaturas.
+
+Campos nuevos principales:
+
+- `systems.building_slots`.
+- `faction_resources.honor`.
+- `faction_resources.industrial_material`.
+- `system_production.honor_per_tick`.
+- `system_production.industrial_material_per_tick`.
+- `unit_templates.honor_cost`.
+- `unit_templates.industrial_material_cost`.
+- `unit_templates.recruitment_building_type`.
+- `recruitment_queue.system_building_id`.
+- `recruitment_queue.origin_system_id`.
+
+Produccion:
+
+- `system_buildings` activos son la fuente de verdad.
+- `system_production` es una proyeccion derivada para UI/consultas.
+- `resolve_resource_ticks()` suma edificios activos de sistemas controlados.
+
+RPCs de edificios:
+
+```text
+start_building_construction(system_id, building_template_id)
+resolve_building_construction()
+recruit_unit_at_building(system_building_id, unit_template_id, quantity)
+heal_unit_at_building(system_building_id, campaign_unit_id, heal_quantity)
+resolve_unit_recovery_queue()
+```
 
 ### 16.1 users / profiles
 
@@ -2144,10 +2309,14 @@ Funciones implementadas para backend autoritativo:
 
 ```text
 resolve_resource_ticks()
+resolve_building_construction()
 resolve_movement_orders()
 resolve_recruitment_queue()
+resolve_unit_recovery_queue()
 resolve_technology_research()
-recruit_unit(unit_template_id, quantity)
+start_building_construction(system_id, building_template_id)
+recruit_unit_at_building(system_building_id, unit_template_id, quantity)
+heal_unit_at_building(system_building_id, campaign_unit_id, heal_quantity)
 start_technology_research(technology_node_id)
 create_movement_order(unit_selections, path_system_ids)
 merchant_trade(resource_key, direction, trade_quantity)
@@ -2239,7 +2408,8 @@ Comportamiento implementado actual del arbol:
 Muestra:
 
 - Mercader con avatar.
-- Compra/venta de Suministro, Mineral, Piedra ancestral y Uridium contra Oro.
+- Compra/venta de Suministro, Mineral, Material Industrial y Uridium contra Oro.
+- Bloqueo si la faccion no tiene Camara de Comercio activa.
 - Comercio estelar entre jugadores.
 - Creacion de ofertas de compra/venta.
 - Listado de ofertas abiertas.
@@ -2617,7 +2787,9 @@ Usar estos nombres de recursos:
 
 - `Suministro vital`
 - `Mineral`
-- `Piedra ancestral`
+- `Honor`
+- `Oro`
+- `Material Industrial`
 - `Uridium`
 - `Componentes tecnológicos`
 
@@ -2641,6 +2813,8 @@ Estados de unidad:
 ready
 moving
 in_war
+recovering
+destroyed
 ```
 
 Estados de reclutamiento:
@@ -2704,12 +2878,17 @@ Construir una aplicación web privada de campaña Warhammer 40K con:
 - Recursos:
   - Suministro vital,
   - Mineral,
-  - Piedra ancestral,
+  - Honor,
+  - Oro,
+  - Material Industrial,
   - Uridium,
   - Componentes tecnológicos.
-- Producción diaria por sistemas controlados mediante tick backend de 24h.
-- Reclutamiento temporizado.
-- Árbol tecnológico con desbloqueo de unidades, edificios futuros y bonos.
+- Produccion diaria por edificios activos mediante tick backend de 24h.
+- Construccion planetaria con slots, costes y cola.
+- Reclutamiento temporizado desde edificios militares.
+- Curacion de miniaturas heridas desde edificios militares.
+- Comercio ligado a Camara de Comercio.
+- Arbol tecnologico con desbloqueo de unidades, edificios y bonos.
 - Movimiento temporizado.
 - Reportes de batalla por jugadores/admin.
 - Sistemas bloqueados mientras haya batalla pendiente.

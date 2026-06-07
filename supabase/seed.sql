@@ -20,6 +20,7 @@ delete from public.battle_reports;
 delete from public.missions;
 delete from public.system_special_objects;
 delete from public.relics;
+delete from public.unit_recovery_queue;
 delete from public.recruitment_queue;
 delete from public.movement_order_units;
 delete from public.movement_orders;
@@ -27,6 +28,8 @@ delete from public.trade_offers;
 delete from public.campaign_units;
 delete from public.conflicts;
 delete from public.campaign_logs;
+delete from public.system_buildings;
+delete from public.system_resource_capabilities;
 delete from public.system_production;
 delete from public.system_edges;
 delete from public.faction_resources;
@@ -100,6 +103,9 @@ set
   is_capital = excluded.is_capital,
   updated_at = now();
 
+update public.systems
+set building_slots = case when is_capital then 6 else 3 end;
+
 update public.factions set capital_system_id = public.seed_uuid('system', 'cinder-maw') where slug = 'orcos';
 update public.factions set capital_system_id = public.seed_uuid('system', 'thokt-vault') where slug = 'necrones';
 update public.factions set capital_system_id = public.seed_uuid('system', 'kharon-prime') where slug = 'guardia-imperial';
@@ -152,16 +158,16 @@ values
 on conflict (slug) do update
 set from_system_id = excluded.from_system_id, to_system_id = excluded.to_system_id, uridium_cost = excluded.uridium_cost, is_blocked = excluded.is_blocked;
 
-insert into public.faction_resources (faction_id, supply, minerals, ancestral_stone, gold, uridium, technology)
+insert into public.faction_resources (faction_id, supply, minerals, ancestral_stone, honor, gold, industrial_material, uridium, technology)
 values
-  (public.seed_uuid('faction', 'guardia-imperial'), 180, 130, 12, 34, 24, 16),
-  (public.seed_uuid('faction', 'orcos'), 190, 135, 7, 26, 20, 16),
-  (public.seed_uuid('faction', 'necrones'), 115, 155, 18, 32, 22, 16),
-  (public.seed_uuid('faction', 'culto-genestelar'), 185, 115, 13, 30, 22, 16),
-  (public.seed_uuid('faction', 'sombra-emperador'), 135, 130, 18, 38, 26, 16),
-  (public.seed_uuid('faction', 'guardia-muerte'), 155, 135, 15, 28, 20, 16)
+  (public.seed_uuid('faction', 'guardia-imperial'), 180, 130, 12, 12, 34, 90, 24, 16),
+  (public.seed_uuid('faction', 'orcos'), 190, 135, 7, 7, 26, 90, 20, 16),
+  (public.seed_uuid('faction', 'necrones'), 115, 155, 18, 18, 32, 90, 22, 16),
+  (public.seed_uuid('faction', 'culto-genestelar'), 185, 115, 13, 13, 30, 90, 22, 16),
+  (public.seed_uuid('faction', 'sombra-emperador'), 135, 130, 18, 18, 38, 90, 26, 16),
+  (public.seed_uuid('faction', 'guardia-muerte'), 155, 135, 15, 15, 28, 90, 20, 16)
 on conflict (faction_id) do update
-set supply = excluded.supply, minerals = excluded.minerals, ancestral_stone = excluded.ancestral_stone, gold = excluded.gold, uridium = excluded.uridium, technology = excluded.technology, updated_at = now();
+set supply = excluded.supply, minerals = excluded.minerals, ancestral_stone = excluded.ancestral_stone, honor = excluded.honor, gold = excluded.gold, industrial_material = excluded.industrial_material, uridium = excluded.uridium, technology = excluded.technology, updated_at = now();
 
 insert into public.system_production (system_id, supply_per_tick, minerals_per_tick, ancestral_stone_per_tick, gold_per_tick, uridium_per_tick, technology_per_tick)
 values
@@ -213,6 +219,7 @@ values
   (public.seed_uuid('technology_node', 'honores-batalla'), 'honores-batalla', 'common-v1', 'Honores de batalla', 'Registros, juramentos y marcas de campana para futuras mejoras narrativas.', 'Infanteria y elite', 3, 31, 88, 12, 360, 'honor', 'Reserva para mejoras narrativas.', false),
 
   (public.seed_uuid('technology_node', 'talleres-campana'), 'talleres-campana', 'common-v1', 'Talleres de campana', 'Instala lineas de mantenimiento para maquinas, vehiculos y andadores.', 'Blindados y maquinas', 1, 61, 60, 4, 120, 'forge', 'Desbloquea Taller de campana.', false),
+  (public.seed_uuid('technology_node', 'dominio-bestial'), 'dominio-bestial', 'common-v1', 'Dominio bestial', 'Instalaciones, jaulas y ritos de control para criaturas de guerra.', 'Blindados y maquinas', 2, 66, 74, 8, 240, 'beast', 'Desbloquea Nido de Bestias.', false),
   (public.seed_uuid('technology_node', 'motores-guerra'), 'motores-guerra', 'common-v1', 'Motores de guerra', 'Habilita blindados, dreadnoughts y maquinas de guerra en el teatro activo.', 'Blindados y maquinas', 2, 75, 70, 8, 240, 'vehicle', 'Desbloquea vehiculos actuales.', false),
   (public.seed_uuid('technology_node', 'blindaje-reforzado'), 'blindaje-reforzado', 'common-v1', 'Blindaje reforzado', 'Estandariza placas, chasis, reparaciones y blindajes de campana.', 'Blindados y maquinas', 3, 84, 54, 12, 360, 'vehicle', '-10% Mineral al reclutar Vehiculos.', false),
   (public.seed_uuid('technology_node', 'arsenal-pesado'), 'arsenal-pesado', 'common-v1', 'Arsenal pesado', 'Infraestructura reservada para superpesados y activos de asedio futuros.', 'Blindados y maquinas', 4, 91, 78, 18, 600, 'arsenal', 'Reserva para superpesados futuros.', false),
@@ -238,6 +245,7 @@ values
   (public.seed_uuid('technology_node', 'especializacion-elite'), public.seed_uuid('technology_node', 'veteranos-guerra')),
   (public.seed_uuid('technology_node', 'honores-batalla'), public.seed_uuid('technology_node', 'especializacion-elite')),
   (public.seed_uuid('technology_node', 'talleres-campana'), public.seed_uuid('technology_node', 'doctrina-campana')),
+  (public.seed_uuid('technology_node', 'dominio-bestial'), public.seed_uuid('technology_node', 'talleres-campana')),
   (public.seed_uuid('technology_node', 'motores-guerra'), public.seed_uuid('technology_node', 'talleres-campana')),
   (public.seed_uuid('technology_node', 'blindaje-reforzado'), public.seed_uuid('technology_node', 'motores-guerra')),
   (public.seed_uuid('technology_node', 'arsenal-pesado'), public.seed_uuid('technology_node', 'blindaje-reforzado')),
@@ -257,24 +265,138 @@ values
   (public.seed_uuid('technology_effect', 'cadenas-mando-time-infantry'), public.seed_uuid('technology_node', 'cadenas-mando'), 'recruitment_time_discount', '{"category":"Infanteria","percent":10}'::jsonb),
   (public.seed_uuid('technology_effect', 'veteranos-guerra-units'), public.seed_uuid('technology_node', 'veteranos-guerra'), 'unlock_unit_template', '{"unit_template_slugs":["unit-orcos-meganobz","unit-necrones-immortals","unit-necrones-skorpekh","unit-guardia-kasrkin","unit-culto-acolytes","unit-sombra-terminators","unit-muerte-plague-marines"]}'::jsonb),
   (public.seed_uuid('technology_effect', 'especializacion-elite-minerals'), public.seed_uuid('technology_node', 'especializacion-elite'), 'recruitment_cost_discount', '{"category":"Elite","resource":"minerals","percent":10}'::jsonb),
-  (public.seed_uuid('technology_effect', 'talleres-campana-building'), public.seed_uuid('technology_node', 'talleres-campana'), 'unlock_building_template', '{"building_template_slugs":["taller-campana"]}'::jsonb),
+  (public.seed_uuid('technology_effect', 'talleres-campana-building'), public.seed_uuid('technology_node', 'talleres-campana'), 'unlock_building_template', '{"building_template_slugs":["taller-guerra"]}'::jsonb),
   (public.seed_uuid('technology_effect', 'motores-guerra-units'), public.seed_uuid('technology_node', 'motores-guerra'), 'unlock_unit_template', '{"unit_template_slugs":["unit-orcos-deff-dread","unit-guardia-leman-russ","unit-culto-ridgerunner","unit-sombra-redemptor","unit-muerte-bloat-drone"]}'::jsonb),
   (public.seed_uuid('technology_effect', 'blindaje-reforzado-minerals'), public.seed_uuid('technology_node', 'blindaje-reforzado'), 'recruitment_cost_discount', '{"category":"Vehiculo","resource":"minerals","percent":10}'::jsonb),
-  (public.seed_uuid('technology_effect', 'estado-mayor-building'), public.seed_uuid('technology_node', 'estado-mayor-cruzada'), 'unlock_building_template', '{"building_template_slugs":["bastion-mando"]}'::jsonb),
-  (public.seed_uuid('technology_effect', 'nodo-logistico-building'), public.seed_uuid('technology_node', 'nodo-logistico'), 'unlock_building_template', '{"building_template_slugs":["nodo-logistico"]}'::jsonb),
-  (public.seed_uuid('technology_effect', 'manufactorum-building'), public.seed_uuid('technology_node', 'manufactorum-local'), 'unlock_building_template', '{"building_template_slugs":["manufactorum"]}'::jsonb),
+  (public.seed_uuid('technology_effect', 'estado-mayor-building'), public.seed_uuid('technology_node', 'estado-mayor-cruzada'), 'unlock_building_template', '{"building_template_slugs":["cuartel-mando"]}'::jsonb),
+  (public.seed_uuid('technology_effect', 'auspex-building'), public.seed_uuid('technology_node', 'auspex-reliquias'), 'unlock_building_template', '{"building_template_slugs":["nexo-inteligencia","antenas-reconocimiento"]}'::jsonb),
+  (public.seed_uuid('technology_effect', 'puerto-uridium-building'), public.seed_uuid('technology_node', 'puerto-uridium'), 'unlock_building_template', '{"building_template_slugs":["refineria-iridium"]}'::jsonb),
+  (public.seed_uuid('technology_effect', 'manufactorum-building'), public.seed_uuid('technology_node', 'manufactorum-local'), 'unlock_building_template', '{"building_template_slugs":["mina-oro"]}'::jsonb),
+  (public.seed_uuid('technology_effect', 'dominio-bestial-building'), public.seed_uuid('technology_node', 'dominio-bestial'), 'unlock_building_template', '{"building_template_slugs":["nido-bestias"]}'::jsonb),
   (public.seed_uuid('technology_effect', 'matrices-efficiency-general'), public.seed_uuid('technology_node', 'matrices-eficiencia'), 'recruitment_cost_discount', '{"category":"all","resource":"all","percent":5}'::jsonb)
 on conflict (id) do update
 set technology_node_id = excluded.technology_node_id, effect_type = excluded.effect_type, payload = excluded.payload;
 
-insert into public.building_templates (id, slug, name, description, category, required_technology_node_id, is_available)
+insert into public.building_templates (
+  id, slug, name, description, category, building_kind, supply_cost, minerals_cost, honor_cost, gold_cost, industrial_material_cost, uridium_cost, technology_cost, construction_time_seconds, produced_resource_key, produced_amount, allowed_unit_categories, required_technology_node_id, icon_key, is_available
+)
 values
-  (public.seed_uuid('building_template', 'bastion-mando'), 'bastion-mando', 'Bastion de mando', 'Centro de coordinacion militar para futuras acciones administrativas y mejoras de mando.', 'Mando', public.seed_uuid('technology_node', 'estado-mayor-cruzada'), true),
-  (public.seed_uuid('building_template', 'taller-campana'), 'taller-campana', 'Taller de campana', 'Instalacion de mantenimiento para vehiculos, andadores y maquinas de guerra.', 'Militar', public.seed_uuid('technology_node', 'talleres-campana'), true),
-  (public.seed_uuid('building_template', 'nodo-logistico'), 'nodo-logistico', 'Nodo logistico', 'Red de almacenaje y transferencia orbital para sostener conquistas.', 'Infraestructura', public.seed_uuid('technology_node', 'nodo-logistico'), true),
-  (public.seed_uuid('building_template', 'manufactorum'), 'manufactorum', 'Manufactorum', 'Complejo industrial futuro para acelerar produccion y construccion.', 'Industrial', public.seed_uuid('technology_node', 'manufactorum-local'), true)
+  (public.seed_uuid('building_template', 'barracon-infanteria'), 'barracon-infanteria', 'Barracon de Infanteria', 'Centro de instruccion para tropas de linea y cuadros veteranos.', 'Reclutamiento', 'recruitment', 12, 8, 0, 0, 4, 0, 0, 240, null, 0, array['Infanteria','Elite']::text[], null, 'infantry_barracks', true),
+  (public.seed_uuid('building_template', 'cuartel-mando'), 'cuartel-mando', 'Cuartel de Mando', 'Instalacion de oficiales, heroes y personajes de mando.', 'Reclutamiento', 'recruitment', 10, 10, 1, 0, 6, 0, 0, 300, null, 0, array['Personaje']::text[], public.seed_uuid('technology_node', 'estado-mayor-cruzada'), 'command_quarters', true),
+  (public.seed_uuid('building_template', 'taller-guerra'), 'taller-guerra', 'Taller de Guerra', 'Bahias de reparacion y ensamblaje de vehiculos.', 'Reclutamiento', 'recruitment', 6, 16, 0, 0, 8, 0, 0, 300, null, 0, array['Vehiculo']::text[], public.seed_uuid('technology_node', 'talleres-campana'), 'war_workshop', true),
+  (public.seed_uuid('building_template', 'nido-bestias'), 'nido-bestias', 'Nido de Bestias', 'Jaulas y rituales de control para monstruos de guerra.', 'Reclutamiento', 'recruitment', 14, 8, 1, 0, 6, 0, 0, 300, null, 0, array['Monstruo']::text[], public.seed_uuid('technology_node', 'dominio-bestial'), 'beast_lair', true),
+  (public.seed_uuid('building_template', 'camara-comercio'), 'camara-comercio', 'Camara de Comercio', 'Mercado orbital y punto de contacto con rutas mercantes.', 'Comercio', 'commerce', 8, 8, 0, 1, 4, 0, 0, 240, null, 0, array[]::text[], null, 'commerce', true),
+  (public.seed_uuid('building_template', 'nexo-inteligencia'), 'nexo-inteligencia', 'Nexo de Inteligencia', 'Centro de analisis para operaciones de espionaje futuras.', 'Inteligencia', 'intelligence', 6, 12, 1, 0, 6, 0, 0, 300, null, 0, array[]::text[], public.seed_uuid('technology_node', 'auspex-reliquias'), 'intelligence', true),
+  (public.seed_uuid('building_template', 'antenas-reconocimiento'), 'antenas-reconocimiento', 'Antenas de Reconocimiento', 'Matrices de escucha y auspex de largo alcance.', 'Inteligencia', 'intelligence', 4, 8, 0, 0, 5, 2, 0, 240, null, 0, array[]::text[], public.seed_uuid('technology_node', 'auspex-reliquias'), 'recon', true),
+  (public.seed_uuid('building_template', 'granja-biologica'), 'granja-biologica', 'Granja Biologica', 'Complejos de biomasa y cultivos adaptados al frente.', 'Produccion', 'production', 4, 4, 0, 0, 3, 0, 0, 180, 'supply', 10, array[]::text[], null, 'biofarm', true),
+  (public.seed_uuid('building_template', 'complejo-minero'), 'complejo-minero', 'Complejo Minero', 'Pozos, excavadoras y refinerias de mineral bruto.', 'Produccion', 'production', 4, 6, 0, 0, 4, 0, 0, 180, 'minerals', 6, array[]::text[], null, 'mine', true),
+  (public.seed_uuid('building_template', 'refineria-iridium'), 'refineria-iridium', 'Refineria de Iridium', 'Planta especializada para estabilizar cristales de salto.', 'Produccion', 'production', 4, 8, 0, 0, 5, 0, 0, 240, 'uridium', 4, array[]::text[], public.seed_uuid('technology_node', 'puerto-uridium'), 'iridium_refinery', true),
+  (public.seed_uuid('building_template', 'mina-oro'), 'mina-oro', 'Mina de Oro', 'Extraccion de metales preciosos para rutas comerciales.', 'Produccion', 'production', 4, 8, 0, 0, 5, 0, 0, 240, 'gold', 3, array[]::text[], public.seed_uuid('technology_node', 'manufactorum-local'), 'gold_mine', true),
+  (public.seed_uuid('building_template', 'planta-fundicion'), 'planta-fundicion', 'Planta de Fundicion', 'Produce Material Industrial para nuevas construcciones.', 'Produccion', 'production', 4, 10, 0, 0, 3, 0, 0, 240, 'industrial_material', 5, array[]::text[], null, 'foundry', true),
+  (public.seed_uuid('building_template', 'senado'), 'senado', 'Senado', 'Institucion politica que convierte influencia local en Honor.', 'Produccion', 'production', 8, 8, 0, 1, 5, 0, 0, 300, 'honor', 2, array[]::text[], null, 'senate', true)
 on conflict (slug) do update
-set name = excluded.name, description = excluded.description, category = excluded.category, required_technology_node_id = excluded.required_technology_node_id, is_available = excluded.is_available, updated_at = now();
+set name = excluded.name, description = excluded.description, category = excluded.category, building_kind = excluded.building_kind, supply_cost = excluded.supply_cost, minerals_cost = excluded.minerals_cost, honor_cost = excluded.honor_cost, gold_cost = excluded.gold_cost, industrial_material_cost = excluded.industrial_material_cost, uridium_cost = excluded.uridium_cost, technology_cost = excluded.technology_cost, construction_time_seconds = excluded.construction_time_seconds, produced_resource_key = excluded.produced_resource_key, produced_amount = excluded.produced_amount, allowed_unit_categories = excluded.allowed_unit_categories, required_technology_node_id = excluded.required_technology_node_id, icon_key = excluded.icon_key, is_available = excluded.is_available, updated_at = now();
+
+insert into public.system_resource_capabilities (system_id, resource_key, production_amount)
+select system_id, resource_key, production_amount
+from (
+  select systems.id as system_id, resources.resource_key, resources.production_amount
+  from public.systems
+  cross join (
+    values
+      ('supply'::text, 10),
+      ('minerals'::text, 6),
+      ('uridium'::text, 4),
+      ('gold'::text, 3),
+      ('industrial_material'::text, 5),
+      ('honor'::text, 2)
+  ) as resources(resource_key, production_amount)
+  where systems.is_capital = true
+
+  union
+  select system_id, 'supply', 10 from public.system_production where supply_per_tick > 0
+  union
+  select system_id, 'minerals', 6 from public.system_production where minerals_per_tick > 0
+  union
+  select system_id, 'uridium', 4 from public.system_production where uridium_per_tick > 0
+  union
+  select system_id, 'honor', 2 from public.system_production where ancestral_stone_per_tick > 0 or honor_per_tick > 0
+  union
+  select public.seed_uuid('system', slug), 'gold', 3
+  from (values ('blackglass'), ('sa-cea-gate'), ('nexus-aster'), ('vesper-halo'), ('red-sabbath'), ('argent-rift')) as gold_systems(slug)
+  union
+  select system_id, 'industrial_material', 5 from public.system_production where minerals_per_tick >= 5
+) capabilities
+on conflict (system_id, resource_key) do update
+set production_amount = excluded.production_amount;
+
+insert into public.system_buildings (
+  id, system_id, building_template_id, status, started_at, finishes_at, constructed_at
+)
+select
+  public.seed_uuid('system_building', systems.slug || ':' || building_slug),
+  systems.id,
+  public.seed_uuid('building_template', building_slug),
+  'active',
+  now() - interval '30 minutes',
+  now() - interval '25 minutes',
+  now() - interval '25 minutes'
+from public.systems
+cross join (
+  values
+    ('barracon-infanteria'),
+    ('camara-comercio'),
+    ('planta-fundicion'),
+    ('senado')
+) as capital_buildings(building_slug)
+where systems.is_capital = true
+on conflict (system_id, building_template_id) do update
+set status = excluded.status, started_at = excluded.started_at, finishes_at = excluded.finishes_at, constructed_at = excluded.constructed_at, updated_at = now();
+
+with preferred_resource as (
+  select distinct on (systems.id)
+    systems.id as system_id,
+    systems.slug as system_slug,
+    case capabilities.resource_key
+      when 'supply' then 'granja-biologica'
+      when 'minerals' then 'complejo-minero'
+      when 'industrial_material' then 'planta-fundicion'
+      when 'uridium' then 'refineria-iridium'
+      when 'gold' then 'mina-oro'
+      when 'honor' then 'senado'
+    end as building_slug
+  from public.systems
+  join public.system_resource_capabilities capabilities on capabilities.system_id = systems.id
+  where systems.status = 'controlled'
+    and systems.is_capital = false
+  order by systems.id,
+    case capabilities.resource_key
+      when 'supply' then 1
+      when 'minerals' then 2
+      when 'industrial_material' then 3
+      when 'uridium' then 4
+      when 'gold' then 5
+      when 'honor' then 6
+      else 99
+    end
+)
+insert into public.system_buildings (
+  id, system_id, building_template_id, status, started_at, finishes_at, constructed_at
+)
+select
+  public.seed_uuid('system_building', system_slug || ':' || building_slug),
+  system_id,
+  public.seed_uuid('building_template', building_slug),
+  'active',
+  now() - interval '30 minutes',
+  now() - interval '25 minutes',
+  now() - interval '25 minutes'
+from preferred_resource
+where building_slug is not null
+on conflict (system_id, building_template_id) do update
+set status = excluded.status, started_at = excluded.started_at, finishes_at = excluded.finishes_at, constructed_at = excluded.constructed_at, updated_at = now();
+
+select public.refresh_system_production_from_buildings();
 
 insert into public.faction_technologies (faction_id, technology_node_id, status, unlocked_at)
 select factions.id, technology_nodes.id, 'unlocked', now()
@@ -316,6 +438,17 @@ values
   (public.seed_uuid('unit_template', 'unit-muerte-bloat-drone'), 'unit-muerte-bloat-drone', public.seed_uuid('faction', 'guardia-muerte'), 'Foetid Bloat-drone', 'Vehiculo', 145, 1, 3, 8, 2, 0, 0, 0, 420, 'Dron demoniaco de apoyo y hostigamiento.', true, public.seed_uuid('technology_node', 'motores-guerra'))
 on conflict (slug) do update
 set faction_id = excluded.faction_id, name = excluded.name, category = excluded.category, points = excluded.points, default_quantity = excluded.default_quantity, supply_cost = excluded.supply_cost, minerals_cost = excluded.minerals_cost, ancestral_stone_cost = excluded.ancestral_stone_cost, gold_cost = excluded.gold_cost, uridium_cost = excluded.uridium_cost, technology_cost = excluded.technology_cost, recruitment_time_seconds = excluded.recruitment_time_seconds, notes = excluded.notes, is_available = excluded.is_available, required_technology_node_id = excluded.required_technology_node_id;
+
+update public.unit_templates
+set
+  honor_cost = ancestral_stone_cost,
+  industrial_material_cost = 0,
+  recruitment_building_type = case
+    when category = 'Vehiculo' then 'taller-guerra'
+    when category = 'Personaje' then 'cuartel-mando'
+    when category = 'Monstruo' then 'nido-bestias'
+    else 'barracon-infanteria'
+  end;
 
 insert into public.campaign_units (
   id, slug, faction_id, unit_template_id, name, category, points, quantity, starting_quantity, experience, rank, enhancement_text, current_system_id, status, is_visible_publicly

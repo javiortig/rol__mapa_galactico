@@ -11,14 +11,18 @@ import type {
   MovementOrder,
   RecruitmentQueueItem,
   ResourceBundle,
+  ResourceKey,
   StarClass,
   StarSystem,
+  SystemBuilding,
   SystemEdge,
+  SystemResourceCapability,
   SystemSpecialObject,
   TechnologyEffect,
   TechnologyNode,
   TechnologyPrerequisite,
   TradeOffer,
+  UnitRecoveryQueueItem,
   UnitCategory,
   UnitMovementSelection,
   UnitTemplate
@@ -49,8 +53,9 @@ export class CampaignDataUnavailableError extends Error {
 const emptyResources: ResourceBundle = {
   supply: 0,
   minerals: 0,
-  ancestralStone: 0,
+  honor: 0,
   gold: 0,
+  industrialMaterial: 0,
   uridium: 0,
   technology: 0
 };
@@ -74,8 +79,10 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
 
     await Promise.allSettled([
       supabase.rpc("resolve_resource_ticks"),
+      supabase.rpc("resolve_building_construction"),
       supabase.rpc("resolve_movement_orders"),
       supabase.rpc("resolve_recruitment_queue"),
+      supabase.rpc("resolve_unit_recovery_queue"),
       supabase.rpc("resolve_technology_research")
     ]);
 
@@ -99,6 +106,9 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       factionTechnologiesResult,
       technologyEffectsResult,
       buildingTemplatesResult,
+      systemBuildingsResult,
+      systemResourceCapabilitiesResult,
+      unitRecoveryQueueResult,
       tradeOffersResult,
       conflictsResult,
       battleReportsResult,
@@ -123,6 +133,9 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       supabase.from("faction_technologies").select("*"),
       supabase.from("technology_effects").select("*"),
       supabase.from("building_templates").select("*").order("name"),
+      supabase.from("system_buildings").select("*").order("created_at"),
+      supabase.from("system_resource_capabilities").select("*"),
+      supabase.from("unit_recovery_queue").select("*, campaign_units(name)").order("finishes_at"),
       supabase.from("trade_offers").select("*").order("created_at", { ascending: false }),
       supabase.from("conflicts").select("*").order("created_at"),
       supabase.from("battle_reports").select("*").order("created_at"),
@@ -189,6 +202,9 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       factionTechnologies: getRows(factionTechnologiesResult, "faction_technologies").map(mapFactionTechnology),
       technologyEffects: getRows(technologyEffectsResult, "technology_effects").map(mapTechnologyEffect),
       buildingTemplates: getRows(buildingTemplatesResult, "building_templates").map(mapBuildingTemplate),
+      systemBuildings: getRows(systemBuildingsResult, "system_buildings").map(mapSystemBuilding),
+      systemResourceCapabilities: getRows(systemResourceCapabilitiesResult, "system_resource_capabilities").map(mapSystemResourceCapability),
+      unitRecoveryQueue: getRows(unitRecoveryQueueResult, "unit_recovery_queue").map(mapUnitRecoveryQueueItem),
       tradeOffers: getRows(tradeOffersResult, "trade_offers").map(mapTradeOffer),
       conflicts: getRows(conflictsResult, "conflicts").map(mapConflict),
       battleReports: getRows(battleReportsResult, "battle_reports").map(mapBattleReport),
@@ -299,6 +315,7 @@ function mapSystem(
     secretAdminNotes: (row.secret_admin_notes as string | null) ?? null,
     missionId: (row.mission_id as string | null) ?? null,
     isCapital: Boolean(row.is_capital),
+    buildingSlots: Number(row.building_slots ?? (row.is_capital ? 6 : 3)),
     production,
     specialObjects
   };
@@ -318,8 +335,9 @@ function mapResourceProduction(row: Record<string, unknown>): ResourceBundle {
   return {
     supply: Number(row.supply_per_tick ?? 0),
     minerals: Number(row.minerals_per_tick ?? 0),
-    ancestralStone: Number(row.ancestral_stone_per_tick ?? 0),
+    honor: Number(row.honor_per_tick ?? row.ancestral_stone_per_tick ?? 0),
     gold: Number(row.gold_per_tick ?? 0),
+    industrialMaterial: Number(row.industrial_material_per_tick ?? 0),
     uridium: Number(row.uridium_per_tick ?? 0),
     technology: Number(row.technology_per_tick ?? 0)
   };
@@ -330,8 +348,9 @@ function mapFactionResources(row: Record<string, unknown>): FactionResources {
     factionId: row.faction_id as string,
     supply: Number(row.supply ?? 0),
     minerals: Number(row.minerals ?? 0),
-    ancestralStone: Number(row.ancestral_stone ?? 0),
+    honor: Number(row.honor ?? row.ancestral_stone ?? 0),
     gold: Number(row.gold ?? 0),
+    industrialMaterial: Number(row.industrial_material ?? 0),
     uridium: Number(row.uridium ?? 0),
     technology: Number(row.technology ?? 0),
     updatedAt: row.updated_at as string
@@ -398,11 +417,13 @@ function mapUnitTemplate(row: Record<string, unknown>): UnitTemplate {
     defaultQuantity: Number(row.default_quantity ?? 1),
     supplyCost: Number(row.supply_cost ?? 0),
     mineralsCost: Number(row.minerals_cost ?? 0),
-    ancestralStoneCost: Number(row.ancestral_stone_cost ?? 0),
+    honorCost: Number(row.honor_cost ?? row.ancestral_stone_cost ?? 0),
     goldCost: Number(row.gold_cost ?? 0),
+    industrialMaterialCost: Number(row.industrial_material_cost ?? 0),
     uridiumCost: Number(row.uridium_cost ?? 0),
     technologyCost: Number(row.technology_cost ?? 0),
     recruitmentTimeSeconds: Number(row.recruitment_time_seconds ?? 0),
+    recruitmentBuildingType: (row.recruitment_building_type as string | null) ?? null,
     notes: (row.notes as string | null) ?? null,
     isAvailable: Boolean(row.is_available),
     requiredTechnologyNodeId: (row.required_technology_node_id as string | null) ?? null
@@ -427,11 +448,11 @@ function mapTradeOffer(row: Record<string, unknown>): TradeOffer {
 }
 
 function mapTradeableResource(value: unknown): TradeOffer["resourceKey"] {
-  if (value === "ancestral_stone") {
-    return "ancestralStone";
+  if (value === "industrial_material") {
+    return "industrialMaterial";
   }
 
-  if (value === "supply" || value === "minerals" || value === "ancestralStone" || value === "uridium") {
+  if (value === "supply" || value === "minerals" || value === "industrialMaterial" || value === "uridium") {
     return value;
   }
 
@@ -487,11 +508,47 @@ function mapTechnologyEffect(row: Record<string, unknown>): TechnologyEffect {
 function mapBuildingTemplate(row: Record<string, unknown>): BuildingTemplate {
   return {
     id: row.id as string,
+    slug: (row.slug as string | null) ?? (row.id as string),
     name: row.name as string,
     category: row.category as string,
     description: row.description as string,
+    buildingKind: row.building_kind as BuildingTemplate["buildingKind"],
+    supplyCost: Number(row.supply_cost ?? 0),
+    mineralsCost: Number(row.minerals_cost ?? 0),
+    honorCost: Number(row.honor_cost ?? 0),
+    goldCost: Number(row.gold_cost ?? 0),
+    industrialMaterialCost: Number(row.industrial_material_cost ?? 0),
+    uridiumCost: Number(row.uridium_cost ?? 0),
+    technologyCost: Number(row.technology_cost ?? 0),
+    constructionTimeSeconds: Number(row.construction_time_seconds ?? 0),
+    producedResourceKey: mapNullableResourceKey(row.produced_resource_key),
+    producedAmount: Number(row.produced_amount ?? 0),
+    allowedUnitCategories: Array.isArray(row.allowed_unit_categories)
+      ? (row.allowed_unit_categories as BuildingTemplate["allowedUnitCategories"])
+      : [],
+    iconKey: (row.icon_key as string | null) ?? null,
     requiredTechnologyNodeId: (row.required_technology_node_id as string | null) ?? null,
     isAvailable: Boolean(row.is_available)
+  };
+}
+
+function mapSystemBuilding(row: Record<string, unknown>): SystemBuilding {
+  return {
+    id: row.id as string,
+    systemId: row.system_id as string,
+    buildingTemplateId: row.building_template_id as string,
+    status: row.status as SystemBuilding["status"],
+    startedAt: (row.started_at as string | null) ?? null,
+    finishesAt: (row.finishes_at as string | null) ?? null,
+    constructedAt: (row.constructed_at as string | null) ?? null
+  };
+}
+
+function mapSystemResourceCapability(row: Record<string, unknown>): SystemResourceCapability {
+  return {
+    systemId: row.system_id as string,
+    resourceKey: mapResourceKey(row.resource_key),
+    productionAmount: Number(row.production_amount ?? 0)
   };
 }
 
@@ -504,9 +561,27 @@ function mapRecruitmentQueueItem(row: Record<string, unknown>): RecruitmentQueue
     unitTemplateId: row.unit_template_id as string,
     unitName: template?.name ?? "Unidad",
     quantity: Number(row.quantity ?? 1),
+    systemBuildingId: (row.system_building_id as string | null) ?? null,
+    originSystemId: (row.origin_system_id as string | null) ?? null,
     startedAt: row.started_at as string,
     finishesAt: row.finishes_at as string,
     status: row.status as RecruitmentQueueItem["status"]
+  };
+}
+
+function mapUnitRecoveryQueueItem(row: Record<string, unknown>): UnitRecoveryQueueItem {
+  const unit = row.campaign_units as { name?: string } | null;
+
+  return {
+    id: row.id as string,
+    factionId: row.faction_id as string,
+    systemBuildingId: row.system_building_id as string,
+    campaignUnitId: row.campaign_unit_id as string,
+    unitName: unit?.name ?? "Unidad",
+    healQuantity: Number(row.heal_quantity ?? 0),
+    startedAt: row.started_at as string,
+    finishesAt: row.finishes_at as string,
+    status: row.status as UnitRecoveryQueueItem["status"]
   };
 }
 
@@ -521,6 +596,41 @@ function mapConflict(row: Record<string, unknown>): Conflict {
     blockedUntil: (row.blocked_until as string | null) ?? null,
     notes: (row.notes as string | null) ?? null
   };
+}
+
+function mapNullableResourceKey(value: unknown): ResourceKey | null {
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  return mapResourceKey(value);
+}
+
+function mapResourceKey(value: unknown): ResourceKey {
+  if (value === "industrial_material") {
+    return "industrialMaterial";
+  }
+
+  if (value === "honor") {
+    return "honor";
+  }
+
+  if (value === "ancestral_stone" || value === "ancestralStone") {
+    return "honor";
+  }
+
+  if (
+    value === "supply" ||
+    value === "minerals" ||
+    value === "gold" ||
+    value === "industrialMaterial" ||
+    value === "uridium" ||
+    value === "technology"
+  ) {
+    return value;
+  }
+
+  return "supply";
 }
 
 function mapBattleReport(row: Record<string, unknown>): BattleReport {

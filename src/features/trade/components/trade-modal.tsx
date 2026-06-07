@@ -19,23 +19,25 @@ import {
 } from "@/features/trade/api/trade-api";
 import type { CampaignSnapshot, FactionResources, TradeOffer, TradeOfferType, TradeableResourceKey } from "@/domain/campaign";
 
-const tradeableResources: TradeableResourceKey[] = ["supply", "minerals", "ancestralStone", "uridium"];
+const tradeableResources: TradeableResourceKey[] = ["supply", "minerals", "industrialMaterial", "uridium"];
 
 const resourcePointValues: Record<TradeableResourceKey | "gold", number> = {
   supply: 1,
   minerals: 2,
   uridium: 2,
-  ancestralStone: 5,
+  industrialMaterial: 2,
   gold: 5
 };
 
 export function TradeModal({
   snapshot,
   open,
+  lockedReason,
   onClose
 }: {
   snapshot: CampaignSnapshot;
   open: boolean;
+  lockedReason?: string | null;
   onClose: () => void;
 }) {
   const [tab, setTab] = useState<"merchant" | "stellar">("merchant");
@@ -79,7 +81,17 @@ export function TradeModal({
         </div>
 
         <div className="mobile-scroll flex-1">
-          {tab === "merchant" ? (
+          {lockedReason ? (
+            <div className="grid min-h-full place-items-center p-6 text-center">
+              <div className="max-w-md">
+                <div className="mx-auto mb-4 grid size-14 place-items-center rounded-md border border-amber-300/30 bg-amber-300/10 text-amber-100">
+                  <Store size={25} />
+                </div>
+                <h3 className="text-xl font-semibold text-cyan-50">Comercio bloqueado</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-300">{lockedReason}</p>
+              </div>
+            </div>
+          ) : tab === "merchant" ? (
             <MerchantPanel snapshot={snapshot} />
           ) : (
             <StellarTradePanel snapshot={snapshot} />
@@ -447,8 +459,8 @@ function TradeActionCard({
 
 function ResourceStrip({ resources, className }: { resources?: FactionResources; className?: string }) {
   return (
-    <div className={`mb-4 grid grid-cols-5 gap-1.5 ${className ?? ""}`}>
-      {(["supply", "minerals", "ancestralStone", "gold", "uridium"] as const).map((resource) => (
+    <div className={`mb-4 grid grid-cols-6 gap-1.5 ${className ?? ""}`}>
+      {(["supply", "minerals", "honor", "gold", "industrialMaterial", "uridium"] as const).map((resource) => (
         <div className="min-w-0 rounded-md border border-cyan-200/15 bg-slate-950/45 px-1.5 py-2 text-center" key={resource}>
           <ResourceIcon className="mx-auto mb-1 size-4" resource={resource} />
           <div className="truncate text-[clamp(0.68rem,2.6vw,0.9rem)] font-semibold tabular-nums text-cyan-50">

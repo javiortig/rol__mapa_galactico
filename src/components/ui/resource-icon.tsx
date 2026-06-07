@@ -1,6 +1,7 @@
 import Image from "next/image";
-import ancestralStoneIcon from "../../../icons/resources/acestral_stone.png";
 import goldIcon from "../../../icons/resources/gold.png";
+import honorIcon from "../../../icons/resources/honor.png";
+import industrialMaterialIcon from "../../../icons/resources/industrial_material.png";
 import uridiumIcon from "../../../icons/resources/iridium.png";
 import supplyIcon from "../../../icons/resources/life_essense.png";
 import mineralIcon from "../../../icons/resources/mineral.png";
@@ -11,8 +12,9 @@ import type { ResourceKey } from "@/domain/campaign";
 export const resourceLabels: Record<ResourceKey, string> = {
   supply: "Suministro vital",
   minerals: "Mineral",
-  ancestralStone: "Piedra ancestral",
+  honor: "Honor",
   gold: "Oro",
+  industrialMaterial: "Material industrial",
   uridium: "Uridium",
   technology: "Componentes tecnologicos"
 };
@@ -20,8 +22,9 @@ export const resourceLabels: Record<ResourceKey, string> = {
 const resourceIcons = {
   supply: supplyIcon,
   minerals: mineralIcon,
-  ancestralStone: ancestralStoneIcon,
+  honor: honorIcon,
   gold: goldIcon,
+  industrialMaterial: industrialMaterialIcon,
   uridium: uridiumIcon,
   technology: technologyIcon
 };

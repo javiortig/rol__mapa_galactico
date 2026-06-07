@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { AlertTriangle, Check, Clock3, Cpu, Crosshair, HandCoins, Minus, MousePointer2, Plus, Route, Shield, Swords, Undo2, X } from "lucide-react";
+import { AlertTriangle, Building2, Check, Clock3, Cpu, Crosshair, Factory, HandCoins, Hammer, Landmark, Minus, MousePointer2, Plus, RadioTower, Route, Shield, Swords, Undo2, X } from "lucide-react";
 import { getCampaignSnapshot, isCampaignAuthRequiredError } from "@/features/campaign/api/campaign-repository";
 import { useCampaignUiStore } from "@/features/campaign/store/campaign-ui-store";
 import { Badge } from "@/components/ui/badge";
@@ -20,13 +20,14 @@ import {
   formatTravelDuration,
   isSystemBlockedForMovement
 } from "@/features/movement/lib/pathfinding";
-import { RecruitmentModal } from "@/features/recruitment/components/recruitment-modal";
 import { TechnologyTreeModal } from "@/features/technology/components/technology-tree-modal";
 import { TradeModal } from "@/features/trade/components/trade-modal";
+import { ConstructionModal } from "@/features/buildings/components/construction-modal";
+import { BuildingActionModal } from "@/features/buildings/components/building-action-modal";
 import { getActiveTechnologyResearch } from "@/features/technology/lib/technology-state";
 import { formatCountdown } from "@/lib/time";
 import { useMediaQuery, useViewportHeightCssVar } from "@/lib/use-media-query";
-import type { CampaignSnapshot, CampaignUnit, Conflict, StarSystem, UnitMovementSelection } from "@/domain/campaign";
+import type { BuildingTemplate, CampaignSnapshot, CampaignUnit, Conflict, StarSystem, SystemBuilding, UnitMovementSelection } from "@/domain/campaign";
 
 const GalaxyMap = dynamic(
   () => import("@/features/galaxy-map/components/galaxy-map").then((mod) => mod.GalaxyMap),
@@ -36,8 +37,8 @@ const GalaxyMap = dynamic(
   }
 );
 
-const mainResources = ["supply", "minerals", "ancestralStone", "gold", "uridium"] as const;
-const planetProductionResources = ["supply", "minerals", "ancestralStone", "gold", "uridium"] as const;
+const mainResources = ["supply", "minerals", "honor", "gold", "industrialMaterial", "uridium"] as const;
+const planetProductionResources = ["supply", "minerals", "honor", "gold", "industrialMaterial", "uridium"] as const;
 
 export function CampaignShell() {
   const router = useRouter();
@@ -51,9 +52,11 @@ export function CampaignShell() {
   const cancelMovementMode = useCampaignUiStore((state) => state.cancelMovementMode);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const isMobile = !isDesktop;
-  const [recruitmentOpen, setRecruitmentOpen] = useState(false);
   const [tradeOpen, setTradeOpen] = useState(false);
+  const [tradeLockedReason, setTradeLockedReason] = useState<string | null>(null);
   const [technologyOpen, setTechnologyOpen] = useState(false);
+  const [constructionSystemId, setConstructionSystemId] = useState<string | null>(null);
+  const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
   const [battleReportSystemId, setBattleReportSystemId] = useState<string | null>(null);
   const [movementOriginSystemId, setMovementOriginSystemId] = useState<string | null>(null);
   const [movementUnitQuantities, setMovementUnitQuantities] = useState<Record<string, number>>({});
@@ -97,7 +100,7 @@ export function CampaignShell() {
   const showSystemPanel = Boolean(panelSystem) && !(isMobile && movementOriginSystemId && movementMobileStage === "route");
   const showCommandDock = !(
     isMobile &&
-    (showSystemPanel || movementOriginSystemId || recruitmentOpen || tradeOpen || technologyOpen || battleReportSystemId)
+    (showSystemPanel || movementOriginSystemId || tradeOpen || technologyOpen || battleReportSystemId || constructionSystemId || selectedBuildingId)
   );
   const battleReportSystem = data.systems.find((system) => system.id === battleReportSystemId) ?? null;
   const battleReportConflict =
@@ -109,6 +112,31 @@ export function CampaignShell() {
     movementHoverPathSystemIds.length > 1 ? movementHoverPathSystemIds : movementPathSystemIds;
   const movementRoutePlan =
     movementDisplayPath.length > 1 ? calculateRoutePlan(movementDisplayPath, data.edges) : null;
+  const constructionSystem = data.systems.find((system) => system.id === constructionSystemId) ?? null;
+  const selectedBuilding = data.systemBuildings.find((building) => building.id === selectedBuildingId) ?? null;
+  const selectedBuildingTemplate = selectedBuilding
+    ? data.buildingTemplates.find((template) => template.id === selectedBuilding.buildingTemplateId) ?? null
+    : null;
+  const hasActiveCommerceBuilding = data.systemBuildings.some((building) => {
+    const system = data.systems.find((item) => item.id === building.systemId);
+    const template = data.buildingTemplates.find((item) => item.id === building.buildingTemplateId);
+    return (
+      building.status === "active" &&
+      template?.slug === "camara-comercio" &&
+      system?.controllerFactionId === data.currentUser.factionId &&
+      system.status === "controlled"
+    );
+  });
+
+  const openTradeFromDock = () => {
+    setTradeLockedReason(hasActiveCommerceBuilding ? null : "Necesitas una Camara de Comercio activa para comerciar.");
+    setTradeOpen(true);
+  };
+
+  const openTradeFromBuilding = () => {
+    setTradeLockedReason(null);
+    setTradeOpen(true);
+  };
 
   const openMovement = (system: StarSystem) => {
     setMovementOriginSystemId(system.id);
@@ -235,7 +263,7 @@ export function CampaignShell() {
           {showCommandDock ? (
             <CommandDock
               onOpenTechnology={() => setTechnologyOpen(true)}
-              onOpenTrade={() => setTradeOpen(true)}
+              onOpenTrade={openTradeFromDock}
               snapshot={data}
             />
           ) : null}
@@ -246,8 +274,16 @@ export function CampaignShell() {
               onClose={() => setSelectedSystem(null)}
               onMergeUnits={(unitIds) => mergeMutation.mutate(unitIds)}
               onOpenBattleReport={(system) => setBattleReportSystemId(system.id)}
+              onOpenBuilding={(building, template) => {
+                if (template.slug === "camara-comercio") {
+                  openTradeFromBuilding();
+                  return;
+                }
+
+                setSelectedBuildingId(building.id);
+              }}
+              onOpenConstruction={(system) => setConstructionSystemId(system.id)}
               onOpenMovement={openMovement}
-              onOpenRecruitment={() => setRecruitmentOpen(true)}
               snapshot={data}
               system={panelSystem}
             />
@@ -261,8 +297,20 @@ export function CampaignShell() {
         tooltipPosition={tooltipPosition}
       />
 
-      <RecruitmentModal onClose={() => setRecruitmentOpen(false)} open={recruitmentOpen} snapshot={data} />
-      <TradeModal onClose={() => setTradeOpen(false)} open={tradeOpen} snapshot={data} />
+      <ConstructionModal
+        onClose={() => setConstructionSystemId(null)}
+        open={Boolean(constructionSystem)}
+        snapshot={data}
+        system={constructionSystem}
+      />
+      <BuildingActionModal
+        building={selectedBuilding}
+        onClose={() => setSelectedBuildingId(null)}
+        open={Boolean(selectedBuilding && selectedBuildingTemplate)}
+        snapshot={data}
+        template={selectedBuildingTemplate}
+      />
+      <TradeModal lockedReason={tradeLockedReason} onClose={() => setTradeOpen(false)} open={tradeOpen} snapshot={data} />
       <TechnologyTreeModal onClose={() => setTechnologyOpen(false)} open={technologyOpen} snapshot={data} />
       {battleReportSystem && battleReportConflict ? (
         <BattleReportModal
@@ -334,8 +382,8 @@ function ResourceBar({ snapshot }: { snapshot: CampaignSnapshot }) {
   );
 
   return (
-    <Panel className="mx-auto w-full max-w-[23rem] overflow-hidden px-1.5 py-1.5 sm:max-w-lg md:w-fit md:max-w-full md:px-4 md:py-3">
-      <div className="grid grid-cols-5 gap-1 sm:gap-2">
+    <Panel className="mx-auto w-full max-w-[27rem] overflow-hidden px-1.5 py-1.5 sm:max-w-xl md:w-fit md:max-w-full md:px-4 md:py-3">
+      <div className="grid grid-cols-6 gap-1 sm:gap-2">
         {mainResources.map((key) => (
           <div
             className="min-w-0 rounded-md border border-cyan-200/15 bg-slate-950/45 px-1.5 py-1.5 text-center md:min-w-24 md:px-3 md:py-2 md:text-left"
@@ -367,6 +415,28 @@ function formatCompactNumber(value: number) {
   return String(value);
 }
 
+function BuildingKindIcon({ template }: { template: BuildingTemplate }) {
+  const className = "size-4";
+  const icon =
+    template.buildingKind === "commerce" ? (
+      <HandCoins className={className} />
+    ) : template.buildingKind === "intelligence" ? (
+      <RadioTower className={className} />
+    ) : template.buildingKind === "production" ? (
+      <Factory className={className} />
+    ) : template.slug === "cuartel-mando" || template.iconKey === "command_quarters" ? (
+      <Landmark className={className} />
+    ) : (
+      <Building2 className={className} />
+    );
+
+  return (
+    <span className="grid size-9 place-items-center rounded-md border border-cyan-200/15 bg-slate-950/45 text-cyan-100">
+      {icon}
+    </span>
+  );
+}
+
 function CommandDock({
   snapshot,
   onOpenTrade,
@@ -381,6 +451,8 @@ function CommandDock({
   );
   const activeMovements = snapshot.movements.filter((movement) => movement.status === "moving");
   const pendingConflicts = snapshot.conflicts.filter((conflict) => conflict.status === "pending");
+  const activeBuildings = snapshot.systemBuildings.filter((building) => building.status === "constructing");
+  const activeRecoveries = snapshot.unitRecoveryQueue.filter((item) => item.status === "queued");
   const activeTechnology = getActiveTechnologyResearch(snapshot);
   const activeTechnologyNode = activeTechnology
     ? snapshot.technologyNodes.find((node) => node.id === activeTechnology.technologyNodeId)
@@ -388,6 +460,8 @@ function CommandDock({
   const activeChronosCount =
     activeMovements.length +
     snapshot.recruitmentQueue.length +
+    activeBuildings.length +
+    activeRecoveries.length +
     pendingConflicts.length +
     (activeTechnology ? 1 : 0);
 
@@ -462,6 +536,26 @@ function CommandDock({
               </div>
             </div>
           ))}
+          {activeBuildings.map((building) => {
+            const template = snapshot.buildingTemplates.find((item) => item.id === building.buildingTemplateId);
+
+            return (
+              <div className="rounded-md border border-amber-300/20 bg-amber-400/8 p-3" key={building.id}>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-amber-50">{template?.name ?? "Construccion"}</span>
+                  <Badge tone="amber">{formatCountdown(building.finishesAt)}</Badge>
+                </div>
+              </div>
+            );
+          })}
+          {activeRecoveries.map((item) => (
+            <div className="rounded-md border border-rose-300/20 bg-rose-400/8 p-3" key={item.id}>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-rose-50">{item.unitName}</span>
+                <Badge tone="rose">{formatCountdown(item.finishesAt)}</Badge>
+              </div>
+            </div>
+          ))}
           {pendingConflicts.map((conflict) => (
             <div className="rounded-md border border-rose-300/20 bg-rose-400/8 p-3" key={conflict.id}>
               <div className="flex items-center justify-between gap-3">
@@ -514,8 +608,9 @@ function GalaxyTooltip({
   const totalProduction =
     system.production.supply +
     system.production.minerals +
-    system.production.ancestralStone +
+    system.production.honor +
     system.production.gold +
+    system.production.industrialMaterial +
     system.production.uridium;
   const stateText =
     system.status === "war" ? "En guerra" : system.status === "controlled" ? "Controlado" : "Neutral";
@@ -572,8 +667,9 @@ function SystemPanel({
   onClose,
   onMergeUnits,
   onOpenBattleReport,
+  onOpenBuilding,
+  onOpenConstruction,
   onOpenMovement,
-  onOpenRecruitment
 }: {
   snapshot: CampaignSnapshot;
   system: StarSystem;
@@ -582,8 +678,9 @@ function SystemPanel({
   onClose: () => void;
   onMergeUnits: (unitIds: string[]) => void;
   onOpenBattleReport: (system: StarSystem) => void;
+  onOpenBuilding: (building: SystemBuilding, template: BuildingTemplate) => void;
+  onOpenConstruction: (system: StarSystem) => void;
   onOpenMovement: (system: StarSystem) => void;
-  onOpenRecruitment: () => void;
 }) {
   const faction = snapshot.factions.find((item) => item.id === system.controllerFactionId);
   const relatedUnits = snapshot.units.filter(
@@ -596,11 +693,16 @@ function SystemPanel({
     (item) => item.systemId === system.id && item.status === "pending"
   );
   const tone = system.status === "war" ? "rose" : system.status === "controlled" ? "cyan" : "slate";
-  const ownFaction = snapshot.factions.find((item) => item.id === snapshot.currentUser.factionId);
-  const canRecruit =
-    Boolean(ownFaction?.capitalSystemId === system.id) &&
-    system.isCapital &&
+  const systemBuildings = snapshot.systemBuildings.filter(
+    (building) => building.systemId === system.id && building.status !== "disabled"
+  );
+  const buildingSlots = system.buildingSlots ?? (system.isCapital ? 6 : 3);
+  const buildingSlotsUsed = systemBuildings.length;
+  const canBuild =
     system.controllerFactionId === snapshot.currentUser.factionId &&
+    system.status === "controlled" &&
+    !isSystemBlockedForMovement(system) &&
+    buildingSlotsUsed < buildingSlots &&
     (snapshot.currentUser.role === "admin" || snapshot.currentUser.role === "player");
   const canMove =
     ownReadyUnits.length > 0 &&
@@ -646,6 +748,61 @@ function SystemPanel({
         </div>
 
         <div className="mobile-scroll flex-1 space-y-4 p-4 md:space-y-5 md:p-5">
+          <section>
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <h2 className="text-xs uppercase tracking-[0.18em] text-cyan-200/70">Edificios</h2>
+              <Badge tone="cyan">{buildingSlotsUsed}/{buildingSlots} slots</Badge>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {systemBuildings.map((building) => {
+                const template = snapshot.buildingTemplates.find((item) => item.id === building.buildingTemplateId);
+
+                if (!template) {
+                  return null;
+                }
+
+                return (
+                  <button
+                    className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-left transition hover:border-cyan-200/40"
+                    key={building.id}
+                    onClick={() => onOpenBuilding(building, template)}
+                    type="button"
+                  >
+                    <div className="mb-2 flex items-start justify-between gap-2">
+                      <BuildingKindIcon template={template} />
+                      <Badge tone={building.status === "active" ? "cyan" : "amber"}>
+                        {building.status === "active" ? "Activo" : "Construyendo"}
+                      </Badge>
+                    </div>
+                    <div className="text-sm font-semibold text-cyan-50">{template.name}</div>
+                    <div className="mt-1 text-xs text-slate-400">
+                      {building.status === "constructing" && building.finishesAt
+                        ? formatCountdown(building.finishesAt)
+                        : template.category}
+                    </div>
+                  </button>
+                );
+              })}
+              {Array.from({ length: Math.max(0, buildingSlots - buildingSlotsUsed) }).map((_, index) => (
+                <button
+                  className="rounded-md border border-dashed border-cyan-200/20 bg-slate-950/20 p-3 text-left text-sm text-slate-400 transition hover:border-cyan-200/40 hover:text-cyan-100 disabled:pointer-events-none disabled:opacity-50"
+                  disabled={!canBuild}
+                  key={`empty-${index}`}
+                  onClick={() => onOpenConstruction(system)}
+                  type="button"
+                >
+                  <div className="mb-2 grid size-9 place-items-center rounded-md border border-cyan-200/15 bg-slate-950/35">
+                    <Hammer size={17} />
+                  </div>
+                  Slot libre
+                </button>
+              ))}
+            </div>
+            {!canBuild && buildingSlotsUsed < buildingSlots ? (
+              <p className="mt-2 text-xs text-slate-500">Solo puedes construir en sistemas propios, controlados y sin bloqueo.</p>
+            ) : null}
+          </section>
+
           <section>
             <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Control</h2>
             <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-sm text-slate-200">
@@ -744,14 +901,12 @@ function SystemPanel({
           ) : null}
         </div>
 
-        <div className={`grid shrink-0 gap-2 border-t border-cyan-200/15 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 md:p-5 ${canRecruit ? "grid-cols-3" : "grid-cols-2"}`}>
+        <div className="grid shrink-0 grid-cols-3 gap-2 border-t border-cyan-200/15 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 md:p-5">
           <Button>Ver misión</Button>
-          {canRecruit ? (
-            <Button className="min-w-0 text-xs sm:text-sm" onClick={onOpenRecruitment}>
-              <Clock3 size={16} />
-              Reclutar
-            </Button>
-          ) : null}
+          <Button className="min-w-0 text-xs sm:text-sm" disabled={!canBuild} onClick={() => onOpenConstruction(system)}>
+            <Hammer size={16} />
+            Construir
+          </Button>
           <Button
             className="min-w-0 text-xs sm:text-sm"
             disabled={system.status === "war" ? !canReport : !canMove}
@@ -1369,7 +1524,8 @@ function getUnitStatusLabel(status: CampaignUnit["status"]) {
     moving: "En movimiento",
     in_war: "En guerra",
     destroyed: "Destruida",
-    retreat_pending: "Retirada"
+    retreat_pending: "Retirada",
+    recovering: "Curandose"
   };
 
   return labels[status];
@@ -1388,7 +1544,7 @@ function getUnitStatusTone(status: CampaignUnit["status"]): "cyan" | "rose" | "a
     return "rose";
   }
 
-  if (status === "retreat_pending") {
+  if (status === "retreat_pending" || status === "recovering") {
     return "violet";
   }
 

@@ -19,7 +19,7 @@ import {
 import { formatCountdown } from "@/lib/time";
 import type { CampaignSnapshot, FactionResources, ResourceKey, UnitTemplate } from "@/domain/campaign";
 
-const resourceSummaryKeys: ResourceKey[] = ["supply", "minerals", "ancestralStone", "gold", "uridium"];
+const resourceSummaryKeys: ResourceKey[] = ["supply", "minerals", "honor", "gold", "industrialMaterial", "uridium"];
 
 export function RecruitmentModal({
   snapshot,
@@ -271,7 +271,7 @@ export function RecruitmentModal({
 
 function ResourceSummary({ resources }: { resources?: FactionResources }) {
   return (
-    <div className="mb-4 grid grid-cols-5 gap-1.5 md:gap-2">
+    <div className="mb-4 grid grid-cols-6 gap-1.5 md:gap-2">
       {resourceSummaryKeys.map((resource) => (
         <div className="min-w-0 rounded-md border border-cyan-200/15 bg-slate-950/45 px-1.5 py-2 text-center md:p-3 md:text-left" key={resource}>
           <div className="mb-1 flex items-center justify-center gap-1.5 text-[10px] text-slate-400 md:mb-2 md:justify-start md:text-[11px]">

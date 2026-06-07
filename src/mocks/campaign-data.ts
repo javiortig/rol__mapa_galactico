@@ -3,8 +3,9 @@ import type { CampaignSnapshot, ResourceBundle } from "@/domain/campaign";
 const emptyResources: ResourceBundle = {
   supply: 0,
   minerals: 0,
-  ancestralStone: 0,
+  honor: 0,
   gold: 0,
+  industrialMaterial: 0,
   uridium: 0,
   technology: 0
 };
@@ -109,7 +110,7 @@ const systems: CampaignSnapshot["systems"] = [
     controllerFactionId: "sombra-emperador",
     isCapital: false,
     publicDescription: "Complejo sacro con rutas de descenso peligrosas.",
-    production: dailyProduction({ supply: 2, ancestralStone: 2, uridium: 1 })
+    production: dailyProduction({ supply: 2, honor: 2, uridium: 1 })
   },
   {
     id: "blackglass",
@@ -122,8 +123,8 @@ const systems: CampaignSnapshot["systems"] = [
     status: "controlled",
     controllerFactionId: "culto-genestelar",
     isCapital: true,
-    publicDescription: "Piedra ancestral bajo oceanos de vidrio oscuro.",
-    production: dailyProduction({ supply: 3, minerals: 4, ancestralStone: 2, uridium: 1 })
+    publicDescription: "Honor bajo oceanos de vidrio oscuro.",
+    production: dailyProduction({ supply: 3, minerals: 4, honor: 2, uridium: 1 })
   },
   {
     id: "red-sabbath",
@@ -137,7 +138,7 @@ const systems: CampaignSnapshot["systems"] = [
     controllerFactionId: "culto-genestelar",
     isCapital: false,
     publicDescription: "Ciudades santuario infiltradas por redes de culto.",
-    production: dailyProduction({ supply: 5, minerals: 2, ancestralStone: 1, uridium: 1 })
+    production: dailyProduction({ supply: 5, minerals: 2, honor: 1, uridium: 1 })
   },
   {
     id: "mirrorcoil",
@@ -151,7 +152,7 @@ const systems: CampaignSnapshot["systems"] = [
     controllerFactionId: "culto-genestelar",
     isCapital: false,
     publicDescription: "Estaciones gemelas que repiten senales falsas hacia el centro.",
-    production: dailyProduction({ supply: 2, minerals: 2, ancestralStone: 1, uridium: 3 })
+    production: dailyProduction({ supply: 2, minerals: 2, honor: 1, uridium: 3 })
   },
   {
     id: "thokt-vault",
@@ -165,7 +166,7 @@ const systems: CampaignSnapshot["systems"] = [
     controllerFactionId: "necrones",
     isCapital: true,
     publicDescription: "Cripta silenciosa rodeada de energia verdosa.",
-    production: dailyProduction({ minerals: 8, ancestralStone: 3, uridium: 2 })
+    production: dailyProduction({ minerals: 8, honor: 3, uridium: 2 })
   },
   {
     id: "novem",
@@ -193,7 +194,7 @@ const systems: CampaignSnapshot["systems"] = [
     controllerFactionId: "necrones",
     isCapital: false,
     publicDescription: "Faro de navegacion que parpadea con luz fria.",
-    production: dailyProduction({ minerals: 2, ancestralStone: 1, uridium: 3 })
+    production: dailyProduction({ minerals: 2, honor: 1, uridium: 3 })
   },
   {
     id: "mordax",
@@ -207,7 +208,7 @@ const systems: CampaignSnapshot["systems"] = [
     controllerFactionId: "guardia-muerte",
     isCapital: true,
     publicDescription: "Mundo industrial desgarrado por senales disformes.",
-    production: dailyProduction({ supply: 5, minerals: 6, ancestralStone: 1, uridium: 2 })
+    production: dailyProduction({ supply: 5, minerals: 6, honor: 1, uridium: 2 })
   },
   {
     id: "drusus",
@@ -235,7 +236,7 @@ const systems: CampaignSnapshot["systems"] = [
     controllerFactionId: "guardia-muerte",
     isCapital: false,
     publicDescription: "Plataformas de asedio cubiertas por esporas y ceniza.",
-    production: dailyProduction({ supply: 3, minerals: 5, ancestralStone: 1, uridium: 1 })
+    production: dailyProduction({ supply: 3, minerals: 5, honor: 1, uridium: 1 })
   },
   {
     id: "cinder-maw",
@@ -305,7 +306,7 @@ const systems: CampaignSnapshot["systems"] = [
     blockedUntil: inMinutes(30),
     isCapital: false,
     publicDescription: "Campos funerarios en orbita baja, disputados por plaga y tecnologia necrona.",
-    production: dailyProduction({ minerals: 2, ancestralStone: 2, uridium: 2 }),
+    production: dailyProduction({ minerals: 2, honor: 2, uridium: 2 }),
     specialObjects: [{ id: "obj-ossuary-reach", name: "Cripta fracturada", type: "anomaly", isPublic: true }]
   },
   {
@@ -320,7 +321,7 @@ const systems: CampaignSnapshot["systems"] = [
     blockedUntil: inMinutes(30),
     isCapital: false,
     publicDescription: "Santuario velado donde la Sombra del Emperador combate una revuelta genestelar.",
-    production: dailyProduction({ supply: 2, ancestralStone: 2, uridium: 2 }),
+    production: dailyProduction({ supply: 2, honor: 2, uridium: 2 }),
     specialObjects: [{ id: "obj-saint-veil", name: "Reliquia velada", type: "relic", isPublic: true }]
   },
   {
@@ -347,7 +348,7 @@ const systems: CampaignSnapshot["systems"] = [
     status: "neutral",
     isCapital: false,
     publicDescription: "Ruinas orbitales con ecos de tecnologia antigua.",
-    production: dailyProduction({ minerals: 2, ancestralStone: 1, uridium: 2 })
+    production: dailyProduction({ minerals: 2, honor: 1, uridium: 2 })
   },
   {
     id: "pale-choir",
@@ -360,7 +361,7 @@ const systems: CampaignSnapshot["systems"] = [
     status: "neutral",
     isCapital: false,
     publicDescription: "Un coro de senales imposibles atraviesa el vacio.",
-    production: dailyProduction({ ancestralStone: 2, uridium: 2 })
+    production: dailyProduction({ honor: 2, uridium: 2 })
   },
   {
     id: "ashen-road",
@@ -386,7 +387,7 @@ const systems: CampaignSnapshot["systems"] = [
     status: "neutral",
     isCapital: false,
     publicDescription: "Tumbas y coordenadas contradictorias.",
-    production: dailyProduction({ minerals: 2, ancestralStone: 2 })
+    production: dailyProduction({ minerals: 2, honor: 2 })
   },
   {
     id: "nexus-aster",
@@ -399,7 +400,7 @@ const systems: CampaignSnapshot["systems"] = [
     status: "neutral",
     isCapital: false,
     publicDescription: "Interseccion de corrientes de salto que todas las facciones desean controlar.",
-    production: dailyProduction({ supply: 2, minerals: 2, ancestralStone: 1, uridium: 3 }),
+    production: dailyProduction({ supply: 2, minerals: 2, honor: 1, uridium: 3 }),
     specialObjects: [{ id: "obj-nexus-aster", name: "Baliza del Nexus", type: "technology", isPublic: true }]
   },
   {
@@ -491,8 +492,9 @@ const resources: CampaignSnapshot["resources"] = [
     factionId: "guardia-imperial",
     supply: 180,
     minerals: 130,
-    ancestralStone: 12,
+    honor: 12,
     gold: 34,
+    industrialMaterial: 90,
     uridium: 24,
     technology: 16,
     updatedAt: new Date(now).toISOString()
@@ -501,8 +503,9 @@ const resources: CampaignSnapshot["resources"] = [
     factionId: "orcos",
     supply: 190,
     minerals: 135,
-    ancestralStone: 7,
+    honor: 7,
     gold: 26,
+    industrialMaterial: 90,
     uridium: 20,
     technology: 16,
     updatedAt: new Date(now).toISOString()
@@ -511,8 +514,9 @@ const resources: CampaignSnapshot["resources"] = [
     factionId: "necrones",
     supply: 115,
     minerals: 155,
-    ancestralStone: 18,
+    honor: 18,
     gold: 32,
+    industrialMaterial: 90,
     uridium: 22,
     technology: 16,
     updatedAt: new Date(now).toISOString()
@@ -521,8 +525,9 @@ const resources: CampaignSnapshot["resources"] = [
     factionId: "culto-genestelar",
     supply: 185,
     minerals: 115,
-    ancestralStone: 13,
+    honor: 13,
     gold: 30,
+    industrialMaterial: 90,
     uridium: 22,
     technology: 16,
     updatedAt: new Date(now).toISOString()
@@ -531,8 +536,9 @@ const resources: CampaignSnapshot["resources"] = [
     factionId: "sombra-emperador",
     supply: 135,
     minerals: 130,
-    ancestralStone: 18,
+    honor: 18,
     gold: 38,
+    industrialMaterial: 90,
     uridium: 26,
     technology: 16,
     updatedAt: new Date(now).toISOString()
@@ -541,8 +547,9 @@ const resources: CampaignSnapshot["resources"] = [
     factionId: "guardia-muerte",
     supply: 155,
     minerals: 135,
-    ancestralStone: 15,
+    honor: 15,
     gold: 28,
+    industrialMaterial: 90,
     uridium: 20,
     technology: 16,
     updatedAt: new Date(now).toISOString()
@@ -1041,7 +1048,7 @@ const units: CampaignSnapshot["units"] = unitGroups.flatMap((group) =>
     return {
       id: unit.id,
       factionId: group.factionId,
-      unitTemplateId: null,
+      unitTemplateId: getMockUnitTemplateId(unit.name),
       name: unit.name,
       currentSystemId: group.currentSystemId,
       status: group.status,
@@ -1164,8 +1171,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 80,
     supplyCost: 12,
     mineralsCost: 2,
-    ancestralStoneCost: 0,
+    honorCost: 0,
     goldCost: 0,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 120,
@@ -1180,8 +1188,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 105,
     supplyCost: 6,
     mineralsCost: 5,
-    ancestralStoneCost: 1,
+    honorCost: 1,
     goldCost: 1,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 240,
@@ -1196,8 +1205,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 135,
     supplyCost: 2,
     mineralsCost: 10,
-    ancestralStoneCost: 1,
+    honorCost: 1,
     goldCost: 0,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 360,
@@ -1212,8 +1222,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 80,
     supplyCost: 8,
     mineralsCost: 4,
-    ancestralStoneCost: 0,
+    honorCost: 0,
     goldCost: 0,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 120,
@@ -1228,8 +1239,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 105,
     supplyCost: 6,
     mineralsCost: 5,
-    ancestralStoneCost: 1,
+    honorCost: 1,
     goldCost: 0,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 240,
@@ -1244,8 +1256,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 140,
     supplyCost: 4,
     mineralsCost: 7,
-    ancestralStoneCost: 2,
+    honorCost: 2,
     goldCost: 1,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 360,
@@ -1260,8 +1273,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 80,
     supplyCost: 12,
     mineralsCost: 2,
-    ancestralStoneCost: 0,
+    honorCost: 0,
     goldCost: 0,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 120,
@@ -1276,8 +1290,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 105,
     supplyCost: 8,
     mineralsCost: 4,
-    ancestralStoneCost: 1,
+    honorCost: 1,
     goldCost: 1,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 240,
@@ -1292,8 +1307,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 145,
     supplyCost: 2,
     mineralsCost: 11,
-    ancestralStoneCost: 1,
+    honorCost: 1,
     goldCost: 0,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 420,
@@ -1308,8 +1324,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 80,
     supplyCost: 12,
     mineralsCost: 2,
-    ancestralStoneCost: 0,
+    honorCost: 0,
     goldCost: 0,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 120,
@@ -1324,8 +1341,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 95,
     supplyCost: 8,
     mineralsCost: 3,
-    ancestralStoneCost: 1,
+    honorCost: 1,
     goldCost: 0,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 240,
@@ -1340,8 +1358,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 120,
     supplyCost: 3,
     mineralsCost: 8,
-    ancestralStoneCost: 1,
+    honorCost: 1,
     goldCost: 0,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 360,
@@ -1356,8 +1375,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 105,
     supplyCost: 8,
     mineralsCost: 4,
-    ancestralStoneCost: 1,
+    honorCost: 1,
     goldCost: 0,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 180,
@@ -1372,8 +1392,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 160,
     supplyCost: 5,
     mineralsCost: 6,
-    ancestralStoneCost: 3,
+    honorCost: 3,
     goldCost: 2,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 360,
@@ -1388,8 +1409,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 185,
     supplyCost: 2,
     mineralsCost: 10,
-    ancestralStoneCost: 3,
+    honorCost: 3,
     goldCost: 0,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 480,
@@ -1404,8 +1426,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 70,
     supplyCost: 12,
     mineralsCost: 1,
-    ancestralStoneCost: 0,
+    honorCost: 0,
     goldCost: 0,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 120,
@@ -1420,8 +1443,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 115,
     supplyCost: 8,
     mineralsCost: 5,
-    ancestralStoneCost: 1,
+    honorCost: 1,
     goldCost: 1,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 240,
@@ -1436,8 +1460,9 @@ const unitTemplateBase: MockUnitTemplate[] = [
     points: 145,
     supplyCost: 3,
     mineralsCost: 8,
-    ancestralStoneCost: 2,
+    honorCost: 2,
     goldCost: 0,
+    industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 420,
@@ -1449,6 +1474,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
 const unitTemplates: CampaignSnapshot["unitTemplates"] = unitTemplateBase.map((template) => ({
   ...template,
   defaultQuantity: getMockDefaultQuantity(template.name),
+  recruitmentBuildingType: getRecruitmentBuildingType(template.category),
   requiredTechnologyNodeId: getRequiredTechnologyForUnit(template.name)
 }));
 
@@ -1522,6 +1548,7 @@ const technologyNodes: CampaignSnapshot["technologyNodes"] = [
   { id: "especializacion-elite", slug: "especializacion-elite", treeKey: "common-v1", name: "Especializacion de elite", description: "Equipo y entrenamiento para unidades de alto valor.", branch: "Infanteria y elite", tier: 2, positionX: 17, positionY: 76, costTechnology: 8, researchTimeSeconds: 240, iconKey: "elite", effectSummary: "-10% Mineral al reclutar Elite.", isStarter: false },
   { id: "honores-batalla", slug: "honores-batalla", treeKey: "common-v1", name: "Honores de batalla", description: "Registros y juramentos para mejoras narrativas futuras.", branch: "Infanteria y elite", tier: 3, positionX: 31, positionY: 88, costTechnology: 12, researchTimeSeconds: 360, iconKey: "honor", effectSummary: "Reserva para mejoras narrativas.", isStarter: false },
   { id: "talleres-campana", slug: "talleres-campana", treeKey: "common-v1", name: "Talleres de campana", description: "Mantenimiento para maquinas, vehiculos y andadores.", branch: "Blindados y maquinas", tier: 1, positionX: 61, positionY: 60, costTechnology: 4, researchTimeSeconds: 120, iconKey: "forge", effectSummary: "Desbloquea Taller de campana.", isStarter: false },
+  { id: "dominio-bestial", slug: "dominio-bestial", treeKey: "common-v1", name: "Dominio bestial", description: "Instalaciones, jaulas y ritos de control para criaturas de guerra.", branch: "Blindados y maquinas", tier: 2, positionX: 66, positionY: 74, costTechnology: 8, researchTimeSeconds: 240, iconKey: "beast", effectSummary: "Desbloquea Nido de Bestias.", isStarter: false },
   { id: "motores-guerra", slug: "motores-guerra", treeKey: "common-v1", name: "Motores de guerra", description: "Habilita blindados, dreadnoughts y maquinas de guerra.", branch: "Blindados y maquinas", tier: 2, positionX: 75, positionY: 70, costTechnology: 8, researchTimeSeconds: 240, iconKey: "vehicle", effectSummary: "Desbloquea vehiculos actuales.", isStarter: false },
   { id: "blindaje-reforzado", slug: "blindaje-reforzado", treeKey: "common-v1", name: "Blindaje reforzado", description: "Estandariza placas, chasis y blindajes de campana.", branch: "Blindados y maquinas", tier: 3, positionX: 84, positionY: 54, costTechnology: 12, researchTimeSeconds: 360, iconKey: "vehicle", effectSummary: "-10% Mineral al reclutar Vehiculos.", isStarter: false },
   { id: "arsenal-pesado", slug: "arsenal-pesado", treeKey: "common-v1", name: "Arsenal pesado", description: "Infraestructura reservada para superpesados futuros.", branch: "Blindados y maquinas", tier: 4, positionX: 91, positionY: 78, costTechnology: 18, researchTimeSeconds: 600, iconKey: "arsenal", effectSummary: "Reserva para superpesados futuros.", isStarter: false },
@@ -1543,6 +1570,7 @@ const prerequisitePairs = [
   ["especializacion-elite", "veteranos-guerra"],
   ["honores-batalla", "especializacion-elite"],
   ["talleres-campana", "doctrina-campana"],
+  ["dominio-bestial", "talleres-campana"],
   ["motores-guerra", "talleres-campana"],
   ["blindaje-reforzado", "motores-guerra"],
   ["arsenal-pesado", "blindaje-reforzado"],
@@ -1576,15 +1604,55 @@ const technologyEffects: CampaignSnapshot["technologyEffects"] = [
   { id: "effect-cadenas-mando", technologyNodeId: "cadenas-mando", effectType: "recruitment_time_discount", payload: { category: "Infanteria", percent: 10 } },
   { id: "effect-especializacion-elite", technologyNodeId: "especializacion-elite", effectType: "recruitment_cost_discount", payload: { category: "Elite", resource: "minerals", percent: 10 } },
   { id: "effect-blindaje-reforzado", technologyNodeId: "blindaje-reforzado", effectType: "recruitment_cost_discount", payload: { category: "Vehiculo", resource: "minerals", percent: 10 } },
-  { id: "effect-matrices-eficiencia", technologyNodeId: "matrices-eficiencia", effectType: "recruitment_cost_discount", payload: { category: "all", resource: "all", percent: 5 } }
+  { id: "effect-matrices-eficiencia", technologyNodeId: "matrices-eficiencia", effectType: "recruitment_cost_discount", payload: { category: "all", resource: "all", percent: 5 } },
+  { id: "effect-talleres-campana-building", technologyNodeId: "talleres-campana", effectType: "unlock_building", payload: { buildingSlug: "taller-guerra" } },
+  { id: "effect-estado-mayor-building", technologyNodeId: "estado-mayor-cruzada", effectType: "unlock_building", payload: { buildingSlug: "cuartel-mando" } },
+  { id: "effect-auspex-building", technologyNodeId: "auspex-reliquias", effectType: "unlock_building", payload: { buildingSlugs: ["nexo-inteligencia", "antenas-reconocimiento"] } },
+  { id: "effect-puerto-uridium-building", technologyNodeId: "puerto-uridium", effectType: "unlock_building", payload: { buildingSlug: "refineria-iridium" } },
+  { id: "effect-manufactorum-building", technologyNodeId: "manufactorum-local", effectType: "unlock_building", payload: { buildingSlug: "mina-oro" } },
+  { id: "effect-dominio-bestial-building", technologyNodeId: "dominio-bestial", effectType: "unlock_building", payload: { buildingSlug: "nido-bestias" } }
 ];
 
 const buildingTemplates: CampaignSnapshot["buildingTemplates"] = [
-  { id: "bastion-mando", name: "Bastion de mando", category: "Mando", description: "Centro de coordinacion militar para futuras acciones administrativas.", requiredTechnologyNodeId: "estado-mayor-cruzada", isAvailable: true },
-  { id: "taller-campana", name: "Taller de campana", category: "Militar", description: "Instalacion de mantenimiento para vehiculos y maquinas.", requiredTechnologyNodeId: "talleres-campana", isAvailable: true },
-  { id: "nodo-logistico", name: "Nodo logistico", category: "Infraestructura", description: "Red de almacenaje y transferencia orbital.", requiredTechnologyNodeId: "nodo-logistico", isAvailable: true },
-  { id: "manufactorum", name: "Manufactorum", category: "Industrial", description: "Complejo industrial futuro para produccion y construccion.", requiredTechnologyNodeId: "manufactorum-local", isAvailable: true }
+  makeBuildingTemplate({ id: "barracon-infanteria", name: "Barracon de Infanteria", category: "Reclutamiento", description: "Centro de instruccion para tropas de linea y cuadros veteranos.", buildingKind: "recruitment", supplyCost: 12, mineralsCost: 8, industrialMaterialCost: 4, constructionTimeSeconds: 240, allowedUnitCategories: ["Infanteria", "Elite"], iconKey: "infantry_barracks" }),
+  makeBuildingTemplate({ id: "cuartel-mando", name: "Cuartel de Mando", category: "Reclutamiento", description: "Instalacion de oficiales, heroes y personajes de mando.", buildingKind: "recruitment", supplyCost: 10, mineralsCost: 10, honorCost: 1, industrialMaterialCost: 6, constructionTimeSeconds: 300, allowedUnitCategories: ["Personaje"], requiredTechnologyNodeId: "estado-mayor-cruzada", iconKey: "command_quarters" }),
+  makeBuildingTemplate({ id: "taller-guerra", name: "Taller de Guerra", category: "Reclutamiento", description: "Bahias de reparacion y ensamblaje de vehiculos.", buildingKind: "recruitment", supplyCost: 6, mineralsCost: 16, industrialMaterialCost: 8, constructionTimeSeconds: 300, allowedUnitCategories: ["Vehiculo"], requiredTechnologyNodeId: "talleres-campana", iconKey: "war_workshop" }),
+  makeBuildingTemplate({ id: "nido-bestias", name: "Nido de Bestias", category: "Reclutamiento", description: "Jaulas y rituales de control para monstruos de guerra.", buildingKind: "recruitment", supplyCost: 14, mineralsCost: 8, honorCost: 1, industrialMaterialCost: 6, constructionTimeSeconds: 300, allowedUnitCategories: ["Monstruo"], requiredTechnologyNodeId: "dominio-bestial", iconKey: "beast_lair" }),
+  makeBuildingTemplate({ id: "camara-comercio", name: "Camara de Comercio", category: "Comercio", description: "Mercado orbital y punto de contacto con rutas mercantes.", buildingKind: "commerce", supplyCost: 8, mineralsCost: 8, goldCost: 1, industrialMaterialCost: 4, constructionTimeSeconds: 240, iconKey: "commerce" }),
+  makeBuildingTemplate({ id: "nexo-inteligencia", name: "Nexo de Inteligencia", category: "Inteligencia", description: "Centro de analisis para operaciones de espionaje futuras.", buildingKind: "intelligence", supplyCost: 6, mineralsCost: 12, honorCost: 1, industrialMaterialCost: 6, constructionTimeSeconds: 300, requiredTechnologyNodeId: "auspex-reliquias", iconKey: "intelligence" }),
+  makeBuildingTemplate({ id: "antenas-reconocimiento", name: "Antenas de Reconocimiento", category: "Inteligencia", description: "Matrices de escucha y auspex de largo alcance.", buildingKind: "intelligence", supplyCost: 4, mineralsCost: 8, industrialMaterialCost: 5, uridiumCost: 2, constructionTimeSeconds: 240, requiredTechnologyNodeId: "auspex-reliquias", iconKey: "recon" }),
+  makeBuildingTemplate({ id: "granja-biologica", name: "Granja Biologica", category: "Produccion", description: "Complejos de biomasa y cultivos adaptados al frente.", buildingKind: "production", supplyCost: 4, mineralsCost: 4, industrialMaterialCost: 3, constructionTimeSeconds: 180, producedResourceKey: "supply", producedAmount: 10, iconKey: "biofarm" }),
+  makeBuildingTemplate({ id: "complejo-minero", name: "Complejo Minero", category: "Produccion", description: "Pozos, excavadoras y refinerias de mineral bruto.", buildingKind: "production", supplyCost: 4, mineralsCost: 6, industrialMaterialCost: 4, constructionTimeSeconds: 180, producedResourceKey: "minerals", producedAmount: 6, iconKey: "mine" }),
+  makeBuildingTemplate({ id: "refineria-iridium", name: "Refineria de Iridium", category: "Produccion", description: "Planta especializada para estabilizar cristales de salto.", buildingKind: "production", supplyCost: 4, mineralsCost: 8, industrialMaterialCost: 5, constructionTimeSeconds: 240, producedResourceKey: "uridium", producedAmount: 4, requiredTechnologyNodeId: "puerto-uridium", iconKey: "iridium_refinery" }),
+  makeBuildingTemplate({ id: "mina-oro", name: "Mina de Oro", category: "Produccion", description: "Extraccion de metales preciosos para rutas comerciales.", buildingKind: "production", supplyCost: 4, mineralsCost: 8, industrialMaterialCost: 5, constructionTimeSeconds: 240, producedResourceKey: "gold", producedAmount: 3, requiredTechnologyNodeId: "manufactorum-local", iconKey: "gold_mine" }),
+  makeBuildingTemplate({ id: "planta-fundicion", name: "Planta de Fundicion", category: "Produccion", description: "Produce Material Industrial para nuevas construcciones.", buildingKind: "production", supplyCost: 4, mineralsCost: 10, industrialMaterialCost: 3, constructionTimeSeconds: 240, producedResourceKey: "industrialMaterial", producedAmount: 5, iconKey: "foundry" }),
+  makeBuildingTemplate({ id: "senado", name: "Senado", category: "Produccion", description: "Institucion politica que convierte influencia local en Honor.", buildingKind: "production", supplyCost: 8, mineralsCost: 8, goldCost: 1, industrialMaterialCost: 5, constructionTimeSeconds: 300, producedResourceKey: "honor", producedAmount: 2, iconKey: "senate" })
 ];
+
+type ProductionResourceKey = Exclude<CampaignSnapshot["systemResourceCapabilities"][number]["resourceKey"], "technology">;
+
+const productionBuildingSlugByResource: Record<ProductionResourceKey, string> = {
+  supply: "granja-biologica",
+  minerals: "complejo-minero",
+  honor: "senado",
+  gold: "mina-oro",
+  industrialMaterial: "planta-fundicion",
+  uridium: "refineria-iridium"
+};
+
+const productionResourceKeys = Object.keys(productionBuildingSlugByResource) as ProductionResourceKey[];
+
+const systemResourceCapabilities: CampaignSnapshot["systemResourceCapabilities"] = systems.flatMap(getMockResourceCapabilities);
+
+const systemBuildings: CampaignSnapshot["systemBuildings"] = systems.flatMap(getMockStartingBuildings);
+
+const unitRecoveryQueue: CampaignSnapshot["unitRecoveryQueue"] = [];
+
+const systemsWithBuildingProduction: CampaignSnapshot["systems"] = systems.map((system) => ({
+  ...system,
+  buildingSlots: system.isCapital ? 6 : 3,
+  production: getMockBuildingProduction(system.id)
+}));
 
 const tradeOffers: CampaignSnapshot["tradeOffers"] = [
   {
@@ -1621,7 +1689,7 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
   resourceTickIntervalHours: 24,
   nextResourceTickAt: inHours(24),
   factions,
-  systems,
+  systems: systemsWithBuildingProduction,
   edges,
   resources,
   units,
@@ -1633,11 +1701,128 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
   factionTechnologies,
   technologyEffects,
   buildingTemplates,
+  systemBuildings,
+  systemResourceCapabilities,
+  unitRecoveryQueue,
   tradeOffers,
   conflicts,
   battleReports: [],
   missions
 };
+
+function getMockResourceCapabilities(system: CampaignSnapshot["systems"][number]): CampaignSnapshot["systemResourceCapabilities"] {
+  if (system.isCapital) {
+    return productionResourceKeys.map((resourceKey) => ({
+      systemId: system.id,
+      resourceKey,
+      productionAmount: getMockProductionAmount(resourceKey)
+    }));
+  }
+
+  return productionResourceKeys
+    .filter((resourceKey) => {
+      if (resourceKey === "industrialMaterial") {
+        return system.status === "controlled" && system.production.minerals >= 5;
+      }
+
+      return system.production[resourceKey] > 0;
+    })
+    .map((resourceKey) => ({
+      systemId: system.id,
+      resourceKey,
+      productionAmount: getMockProductionAmount(resourceKey)
+    }));
+}
+
+function getMockStartingBuildings(system: CampaignSnapshot["systems"][number]): CampaignSnapshot["systemBuildings"] {
+  if (system.status !== "controlled" || !system.controllerFactionId) {
+    return [];
+  }
+
+  if (system.isCapital) {
+    return ["barracon-infanteria", "camara-comercio", "planta-fundicion", "senado"].map((slug) =>
+      makeSystemBuilding(system.id, slug)
+    );
+  }
+
+  const capability = getPreferredMockCapability(system.id);
+  const slug = capability ? productionBuildingSlugByResource[capability.resourceKey as ProductionResourceKey] : null;
+
+  return slug ? [makeSystemBuilding(system.id, slug)] : [];
+}
+
+function getMockBuildingProduction(systemId: string): ResourceBundle {
+  const production = { ...emptyResources };
+
+  for (const building of systemBuildings) {
+    if (building.systemId !== systemId || building.status !== "active") {
+      continue;
+    }
+
+    const template = buildingTemplates.find((item) => item.id === building.buildingTemplateId);
+
+    if (!template?.producedResourceKey) {
+      continue;
+    }
+
+    production[template.producedResourceKey] += template.producedAmount;
+  }
+
+  return production;
+}
+
+function getPreferredMockCapability(systemId: string) {
+  const priority: ProductionResourceKey[] = ["supply", "minerals", "industrialMaterial", "uridium", "gold", "honor"];
+  const capabilities = systemResourceCapabilities.filter((capability) => capability.systemId === systemId);
+
+  return priority
+    .map((resourceKey) => capabilities.find((capability) => capability.resourceKey === resourceKey))
+    .find(Boolean);
+}
+
+function getMockProductionAmount(resourceKey: ProductionResourceKey) {
+  const template = buildingTemplates.find((item) => item.slug === productionBuildingSlugByResource[resourceKey]);
+  return template?.producedAmount ?? 0;
+}
+
+function makeSystemBuilding(systemId: string, buildingTemplateSlug: string): CampaignSnapshot["systemBuildings"][number] {
+  return {
+    id: `building-${systemId}-${buildingTemplateSlug}`,
+    systemId,
+    buildingTemplateId: buildingTemplateSlug,
+    status: "active",
+    startedAt: inMinutes(-30),
+    finishesAt: inMinutes(-25),
+    constructedAt: inMinutes(-25)
+  };
+}
+
+function makeBuildingTemplate(
+  template: Omit<
+    Partial<CampaignSnapshot["buildingTemplates"][number]>,
+    "id" | "name" | "category" | "description" | "buildingKind"
+  > &
+    Pick<CampaignSnapshot["buildingTemplates"][number], "id" | "name" | "category" | "description" | "buildingKind">
+): CampaignSnapshot["buildingTemplates"][number] {
+  return {
+    slug: template.id,
+    supplyCost: 0,
+    mineralsCost: 0,
+    honorCost: 0,
+    goldCost: 0,
+    industrialMaterialCost: 0,
+    uridiumCost: 0,
+    technologyCost: 0,
+    constructionTimeSeconds: 0,
+    producedResourceKey: null,
+    producedAmount: 0,
+    allowedUnitCategories: [],
+    iconKey: null,
+    requiredTechnologyNodeId: null,
+    isAvailable: true,
+    ...template
+  };
+}
 
 function getMockUnitCategory(name: string): CampaignSnapshot["units"][number]["category"] {
   if (["Deff Dread", "Leman Russ Battle Tank", "Achilles Ridgerunner", "Redemptor Dreadnought", "Foetid Bloat-drone"].includes(name)) {
@@ -1649,6 +1834,47 @@ function getMockUnitCategory(name: string): CampaignSnapshot["units"][number]["c
   }
 
   return "Infanteria";
+}
+
+function getRecruitmentBuildingType(category: CampaignSnapshot["unitTemplates"][number]["category"]) {
+  if (category === "Vehiculo" || category === "Vehículo") {
+    return "taller-guerra";
+  }
+
+  if (category === "Personaje") {
+    return "cuartel-mando";
+  }
+
+  if (category === "Monstruo") {
+    return "nido-bestias";
+  }
+
+  return "barracon-infanteria";
+}
+
+function getMockUnitTemplateId(name: string) {
+  const templateIds: Record<string, string> = {
+    Boyz: "unit-orcos-boyz",
+    Meganobz: "unit-orcos-meganobz",
+    "Deff Dread": "unit-orcos-deff-dread",
+    "Necron Warriors": "unit-necrones-warriors",
+    Immortals: "unit-necrones-immortals",
+    "Skorpekh Destroyers": "unit-necrones-skorpekh",
+    "Cadian Shock Troops": "unit-guardia-cadian",
+    Kasrkin: "unit-guardia-kasrkin",
+    "Leman Russ Battle Tank": "unit-guardia-leman-russ",
+    "Neophyte Hybrids": "unit-culto-neophytes",
+    "Acolyte Hybrids": "unit-culto-acolytes",
+    "Achilles Ridgerunner": "unit-culto-ridgerunner",
+    "Intercessor Squad": "unit-sombra-intercessors",
+    "Terminator Squad": "unit-sombra-terminators",
+    "Redemptor Dreadnought": "unit-sombra-redemptor",
+    Poxwalkers: "unit-muerte-poxwalkers",
+    "Plague Marines": "unit-muerte-plague-marines",
+    "Foetid Bloat-drone": "unit-muerte-bloat-drone"
+  };
+
+  return templateIds[name] ?? null;
 }
 
 function getMockDefaultQuantity(name: string) {

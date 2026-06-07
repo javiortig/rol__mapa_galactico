@@ -1,8 +1,8 @@
-import type { CampaignSnapshot, ResourceKey, TechnologyNode, UnitCategory, UnitTemplate } from "@/domain/campaign";
+import type { BuildingTemplate, CampaignSnapshot, ResourceKey, TechnologyNode, UnitCategory, UnitTemplate } from "@/domain/campaign";
 
 export type DerivedTechnologyStatus = "locked" | "available" | "researching" | "unlocked";
 
-const resources: ResourceKey[] = ["supply", "minerals", "ancestralStone", "gold", "uridium", "technology"];
+const resources: ResourceKey[] = ["supply", "minerals", "honor", "gold", "industrialMaterial", "uridium", "technology"];
 
 export function getFactionTechnology(snapshot: CampaignSnapshot, technologyNodeId: string) {
   return snapshot.factionTechnologies.find(
@@ -29,6 +29,10 @@ export function isTechnologyUnlocked(snapshot: CampaignSnapshot, technologyNodeI
 }
 
 export function isUnitTemplateUnlocked(snapshot: CampaignSnapshot, template: UnitTemplate) {
+  return isTechnologyUnlocked(snapshot, template.requiredTechnologyNodeId);
+}
+
+export function isBuildingTemplateUnlocked(snapshot: CampaignSnapshot, template: BuildingTemplate) {
   return isTechnologyUnlocked(snapshot, template.requiredTechnologyNodeId);
 }
 
@@ -82,13 +86,32 @@ export function getBaseRecruitmentCost(template: UnitTemplate, resource: Resourc
   const costs: Record<ResourceKey, number> = {
     supply: template.supplyCost,
     minerals: template.mineralsCost,
-    ancestralStone: template.ancestralStoneCost,
+    honor: template.honorCost,
     gold: template.goldCost,
+    industrialMaterial: template.industrialMaterialCost,
     uridium: template.uridiumCost,
     technology: template.technologyCost
   };
 
   return costs[resource];
+}
+
+export function getBaseBuildingCost(template: BuildingTemplate, resource: ResourceKey) {
+  const costs: Record<ResourceKey, number> = {
+    supply: template.supplyCost,
+    minerals: template.mineralsCost,
+    honor: template.honorCost,
+    gold: template.goldCost,
+    industrialMaterial: template.industrialMaterialCost,
+    uridium: template.uridiumCost,
+    technology: template.technologyCost
+  };
+
+  return costs[resource];
+}
+
+export function getVisibleBuildingCostResources(template: BuildingTemplate) {
+  return resources.filter((resource) => getBaseBuildingCost(template, resource) > 0);
 }
 
 export function getVisibleRecruitmentCostResources(snapshot: CampaignSnapshot, template: UnitTemplate) {
