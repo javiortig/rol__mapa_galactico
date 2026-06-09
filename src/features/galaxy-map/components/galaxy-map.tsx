@@ -656,6 +656,8 @@ function drawSystems({
     }
 
     if (system.blockedUntil) {
+      const blockExpired = new Date(system.blockedUntil).getTime() <= Date.now();
+      const shieldColor = blockExpired ? 0x94a3b8 : 0xfbbf24;
       const shield = new PIXI.Graphics();
       shield.moveTo(radius * 2.2, -radius * 2.75);
       shield.lineTo(radius * 3.1, -radius * 2.36);
@@ -664,8 +666,8 @@ function drawSystems({
       shield.lineTo(radius * 1.54, -radius * 1.32);
       shield.lineTo(radius * 1.3, -radius * 2.36);
       shield.closePath();
-      shield.fill({ color: 0xfbbf24, alpha: 0.18 });
-      shield.stroke({ color: 0xfbbf24, alpha: 0.9, width: 1.35 });
+      shield.fill({ color: shieldColor, alpha: blockExpired ? 0.1 : 0.18 });
+      shield.stroke({ color: shieldColor, alpha: blockExpired ? 0.55 : 0.9, width: 1.35 });
       node.addChild(shield);
     }
 

@@ -13,6 +13,7 @@ const emptyResources: ResourceBundle = {
 const now = Date.now();
 const inHours = (hours: number) => new Date(now + hours * 60 * 60 * 1000).toISOString();
 const inMinutes = (minutes: number) => new Date(now + minutes * 60 * 1000).toISOString();
+const inDays = (days: number) => new Date(now + days * 24 * 60 * 60 * 1000).toISOString();
 const dailyProduction = (resources: Partial<ResourceBundle>): ResourceBundle => ({
   ...emptyResources,
   ...resources
@@ -289,7 +290,7 @@ const systems: CampaignSnapshot["systems"] = [
     starClass: "blue",
     type: "Nebulosa navegable",
     status: "war",
-    blockedUntil: inMinutes(30),
+    blockedUntil: inDays(14),
     isCapital: false,
     publicDescription: "Corredor azul con pozos de gravedad inestables. Orcos e Imperiales han chocado aqui.",
     production: dailyProduction({ uridium: 5 })
@@ -303,7 +304,7 @@ const systems: CampaignSnapshot["systems"] = [
     starClass: "violet",
     type: "Osario orbital",
     status: "war",
-    blockedUntil: inMinutes(30),
+    blockedUntil: inDays(14),
     isCapital: false,
     publicDescription: "Campos funerarios en orbita baja, disputados por plaga y tecnologia necrona.",
     production: dailyProduction({ minerals: 2, honor: 2, uridium: 2 }),
@@ -318,7 +319,7 @@ const systems: CampaignSnapshot["systems"] = [
     starClass: "yellow",
     type: "Velo sagrado",
     status: "war",
-    blockedUntil: inMinutes(30),
+    blockedUntil: inDays(14),
     isCapital: false,
     publicDescription: "Santuario velado donde la Sombra del Emperador combate una revuelta genestelar.",
     production: dailyProduction({ supply: 2, honor: 2, uridium: 2 }),
@@ -1485,7 +1486,7 @@ const conflicts: CampaignSnapshot["conflicts"] = [
     attackerFactionId: "orcos",
     defenderFactionId: "guardia-imperial",
     status: "pending",
-    blockedUntil: inMinutes(30),
+    blockedUntil: inDays(14),
     notes: "Orcos e Imperiales han colisionado en la ruta central de la Zanja Azul. Pendiente de batalla fisica."
   },
   {
@@ -1494,7 +1495,7 @@ const conflicts: CampaignSnapshot["conflicts"] = [
     attackerFactionId: "guardia-muerte",
     defenderFactionId: "necrones",
     status: "pending",
-    blockedUntil: inMinutes(30),
+    blockedUntil: inDays(14),
     notes: "La Guardia de la Muerte intenta profanar criptas que los Necrones estan reactivando. Pendiente de batalla fisica."
   },
   {
@@ -1503,7 +1504,7 @@ const conflicts: CampaignSnapshot["conflicts"] = [
     attackerFactionId: "sombra-emperador",
     defenderFactionId: "culto-genestelar",
     status: "pending",
-    blockedUntil: inMinutes(30),
+    blockedUntil: inDays(14),
     notes: "La Sombra del Emperador ha descubierto una insurreccion genestelar en el santuario. Pendiente de batalla fisica."
   }
 ];

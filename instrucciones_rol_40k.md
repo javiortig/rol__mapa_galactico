@@ -752,12 +752,14 @@ Visualmente:
 - Borde ámbar.
 - Tooltip con tiempo restante.
 - Panel del sistema muestra "Bloqueado durante X días/horas".
+- Si `blocked_until` ya ha vencido, la UI debe mostrar `Expirado` y el marcador visual pasa a un estado gris/apagado.
 
 ### 6.3 Reglas del bloqueo
 
 Por ahora:
 
 - Un sistema con batalla pendiente queda bloqueado.
+- La duración estándar del bloqueo inicial de batalla es de 14 días (`conflict_block_duration_minutes = 20160`).
 - Durante el bloqueo no puede ser atacado.
 - Puede seguir mostrando su controlador públicamente.
 - El bloqueo puede mantenerse hasta que los jugadores participantes o el admin reporten el resultado.
@@ -1937,7 +1939,7 @@ campaign_settings
 - id text primary key default 'default'
 - resource_tick_interval_hours integer default 24
 - movement_edge_duration_seconds integer default 120
-- conflict_block_duration_minutes integer default 30
+- conflict_block_duration_minutes integer default 20160 -- 14 dias
 - last_resource_tick_at timestamptz nullable
 - next_resource_tick_at timestamptz nullable
 - updated_at timestamptz
@@ -2885,6 +2887,7 @@ Construir una aplicación web privada de campaña Warhammer 40K con:
   - Componentes tecnológicos.
 - Produccion diaria por edificios activos mediante tick backend de 24h.
 - Construccion planetaria con slots, costes y cola.
+- Edificios de sistemas enemigos ocultos por niebla de guerra: el jugador ve slot ocupado, no el edificio concreto.
 - Reclutamiento temporizado desde edificios militares.
 - Curacion de miniaturas heridas desde edificios militares.
 - Comercio ligado a Camara de Comercio.

@@ -76,9 +76,9 @@ values
   (public.seed_uuid('system', 'cinder-maw'), 'cinder-maw', 'Cinder Maw', 80, 430, 1.15, 'orange', 'Capital volcanica', 'controlled', public.seed_uuid('faction', 'orcos'), null, 'Forjas geotermicas y tormentas de ceniza.', true),
   (public.seed_uuid('system', 'eclipse-forge'), 'eclipse-forge', 'Eclipse Forge', 185, 485, 0.86, 'red', 'Forja abandonada', 'controlled', public.seed_uuid('faction', 'orcos'), null, 'Estructuras de manufactura latentes convertidas en talleres orkos.', false),
   (public.seed_uuid('system', 'rustmaw-run'), 'rustmaw-run', 'Rustmaw Run', 285, 430, 0.82, 'orange', 'Corredor chatarrero', 'controlled', public.seed_uuid('faction', 'orcos'), null, 'Ruta de pecios saqueados que apunta hacia el centro.', false),
-  (public.seed_uuid('system', 'azur-trench'), 'azur-trench', 'Azur Trench', 405, 390, 0.86, 'blue', 'Nebulosa navegable', 'war', null, now() + interval '30 minutes', 'Corredor azul con pozos de gravedad inestables. Orcos e Imperiales han chocado aqui.', false),
-  (public.seed_uuid('system', 'ossuary-reach'), 'ossuary-reach', 'Ossuary Reach', 485, 625, 0.84, 'violet', 'Osario orbital', 'war', null, now() + interval '30 minutes', 'Campos funerarios en orbita baja, disputados por plaga y tecnologia necrona.', false),
-  (public.seed_uuid('system', 'saint-veil'), 'saint-veil', 'Saint Veil', 650, 395, 0.86, 'yellow', 'Velo sagrado', 'war', null, now() + interval '30 minutes', 'Santuario velado donde la Sombra del Emperador combate una revuelta genestelar.', false),
+  (public.seed_uuid('system', 'azur-trench'), 'azur-trench', 'Azur Trench', 405, 390, 0.86, 'blue', 'Nebulosa navegable', 'war', null, now() + interval '14 days', 'Corredor azul con pozos de gravedad inestables. Orcos e Imperiales han chocado aqui.', false),
+  (public.seed_uuid('system', 'ossuary-reach'), 'ossuary-reach', 'Ossuary Reach', 485, 625, 0.84, 'violet', 'Osario orbital', 'war', null, now() + interval '14 days', 'Campos funerarios en orbita baja, disputados por plaga y tecnologia necrona.', false),
+  (public.seed_uuid('system', 'saint-veil'), 'saint-veil', 'Saint Veil', 650, 395, 0.86, 'yellow', 'Velo sagrado', 'war', null, now() + interval '14 days', 'Santuario velado donde la Sombra del Emperador combate una revuelta genestelar.', false),
   (public.seed_uuid('system', 'orison'), 'orison', 'Orison', 470, 310, 0.84, 'yellow', 'Colonia agricola', 'neutral', null, null, 'Graneros presurizados y bastiones de defensa civil abandonados.', false),
   (public.seed_uuid('system', 'vesper-halo'), 'vesper-halo', 'Vesper Halo', 560, 220, 0.82, 'violet', 'Anillo orbital', 'neutral', null, null, 'Ruinas orbitales con ecos de tecnologia antigua.', false),
   (public.seed_uuid('system', 'pale-choir'), 'pale-choir', 'Pale Choir', 690, 605, 0.78, 'violet', 'Anomalia psiquica', 'neutral', null, null, 'Un coro de senales imposibles atraviesa el vacio.', false),
@@ -527,9 +527,9 @@ set
 
 insert into public.conflicts (id, slug, system_id, attacker_faction_id, defender_faction_id, status, blocked_until, notes)
 values
-  (public.seed_uuid('conflict', 'conflict-azur-trench'), 'conflict-azur-trench', public.seed_uuid('system', 'azur-trench'), public.seed_uuid('faction', 'orcos'), public.seed_uuid('faction', 'guardia-imperial'), 'pending', now() + interval '30 minutes', 'Orcos e Imperiales han colisionado en la ruta central de la Zanja Azul. Pendiente de batalla fisica.'),
-  (public.seed_uuid('conflict', 'conflict-ossuary-reach'), 'conflict-ossuary-reach', public.seed_uuid('system', 'ossuary-reach'), public.seed_uuid('faction', 'guardia-muerte'), public.seed_uuid('faction', 'necrones'), 'pending', now() + interval '30 minutes', 'La Guardia de la Muerte intenta profanar criptas que los Necrones estan reactivando. Pendiente de batalla fisica.'),
-  (public.seed_uuid('conflict', 'conflict-saint-veil'), 'conflict-saint-veil', public.seed_uuid('system', 'saint-veil'), public.seed_uuid('faction', 'sombra-emperador'), public.seed_uuid('faction', 'culto-genestelar'), 'pending', now() + interval '30 minutes', 'La Sombra del Emperador ha descubierto una insurreccion genestelar en el santuario. Pendiente de batalla fisica.')
+  (public.seed_uuid('conflict', 'conflict-azur-trench'), 'conflict-azur-trench', public.seed_uuid('system', 'azur-trench'), public.seed_uuid('faction', 'orcos'), public.seed_uuid('faction', 'guardia-imperial'), 'pending', now() + interval '14 days', 'Orcos e Imperiales han colisionado en la ruta central de la Zanja Azul. Pendiente de batalla fisica.'),
+  (public.seed_uuid('conflict', 'conflict-ossuary-reach'), 'conflict-ossuary-reach', public.seed_uuid('system', 'ossuary-reach'), public.seed_uuid('faction', 'guardia-muerte'), public.seed_uuid('faction', 'necrones'), 'pending', now() + interval '14 days', 'La Guardia de la Muerte intenta profanar criptas que los Necrones estan reactivando. Pendiente de batalla fisica.'),
+  (public.seed_uuid('conflict', 'conflict-saint-veil'), 'conflict-saint-veil', public.seed_uuid('system', 'saint-veil'), public.seed_uuid('faction', 'sombra-emperador'), public.seed_uuid('faction', 'culto-genestelar'), 'pending', now() + interval '14 days', 'La Sombra del Emperador ha descubierto una insurreccion genestelar en el santuario. Pendiente de batalla fisica.')
 on conflict (slug) do update
 set system_id = excluded.system_id, attacker_faction_id = excluded.attacker_faction_id, defender_faction_id = excluded.defender_faction_id, status = excluded.status, winner_faction_id = null, blocked_until = excluded.blocked_until, notes = excluded.notes, resolved_at = null;
 
@@ -553,7 +553,7 @@ update public.campaign_settings
 set
   resource_tick_interval_hours = 24,
   movement_edge_duration_seconds = 120,
-  conflict_block_duration_minutes = 30,
+  conflict_block_duration_minutes = 20160,
   next_resource_tick_at = now() + interval '24 hours',
   updated_at = now()
 where id = 'default';

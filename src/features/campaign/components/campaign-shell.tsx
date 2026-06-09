@@ -415,6 +415,18 @@ function formatCompactNumber(value: number) {
   return String(value);
 }
 
+function isBlockExpired(blockedUntil?: string | null) {
+  return Boolean(blockedUntil && new Date(blockedUntil).getTime() <= Date.now());
+}
+
+function formatBlockCountdown(blockedUntil?: string | null) {
+  if (!blockedUntil) {
+    return "";
+  }
+
+  return isBlockExpired(blockedUntil) ? "Expirado" : formatCountdown(blockedUntil);
+}
+
 function BuildingKindIcon({ template }: { template: BuildingTemplate }) {
   const className = "size-4";
   const icon =
@@ -434,6 +446,23 @@ function BuildingKindIcon({ template }: { template: BuildingTemplate }) {
     <span className="grid size-9 place-items-center rounded-md border border-cyan-200/15 bg-slate-950/45 text-cyan-100">
       {icon}
     </span>
+  );
+}
+
+function HiddenBuildingSlot({ building }: { building: SystemBuilding }) {
+  return (
+    <div className="rounded-md border border-slate-400/20 bg-slate-950/25 p-3 text-left">
+      <div className="mb-2 flex items-start justify-between gap-2">
+        <span className="grid size-9 place-items-center rounded-md border border-slate-400/20 bg-slate-900/45 text-slate-300">
+          <Building2 className="size-4" />
+        </span>
+        <Badge tone={building.status === "constructing" ? "amber" : "slate"}>
+          {building.status === "constructing" ? "Actividad" : "Ocupado"}
+        </Badge>
+      </div>
+      <div className="text-sm font-semibold text-slate-200">Instalacion detectada</div>
+      <div className="mt-1 text-xs text-slate-500">Detalles no revelados</div>
+    </div>
   );
 }
 
@@ -560,7 +589,9 @@ function CommandDock({
             <div className="rounded-md border border-rose-300/20 bg-rose-400/8 p-3" key={conflict.id}>
               <div className="flex items-center justify-between gap-3">
                 <span className="text-rose-50">Batalla pendiente</span>
-                <Badge tone="rose">{formatCountdown(conflict.blockedUntil)}</Badge>
+                <Badge tone={isBlockExpired(conflict.blockedUntil) ? "slate" : "rose"}>
+                  {formatBlockCountdown(conflict.blockedUntil)}
+                </Badge>
               </div>
             </div>
           ))}
@@ -651,7 +682,7 @@ function GalaxyTooltip({
         {system.blockedUntil ? (
           <div className="flex items-center justify-between gap-3 text-amber-100">
             <span>Bloqueo</span>
-            <span>{formatCountdown(system.blockedUntil)}</span>
+            <span>{formatBlockCountdown(system.blockedUntil)}</span>
           </div>
         ) : null}
       </div>
@@ -693,6 +724,7 @@ function SystemPanel({
     (item) => item.systemId === system.id && item.status === "pending"
   );
   const tone = system.status === "war" ? "rose" : system.status === "controlled" ? "cyan" : "slate";
+  const canInspectBuildings = snapshot.currentUser.role === "admin" || system.controllerFactionId === snapshot.currentUser.factionId;
   const systemBuildings = snapshot.systemBuildings.filter(
     (building) => building.systemId === system.id && building.status !== "disabled"
   );
@@ -715,10 +747,17 @@ function SystemPanel({
       conflict?.attackerFactionId === snapshot.currentUser.factionId ||
       conflict?.defenderFactionId === snapshot.currentUser.factionId);
   const mergeGroups = getMergeableUnitGroups(ownReadyUnits);
+  const visibleUnits = relatedUnits.filter(
+    (unit) =>
+      snapshot.currentUser.role === "admin" ||
+      unit.factionId === snapshot.currentUser.factionId ||
+      unit.isVisiblePublicly
+  );
+  const blockExpired = isBlockExpired(system.blockedUntil);
 
   return (
-    <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-30 max-h-[calc(var(--app-height)-5rem)] w-auto max-w-none overflow-hidden lg:static lg:z-auto lg:w-full lg:max-w-md lg:max-h-none lg:self-stretch">
-      <div className="flex h-full flex-col">
+    <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] top-[calc(4.85rem+env(safe-area-inset-top))] z-30 flex w-auto max-w-none overflow-hidden lg:static lg:z-auto lg:w-full lg:max-w-md lg:self-stretch">
+      <div className="flex min-h-0 flex-1 flex-col">
         <div className="shrink-0 border-b border-cyan-200/15 p-4 md:p-5">
           <div className="mb-3 flex items-start justify-between gap-3">
             <div>
@@ -759,6 +798,10 @@ function SystemPanel({
 
                 if (!template) {
                   return null;
+                }
+
+                if (!canInspectBuildings) {
+                  return <HiddenBuildingSlot building={building} key={building.id} />;
                 }
 
                 return (
@@ -820,8 +863,14 @@ function SystemPanel({
           {system.blockedUntil ? (
             <section>
               <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-amber-200/70">Bloqueo</h2>
-              <div className="rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-50">
-                Bloqueado durante {formatCountdown(system.blockedUntil)}
+              <div
+                className={`rounded-md border p-3 text-sm ${
+                  blockExpired
+                    ? "border-slate-400/25 bg-slate-500/10 text-slate-200"
+                    : "border-amber-300/25 bg-amber-300/10 text-amber-50"
+                }`}
+              >
+                {blockExpired ? "Bloqueo expirado" : `Bloqueado durante ${formatCountdown(system.blockedUntil)}`}
               </div>
             </section>
           ) : null}
@@ -844,8 +893,8 @@ function SystemPanel({
           <section>
             <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Tropas visibles</h2>
             <div className="space-y-2">
-              {relatedUnits.length > 0 ? (
-                relatedUnits.map((unit) => (
+              {visibleUnits.length > 0 ? (
+                visibleUnits.map((unit) => (
                   <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={unit.id}>
                     <div className="flex items-center justify-between gap-3">
                       <div className="text-sm font-medium text-slate-100">{unit.name}</div>
@@ -856,7 +905,9 @@ function SystemPanel({
                 ))
               ) : (
                 <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-sm text-slate-400">
-                  Sin tropas propias visibles.
+                  {system.controllerFactionId === snapshot.currentUser.factionId
+                    ? "Sin tropas propias visibles."
+                    : "Sin tropas reveladas por la niebla de guerra."}
                 </div>
               )}
             </div>
@@ -902,7 +953,7 @@ function SystemPanel({
         </div>
 
         <div className="grid shrink-0 grid-cols-3 gap-2 border-t border-cyan-200/15 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 md:p-5">
-          <Button>Ver misión</Button>
+          <Button className="min-w-0 text-xs sm:text-sm">Ver mision</Button>
           <Button className="min-w-0 text-xs sm:text-sm" disabled={!canBuild} onClick={() => onOpenConstruction(system)}>
             <Hammer size={16} />
             Construir
@@ -922,7 +973,14 @@ function SystemPanel({
             }}
             variant={system.status === "war" ? "danger" : "ghost"}
           >
-            {system.status === "war" ? "Reportar" : "Mover tropas"}
+            {system.status === "war" ? (
+              "Reportar"
+            ) : (
+              <>
+                <span className="sm:hidden">Mover</span>
+                <span className="hidden sm:inline">Mover tropas</span>
+              </>
+            )}
           </Button>
         </div>
       </div>
@@ -1466,9 +1524,9 @@ function BattleReportModal({
                   value={postBlockMinutes}
                 >
                   <option value={0}>Sin bloqueo</option>
-                  <option value={10}>10 minutos</option>
-                  <option value={30}>30 minutos</option>
-                  <option value={60}>60 minutos</option>
+                  <option value={1440}>1 dia</option>
+                  <option value={10080}>7 dias</option>
+                  <option value={20160}>14 dias</option>
                 </select>
               </label>
 
