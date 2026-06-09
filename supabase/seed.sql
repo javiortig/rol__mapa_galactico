@@ -443,6 +443,27 @@ update public.unit_templates
 set
   honor_cost = ancestral_stone_cost,
   industrial_material_cost = 0,
+  wounds_per_model = case slug
+    when 'unit-orcos-boyz' then 1
+    when 'unit-orcos-meganobz' then 3
+    when 'unit-orcos-deff-dread' then 8
+    when 'unit-necrones-warriors' then 1
+    when 'unit-necrones-immortals' then 1
+    when 'unit-necrones-skorpekh' then 3
+    when 'unit-guardia-cadian' then 1
+    when 'unit-guardia-kasrkin' then 1
+    when 'unit-guardia-leman-russ' then 13
+    when 'unit-culto-neophytes' then 1
+    when 'unit-culto-acolytes' then 1
+    when 'unit-culto-ridgerunner' then 8
+    when 'unit-sombra-intercessors' then 2
+    when 'unit-sombra-terminators' then 3
+    when 'unit-sombra-redemptor' then 12
+    when 'unit-muerte-poxwalkers' then 1
+    when 'unit-muerte-plague-marines' then 2
+    when 'unit-muerte-bloat-drone' then 10
+    else wounds_per_model
+  end,
   recruitment_building_type = case
     when category = 'Vehiculo' then 'taller-guerra'
     when category = 'Personaje' then 'cuartel-mando'
@@ -481,6 +502,13 @@ values
 on conflict (slug) do update
 set faction_id = excluded.faction_id, unit_template_id = excluded.unit_template_id, name = excluded.name, category = excluded.category, points = excluded.points, quantity = excluded.quantity, starting_quantity = excluded.starting_quantity, experience = excluded.experience, rank = excluded.rank, enhancement_text = excluded.enhancement_text, current_system_id = excluded.current_system_id, status = excluded.status, is_visible_publicly = excluded.is_visible_publicly, updated_at = now();
 
+update public.campaign_units
+set wounds_taken = 0;
+
+update public.campaign_units
+set quantity = 7, wounds_taken = 2
+where slug = 'imperial-kharon-cadians';
+
 insert into public.movement_orders (
   id, faction_id, from_system_id, to_system_id, uridium_cost, started_at, arrival_at, status, path_system_ids, segment_count, duration_seconds
 )
@@ -506,11 +534,11 @@ on conflict (movement_order_id, unit_id) do update
 set quantity_at_departure = excluded.quantity_at_departure;
 
 insert into public.trade_offers (
-  id, creator_faction_id, offer_type, resource_key, resource_amount, gold_amount, fee_gold, status, created_at, updated_at
+  id, creator_faction_id, offer_type, resource_key, resource_amount, gold_amount, fee_gold, status, is_reserved, created_at, updated_at
 )
 values
-  (public.seed_uuid('trade_offer', 'imperial-sell-minerals'), public.seed_uuid('faction', 'guardia-imperial'), 'sell', 'minerals', 15, 8, 3, 'open', now() - interval '8 minutes', now() - interval '8 minutes'),
-  (public.seed_uuid('trade_offer', 'orcos-buy-supply'), public.seed_uuid('faction', 'orcos'), 'buy', 'supply', 20, 5, 2, 'open', now() - interval '4 minutes', now() - interval '4 minutes')
+  (public.seed_uuid('trade_offer', 'imperial-sell-minerals'), public.seed_uuid('faction', 'guardia-imperial'), 'sell', 'minerals', 15, 8, 3, 'open', true, now() - interval '8 minutes', now() - interval '8 minutes'),
+  (public.seed_uuid('trade_offer', 'orcos-buy-supply'), public.seed_uuid('faction', 'orcos'), 'buy', 'supply', 20, 5, 2, 'open', true, now() - interval '4 minutes', now() - interval '4 minutes')
 on conflict (id) do update
 set
   creator_faction_id = excluded.creator_faction_id,
@@ -520,10 +548,19 @@ set
   gold_amount = excluded.gold_amount,
   fee_gold = excluded.fee_gold,
   status = excluded.status,
+  is_reserved = excluded.is_reserved,
   accepted_by_faction_id = null,
   accepted_at = null,
   cancelled_at = null,
   updated_at = excluded.updated_at;
+
+update public.faction_resources
+set minerals = greatest(0, minerals - 15), gold = greatest(0, gold - 3)
+where faction_id = public.seed_uuid('faction', 'guardia-imperial');
+
+update public.faction_resources
+set gold = greatest(0, gold - 7)
+where faction_id = public.seed_uuid('faction', 'orcos');
 
 insert into public.conflicts (id, slug, system_id, attacker_faction_id, defender_faction_id, status, blocked_until, notes)
 values

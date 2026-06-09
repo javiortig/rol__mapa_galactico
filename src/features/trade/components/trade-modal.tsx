@@ -236,6 +236,8 @@ function StellarTradePanel({ snapshot }: { snapshot: CampaignSnapshot }) {
     [snapshot.tradeOffers]
   );
   const feeGold = getTradeFee(goldAmount);
+  const publishCosts = getOfferPublishCosts(offerType, resourceKey, resourceAmount, goldAmount, feeGold);
+  const canCreate = rpcReady && hasEnoughTradeResources(resources, publishCosts);
   const createMutation = useMutation({
     mutationFn: () => createTradeOffer(offerType, resourceKey, resourceAmount, goldAmount),
     onSuccess: () => {
@@ -296,6 +298,11 @@ function StellarTradePanel({ snapshot }: { snapshot: CampaignSnapshot }) {
           Comision por jugador: <ResourceAmount resource="gold" value={feeGold} />
         </div>
 
+        <div className="mt-3 rounded-md border border-cyan-200/15 bg-slate-950/45 p-3 text-sm text-slate-200">
+          <div className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Reserva al publicar</div>
+          <TradeCostLine costs={publishCosts} resources={resources} />
+        </div>
+
         {!rpcReady ? (
           <div className="mt-3 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
             Supabase no esta configurado.
@@ -306,7 +313,7 @@ function StellarTradePanel({ snapshot }: { snapshot: CampaignSnapshot }) {
 
         <Button
           className="mt-4 w-full"
-          disabled={!rpcReady || createMutation.isPending || resourceAmount < 1 || goldAmount < 1}
+          disabled={!canCreate || createMutation.isPending || resourceAmount < 1 || goldAmount < 1}
           onClick={() => createMutation.mutate()}
         >
           {createMutation.isPending ? "Creando..." : "Crear oferta"}
@@ -363,6 +370,9 @@ function TradeOfferCard({
 }) {
   const creator = snapshot.factions.find((faction) => faction.id === offer.creatorFactionId);
   const isOwn = offer.creatorFactionId === snapshot.currentUser.factionId;
+  const resources = getCurrentResources(snapshot);
+  const acceptCosts = getOfferAcceptCosts(offer);
+  const canAccept = !isOwn && hasEnoughTradeResources(resources, acceptCosts);
 
   return (
     <div className="rounded-lg border border-cyan-200/15 bg-slate-950/35 p-4">
@@ -396,13 +406,24 @@ function TradeOfferCard({
         Comision de cada parte: <ResourceAmount className="text-amber-50" resource="gold" value={offer.feeGold} />
       </div>
 
+      <div className="mt-3 rounded-md border border-cyan-200/15 bg-slate-950/45 p-3 text-xs text-slate-200">
+        <div className="mb-2 text-slate-400">
+          {isOwn ? "Tu oferta tiene recursos reservados." : "Coste al aceptar"}
+        </div>
+        {isOwn ? (
+          <Badge tone={offer.isReserved ? "cyan" : "amber"}>{offer.isReserved ? "Reservada" : "Pendiente"}</Badge>
+        ) : (
+          <TradeCostLine costs={acceptCosts} resources={resources} />
+        )}
+      </div>
+
       <div className="mt-4 grid grid-cols-2 gap-2">
         {isOwn ? (
           <Button className="col-span-2" disabled={cancelPending} onClick={onCancel} size="sm" variant="ghost">
             {cancelPending ? "Cancelando..." : "Cancelar"}
           </Button>
         ) : (
-          <Button className="col-span-2" disabled={acceptPending} onClick={onAccept} size="sm">
+          <Button className="col-span-2" disabled={!canAccept || acceptPending} onClick={onAccept} size="sm">
             {acceptPending ? "Aceptando..." : "Aceptar"}
           </Button>
         )}
@@ -472,6 +493,34 @@ function ResourceStrip({ resources, className }: { resources?: FactionResources;
   );
 }
 
+function TradeCostLine({
+  costs,
+  resources
+}: {
+  costs: Partial<Record<TradeableResourceKey | "gold", number>>;
+  resources?: FactionResources;
+}) {
+  const entries = Object.entries(costs).filter(([, value]) => value > 0) as Array<[TradeableResourceKey | "gold", number]>;
+
+  if (entries.length === 0) {
+    return <span className="text-slate-400">Sin coste.</span>;
+  }
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {entries.map(([resource, value]) => {
+        const enough = (resources?.[resource] ?? 0) >= value;
+
+        return (
+          <span className={enough ? "text-slate-100" : "text-rose-100"} key={resource}>
+            <ResourceAmount resource={resource} value={value} />
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
 function NumberField({
   label,
   value,
@@ -513,6 +562,43 @@ function getMerchantSellPayout(resource: TradeableResourceKey, quantity: number)
 
 function getTradeFee(goldAmount: number) {
   return Math.ceil(Math.max(0, goldAmount) * 0.3);
+}
+
+function getOfferPublishCosts(
+  offerType: TradeOfferType,
+  resourceKey: TradeableResourceKey,
+  resourceAmount: number,
+  goldAmount: number,
+  feeGold: number
+): Partial<Record<TradeableResourceKey | "gold", number>> {
+  if (offerType === "buy") {
+    return { gold: goldAmount + feeGold };
+  }
+
+  return {
+    [resourceKey]: resourceAmount,
+    gold: feeGold
+  };
+}
+
+function getOfferAcceptCosts(offer: TradeOffer): Partial<Record<TradeableResourceKey | "gold", number>> {
+  if (offer.offerType === "buy") {
+    return {
+      [offer.resourceKey]: offer.resourceAmount,
+      gold: offer.feeGold
+    };
+  }
+
+  return {
+    gold: offer.goldAmount + offer.feeGold
+  };
+}
+
+function hasEnoughTradeResources(
+  resources: FactionResources | undefined,
+  costs: Partial<Record<TradeableResourceKey | "gold", number>>
+) {
+  return Object.entries(costs).every(([resource, value]) => (resources?.[resource as TradeableResourceKey | "gold"] ?? 0) >= (value ?? 0));
 }
 
 function clampInteger(value: number, min: number, max: number) {

@@ -39,17 +39,52 @@ export async function recruitUnitAtBuilding(systemBuildingId: string, unitTempla
   return data as string;
 }
 
-export async function healUnitAtBuilding(systemBuildingId: string, campaignUnitId: string, healQuantity: number) {
+export async function resupplyUnitAtBuilding(systemBuildingId: string, campaignUnitId: string) {
   const supabase = getSupabaseBrowserClient();
 
   if (!supabase) {
     throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
   }
 
-  const { data, error } = await supabase.rpc("heal_unit_at_building", {
+  const { data, error } = await supabase.rpc("resupply_unit_at_building", {
     system_building_id: systemBuildingId,
-    campaign_unit_id: campaignUnitId,
-    heal_quantity: healQuantity
+    campaign_unit_id: campaignUnitId
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as string;
+}
+
+export async function cancelRecruitmentQueue(queueId: string) {
+  const supabase = getSupabaseBrowserClient();
+
+  if (!supabase) {
+    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+  }
+
+  const { data, error } = await supabase.rpc("cancel_recruitment_queue", {
+    queue_id: queueId
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as string;
+}
+
+export async function cancelUnitRecoveryQueue(queueId: string) {
+  const supabase = getSupabaseBrowserClient();
+
+  if (!supabase) {
+    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+  }
+
+  const { data, error } = await supabase.rpc("cancel_unit_recovery_queue", {
+    queue_id: queueId
   });
 
   if (error) {

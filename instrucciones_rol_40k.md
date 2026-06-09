@@ -140,7 +140,7 @@ Navegacion movil actual:
 
 ## Estado actual implementado para agentes IA
 
-Ultima auditoria del documento: 2026-06-07. La ultima version de Git que modifico este documento antes de esta actualizacion era `54a9265` (`fix scrolls para IOS`). No habia commits posteriores sin documentar; esta seccion consolida el estado actual para que otro agente pueda orientarse rapido.
+Ultima auditoria del documento: 2026-06-10. Esta seccion consolida el estado actual para que otro agente pueda orientarse rapido.
 
 Estado tecnico actual:
 
@@ -159,18 +159,20 @@ Estado jugable actual:
 - Produccion diaria por tick temporal configurable, calculada desde edificios activos.
 - Movimiento, reclutamiento e investigacion funcionan por timestamps y resolvers backend/lazy processing.
 - Unidades jugables son `campaign_units`, no ejercitos abstractos.
-- Las unidades tienen miniaturas actuales y miniaturas iniciales; pueden separarse al mover una cantidad parcial.
+- Las unidades tienen miniaturas actuales, miniaturas iniciales y heridas agregadas; no pueden separarse al mover.
 - Construccion planetaria con slots por sistema: 6 en capitales y 3 en el resto.
 - Reclutamiento desde edificios militares activos, no desde un boton global de capital.
 - Reclutamiento usa `unit_templates`, costes, tiempos, cola, edificios compatibles y validacion tecnologica.
-- Curacion de unidades heridas desde edificios militares a mitad del coste proporcional por miniatura.
+- Reabastecimiento completo de unidades danadas desde edificios militares compatibles a mitad del coste completo de la unidad.
+- Cancelar reclutamiento, reabastecimiento o movimiento devuelve el 50% de los recursos gastados, redondeando hacia arriba.
 - Arbol tecnologico comun `common-v1` con progreso independiente por faccion.
 - Oro es un recurso principal visible en la barra superior y se usa sobre todo para comercio.
 - Material Industrial es un recurso visible y comerciable usado principalmente para construccion.
 - Componentes tecnologicos son un recurso especial del arbol tecnologico; no aparecen en la barra superior y no se producen en planetas ni por edificios de produccion.
 - Honor sustituye a Piedra ancestral como recurso especial visible; las columnas SQL legacy `ancestral_stone` pueden existir temporalmente solo por compatibilidad de migraciones.
 - El panel de mando operativo tiene entrada `Comercio`, no `Recursos`; abre Mercader y Comercio estelar.
-- Batallas se juegan fuera de la app; la web gestiona conflicto, bloqueo, reportes, bajas y control final.
+- Batallas se juegan fuera de la app; la web gestiona conflicto, bloqueo, reportes, supervivientes, heridas restantes y control final.
+- Comercio estelar usa reserva de recursos: publicar una oferta inmoviliza el recurso/oro y su comision; al aceptar solo se valida el coste del aceptante.
 
 Estado visual actual:
 
@@ -637,7 +639,15 @@ El comercio entre jugadores usa ofertas abiertas de recurso contra Oro:
 - Cada transacción cobra una comisión del 30% del Oro de la oferta, redondeada hacia arriba.
 - Cada jugador paga su propia comisión en Oro.
 
-En v1 las ofertas no reservan recursos al publicarse. El backend valida al crear y vuelve a validar de forma atómica al aceptar.
+Regla vigente: el comercio estelar reserva recursos al publicar.
+
+- Oferta de compra: el creador reserva `gold_amount + fee_gold`.
+- Oferta de venta: el creador reserva `resource_amount` y `fee_gold`.
+- Al cancelar una oferta propia abierta, se devuelve toda la reserva.
+- Al aceptar, el aceptante paga su coste y su propia comision; el creador no vuelve a validar recursos porque ya los tenia reservados.
+- Cualquier texto anterior que diga que las ofertas no reservan recursos queda obsoleto.
+
+Texto legacy obsoleto: antes las ofertas no reservaban recursos; ya no debe implementarse asi.
 
 ---
 
@@ -918,7 +928,7 @@ Los jugadores mueven unidades Warhammer concretas, no destacamentos abstractos.
 
 Una orden de movimiento puede incluir una o varias unidades propias que esten `ready`, pertenezcan a la misma faccion y esten en el mismo sistema de origen.
 
-Cada fila de `campaign_units` representa una unidad Warhammer persistente. El campo `quantity` representa cuantas miniaturas actuales quedan vivas en esa unidad, y `starting_quantity` representa su tamano de referencia al crearse o al separarse. Por ejemplo, una unidad de `Boyz` puede empezar como `10/10`, quedar `6/10` tras una batalla, o separarse en un grupo hijo de `4/4` para moverse por otra ruta.
+Cada fila de `campaign_units` representa una unidad Warhammer persistente e indivisible. El campo `quantity` representa cuantas miniaturas actuales quedan vivas en esa unidad, `starting_quantity` representa su tamano completo y `wounds_taken` representa heridas agregadas en miniaturas supervivientes. Por ejemplo, una unidad de `Boyz` puede empezar como `10/10`, quedar `6/10` y `2 heridas` tras una batalla, pero no puede separarse en grupos hijos para moverse por otra ruta.
 
 Cada unidad movible es una unidad real de faccion, por ejemplo `Boyz`, `Meganobz`, `Deff Dread`, `Necron Warriors`, `Kasrkin`, `Leman Russ Battle Tank`, `Intercessor Squad`, `Plague Marines` o `Foetid Bloat-drone`.
 
@@ -944,6 +954,15 @@ Ejemplos:
 | Ruta larga/importante | 2 Uridium |
 | Ruta complicada | 3 Uridium |
 | Ruta bloqueada | No disponible |
+
+Cancelacion de movimiento:
+
+- RPC: `cancel_movement_order(order_id)`.
+- Solo puede cancelar el propietario de la faccion o un admin.
+- Solo se puede cancelar si la orden sigue en estado `moving` y `arrival_at` no ha vencido.
+- Al cancelar, las unidades vuelven completas al sistema de origen en estado `ready`.
+- Se devuelve el 50% del `uridium_cost`, redondeado hacia arriba.
+- El UI debe mostrar el reembolso previsto antes de confirmar la cancelacion.
 
 ### 8.3 Flujo de interfaz para mover tropas
 
@@ -979,20 +998,20 @@ Se abre panel o modal:
 Mover tropas desde Kharon Prime
 
 Selecciona unidades:
-[ 0/10 ] Cadian Shock Troops - 80 pts
-[ 0/10 ] Kasrkin - 105 pts
-[ 0/1  ] Leman Russ Battle Tank - 145 pts
+[ ] Cadian Shock Troops - 10/10 miniaturas - 80 pts
+[ ] Kasrkin - 10/10 miniaturas - 105 pts
+[ ] Leman Russ Battle Tank - 1/1 miniaturas - 145 pts
 ```
 
 Primera version:
 
 - Seleccion multiple de unidades Warhammer concretas.
-- Cada unidad permite elegir cuantas miniaturas mover, desde 1 hasta `quantity`.
-- Si se mueve la unidad completa, la fila original pasa a `moving`.
-- Si se mueve solo una parte, backend crea una unidad hija con `parent_unit_id`, `quantity = miniaturas_movidas` y `starting_quantity = miniaturas_movidas`; la unidad original conserva las miniaturas restantes.
+- Cada unidad se selecciona completa; no se pueden mover miniaturas sueltas.
+- El backend rechaza cualquier `unit_selection.quantity` distinto al `campaign_units.quantity` actual.
+- Las filas `parent_unit_id` pueden existir como legacy, pero no se crean nuevas unidades hijas en el flujo actual.
 - Todas deben estar en el sistema origen.
 - Todas deben estar `ready`.
-- El jugador puede fusionar despues unidades compatibles que esten `ready`, en el mismo sistema, con misma plantilla, rango y enhancement.
+- La accion de fusionar/reorganizar unidades queda oculta porque el sistema actual no crea separaciones futuras.
 
 #### Paso 3: seleccionar ruta
 
@@ -1253,21 +1272,35 @@ Cuando `now() >= finishes_at`:
 
 ### 9.6 Las bajas
 
+Regla vigente:
+
+- El reporte confirmado indica miniaturas supervivientes y heridas restantes por unidad.
+- Backend actualiza `campaign_units.quantity` y `campaign_units.wounds_taken`.
+- Si `quantity = 0`, la unidad pasa a `destroyed` y `wounds_taken = 0`.
+- Validacion: `wounds_taken <= quantity * unit_templates.wounds_per_model`.
+- Las unidades son indivisibles: las miniaturas no se separan ni para movimiento ni para reabastecimiento.
+- `resupply_unit_at_building(system_building_id, campaign_unit_id)` reabastece una unidad completa desde un edificio militar compatible.
+- El reabastecimiento exige unidad propia `ready`, mismo sistema que el edificio, edificio activo compatible y `quantity < starting_quantity` o `wounds_taken > 0`.
+- Coste de reabastecimiento: mitad del coste completo original de la unidad, redondeado hacia arriba por recurso.
+- Al completarse, `resolve_unit_recovery_queue()` deja `quantity = starting_quantity` y `wounds_taken = 0`.
+- Cada edificio solo puede tener una cola activa total: reclutamiento o reabastecimiento.
+- Cancelar reclutamiento o reabastecimiento devuelve el 50% de los recursos gastados, redondeado hacia arriba.
+
 Si una unidad sufre bajas en batalla:
 
-- El reporte confirmado indica cuantas miniaturas sobreviven por unidad.
+- Texto legacy obsoleto: el reporte confirmado debe indicar miniaturas supervivientes y heridas restantes por unidad.
 - Backend actualiza `campaign_units.quantity`.
 - Si `quantity` queda en `0`, la unidad pasa a `destroyed` y conserva `destroyed_at`.
-- Las unidades heridas pueden curarse desde edificios militares compatibles.
+- Texto legacy obsoleto: las unidades danadas se reabastecen completas desde edificios militares compatibles.
 
 Curación v1:
 
-- RPC: `heal_unit_at_building(system_building_id, campaign_unit_id, heal_quantity)`.
+- Texto legacy obsoleto: usar `resupply_unit_at_building(system_building_id, campaign_unit_id)`; `heal_unit_at_building(...)` solo queda como alias compatible.
 - La unidad debe ser propia, estar `ready`, estar en el mismo sistema que el edificio y tener `quantity < starting_quantity`.
 - El edificio debe ser militar y compatible con la categoría de la unidad.
-- Coste = mitad del coste normal proporcional por miniatura, redondeado hacia arriba por recurso.
+- Texto legacy obsoleto: coste = mitad del coste completo original de la unidad, redondeado hacia arriba por recurso.
 - La unidad queda `recovering` mientras dura la cola.
-- `resolve_unit_recovery_queue()` completa curaciones vencidas y aumenta `quantity` sin superar `starting_quantity`.
+- `resolve_unit_recovery_queue()` completa reabastecimientos vencidos y deja `quantity = starting_quantity`, `wounds_taken = 0`.
 
 ### 9.7 Árbol tecnológico y desbloqueos de reclutamiento
 
@@ -1489,6 +1522,8 @@ Comercio estelar:
 - No se comercian Honor ni Componentes tecnologicos.
 - Requiere al menos una Camara de Comercio activa de la faccion.
 - Cada transaccion cobra una comision en Oro del 30%, redondeada hacia arriba, a cada jugador por separado.
+- Publicar una oferta reserva inmediatamente los recursos/oro comprometidos y la comision del creador.
+- Cancelar una oferta devuelve la reserva completa.
 
 El bloque antiguo de panel detallado de recursos queda solo como referencia historica y no debe implementarse como vista principal:
 
@@ -1617,11 +1652,15 @@ Crear funciones RPC o endpoints equivalentes:
 
 ```text
 create_movement_order(unit_selections, path_system_ids)
+cancel_movement_order(order_id)
 start_building_construction(system_id, building_template_id)
 resolve_building_construction()
 recruit_unit_at_building(system_building_id, unit_template_id, quantity)
-heal_unit_at_building(system_building_id, campaign_unit_id, heal_quantity)
+resupply_unit_at_building(system_building_id, campaign_unit_id)
+heal_unit_at_building(system_building_id, campaign_unit_id, heal_quantity) -- alias legacy
 resolve_unit_recovery_queue()
+cancel_recruitment_queue(queue_id)
+cancel_unit_recovery_queue(queue_id)
 start_technology_research(technology_node_id)
 merchant_trade(resource_key, direction, trade_quantity)
 create_trade_offer(offer_type, resource_key, resource_amount, gold_amount)
@@ -1631,8 +1670,7 @@ resolve_resource_ticks()
 resolve_movement_orders()
 resolve_recruitment_queue()
 resolve_technology_research()
-submit_battle_report(conflict_id, report_payload)
-merge_campaign_units(unit_ids)
+submit_battle_report(conflict_id, report_payload) -- incluye survivors y wounds_remaining
 admin_confirm_battle_report(conflict_id, final_payload)
 admin_resolve_battle(conflict_id, winner_faction_id, blocked_days)
 admin_update_system_control(system_id, faction_id)
@@ -1957,21 +1995,22 @@ campaign_units
 - category text
 - points integer
 - quantity integer default 1 -- miniaturas actuales
-- starting_quantity integer default 1 -- tamano de referencia de esta fila
-- parent_unit_id uuid nullable references campaign_units(id)
+- starting_quantity integer default 1 -- tamano completo de la unidad
+- wounds_taken integer default 0 -- heridas agregadas en miniaturas supervivientes
+- parent_unit_id uuid nullable references campaign_units(id) -- legacy, no se crean hijos nuevos
 - destroyed_at timestamptz nullable
 - experience integer default 0
 - rank text nullable
 - enhancement_text text nullable
 - notes text nullable
 - current_system_id uuid nullable references systems(id)
-- status text check in ('ready', 'moving', 'in_war', 'destroyed', 'retreat_pending')
+- status text check in ('ready', 'moving', 'in_war', 'destroyed', 'retreat_pending', 'recovering')
 - is_visible_publicly boolean default false
 - created_at timestamptz
 - updated_at timestamptz
 ```
 
-Cada fila representa una unidad Warhammer concreta movible en el mapa. Al separar miniaturas para mover solo parte de una unidad, backend crea una nueva fila hija con `parent_unit_id`; al fusionar unidades compatibles, una fila absorbe a las otras.
+Cada fila representa una unidad Warhammer concreta movible en el mapa. Las unidades son indivisibles: no se separan miniaturas al mover y no se crean nuevas filas hijas en el flujo actual. La validacion de heridas es `wounds_taken <= quantity * unit_templates.wounds_per_model`.
 
 ### 16.9 movement_order_units
 
@@ -1994,6 +2033,7 @@ unit_templates
 - category text
 - points integer
 - default_quantity integer default 1
+- wounds_per_model integer default 1
 - supply_cost integer
 - minerals_cost integer
 - ancestral_stone_cost integer
@@ -2106,10 +2146,11 @@ trade_offers
 - id uuid primary key
 - creator_faction_id uuid references factions(id)
 - offer_type text check in ('buy', 'sell')
-- resource_key text check in ('supply', 'minerals', 'ancestral_stone', 'uridium')
+- resource_key text check in ('supply', 'minerals', 'industrial_material', 'uridium')
 - resource_amount integer
 - gold_amount integer
 - fee_gold integer -- ceil(gold_amount * 0.30)
+- is_reserved boolean default false
 - status text check in ('open', 'accepted', 'cancelled')
 - accepted_by_faction_id uuid nullable references factions(id)
 - created_at timestamptz
@@ -2118,7 +2159,14 @@ trade_offers
 - updated_at timestamptz
 ```
 
-`trade_offers` no reserva recursos en v1. Crear y aceptar ofertas valida recursos en backend. Aceptar una oferta aplica la transferencia de recurso/Oro y descuenta la comision de Oro a ambas facciones.
+`trade_offers` usa reserva de recursos:
+
+- `is_reserved boolean default false`.
+- Ofertas abiertas nuevas deben tener `is_reserved = true`.
+- Compra: reserva `gold_amount + fee_gold`.
+- Venta: reserva `resource_amount` y `fee_gold`.
+- Aceptar oferta aplica transferencia usando la reserva del creador y valida solo el pago/comision del aceptante.
+- Cancelar oferta devuelve toda la reserva del creador.
 
 ### 16.13 movement_orders
 
@@ -2135,6 +2183,7 @@ movement_orders
 - started_at timestamptz
 - arrival_at timestamptz
 - status text check in ('moving', 'arrived', 'cancelled')
+- cancelled_at timestamptz nullable
 - created_at timestamptz
 ```
 
@@ -2318,16 +2367,19 @@ resolve_unit_recovery_queue()
 resolve_technology_research()
 start_building_construction(system_id, building_template_id)
 recruit_unit_at_building(system_building_id, unit_template_id, quantity)
-heal_unit_at_building(system_building_id, campaign_unit_id, heal_quantity)
+resupply_unit_at_building(system_building_id, campaign_unit_id)
+heal_unit_at_building(system_building_id, campaign_unit_id, heal_quantity) -- alias legacy
+cancel_recruitment_queue(queue_id)
+cancel_unit_recovery_queue(queue_id)
 start_technology_research(technology_node_id)
 create_movement_order(unit_selections, path_system_ids)
+cancel_movement_order(order_id)
 merchant_trade(resource_key, direction, trade_quantity)
 create_trade_offer(offer_type, resource_key, resource_amount, gold_amount)
 accept_trade_offer(offer_id)
 cancel_trade_offer(offer_id)
 submit_battle_report(conflict_id, report_payload)
-merge_campaign_units(unit_ids)
-admin_resolve_battle(target_conflict_id, winner_faction_id, final_controller_faction_id, survivors, post_battle_blocked_until, narrative_notes)
+admin_resolve_battle(target_conflict_id, winner_faction_id, final_controller_faction_id, survivors, wounds_remaining, post_battle_blocked_until, narrative_notes)
 ```
 
 Supabase Studio en `http://127.0.0.1:54323` es la herramienta recomendada para ver y editar la base local durante desarrollo.

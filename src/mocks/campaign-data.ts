@@ -571,6 +571,7 @@ type MockUnitGroup = {
     points: number;
     quantity: number;
     startingQuantity?: number;
+    woundsTaken?: number;
     experience: number;
     rank?: string | null;
     enhancementText?: string | null;
@@ -610,7 +611,9 @@ const unitGroups: MockUnitGroup[] = [
         id: "imperial-arx-kasrkin",
         name: "Kasrkin",
         points: 105,
-        quantity: 2,
+        quantity: 7,
+        startingQuantity: 10,
+        woundsTaken: 2,
         experience: 2,
         rank: "Veteranos",
         enhancementText: "Doctrina de frontera"
@@ -1057,6 +1060,7 @@ const units: CampaignSnapshot["units"] = unitGroups.flatMap((group) =>
       points: unit.points,
       quantity: unit.quantity,
       startingQuantity,
+      woundsTaken: unit.woundsTaken ?? 0,
       experience: unit.experience,
       isVisiblePublicly: group.isVisiblePublicly,
       parentUnitId: null,
@@ -1161,7 +1165,7 @@ const movements: CampaignSnapshot["movements"] = [
   }
 ];
 
-type MockUnitTemplate = Omit<CampaignSnapshot["unitTemplates"][number], "defaultQuantity">;
+type MockUnitTemplate = Omit<CampaignSnapshot["unitTemplates"][number], "defaultQuantity" | "woundsPerModel">;
 
 const unitTemplateBase: MockUnitTemplate[] = [
   {
@@ -1475,6 +1479,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
 const unitTemplates: CampaignSnapshot["unitTemplates"] = unitTemplateBase.map((template) => ({
   ...template,
   defaultQuantity: getMockDefaultQuantity(template.name),
+  woundsPerModel: getMockWoundsPerModel(template.name),
   recruitmentBuildingType: getRecruitmentBuildingType(template.category),
   requiredTechnologyNodeId: getRequiredTechnologyForUnit(template.name)
 }));
@@ -1665,6 +1670,7 @@ const tradeOffers: CampaignSnapshot["tradeOffers"] = [
     goldAmount: 8,
     feeGold: 3,
     status: "open",
+    isReserved: true,
     createdAt: inMinutes(-8)
   },
   {
@@ -1676,6 +1682,7 @@ const tradeOffers: CampaignSnapshot["tradeOffers"] = [
     goldAmount: 5,
     feeGold: 2,
     status: "open",
+    isReserved: true,
     createdAt: inMinutes(-4)
   }
 ];
@@ -1901,6 +1908,31 @@ function getMockDefaultQuantity(name: string) {
   };
 
   return defaultQuantities[name] ?? 1;
+}
+
+function getMockWoundsPerModel(name: string) {
+  const wounds: Record<string, number> = {
+    Boyz: 1,
+    Meganobz: 3,
+    "Deff Dread": 8,
+    "Necron Warriors": 1,
+    Immortals: 1,
+    "Skorpekh Destroyers": 3,
+    "Cadian Shock Troops": 1,
+    Kasrkin: 1,
+    "Leman Russ Battle Tank": 13,
+    "Neophyte Hybrids": 1,
+    "Acolyte Hybrids": 1,
+    "Achilles Ridgerunner": 8,
+    "Intercessor Squad": 2,
+    "Terminator Squad": 3,
+    "Redemptor Dreadnought": 12,
+    Poxwalkers: 1,
+    "Plague Marines": 2,
+    "Foetid Bloat-drone": 10
+  };
+
+  return wounds[name] ?? 1;
 }
 
 function getRequiredTechnologyForUnit(name: string) {

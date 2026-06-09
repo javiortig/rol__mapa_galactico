@@ -368,6 +368,7 @@ function mapCampaignUnit(row: Record<string, unknown>): CampaignUnit {
     points: Number(row.points ?? 0),
     quantity: Number(row.quantity ?? 1),
     startingQuantity: Number(row.starting_quantity ?? row.quantity ?? 1),
+    woundsTaken: Number(row.wounds_taken ?? 0),
     experience: Number(row.experience ?? 0),
     isVisiblePublicly: Boolean(row.is_visible_publicly),
     parentUnitId: (row.parent_unit_id as string | null) ?? null,
@@ -403,7 +404,8 @@ function mapMovement(row: Record<string, unknown>, movementUnits: UnitMovementSe
     durationSeconds: Number(row.duration_seconds ?? 0),
     startedAt: row.started_at as string,
     arrivalAt: row.arrival_at as string,
-    status: row.status as MovementOrder["status"]
+    status: row.status as MovementOrder["status"],
+    cancelledAt: (row.cancelled_at as string | null) ?? null
   };
 }
 
@@ -415,6 +417,7 @@ function mapUnitTemplate(row: Record<string, unknown>): UnitTemplate {
     category: row.category as UnitCategory,
     points: Number(row.points ?? 0),
     defaultQuantity: Number(row.default_quantity ?? 1),
+    woundsPerModel: Number(row.wounds_per_model ?? 1),
     supplyCost: Number(row.supply_cost ?? 0),
     mineralsCost: Number(row.minerals_cost ?? 0),
     honorCost: Number(row.honor_cost ?? row.ancestral_stone_cost ?? 0),
@@ -443,7 +446,8 @@ function mapTradeOffer(row: Record<string, unknown>): TradeOffer {
     acceptedByFactionId: (row.accepted_by_faction_id as string | null) ?? null,
     createdAt: row.created_at as string,
     acceptedAt: (row.accepted_at as string | null) ?? null,
-    cancelledAt: (row.cancelled_at as string | null) ?? null
+    cancelledAt: (row.cancelled_at as string | null) ?? null,
+    isReserved: Boolean(row.is_reserved)
   };
 }
 
@@ -563,6 +567,13 @@ function mapRecruitmentQueueItem(row: Record<string, unknown>): RecruitmentQueue
     quantity: Number(row.quantity ?? 1),
     systemBuildingId: (row.system_building_id as string | null) ?? null,
     originSystemId: (row.origin_system_id as string | null) ?? null,
+    supplyCost: Number(row.supply_cost ?? 0),
+    mineralsCost: Number(row.minerals_cost ?? 0),
+    honorCost: Number(row.honor_cost ?? row.ancestral_stone_cost ?? 0),
+    goldCost: Number(row.gold_cost ?? 0),
+    industrialMaterialCost: Number(row.industrial_material_cost ?? 0),
+    uridiumCost: Number(row.uridium_cost ?? 0),
+    technologyCost: Number(row.technology_cost ?? 0),
     startedAt: row.started_at as string,
     finishesAt: row.finishes_at as string,
     status: row.status as RecruitmentQueueItem["status"]
@@ -579,6 +590,13 @@ function mapUnitRecoveryQueueItem(row: Record<string, unknown>): UnitRecoveryQue
     campaignUnitId: row.campaign_unit_id as string,
     unitName: unit?.name ?? "Unidad",
     healQuantity: Number(row.heal_quantity ?? 0),
+    supplyCost: Number(row.supply_cost ?? 0),
+    mineralsCost: Number(row.minerals_cost ?? 0),
+    honorCost: Number(row.honor_cost ?? 0),
+    goldCost: Number(row.gold_cost ?? 0),
+    industrialMaterialCost: Number(row.industrial_material_cost ?? 0),
+    uridiumCost: Number(row.uridium_cost ?? 0),
+    technologyCost: Number(row.technology_cost ?? 0),
     startedAt: row.started_at as string,
     finishesAt: row.finishes_at as string,
     status: row.status as UnitRecoveryQueueItem["status"]
@@ -643,6 +661,7 @@ function mapBattleReport(row: Record<string, unknown>): BattleReport {
     status: row.status as BattleReport["status"],
     casualties: mapNumberRecord(row.casualties),
     survivors: mapNumberRecord(row.survivors),
+    woundsRemaining: mapNumberRecord(row.wounds_remaining),
     narrativeNotes: (row.narrative_notes as string | null) ?? null
   };
 }

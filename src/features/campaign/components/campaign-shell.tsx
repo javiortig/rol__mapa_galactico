@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
 import { ResourceIcon, resourceLabels } from "@/components/ui/resource-icon";
-import { canUseMovementRpc, createMovementOrder, mergeCampaignUnits } from "@/features/movement/api/movement-api";
+import { canUseMovementRpc, cancelMovementOrder, createMovementOrder } from "@/features/movement/api/movement-api";
 import { canUseBattleReportRpc, submitBattleReport } from "@/features/battle-reports/api/battle-report-api";
 import {
   calculateRoutePlan,
@@ -68,8 +68,8 @@ export function CampaignShell() {
     queryKey: ["campaign-snapshot"],
     queryFn: getCampaignSnapshot
   });
-  const mergeMutation = useMutation({
-    mutationFn: mergeCampaignUnits,
+  const cancelMovementMutation = useMutation({
+    mutationFn: cancelMovementOrder,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
     }
@@ -262,6 +262,9 @@ export function CampaignShell() {
         <div className="flex min-h-0 flex-1 items-stretch justify-end gap-4 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:px-4 md:pb-4 lg:justify-between">
           {showCommandDock ? (
             <CommandDock
+              cancelMovementError={cancelMovementMutation.error?.message}
+              cancelMovementPending={cancelMovementMutation.isPending}
+              onCancelMovement={(movementId) => cancelMovementMutation.mutate(movementId)}
               onOpenTechnology={() => setTechnologyOpen(true)}
               onOpenTrade={openTradeFromDock}
               snapshot={data}
@@ -269,10 +272,7 @@ export function CampaignShell() {
           ) : null}
           {showSystemPanel && panelSystem ? (
             <SystemPanel
-              mergeError={mergeMutation.error?.message}
-              mergePending={mergeMutation.isPending}
               onClose={() => setSelectedSystem(null)}
-              onMergeUnits={(unitIds) => mergeMutation.mutate(unitIds)}
               onOpenBattleReport={(system) => setBattleReportSystemId(system.id)}
               onOpenBuilding={(building, template) => {
                 if (template.slug === "camara-comercio") {
@@ -469,11 +469,17 @@ function HiddenBuildingSlot({ building }: { building: SystemBuilding }) {
 function CommandDock({
   snapshot,
   onOpenTrade,
-  onOpenTechnology
+  onOpenTechnology,
+  onCancelMovement,
+  cancelMovementPending,
+  cancelMovementError
 }: {
   snapshot: CampaignSnapshot;
   onOpenTrade: () => void;
   onOpenTechnology: () => void;
+  onCancelMovement: (movementId: string) => void;
+  cancelMovementPending: boolean;
+  cancelMovementError?: string;
 }) {
   const ownUnits = snapshot.units.filter(
     (unit) => unit.factionId === snapshot.currentUser.factionId && unit.status !== "destroyed" && unit.quantity > 0
@@ -555,8 +561,17 @@ function CommandDock({
                 <span className="text-slate-200">Movimiento</span>
                 <Badge tone="cyan">{formatCountdown(movement.arrivalAt)}</Badge>
               </div>
+              {movement.factionId === snapshot.currentUser.factionId || snapshot.currentUser.role === "admin" ? (
+                <div className="mt-2 flex items-center justify-between gap-2 text-xs text-slate-400">
+                  <span>Reembolso: {Math.ceil(movement.uridiumCost / 2)} Uridium</span>
+                  <Button disabled={cancelMovementPending} onClick={() => onCancelMovement(movement.id)} size="sm" variant="ghost">
+                    Cancelar
+                  </Button>
+                </div>
+              ) : null}
             </div>
           ))}
+          {cancelMovementError ? <p className="text-xs text-rose-200">{cancelMovementError}</p> : null}
           {snapshot.recruitmentQueue.map((item) => (
             <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={item.id}>
               <div className="flex items-center justify-between gap-3">
@@ -693,10 +708,7 @@ function GalaxyTooltip({
 function SystemPanel({
   snapshot,
   system,
-  mergeError,
-  mergePending,
   onClose,
-  onMergeUnits,
   onOpenBattleReport,
   onOpenBuilding,
   onOpenConstruction,
@@ -704,10 +716,7 @@ function SystemPanel({
 }: {
   snapshot: CampaignSnapshot;
   system: StarSystem;
-  mergeError?: string;
-  mergePending: boolean;
   onClose: () => void;
-  onMergeUnits: (unitIds: string[]) => void;
   onOpenBattleReport: (system: StarSystem) => void;
   onOpenBuilding: (building: SystemBuilding, template: BuildingTemplate) => void;
   onOpenConstruction: (system: StarSystem) => void;
@@ -746,7 +755,12 @@ function SystemPanel({
     (snapshot.currentUser.role === "admin" ||
       conflict?.attackerFactionId === snapshot.currentUser.factionId ||
       conflict?.defenderFactionId === snapshot.currentUser.factionId);
-  const mergeGroups = getMergeableUnitGroups(ownReadyUnits);
+  const mergeGroups: CampaignUnit[][] = [];
+  const mergePending = false;
+  const mergeError: string | undefined = undefined;
+  const onMergeUnits = (_unitIds: string[]) => {
+    void _unitIds;
+  };
   const visibleUnits = relatedUnits.filter(
     (unit) =>
       snapshot.currentUser.role === "admin" ||
@@ -1035,8 +1049,7 @@ function MovementPlanner({
   const systemById = useMemo(() => new Map(snapshot.systems.map((system) => [system.id, system])), [snapshot.systems]);
   const rpcReady = canUseMovementRpc();
   const selectedSelections = availableUnits.flatMap<UnitMovementSelection>((unit) => {
-    const quantity = clampInteger(selectedQuantities[unit.id] ?? 0, 0, unit.quantity);
-    return quantity > 0 ? [{ unitId: unit.id, quantity }] : [];
+    return selectedQuantities[unit.id] ? [{ unitId: unit.id, quantity: unit.quantity }] : [];
   });
   const selectedMiniatures = selectedSelections.reduce((total, selection) => total + selection.quantity, 0);
   const hasEnoughUridium = resources && routePlan ? resources.uridium >= routePlan.uridiumCost : false;
@@ -1322,25 +1335,25 @@ function UnitSelectionCard({
             {formatUnitStrength(unit)} · {unit.category}
           </div>
         </div>
-        <Badge tone={selected ? "cyan" : "slate"}>{selected ? `${selectedQuantity}/${unit.quantity}` : "Libre"}</Badge>
+        <Badge tone={selected ? "cyan" : "slate"}>{selected ? "Seleccionada" : "Lista"}</Badge>
       </div>
 
       <div className="mt-3 flex items-center justify-between rounded-md border border-cyan-200/10 bg-slate-950/40 p-2">
         <Button
           disabled={selectedQuantity <= 0}
-          onClick={() => onSetQuantity(selectedQuantity - 1)}
+          onClick={() => onSetQuantity(0)}
           size="icon"
           variant="ghost"
         >
           <Minus size={15} />
         </Button>
         <div className="text-center">
-          <div className="text-[11px] text-slate-400">Miniaturas a mover</div>
+          <div className="text-[11px] text-slate-400">Unidad completa</div>
           <div className="text-base font-semibold text-cyan-50">{selectedQuantity}</div>
         </div>
         <Button
           disabled={selectedQuantity >= unit.quantity}
-          onClick={() => onSetQuantity(selectedQuantity + 1)}
+          onClick={() => onSetQuantity(unit.quantity)}
           size="icon"
           variant="ghost"
         >
@@ -1392,6 +1405,9 @@ function BattleReportModal({
   const [survivors, setSurvivors] = useState<Record<string, number>>(() =>
     Object.fromEntries(warUnits.map((unit) => [unit.id, unit.quantity]))
   );
+  const [woundsRemaining, setWoundsRemaining] = useState<Record<string, number>>(() =>
+    Object.fromEntries(warUnits.map((unit) => [unit.id, unit.woundsTaken]))
+  );
   const rpcReady = canUseBattleReportRpc();
   const mutation = useMutation({
     mutationFn: () =>
@@ -1399,6 +1415,7 @@ function BattleReportModal({
         winnerFactionId,
         finalControllerFactionId,
         survivors,
+        woundsRemaining,
         postBattleBlockedUntil:
           postBlockMinutes > 0 ? new Date(Date.now() + postBlockMinutes * 60_000).toISOString() : null,
         narrativeNotes: narrativeNotes.trim() || null
@@ -1439,6 +1456,9 @@ function BattleReportModal({
             <div className="space-y-2">
               {warUnits.map((unit) => {
                 const value = clampInteger(survivors[unit.id] ?? unit.quantity, 0, unit.quantity);
+                const woundsPerModel = getUnitWoundsPerModel(snapshot, unit);
+                const maxWounds = value * woundsPerModel;
+                const woundsValue = clampInteger(woundsRemaining[unit.id] ?? 0, 0, maxWounds);
                 const faction = snapshot.factions.find((item) => item.id === unit.factionId);
 
                 return (
@@ -1458,7 +1478,14 @@ function BattleReportModal({
                     <div className="flex items-center justify-between rounded-md border border-cyan-200/10 bg-slate-950/40 p-2">
                       <Button
                         disabled={value <= 0 || mutation.isPending}
-                        onClick={() => setSurvivors((current) => ({ ...current, [unit.id]: value - 1 }))}
+                        onClick={() => {
+                          const nextValue = value - 1;
+                          setSurvivors((current) => ({ ...current, [unit.id]: nextValue }));
+                          setWoundsRemaining((current) => ({
+                            ...current,
+                            [unit.id]: Math.min(current[unit.id] ?? 0, nextValue * woundsPerModel)
+                          }));
+                        }}
                         size="icon"
                         variant="ghost"
                       >
@@ -1471,6 +1498,29 @@ function BattleReportModal({
                       <Button
                         disabled={value >= unit.quantity || mutation.isPending}
                         onClick={() => setSurvivors((current) => ({ ...current, [unit.id]: value + 1 }))}
+                        size="icon"
+                        variant="ghost"
+                      >
+                        <Plus size={15} />
+                      </Button>
+                    </div>
+
+                    <div className="mt-2 flex items-center justify-between rounded-md border border-cyan-200/10 bg-slate-950/40 p-2">
+                      <Button
+                        disabled={woundsValue <= 0 || mutation.isPending}
+                        onClick={() => setWoundsRemaining((current) => ({ ...current, [unit.id]: woundsValue - 1 }))}
+                        size="icon"
+                        variant="ghost"
+                      >
+                        <Minus size={15} />
+                      </Button>
+                      <div className="text-center">
+                        <div className="text-[11px] text-slate-400">Heridas restantes</div>
+                        <div className="text-base font-semibold text-cyan-50">{woundsValue}/{maxWounds}</div>
+                      </div>
+                      <Button
+                        disabled={woundsValue >= maxWounds || mutation.isPending}
+                        onClick={() => setWoundsRemaining((current) => ({ ...current, [unit.id]: woundsValue + 1 }))}
                         size="icon"
                         variant="ghost"
                       >
@@ -1565,7 +1615,11 @@ function BattleReportModal({
 }
 
 function formatUnitStrength(unit: CampaignUnit) {
-  return `${unit.quantity}/${unit.startingQuantity} miniaturas · ${getCurrentUnitPoints(unit)} pts`;
+  return `${unit.quantity}/${unit.startingQuantity} miniaturas · ${unit.woundsTaken} heridas · ${getCurrentUnitPoints(unit)} pts`;
+}
+
+function getUnitWoundsPerModel(snapshot: CampaignSnapshot, unit: CampaignUnit) {
+  return snapshot.unitTemplates.find((template) => template.id === unit.unitTemplateId)?.woundsPerModel ?? 1;
 }
 
 function getCurrentUnitPoints(unit: CampaignUnit) {
@@ -1607,17 +1661,6 @@ function getUnitStatusTone(status: CampaignUnit["status"]): "cyan" | "rose" | "a
   }
 
   return "slate";
-}
-
-function getMergeableUnitGroups(units: CampaignUnit[]) {
-  const groups = new Map<string, CampaignUnit[]>();
-
-  for (const unit of units) {
-    const key = getUnitCompatibilityKey(unit);
-    groups.set(key, [...(groups.get(key) ?? []), unit]);
-  }
-
-  return [...groups.values()].filter((group) => group.length > 1);
 }
 
 function getUnitCompatibilityKey(unit: CampaignUnit) {

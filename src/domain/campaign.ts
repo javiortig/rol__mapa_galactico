@@ -99,6 +99,7 @@ export interface CampaignUnit {
   points: number;
   quantity: number;
   startingQuantity: number;
+  woundsTaken: number;
   experience: number;
   isVisiblePublicly: boolean;
   parentUnitId?: string | null;
@@ -127,6 +128,7 @@ export interface MovementOrder {
   startedAt: string;
   arrivalAt: string;
   status: MovementStatus;
+  cancelledAt?: string | null;
 }
 
 export interface RecruitmentQueueItem {
@@ -137,6 +139,13 @@ export interface RecruitmentQueueItem {
   quantity: number;
   systemBuildingId?: string | null;
   originSystemId?: string | null;
+  supplyCost: number;
+  mineralsCost: number;
+  honorCost: number;
+  goldCost: number;
+  industrialMaterialCost: number;
+  uridiumCost: number;
+  technologyCost: number;
   startedAt: string;
   finishesAt: string;
   status: RecruitmentStatus;
@@ -149,6 +158,7 @@ export interface UnitTemplate {
   category: UnitCategory;
   points: number;
   defaultQuantity: number;
+  woundsPerModel: number;
   supplyCost: number;
   mineralsCost: number;
   honorCost: number;
@@ -176,6 +186,7 @@ export interface TradeOffer {
   createdAt: string;
   acceptedAt?: string | null;
   cancelledAt?: string | null;
+  isReserved: boolean;
 }
 
 export interface TechnologyNode {
@@ -262,6 +273,13 @@ export interface UnitRecoveryQueueItem {
   campaignUnitId: string;
   unitName: string;
   healQuantity: number;
+  supplyCost: number;
+  mineralsCost: number;
+  honorCost: number;
+  goldCost: number;
+  industrialMaterialCost: number;
+  uridiumCost: number;
+  technologyCost: number;
   startedAt: string;
   finishesAt: string;
   status: RecoveryStatus;
@@ -287,6 +305,7 @@ export interface BattleReport {
   status: "submitted" | "auto_confirmed" | "admin_confirmed" | "disputed" | "rejected";
   casualties?: Record<string, number> | null;
   survivors?: Record<string, number> | null;
+  woundsRemaining?: Record<string, number> | null;
   narrativeNotes?: string | null;
 }
 

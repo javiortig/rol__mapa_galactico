@@ -7,7 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
 import { ResourceAmount, ResourceIcon, resourceLabels } from "@/components/ui/resource-icon";
-import { canUseRecruitmentRpc, healUnitAtBuilding, recruitUnitAtBuilding } from "@/features/recruitment/api/recruitment-api";
+import {
+  canUseRecruitmentRpc,
+  cancelRecruitmentQueue,
+  cancelUnitRecoveryQueue,
+  recruitUnitAtBuilding,
+  resupplyUnitAtBuilding
+} from "@/features/recruitment/api/recruitment-api";
 import {
   getBaseRecruitmentCost,
   getRecruitmentCost,
@@ -17,7 +23,16 @@ import {
   isUnitTemplateUnlocked
 } from "@/features/technology/lib/technology-state";
 import { formatCountdown } from "@/lib/time";
-import type { BuildingTemplate, CampaignSnapshot, FactionResources, ResourceKey, SystemBuilding, UnitTemplate } from "@/domain/campaign";
+import type {
+  BuildingTemplate,
+  CampaignSnapshot,
+  FactionResources,
+  RecruitmentQueueItem,
+  ResourceKey,
+  SystemBuilding,
+  UnitRecoveryQueueItem,
+  UnitTemplate
+} from "@/domain/campaign";
 
 type BuildingTab = "recruit" | "heal" | "queue";
 
@@ -122,7 +137,7 @@ function RecruitmentBuildingView({
           </Button>
           <Button onClick={() => onTabChange("heal")} size="sm" variant={tab === "heal" ? "primary" : "ghost"}>
             <HeartPulse size={15} />
-            Curar
+            Reabastecer
           </Button>
           <Button onClick={() => onTabChange("queue")} size="sm" variant={tab === "queue" ? "primary" : "ghost"}>
             <Clock3 size={15} />
@@ -172,6 +187,7 @@ function RecruitTab({
   const selectedUnlocked = selectedTemplate ? isUnitTemplateUnlocked(snapshot, selectedTemplate) : false;
   const selectedResources = selectedTemplate ? getVisibleRecruitmentCostResources(snapshot, selectedTemplate) : [];
   const hasResources = selectedTemplate && resources ? canAffordRecruitment(snapshot, resources, selectedTemplate, quantity) : false;
+  const activeQueue = getActiveBuildingQueue(snapshot, building.id);
   const mutation = useMutation({
     mutationFn: () => {
       if (!selectedTemplate) {
@@ -257,11 +273,17 @@ function RecruitTab({
               </p>
             </div>
 
-            <QuantityPicker disabled={mutation.isPending} max={9} min={1} onChange={setQuantity} value={quantity} />
+            <QuantityPicker disabled={mutation.isPending} max={1} min={1} onChange={setQuantity} value={quantity} />
 
             {!selectedUnlocked ? (
               <div className="rounded-md border border-violet-300/25 bg-violet-400/10 p-3 text-sm text-violet-100">
                 Requiere investigar {getRequiredTechnologyName(snapshot, selectedTemplate.requiredTechnologyNodeId)}.
+              </div>
+            ) : null}
+
+            {activeQueue ? (
+              <div className="rounded-md border border-amber-300/25 bg-amber-400/10 p-3 text-sm text-amber-100">
+                Este edificio ya tiene una orden en cola. Cancela o espera a que termine para iniciar otra.
               </div>
             ) : null}
 
@@ -275,7 +297,7 @@ function RecruitTab({
 
             <Button
               className="sticky bottom-0 w-full"
-              disabled={!rpcReady || !selectedUnlocked || !hasResources || mutation.isPending}
+              disabled={!rpcReady || !selectedUnlocked || !hasResources || Boolean(activeQueue) || mutation.isPending}
               onClick={() => mutation.mutate()}
             >
               {mutation.isPending ? "Enviando..." : "Reclutar"}
@@ -302,24 +324,22 @@ function HealTab({
 }) {
   const queryClient = useQueryClient();
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
-  const [healQuantity, setHealQuantity] = useState(1);
   const resources = getCurrentResources(snapshot);
   const rpcReady = canUseRecruitmentRpc();
+  const activeQueue = getActiveBuildingQueue(snapshot, building.id);
   const woundedUnits = snapshot.units.filter(
     (unit) =>
       unit.factionId === snapshot.currentUser.factionId &&
       unit.currentSystemId === building.systemId &&
       unit.status === "ready" &&
-      unit.quantity < unit.startingQuantity &&
+      (unit.quantity < unit.startingQuantity || unit.woundsTaken > 0) &&
       template.allowedUnitCategories.includes(unit.category)
   );
   const selectedUnit = woundedUnits.find((unit) => unit.id === selectedUnitId) ?? woundedUnits[0] ?? null;
   const selectedTemplate = selectedUnit
     ? snapshot.unitTemplates.find((unitTemplate) => unitTemplate.id === selectedUnit.unitTemplateId) ?? null
     : null;
-  const maxHeal = selectedUnit ? selectedUnit.startingQuantity - selectedUnit.quantity : 0;
-  const clampedHeal = Math.min(Math.max(healQuantity, 1), Math.max(maxHeal, 1));
-  const recoveryCosts = selectedTemplate ? getRecoveryCosts(selectedTemplate, clampedHeal) : {};
+  const recoveryCosts = selectedTemplate ? getResupplyCosts(selectedTemplate) : {};
   const visibleResources = Object.entries(recoveryCosts)
     .filter(([, value]) => value > 0)
     .map(([resource]) => resource as ResourceKey);
@@ -328,10 +348,10 @@ function HealTab({
   const mutation = useMutation({
     mutationFn: () => {
       if (!selectedUnit) {
-        throw new Error("Selecciona una unidad herida.");
+        throw new Error("Selecciona una unidad para reabastecer.");
       }
 
-      return healUnitAtBuilding(building.id, selectedUnit.id, clampedHeal);
+      return resupplyUnitAtBuilding(building.id, selectedUnit.id);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
@@ -355,10 +375,7 @@ function HealTab({
                       : "border-cyan-200/15 bg-slate-950/35 hover:border-rose-200/35"
                   }`}
                   key={unit.id}
-                  onClick={() => {
-                    setSelectedUnitId(unit.id);
-                    setHealQuantity(1);
-                  }}
+                  onClick={() => setSelectedUnitId(unit.id)}
                   type="button"
                 >
                   <div className="mb-3 flex items-start justify-between gap-3">
@@ -369,14 +386,14 @@ function HealTab({
                     <Badge tone="rose">{unit.quantity}/{unit.startingQuantity}</Badge>
                   </div>
                   <div className="text-xs text-slate-300">
-                    Faltan {unit.startingQuantity - unit.quantity} miniaturas.
+                    Faltan {unit.startingQuantity - unit.quantity} miniaturas · {unit.woundsTaken} heridas.
                   </div>
                 </button>
               );
             })
           ) : (
             <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-4 text-sm text-slate-400">
-              No hay unidades heridas compatibles en este sistema.
+              No hay unidades compatibles para reabastecer en este sistema.
             </div>
           )}
         </div>
@@ -388,11 +405,18 @@ function HealTab({
             <div>
               <h3 className="text-xl font-semibold text-cyan-50">{selectedUnit.name}</h3>
               <p className="mt-1 text-sm text-slate-400">
-                {selectedUnit.quantity}/{selectedUnit.startingQuantity} miniaturas · recupera hasta {maxHeal}
+                {selectedUnit.quantity}/{selectedUnit.startingQuantity} miniaturas · {selectedUnit.woundsTaken} heridas
+              </p>
+              <p className="mt-2 text-xs leading-5 text-slate-500">
+                Recupera la unidad completa: miniaturas al maximo y heridas a 0.
               </p>
             </div>
 
-            <QuantityPicker disabled={mutation.isPending} max={maxHeal} min={1} onChange={setHealQuantity} value={clampedHeal} />
+            {activeQueue ? (
+              <div className="rounded-md border border-amber-300/25 bg-amber-400/10 p-3 text-sm text-amber-100">
+                Este edificio ya tiene una orden en cola. Cancela o espera a que termine para reabastecer.
+              </div>
+            ) : null}
 
             <CostSummary
               getValue={(resource) => recoveryCosts[resource] ?? 0}
@@ -404,15 +428,15 @@ function HealTab({
 
             <Button
               className="sticky bottom-0 w-full"
-              disabled={!rpcReady || !hasResources || mutation.isPending}
+              disabled={!rpcReady || !hasResources || Boolean(activeQueue) || mutation.isPending}
               onClick={() => mutation.mutate()}
             >
               <HeartPulse size={16} />
-              {mutation.isPending ? "Iniciando..." : "Curar unidad"}
+              {mutation.isPending ? "Iniciando..." : "Reabastecer unidad"}
             </Button>
           </div>
         ) : (
-          <p className="text-sm text-slate-400">No hay unidades heridas.</p>
+          <p className="text-sm text-slate-400">No hay unidades para reabastecer.</p>
         )}
       </aside>
     </div>
@@ -420,8 +444,21 @@ function HealTab({
 }
 
 function QueueTab({ snapshot, building }: { snapshot: CampaignSnapshot; building: SystemBuilding }) {
+  const queryClient = useQueryClient();
   const recruitmentQueue = snapshot.recruitmentQueue.filter((item) => item.systemBuildingId === building.id && item.status === "queued");
   const recoveryQueue = snapshot.unitRecoveryQueue.filter((item) => item.systemBuildingId === building.id && item.status === "queued");
+  const cancelRecruitmentMutation = useMutation({
+    mutationFn: cancelRecruitmentQueue,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
+  });
+  const cancelRecoveryMutation = useMutation({
+    mutationFn: cancelUnitRecoveryQueue,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
+  });
 
   return (
     <div className="mobile-scroll flex-1 p-4 md:p-5">
@@ -432,21 +469,29 @@ function QueueTab({ snapshot, building }: { snapshot: CampaignSnapshot; building
             id: item.id,
             title: item.unitName,
             detail: `x${item.quantity}`,
-            finishesAt: item.finishesAt
+            finishesAt: item.finishesAt,
+            refund: getQueueRefund(item)
           }))}
+          cancelPending={cancelRecruitmentMutation.isPending}
+          onCancel={(id) => cancelRecruitmentMutation.mutate(id)}
           title="Reclutamiento"
         />
         <QueueSection
-          emptyText="Sin curaciones activas."
+          emptyText="Sin reabastecimientos activos."
           items={recoveryQueue.map((item) => ({
             id: item.id,
             title: item.unitName,
-            detail: `+${item.healQuantity} miniaturas`,
-            finishesAt: item.finishesAt
+            detail: "Reabastecimiento completo",
+            finishesAt: item.finishesAt,
+            refund: getQueueRefund(item)
           }))}
-          title="Curacion"
+          cancelPending={cancelRecoveryMutation.isPending}
+          onCancel={(id) => cancelRecoveryMutation.mutate(id)}
+          title="Reabastecimiento"
         />
       </div>
+      {cancelRecruitmentMutation.error ? <p className="mt-3 text-sm text-rose-200">{cancelRecruitmentMutation.error.message}</p> : null}
+      {cancelRecoveryMutation.error ? <p className="mt-3 text-sm text-rose-200">{cancelRecoveryMutation.error.message}</p> : null}
     </div>
   );
 }
@@ -454,11 +499,15 @@ function QueueTab({ snapshot, building }: { snapshot: CampaignSnapshot; building
 function QueueSection({
   title,
   items,
-  emptyText
+  emptyText,
+  cancelPending,
+  onCancel
 }: {
   title: string;
-  items: Array<{ id: string; title: string; detail: string; finishesAt: string }>;
+  items: Array<{ id: string; title: string; detail: string; finishesAt: string; refund: Partial<Record<ResourceKey, number>> }>;
   emptyText: string;
+  cancelPending: boolean;
+  onCancel: (id: string) => void;
 }) {
   return (
     <section>
@@ -471,8 +520,14 @@ function QueueSection({
                 <div>
                   <div className="text-sm font-medium text-slate-100">{item.title}</div>
                   <div className="mt-1 text-xs text-slate-400">{item.detail}</div>
+                  <RefundLine refund={item.refund} />
                 </div>
-                <Badge tone="violet">{formatCountdown(item.finishesAt)}</Badge>
+                <div className="flex flex-col items-end gap-2">
+                  <Badge tone="violet">{formatCountdown(item.finishesAt)}</Badge>
+                  <Button disabled={cancelPending} onClick={() => onCancel(item.id)} size="sm" variant="ghost">
+                    Cancelar
+                  </Button>
+                </div>
               </div>
             </div>
           ))
@@ -603,6 +658,23 @@ function CostPill({
   );
 }
 
+function RefundLine({ refund }: { refund: Partial<Record<ResourceKey, number>> }) {
+  const resources = Object.entries(refund).filter(([, value]) => value > 0) as Array<[ResourceKey, number]>;
+
+  if (resources.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-slate-400">
+      <span>Reembolso:</span>
+      {resources.map(([resource, value]) => (
+        <ResourceAmount key={resource} resource={resource} value={value} />
+      ))}
+    </div>
+  );
+}
+
 function getCurrentResources(snapshot: CampaignSnapshot) {
   return snapshot.resources.find((item) => item.factionId === snapshot.currentUser.factionId);
 }
@@ -618,9 +690,8 @@ function canAffordRecruitment(
   );
 }
 
-function getRecoveryCosts(template: UnitTemplate, healQuantity: number): Partial<Record<ResourceKey, number>> {
-  const divisor = Math.max(template.defaultQuantity, 1);
-  const halfCost = (value: number) => (value > 0 ? Math.ceil((value * healQuantity) / divisor / 2) : 0);
+function getResupplyCosts(template: UnitTemplate): Partial<Record<ResourceKey, number>> {
+  const halfCost = (value: number) => (value > 0 ? Math.ceil(value / 2) : 0);
 
   return {
     supply: halfCost(template.supplyCost),
@@ -630,6 +701,39 @@ function getRecoveryCosts(template: UnitTemplate, healQuantity: number): Partial
     industrialMaterial: halfCost(template.industrialMaterialCost),
     uridium: halfCost(template.uridiumCost),
     technology: halfCost(template.technologyCost)
+  };
+}
+
+function getActiveBuildingQueue(snapshot: CampaignSnapshot, buildingId: string) {
+  return (
+    snapshot.recruitmentQueue.find((item) => item.systemBuildingId === buildingId && item.status === "queued") ??
+    snapshot.unitRecoveryQueue.find((item) => item.systemBuildingId === buildingId && item.status === "queued") ??
+    null
+  );
+}
+
+function getQueueRefund(
+  item: Pick<
+    RecruitmentQueueItem | UnitRecoveryQueueItem,
+    | "supplyCost"
+    | "mineralsCost"
+    | "honorCost"
+    | "goldCost"
+    | "industrialMaterialCost"
+    | "uridiumCost"
+    | "technologyCost"
+  >
+): Partial<Record<ResourceKey, number>> {
+  const refund = (value: number) => (value > 0 ? Math.ceil(value / 2) : 0);
+
+  return {
+    supply: refund(item.supplyCost),
+    minerals: refund(item.mineralsCost),
+    honor: refund(item.honorCost),
+    gold: refund(item.goldCost),
+    industrialMaterial: refund(item.industrialMaterialCost),
+    uridium: refund(item.uridiumCost),
+    technology: refund(item.technologyCost)
   };
 }
 
