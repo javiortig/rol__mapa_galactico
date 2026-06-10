@@ -223,6 +223,10 @@ function getBuildBlockReason(
   template: BuildingTemplate,
   resources?: FactionResources
 ) {
+  if (system.systemKind === "gaseous") {
+    return "Sistema gaseoso no edificable";
+  }
+
   const currentBuildings = snapshot.systemBuildings.filter(
     (building) => building.systemId === system.id && building.status !== "disabled"
   );

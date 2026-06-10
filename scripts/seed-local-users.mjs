@@ -194,6 +194,21 @@ async function seedUsers() {
       throw profileError;
     }
 
+    if (seedUser.role === "admin") {
+      const { error: clearFactionError } = await supabase
+        .from("player_factions")
+        .delete()
+        .eq("user_id", authUser.id);
+
+      if (clearFactionError) {
+        throw clearFactionError;
+      }
+
+      seeded.set(seedUser.email, { id: authUser.id, factionId: null });
+      console.log(`Usuario de campana listo: ${seedUser.email} (sin faccion)`);
+      continue;
+    }
+
     const { error: factionError } = await supabase.from("player_factions").upsert(
       {
         user_id: authUser.id,

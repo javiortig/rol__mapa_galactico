@@ -83,6 +83,12 @@ export function CampaignShell() {
     }
   }, [error, router]);
 
+  useEffect(() => {
+    if (data?.currentUser.role === "admin") {
+      router.replace("/admin");
+    }
+  }, [data?.currentUser.role, router]);
+
   const armMobileTapShield = useCallback(() => {
     if (!isMobile) {
       return;
@@ -118,6 +124,10 @@ export function CampaignShell() {
 
   if (!data) {
     return <main className="grid min-h-screen place-items-center text-cyan-100">Cargando campaña...</main>;
+  }
+
+  if (data.currentUser.role === "admin") {
+    return <main className="grid min-h-screen place-items-center text-cyan-100">Redirigiendo a consola de administración...</main>;
   }
 
   const selectedSystem = data.systems.find(
@@ -725,7 +735,7 @@ function GalaxyTooltip({
           </span>
         </div>
         <div className="flex items-center justify-between gap-3">
-          <span>Producción diaria</span>
+          <span>Capacidad base</span>
           <span className="text-cyan-100">+{totalProduction}/día</span>
         </div>
         {system.blockedUntil ? (
@@ -777,6 +787,7 @@ function SystemPanel({
   const canBuild =
     system.controllerFactionId === snapshot.currentUser.factionId &&
     system.status === "controlled" &&
+    system.systemKind !== "gaseous" &&
     !isSystemBlockedForMovement(system) &&
     buildingSlotsUsed < buildingSlots &&
     (snapshot.currentUser.role === "admin" || snapshot.currentUser.role === "player");
@@ -915,6 +926,11 @@ function SystemPanel({
                 Sistema compartido: no admite conquista y las facciones pueden coexistir al llegar.
               </p>
             ) : null}
+            {system.systemKind === "gaseous" ? (
+              <p className="mt-2 text-xs text-slate-400">
+                Sistema gaseoso: no admite construcciones y su capacidad de recursos es nula.
+              </p>
+            ) : null}
           </section>
 
           {system.blockedUntil ? (
@@ -933,7 +949,7 @@ function SystemPanel({
           ) : null}
 
           <section>
-            <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Producción diaria</h2>
+            <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Capacidad base diaria</h2>
             <div className="grid grid-cols-2 gap-2">
               {planetProductionResources.map((key) => (
                 <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={key}>
@@ -945,6 +961,7 @@ function SystemPanel({
                 </div>
               ))}
             </div>
+            <p className="mt-2 text-xs text-slate-400">Los edificios extraen esta capacidad. Sin edificio activo, la extracción efectiva es 0.</p>
           </section>
 
           <section>
@@ -1011,10 +1028,16 @@ function SystemPanel({
 
         <div className="grid shrink-0 grid-cols-3 gap-2 border-t border-cyan-200/15 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 md:p-5">
           <Button className="min-w-0 text-xs sm:text-sm">Ver mision</Button>
-          <Button className="min-w-0 text-xs sm:text-sm" disabled={!canBuild} onClick={() => onOpenConstruction(system)}>
-            <Hammer size={16} />
-            Construir
-          </Button>
+          {system.systemKind === "gaseous" ? (
+            <Button className="min-w-0 text-xs sm:text-sm" disabled variant="ghost">
+              No edificable
+            </Button>
+          ) : (
+            <Button className="min-w-0 text-xs sm:text-sm" disabled={!canBuild} onClick={() => onOpenConstruction(system)}>
+              <Hammer size={16} />
+              Construir
+            </Button>
+          )}
           <Button
             className="min-w-0 text-xs sm:text-sm"
             disabled={system.status === "war" ? !canReport : !canMove}

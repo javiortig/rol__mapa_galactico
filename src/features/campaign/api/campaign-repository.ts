@@ -154,10 +154,13 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
 
     const playerFactions = getRows(playerFactionsResult, "player_factions");
     const factionRows = getRows(factionsResult, "factions");
-    const currentFactionId =
-      (playerFactions[0]?.faction_id as string | undefined) ?? (factionRows[0]?.id as string | undefined);
+    const isAdminUser = profile.role === "admin";
+    const assignedFactionId = (playerFactions[0]?.faction_id as string | undefined) ?? null;
+    const currentFactionId = isAdminUser
+      ? assignedFactionId
+      : assignedFactionId ?? ((factionRows[0]?.id as string | undefined) ?? null);
 
-    if (!currentFactionId) {
+    if (!isAdminUser && !currentFactionId) {
       return getFallbackSnapshotOrThrow(allowMockFallback, "Tu usuario no tiene faccion asignada.");
     }
 
@@ -167,6 +170,10 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
         mapResourceProduction(row)
       ])
     );
+    const systemResourceCapabilities = getRows(systemResourceCapabilitiesResult, "system_resource_capabilities").map(
+      mapSystemResourceCapability
+    );
+    const capacityBySystem = groupBySystemCapacity(systemResourceCapabilities);
     const specialObjectsBySystem = groupBy(
       getRows(specialObjectsResult, "system_special_objects").map(mapSpecialObject),
       (item) => item.systemId
@@ -187,7 +194,11 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       nextResourceTickAt: settingsResult.data?.next_resource_tick_at ?? new Date().toISOString(),
       factions: factionRows.map(mapFaction),
       systems: getRows(systemsResult, "systems").map((row) =>
-        mapSystem(row, productionBySystem.get(row.id as string), specialObjectsBySystem.get(row.id as string))
+        mapSystem(
+          row,
+          capacityBySystem.get(row.id as string) ?? productionBySystem.get(row.id as string),
+          specialObjectsBySystem.get(row.id as string)
+        )
       ),
       edges: getRows(edgesResult, "system_edges").map(mapEdge),
       resources: getRows(resourcesResult, "faction_resources").map(mapFactionResources),
@@ -203,7 +214,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       technologyEffects: getRows(technologyEffectsResult, "technology_effects").map(mapTechnologyEffect),
       buildingTemplates: getRows(buildingTemplatesResult, "building_templates").map(mapBuildingTemplate),
       systemBuildings: getRows(systemBuildingsResult, "system_buildings").map(mapSystemBuilding),
-      systemResourceCapabilities: getRows(systemResourceCapabilitiesResult, "system_resource_capabilities").map(mapSystemResourceCapability),
+      systemResourceCapabilities,
       unitRecoveryQueue: getRows(unitRecoveryQueueResult, "unit_recovery_queue").map(mapUnitRecoveryQueueItem),
       tradeOffers: getRows(tradeOffersResult, "trade_offers").map(mapTradeOffer),
       conflicts: getRows(conflictsResult, "conflicts").map(mapConflict),
@@ -347,6 +358,15 @@ function mapResourceProduction(row: Record<string, unknown>): ResourceBundle {
     uridium: Number(row.uridium_per_tick ?? 0),
     technology: Number(row.technology_per_tick ?? 0)
   };
+}
+
+function groupBySystemCapacity(capabilities: SystemResourceCapability[]) {
+  return capabilities.reduce((systems, capability) => {
+    const bundle = systems.get(capability.systemId) ?? { ...emptyResources };
+    bundle[capability.resourceKey] = Math.max(0, capability.productionAmount);
+    systems.set(capability.systemId, bundle);
+    return systems;
+  }, new Map<string, ResourceBundle>());
 }
 
 function mapFactionResources(row: Record<string, unknown>): FactionResources {

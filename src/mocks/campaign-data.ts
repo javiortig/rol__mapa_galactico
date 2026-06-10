@@ -1669,10 +1669,10 @@ const systemBuildings: CampaignSnapshot["systemBuildings"] = systems.flatMap(get
 
 const unitRecoveryQueue: CampaignSnapshot["unitRecoveryQueue"] = [];
 
-const systemsWithBuildingProduction: CampaignSnapshot["systems"] = systems.map((system) => ({
+const systemsWithBaseProduction: CampaignSnapshot["systems"] = systems.map((system) => ({
   ...system,
   buildingSlots: system.isCapital ? 6 : 3,
-  production: getMockBuildingProduction(system.id)
+  production: getMockBaseProduction(system.id)
 }));
 
 const tradeOffers: CampaignSnapshot["tradeOffers"] = [
@@ -1707,12 +1707,12 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
     id: "user-cadia",
     displayName: "Alto Mando Imperial",
     role: "admin",
-    factionId: "guardia-imperial"
+    factionId: null
   },
   resourceTickIntervalHours: 24,
   nextResourceTickAt: inHours(24),
   factions,
-  systems: systemsWithBuildingProduction,
+  systems: systemsWithBaseProduction,
   edges,
   resources,
   units,
@@ -1734,27 +1734,25 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
 };
 
 function getMockResourceCapabilities(system: CampaignSnapshot["systems"][number]): CampaignSnapshot["systemResourceCapabilities"] {
+  if (system.systemKind === "gaseous") {
+    return [];
+  }
+
   if (system.isCapital) {
     return productionResourceKeys.map((resourceKey) => ({
       systemId: system.id,
       resourceKey,
-      productionAmount: getMockProductionAmount(resourceKey)
+      productionAmount: getCapitalCapability(resourceKey)
     }));
   }
 
   return productionResourceKeys
-    .filter((resourceKey) => {
-      if (resourceKey === "industrialMaterial") {
-        return system.status === "controlled" && system.production.minerals >= 5;
-      }
-
-      return system.production[resourceKey] > 0;
-    })
     .map((resourceKey) => ({
       systemId: system.id,
       resourceKey,
-      productionAmount: getMockProductionAmount(resourceKey)
-    }));
+      productionAmount: getMockDeterministicCapability(system.id, resourceKey)
+    }))
+    .filter((capability) => capability.productionAmount > 0);
 }
 
 function getMockStartingBuildings(system: CampaignSnapshot["systems"][number]): CampaignSnapshot["systemBuildings"] {
@@ -1774,21 +1772,12 @@ function getMockStartingBuildings(system: CampaignSnapshot["systems"][number]): 
   return slug ? [makeSystemBuilding(system.id, slug)] : [];
 }
 
-function getMockBuildingProduction(systemId: string): ResourceBundle {
+function getMockBaseProduction(systemId: string): ResourceBundle {
   const production = { ...emptyResources };
+  const capabilities = systemResourceCapabilities.filter((capability) => capability.systemId === systemId);
 
-  for (const building of systemBuildings) {
-    if (building.systemId !== systemId || building.status !== "active") {
-      continue;
-    }
-
-    const template = buildingTemplates.find((item) => item.id === building.buildingTemplateId);
-
-    if (!template?.producedResourceKey) {
-      continue;
-    }
-
-    production[template.producedResourceKey] += template.producedAmount;
+  for (const capability of capabilities) {
+    production[capability.resourceKey] = capability.productionAmount;
   }
 
   return production;
@@ -1803,9 +1792,95 @@ function getPreferredMockCapability(systemId: string) {
     .find(Boolean);
 }
 
-function getMockProductionAmount(resourceKey: ProductionResourceKey) {
-  const template = buildingTemplates.find((item) => item.slug === productionBuildingSlugByResource[resourceKey]);
-  return template?.producedAmount ?? 0;
+function getCapitalCapability(resourceKey: ProductionResourceKey) {
+  const capitalCapabilities: Record<ProductionResourceKey, number> = {
+    supply: 10,
+    minerals: 5,
+    industrialMaterial: 20,
+    uridium: 5,
+    honor: 3,
+    gold: 3
+  };
+
+  return capitalCapabilities[resourceKey];
+}
+
+function getMockDeterministicCapability(systemId: string, resourceKey: ProductionResourceKey) {
+  const profile = deterministicInt(`${systemId}:profile`, 0, 4);
+
+  if (profile === 0) {
+    return capabilityRange(systemId, resourceKey, {
+      supply: [5, 9],
+      minerals: [2, 5],
+      industrialMaterial: [4, 9],
+      uridium: [1, 3],
+      honor: [1, 3],
+      gold: [1, 3]
+    });
+  }
+
+  if (profile === 1) {
+    return capabilityRange(systemId, resourceKey, {
+      supply: [2, 5],
+      minerals: [6, 10],
+      industrialMaterial: [8, 13],
+      uridium: [1, 4],
+      honor: [0, 2],
+      gold: [1, 3]
+    });
+  }
+
+  if (profile === 2) {
+    return capabilityRange(systemId, resourceKey, {
+      supply: [3, 6],
+      minerals: [2, 5],
+      industrialMaterial: [3, 7],
+      uridium: [5, 9],
+      honor: [1, 3],
+      gold: [1, 4]
+    });
+  }
+
+  if (profile === 3) {
+    return capabilityRange(systemId, resourceKey, {
+      supply: [3, 6],
+      minerals: [1, 4],
+      industrialMaterial: [2, 6],
+      uridium: [1, 3],
+      honor: [4, 7],
+      gold: [2, 5]
+    });
+  }
+
+  return capabilityRange(systemId, resourceKey, {
+    supply: [4, 7],
+    minerals: [3, 6],
+    industrialMaterial: [5, 10],
+    uridium: [2, 5],
+    honor: [2, 4],
+    gold: [2, 4]
+  });
+}
+
+function capabilityRange(
+  systemId: string,
+  resourceKey: ProductionResourceKey,
+  ranges: Record<ProductionResourceKey, [number, number]>
+) {
+  const [min, max] = ranges[resourceKey];
+  return deterministicInt(`${systemId}:${resourceKey}`, min, max);
+}
+
+function deterministicInt(seed: string, min: number, max: number) {
+  let hash = 2166136261;
+
+  for (let index = 0; index < seed.length; index += 1) {
+    hash ^= seed.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+
+  const normalized = (hash >>> 0) % (max - min + 1);
+  return min + normalized;
 }
 
 function makeSystemBuilding(systemId: string, buildingTemplateSlug: string): CampaignSnapshot["systemBuildings"][number] {

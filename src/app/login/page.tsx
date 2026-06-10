@@ -36,7 +36,7 @@ export default function LoginPage() {
 
     setIsSubmitting(true);
     clearSupabaseAuthStorage();
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
     setIsSubmitting(false);
 
     if (signInError) {
@@ -44,7 +44,21 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/");
+    let destination = "/";
+
+    if (data.user?.id) {
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .maybeSingle();
+
+      if (profileData?.role === "admin") {
+        destination = "/admin";
+      }
+    }
+
+    router.push(destination);
     router.refresh();
   }
 

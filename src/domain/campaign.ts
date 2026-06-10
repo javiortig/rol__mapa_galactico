@@ -330,7 +330,7 @@ export interface CampaignSnapshot {
     id: string;
     displayName: string;
     role: Role;
-    factionId: string;
+    factionId: string | null;
   };
   resourceTickIntervalHours: number;
   nextResourceTickAt: string;

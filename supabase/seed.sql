@@ -314,38 +314,7 @@ values
 on conflict (slug) do update
 set name = excluded.name, description = excluded.description, category = excluded.category, building_kind = excluded.building_kind, supply_cost = excluded.supply_cost, minerals_cost = excluded.minerals_cost, honor_cost = excluded.honor_cost, gold_cost = excluded.gold_cost, industrial_material_cost = excluded.industrial_material_cost, uridium_cost = excluded.uridium_cost, technology_cost = excluded.technology_cost, construction_time_seconds = excluded.construction_time_seconds, produced_resource_key = excluded.produced_resource_key, produced_amount = excluded.produced_amount, allowed_unit_categories = excluded.allowed_unit_categories, required_technology_node_id = excluded.required_technology_node_id, icon_key = excluded.icon_key, is_available = excluded.is_available, updated_at = now();
 
-insert into public.system_resource_capabilities (system_id, resource_key, production_amount)
-select system_id, resource_key, production_amount
-from (
-  select systems.id as system_id, resources.resource_key, resources.production_amount
-  from public.systems
-  cross join (
-    values
-      ('supply'::text, 10),
-      ('minerals'::text, 6),
-      ('uridium'::text, 4),
-      ('gold'::text, 3),
-      ('industrial_material'::text, 5),
-      ('honor'::text, 2)
-  ) as resources(resource_key, production_amount)
-  where systems.is_capital = true
-
-  union
-  select system_id, 'supply', 10 from public.system_production where supply_per_tick > 0
-  union
-  select system_id, 'minerals', 6 from public.system_production where minerals_per_tick > 0
-  union
-  select system_id, 'uridium', 4 from public.system_production where uridium_per_tick > 0
-  union
-  select system_id, 'honor', 2 from public.system_production where ancestral_stone_per_tick > 0 or honor_per_tick > 0
-  union
-  select public.seed_uuid('system', slug), 'gold', 3
-  from (values ('blackglass'), ('sa-cea-gate'), ('nexus-aster'), ('vesper-halo'), ('red-sabbath'), ('argent-rift')) as gold_systems(slug)
-  union
-  select system_id, 'industrial_material', 5 from public.system_production where minerals_per_tick >= 5
-) capabilities
-on conflict (system_id, resource_key) do update
-set production_amount = excluded.production_amount;
+select public.rebuild_system_resource_capabilities();
 
 insert into public.system_buildings (
   id, system_id, building_template_id, status, started_at, finishes_at, constructed_at
