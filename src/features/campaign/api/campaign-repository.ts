@@ -307,6 +307,12 @@ function mapSystem(
     y: Number(row.y),
     size: Number(row.size ?? 1),
     starClass: row.star_class as StarClass | undefined,
+    systemKind: (row.system_kind as StarSystem["systemKind"] | undefined) ?? "standard",
+    isConquerable: row.is_conquerable === null || row.is_conquerable === undefined ? true : Boolean(row.is_conquerable),
+    allowsSharedOccupation:
+      row.allows_shared_occupation === null || row.allows_shared_occupation === undefined
+        ? false
+        : Boolean(row.allows_shared_occupation),
     type: row.type as string,
     status: row.status as StarSystem["status"],
     controllerFactionId: (row.controller_faction_id as string | null) ?? null,

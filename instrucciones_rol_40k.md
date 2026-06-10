@@ -173,6 +173,7 @@ Estado jugable actual:
 - El panel de mando operativo tiene entrada `Comercio`, no `Recursos`; abre Mercader y Comercio estelar.
 - Batallas se juegan fuera de la app; la web gestiona conflicto, bloqueo, reportes, supervivientes, heridas restantes y control final.
 - Comercio estelar usa reserva de recursos: publicar una oferta inmoviliza el recurso/oro y su comision; al aceptar solo se valida el coste del aceptante.
+- Sistemas gaseosos compartidos: `Nexus Aster` y `Ashen Road` son no conquistables, no generan batalla al llegar y permiten coexistencia de facciones.
 
 Estado visual actual:
 
@@ -188,6 +189,7 @@ Estado movil actual:
 
 - En movil la experiencia es mapa primero.
 - El panel de sistema no se abre al cargar; se abre solo al tocar una estrella.
+- Al tocar una estrella en movil se aplica un bloqueo tactil muy corto para evitar tap fantasma/click-through sobre botones del panel recien abierto.
 - El dock inferior se oculta cuando hay panel de sistema, movimiento, reclutamiento, tecnologia o reporte abierto.
 - La app usa `--app-height` calculado con `visualViewport` para Safari iOS.
 - Paneles largos usan scroll tactil real mediante clase `mobile-scroll`.

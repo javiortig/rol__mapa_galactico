@@ -11,6 +11,7 @@ interface GalaxyMapProps {
   factions: Faction[];
   movements: MovementOrder[];
   movementPlanning?: MovementPlanning;
+  onSystemPointerTap?: () => void;
 }
 
 type MovementPlanning = {
@@ -76,7 +77,7 @@ const starPalette: Record<StarClass, { core: number; corona: number; halo: numbe
   green: { core: 0xdcfce7, corona: 0x34d399, halo: 0x059669, name: "Verde" }
 };
 
-export function GalaxyMap({ systems, edges, factions, movements, movementPlanning }: GalaxyMapProps) {
+export function GalaxyMap({ systems, edges, factions, movements, movementPlanning, onSystemPointerTap }: GalaxyMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const pixiStateRef = useRef<PixiMapState | null>(null);
   const dataRef = useRef<MapData | null>(null);
@@ -127,10 +128,11 @@ export function GalaxyMap({ systems, edges, factions, movements, movementPlannin
         setHoveredSystem,
         setSelectedSystem,
         setTooltipPosition,
-        getMovementPlanning: () => movementPlanningRef.current
+        getMovementPlanning: () => movementPlanningRef.current,
+        onSystemPointerTap
       });
     }
-  }, [edges, factionColorById, factions, movements, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems]);
+  }, [edges, factionColorById, factions, movements, onSystemPointerTap, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems]);
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -208,7 +210,8 @@ export function GalaxyMap({ systems, edges, factions, movements, movementPlannin
         setHoveredSystem,
         setSelectedSystem,
         setTooltipPosition,
-        getMovementPlanning: () => movementPlanningRef.current
+        getMovementPlanning: () => movementPlanningRef.current,
+        onSystemPointerTap
       });
 
       let time = 0;
@@ -249,7 +252,7 @@ export function GalaxyMap({ systems, edges, factions, movements, movementPlannin
         app.destroy(true, { children: true });
       }
     };
-  }, [edges, factionColorById, factions, movements, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems]);
+  }, [edges, factionColorById, factions, movements, onSystemPointerTap, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems]);
 
   return <div className="absolute inset-0 touch-none" ref={containerRef} />;
 }
@@ -431,6 +434,7 @@ function renderStaticMap(
     setSelectedSystem: (systemId: string | null) => void;
     setTooltipPosition: (position: { x: number; y: number } | null) => void;
     getMovementPlanning: () => MovementPlanning | undefined;
+    onSystemPointerTap?: () => void;
   }
 ) {
   clearLayer(state.layers.background);
@@ -452,7 +456,8 @@ function renderStaticMap(
     setSelectedSystem: handlers.setSelectedSystem,
     setHoveredSystem: handlers.setHoveredSystem,
     setTooltipPosition: handlers.setTooltipPosition,
-    getMovementPlanning: handlers.getMovementPlanning
+    getMovementPlanning: handlers.getMovementPlanning,
+    onSystemPointerTap: handlers.onSystemPointerTap
   });
 }
 
@@ -597,7 +602,8 @@ function drawSystems({
   setSelectedSystem,
   setHoveredSystem,
   setTooltipPosition,
-  getMovementPlanning
+  getMovementPlanning,
+  onSystemPointerTap
 }: {
   layer: PIXI.Container;
   labelsLayer: PIXI.Container;
@@ -608,10 +614,16 @@ function drawSystems({
   setHoveredSystem: (systemId: string | null) => void;
   setTooltipPosition: (position: { x: number; y: number } | null) => void;
   getMovementPlanning: () => MovementPlanning | undefined;
+  onSystemPointerTap?: () => void;
 }) {
   for (const system of systems) {
     const starColors = getStarColors(system);
     const factionColor = getFactionColor(system, factionColorById);
+    const isNeutral = system.status === "neutral";
+    const isGaseous = system.systemKind === "gaseous";
+    const neutralRingColor = isGaseous ? 0x67e8f9 : 0x94a3b8;
+    const neutralCoreColor = isGaseous ? 0xd6f1ff : 0xdbe7f2;
+    const neutralCoronaColor = isGaseous ? 0x38bdf8 : 0x7f97b0;
     const controlColor = system.status === "war" ? 0xfb7185 : factionColor ?? 0x94a3b8;
     const radius = 8.4 * system.size;
     const node = new PIXI.Container();
@@ -620,17 +632,27 @@ function drawSystems({
     node.cursor = "pointer";
     node.hitArea = new PIXI.Circle(0, 0, radius * 3.4);
 
-    drawSoftCircle(node, 0, 0, radius * 5.4, starColors.halo, 0.038, 4);
-    drawSoftCircle(node, 0, 0, radius * 3.2, starColors.corona, 0.12, 3);
+    drawSoftCircle(node, 0, 0, radius * 5.4, isNeutral ? neutralRingColor : starColors.halo, isNeutral ? 0.026 : 0.038, 4);
+    drawSoftCircle(node, 0, 0, radius * 3.2, isNeutral ? neutralCoronaColor : starColors.corona, isNeutral ? 0.082 : 0.12, 3);
 
     const orbit = new PIXI.Graphics();
     orbit.circle(0, 0, radius * 1.82);
     orbit.stroke({
-      color: system.status === "neutral" ? 0xcbd5e1 : controlColor,
-      alpha: system.status === "neutral" ? 0.46 : 0.84,
-      width: system.status === "neutral" ? 1.25 : 2.1
+      color: isNeutral ? neutralRingColor : controlColor,
+      alpha: isNeutral ? 0.36 : 0.84,
+      width: isNeutral ? 1.2 : 2.1
     });
     node.addChild(orbit);
+
+    if (isGaseous) {
+      const gaseousLayer = new PIXI.Graphics();
+      gaseousLayer.ellipse(0, 0, radius * 2.6, radius * 1.45);
+      gaseousLayer.stroke({ color: 0x38bdf8, alpha: 0.56, width: 1.3 });
+      gaseousLayer.ellipse(0, 0, radius * 2.15, radius * 1.08);
+      gaseousLayer.stroke({ color: 0xa5f3fc, alpha: 0.34, width: 1 });
+      gaseousLayer.rotation = ((hashString(system.id) % 180) * Math.PI) / 180;
+      node.addChild(gaseousLayer);
+    }
 
     if (system.controllerFactionId && system.status !== "neutral") {
       const factionGlow = new PIXI.Graphics();
@@ -684,12 +706,14 @@ function drawSystems({
     }
 
     const core = new PIXI.Graphics();
+    const coronaColor = isNeutral ? neutralCoronaColor : starColors.corona;
+    const coreColor = isNeutral ? neutralCoreColor : starColors.core;
     core.circle(0, 0, radius * 1.12);
-    core.fill({ color: starColors.corona, alpha: 0.75 });
+    core.fill({ color: coronaColor, alpha: isNeutral ? 0.6 : 0.75 });
     core.circle(0, 0, radius * 0.72);
-    core.fill({ color: starColors.core, alpha: 1 });
+    core.fill({ color: coreColor, alpha: isNeutral ? 0.88 : 1 });
     core.circle(-radius * 0.22, -radius * 0.24, radius * 0.24);
-    core.fill({ color: 0xffffff, alpha: 0.82 });
+    core.fill({ color: 0xffffff, alpha: isNeutral ? 0.62 : 0.82 });
     node.addChild(core);
 
     const scanline = new PIXI.Graphics();
@@ -701,7 +725,7 @@ function drawSystems({
     scanline.lineTo(0, -radius * 1.2);
     scanline.moveTo(0, radius * 1.2);
     scanline.lineTo(0, radius * 2.1);
-    scanline.stroke({ color: controlColor, alpha: system.status === "neutral" ? 0.22 : 0.44, width: 1 });
+    scanline.stroke({ color: controlColor, alpha: isNeutral ? 0.14 : 0.44, width: 1 });
     node.addChild(scanline);
 
     node.on("pointertap", () => {
@@ -712,6 +736,7 @@ function drawSystems({
         return;
       }
 
+      onSystemPointerTap?.();
       setSelectedSystem(system.id);
     });
     node.on("pointerover", (event) => {

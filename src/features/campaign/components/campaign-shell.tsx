@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, Building2, Check, Clock3, Cpu, Crosshair, Factory, HandCoins, Hammer, Landmark, Minus, MousePointer2, Plus, RadioTower, Route, Shield, Swords, Undo2, X } from "lucide-react";
 import { getCampaignSnapshot, isCampaignAuthRequiredError } from "@/features/campaign/api/campaign-repository";
 import { useCampaignUiStore } from "@/features/campaign/store/campaign-ui-store";
@@ -58,6 +58,8 @@ export function CampaignShell() {
   const [constructionSystemId, setConstructionSystemId] = useState<string | null>(null);
   const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
   const [battleReportSystemId, setBattleReportSystemId] = useState<string | null>(null);
+  const [mobileTapShieldActive, setMobileTapShieldActive] = useState(false);
+  const mobileTapShieldTimerRef = useRef<number | null>(null);
   const [movementOriginSystemId, setMovementOriginSystemId] = useState<string | null>(null);
   const [movementUnitQuantities, setMovementUnitQuantities] = useState<Record<string, number>>({});
   const [movementRouteMode, setMovementRouteMode] = useState<"optimal" | "manual">("optimal");
@@ -80,6 +82,31 @@ export function CampaignShell() {
       router.replace("/login");
     }
   }, [error, router]);
+
+  const armMobileTapShield = useCallback(() => {
+    if (!isMobile) {
+      return;
+    }
+
+    setMobileTapShieldActive(true);
+
+    if (mobileTapShieldTimerRef.current !== null) {
+      window.clearTimeout(mobileTapShieldTimerRef.current);
+    }
+
+    mobileTapShieldTimerRef.current = window.setTimeout(() => {
+      setMobileTapShieldActive(false);
+      mobileTapShieldTimerRef.current = null;
+    }, 280);
+  }, [isMobile]);
+
+  useEffect(() => {
+    return () => {
+      if (mobileTapShieldTimerRef.current !== null) {
+        window.clearTimeout(mobileTapShieldTimerRef.current);
+      }
+    };
+  }, []);
 
   if (isCampaignAuthRequiredError(error)) {
     return <PrivateCampaignNotice title="Acceso privado" message="Redirigiendo al acceso de campana..." />;
@@ -240,6 +267,7 @@ export function CampaignShell() {
         edges={data.edges}
         factions={data.factions}
         movements={data.movements}
+        onSystemPointerTap={armMobileTapShield}
         movementPlanning={
           movementOriginSystemId && (!isMobile || movementMobileStage === "route")
             ? {
@@ -253,6 +281,8 @@ export function CampaignShell() {
         }
         systems={data.systems}
       />
+
+      {mobileTapShieldActive ? <div aria-hidden="true" className="pointer-events-auto absolute inset-0 z-[35] touch-none" /> : null}
 
       <div className="pointer-events-none absolute inset-0 flex flex-col">
         <div className="pointer-events-auto px-3 pb-2 pt-[max(0.75rem,env(safe-area-inset-top))] md:p-4">
@@ -670,6 +700,10 @@ function GalaxyTooltip({
         <div>
           <div className="font-semibold text-cyan-50">{system.name}</div>
           <div className="mt-0.5 text-xs text-slate-400">{system.type}</div>
+          <div className="mt-1 flex flex-wrap gap-1">
+            {system.systemKind === "gaseous" ? <Badge tone="cyan">gaseoso</Badge> : null}
+            {!system.isConquerable ? <Badge tone="slate">no conquistable</Badge> : null}
+          </div>
         </div>
         <Badge tone={system.status === "war" ? "rose" : system.status === "controlled" ? "cyan" : "slate"}>
           {stateText}
@@ -733,6 +767,7 @@ function SystemPanel({
     (item) => item.systemId === system.id && item.status === "pending"
   );
   const tone = system.status === "war" ? "rose" : system.status === "controlled" ? "cyan" : "slate";
+  const isSharedSystem = !system.isConquerable || system.allowsSharedOccupation;
   const canInspectBuildings = snapshot.currentUser.role === "admin" || system.controllerFactionId === snapshot.currentUser.factionId;
   const systemBuildings = snapshot.systemBuildings.filter(
     (building) => building.systemId === system.id && building.status !== "disabled"
@@ -752,6 +787,7 @@ function SystemPanel({
     (snapshot.currentUser.role === "admin" || snapshot.currentUser.role === "player");
   const canReport =
     Boolean(conflict) &&
+    !isSharedSystem &&
     (snapshot.currentUser.role === "admin" ||
       conflict?.attackerFactionId === snapshot.currentUser.factionId ||
       conflict?.defenderFactionId === snapshot.currentUser.factionId);
@@ -778,6 +814,8 @@ function SystemPanel({
               <div className="mb-2 flex items-center gap-2">
                 <Badge tone={tone}>{system.status}</Badge>
                 {system.isCapital ? <Badge tone="amber">capital</Badge> : null}
+                {system.systemKind === "gaseous" ? <Badge tone="cyan">gaseoso</Badge> : null}
+                {!system.isConquerable ? <Badge tone="slate">no conquistable</Badge> : null}
               </div>
               <h1 className="text-xl font-semibold text-cyan-50 md:text-2xl">{system.name}</h1>
               <p className="mt-1 text-sm text-slate-300">{system.type}</p>
@@ -872,6 +910,11 @@ function SystemPanel({
                 "Neutral"
               )}
             </div>
+            {isSharedSystem ? (
+              <p className="mt-2 text-xs text-slate-400">
+                Sistema compartido: no admite conquista y las facciones pueden coexistir al llegar.
+              </p>
+            ) : null}
           </section>
 
           {system.blockedUntil ? (
@@ -1398,8 +1441,11 @@ function BattleReportModal({
   const defaultWinner =
     factionOptions.find((faction) => faction.id === snapshot.currentUser.factionId)?.id ??
     conflict.attackerFactionId;
+  const isConquerableSystem = system.isConquerable;
   const [winnerFactionId, setWinnerFactionId] = useState<string | null>(defaultWinner);
-  const [finalControllerFactionId, setFinalControllerFactionId] = useState<string | null>(defaultWinner);
+  const [finalControllerFactionId, setFinalControllerFactionId] = useState<string | null>(
+    isConquerableSystem ? defaultWinner : null
+  );
   const [postBlockMinutes, setPostBlockMinutes] = useState(0);
   const [narrativeNotes, setNarrativeNotes] = useState("");
   const [survivors, setSurvivors] = useState<Record<string, number>>(() =>
@@ -1413,7 +1459,7 @@ function BattleReportModal({
     mutationFn: () =>
       submitBattleReport(conflict.id, {
         winnerFactionId,
-        finalControllerFactionId,
+        finalControllerFactionId: isConquerableSystem ? finalControllerFactionId : null,
         survivors,
         woundsRemaining,
         postBattleBlockedUntil:
@@ -1554,16 +1600,22 @@ function BattleReportModal({
                 <span className="mb-2 block text-slate-300">Control final</span>
                 <select
                   className="w-full rounded-md border border-cyan-200/15 bg-slate-950/70 px-3 py-2 text-sm text-cyan-50 outline-none"
+                  disabled={!isConquerableSystem}
                   onChange={(event) => setFinalControllerFactionId(event.target.value || null)}
                   value={finalControllerFactionId ?? ""}
                 >
                   <option value="">Neutral</option>
-                  {factionOptions.map((faction) => (
-                    <option key={faction.id} value={faction.id}>
-                      {faction.name}
-                    </option>
-                  ))}
+                  {isConquerableSystem
+                    ? factionOptions.map((faction) => (
+                        <option key={faction.id} value={faction.id}>
+                          {faction.name}
+                        </option>
+                      ))
+                    : null}
                 </select>
+                {!isConquerableSystem ? (
+                  <p className="mt-2 text-xs text-slate-400">Sistema no conquistable: el control final siempre es Neutral.</p>
+                ) : null}
               </label>
 
               <label className="block text-sm">

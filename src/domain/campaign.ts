@@ -12,6 +12,8 @@ export type TechnologyStatus = "available" | "researching" | "unlocked";
 
 export type StarClass = "blue" | "white" | "yellow" | "orange" | "red" | "violet" | "green";
 
+export type StarSystemKind = "standard" | "gaseous";
+
 export type UnitCategory =
   | "Infantería"
   | "Élite"
@@ -55,6 +57,9 @@ export interface StarSystem {
   y: number;
   size: number;
   starClass?: StarClass;
+  systemKind: StarSystemKind;
+  isConquerable: boolean;
+  allowsSharedOccupation: boolean;
   type: string;
   status: SystemStatus;
   controllerFactionId?: string | null;

@@ -106,6 +106,23 @@ set
 update public.systems
 set building_slots = case when is_capital then 6 else 3 end;
 
+update public.systems
+set
+  system_kind = 'standard',
+  is_conquerable = true,
+  allows_shared_occupation = false;
+
+update public.systems
+set
+  system_kind = 'gaseous',
+  is_conquerable = false,
+  allows_shared_occupation = true,
+  status = 'neutral',
+  controller_faction_id = null,
+  blocked_until = null,
+  updated_at = now()
+where slug in ('nexus-aster', 'ashen-road');
+
 update public.factions set capital_system_id = public.seed_uuid('system', 'cinder-maw') where slug = 'orcos';
 update public.factions set capital_system_id = public.seed_uuid('system', 'thokt-vault') where slug = 'necrones';
 update public.factions set capital_system_id = public.seed_uuid('system', 'kharon-prime') where slug = 'guardia-imperial';

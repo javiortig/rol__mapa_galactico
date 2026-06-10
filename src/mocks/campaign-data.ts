@@ -28,7 +28,9 @@ const factions: CampaignSnapshot["factions"] = [
   { id: "guardia-muerte", name: "Guardia de la Muerte", color: "#b6c35a", capitalSystemId: "mordax" }
 ];
 
-const systems: CampaignSnapshot["systems"] = [
+type BaseSystem = Omit<CampaignSnapshot["systems"][number], "systemKind" | "isConquerable" | "allowsSharedOccupation">;
+
+const baseSystems: BaseSystem[] = [
   {
     id: "kharon-prime",
     name: "Kharon Prime",
@@ -444,6 +446,19 @@ const systems: CampaignSnapshot["systems"] = [
     production: dailyProduction({ supply: 2, minerals: 3, uridium: 2 })
   }
 ];
+
+const gaseousSystemIds = new Set(["nexus-aster", "ashen-road"]);
+
+const systems: CampaignSnapshot["systems"] = baseSystems.map((system) => {
+  const isGaseous = gaseousSystemIds.has(system.id);
+
+  return {
+    ...system,
+    systemKind: isGaseous ? "gaseous" : "standard",
+    isConquerable: !isGaseous,
+    allowsSharedOccupation: isGaseous
+  };
+});
 
 const edges: CampaignSnapshot["edges"] = [
   { id: "route-01", fromSystemId: "kharon-prime", toSystemId: "helios-drift", uridiumCost: 1 },
