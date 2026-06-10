@@ -77,6 +77,16 @@ const starPalette: Record<StarClass, { core: number; corona: number; halo: numbe
   green: { core: 0xdcfce7, corona: 0x34d399, halo: 0x059669, name: "Verde" }
 };
 
+const neutralSystemColors = {
+  ring: 0x8d98a8,
+  core: 0xe2e8f0,
+  corona: 0xb2bcc9,
+  hover: 0xcbd5e1,
+  route: 0x94a3b8,
+  gaseousOuter: 0x95a2b2,
+  gaseousInner: 0xc8d0da
+};
+
 export function GalaxyMap({ systems, edges, factions, movements, movementPlanning, onSystemPointerTap }: GalaxyMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const pixiStateRef = useRef<PixiMapState | null>(null);
@@ -486,6 +496,7 @@ function renderDynamicLayers({
     layer: state.layers.routeEffects,
     systems: data.systems,
     edges: data.edges,
+    factionColorById: data.factionColorById,
     selectedSystemId,
     hoveredSystemId,
     movementOriginSystemId,
@@ -621,9 +632,9 @@ function drawSystems({
     const factionColor = getFactionColor(system, factionColorById);
     const isNeutral = system.status === "neutral";
     const isGaseous = system.systemKind === "gaseous";
-    const neutralRingColor = isGaseous ? 0x67e8f9 : 0x94a3b8;
-    const neutralCoreColor = isGaseous ? 0xd6f1ff : 0xdbe7f2;
-    const neutralCoronaColor = isGaseous ? 0x38bdf8 : 0x7f97b0;
+    const neutralRingColor = isGaseous ? neutralSystemColors.gaseousOuter : neutralSystemColors.ring;
+    const neutralCoreColor = neutralSystemColors.core;
+    const neutralCoronaColor = neutralSystemColors.corona;
     const controlColor = system.status === "war" ? 0xfb7185 : factionColor ?? 0x94a3b8;
     const radius = 8.4 * system.size;
     const node = new PIXI.Container();
@@ -632,24 +643,24 @@ function drawSystems({
     node.cursor = "pointer";
     node.hitArea = new PIXI.Circle(0, 0, radius * 3.4);
 
-    drawSoftCircle(node, 0, 0, radius * 5.4, isNeutral ? neutralRingColor : starColors.halo, isNeutral ? 0.026 : 0.038, 4);
-    drawSoftCircle(node, 0, 0, radius * 3.2, isNeutral ? neutralCoronaColor : starColors.corona, isNeutral ? 0.082 : 0.12, 3);
+    drawSoftCircle(node, 0, 0, radius * 5.4, isNeutral ? neutralRingColor : starColors.halo, isNeutral ? 0.022 : 0.038, 4);
+    drawSoftCircle(node, 0, 0, radius * 3.2, isNeutral ? neutralCoronaColor : starColors.corona, isNeutral ? 0.066 : 0.12, 3);
 
     const orbit = new PIXI.Graphics();
     orbit.circle(0, 0, radius * 1.82);
     orbit.stroke({
       color: isNeutral ? neutralRingColor : controlColor,
-      alpha: isNeutral ? 0.36 : 0.84,
-      width: isNeutral ? 1.2 : 2.1
+      alpha: isNeutral ? 0.28 : 0.84,
+      width: isNeutral ? 1.05 : 2.1
     });
     node.addChild(orbit);
 
     if (isGaseous) {
       const gaseousLayer = new PIXI.Graphics();
       gaseousLayer.ellipse(0, 0, radius * 2.6, radius * 1.45);
-      gaseousLayer.stroke({ color: 0x38bdf8, alpha: 0.56, width: 1.3 });
+      gaseousLayer.stroke({ color: neutralSystemColors.gaseousOuter, alpha: 0.32, width: 1.05 });
       gaseousLayer.ellipse(0, 0, radius * 2.15, radius * 1.08);
-      gaseousLayer.stroke({ color: 0xa5f3fc, alpha: 0.34, width: 1 });
+      gaseousLayer.stroke({ color: neutralSystemColors.gaseousInner, alpha: 0.2, width: 0.95 });
       gaseousLayer.rotation = ((hashString(system.id) % 180) * Math.PI) / 180;
       node.addChild(gaseousLayer);
     }
@@ -709,11 +720,11 @@ function drawSystems({
     const coronaColor = isNeutral ? neutralCoronaColor : starColors.corona;
     const coreColor = isNeutral ? neutralCoreColor : starColors.core;
     core.circle(0, 0, radius * 1.12);
-    core.fill({ color: coronaColor, alpha: isNeutral ? 0.6 : 0.75 });
+    core.fill({ color: coronaColor, alpha: isNeutral ? 0.52 : 0.75 });
     core.circle(0, 0, radius * 0.72);
-    core.fill({ color: coreColor, alpha: isNeutral ? 0.88 : 1 });
+    core.fill({ color: coreColor, alpha: isNeutral ? 0.8 : 1 });
     core.circle(-radius * 0.22, -radius * 0.24, radius * 0.24);
-    core.fill({ color: 0xffffff, alpha: isNeutral ? 0.62 : 0.82 });
+    core.fill({ color: 0xffffff, alpha: isNeutral ? 0.5 : 0.82 });
     node.addChild(core);
 
     const scanline = new PIXI.Graphics();
@@ -725,7 +736,7 @@ function drawSystems({
     scanline.lineTo(0, -radius * 1.2);
     scanline.moveTo(0, radius * 1.2);
     scanline.lineTo(0, radius * 2.1);
-    scanline.stroke({ color: controlColor, alpha: isNeutral ? 0.14 : 0.44, width: 1 });
+    scanline.stroke({ color: isNeutral ? neutralRingColor : controlColor, alpha: isNeutral ? 0.1 : 0.44, width: 1 });
     node.addChild(scanline);
 
     node.on("pointertap", () => {
@@ -782,6 +793,7 @@ function drawRouteEffects({
   layer,
   systems,
   edges,
+  factionColorById,
   selectedSystemId,
   hoveredSystemId,
   movementOriginSystemId,
@@ -791,6 +803,7 @@ function drawRouteEffects({
   layer: PIXI.Container;
   systems: StarSystem[];
   edges: SystemEdge[];
+  factionColorById: Map<string, string>;
   selectedSystemId: string | null;
   hoveredSystemId: string | null;
   movementOriginSystemId: string | null;
@@ -800,6 +813,7 @@ function drawRouteEffects({
   const systemById = new Map(systems.map((system) => [system.id, system]));
   const activeSystemId = movementOriginSystemId ?? selectedSystemId ?? hoveredSystemId;
   const warSystemIds = new Set(systems.filter((system) => system.status === "war").map((system) => system.id));
+  const hasMovementPlanning = Boolean(movementOriginSystemId);
   drawPathHighlight(layer, systemById, plannedPathSystemIds, 0xfef08a, 0.74);
 
   for (const edge of edges) {
@@ -810,19 +824,31 @@ function drawRouteEffects({
       continue;
     }
 
-    const isAdjacent = activeSystemId === from.id || activeSystemId === to.id;
-    const isWarAdjacent = warSystemIds.has(from.id) || warSystemIds.has(to.id);
+    const isAdjacent = Boolean(activeSystemId) && (activeSystemId === from.id || activeSystemId === to.id);
+    const isWarAdjacent = !activeSystemId && (warSystemIds.has(from.id) || warSystemIds.has(to.id));
 
     if (!isAdjacent && !isWarAdjacent) {
       continue;
     }
 
-    const color = isWarAdjacent ? 0xfb7185 : movementOriginSystemId ? 0xfef08a : 0x67e8f9;
-    const alpha = isAdjacent ? 0.72 : 0.32 + Math.sin(time * 0.07) * 0.08;
+    let color = 0xfb7185;
+    let alpha = 0.32 + Math.sin(time * 0.07) * 0.08;
+    let width = 2.3;
+
+    if (isAdjacent && activeSystemId) {
+      color = hasMovementPlanning
+        ? edge.isBlocked
+          ? 0xfb7185
+          : 0xfef08a
+        : getAdjacentDestinationColor(edge, activeSystemId, from, to, factionColorById);
+      alpha = hasMovementPlanning ? (edge.isBlocked ? 0.8 : 0.72) : 0.76;
+      width = 4;
+    }
+
     const line = new PIXI.Graphics();
     line.moveTo(from.x, from.y);
     line.lineTo(to.x, to.y);
-    line.stroke({ color, alpha, width: isAdjacent ? 4 : 2.3 });
+    line.stroke({ color, alpha, width });
     layer.addChild(line);
 
   }
@@ -871,25 +897,33 @@ function drawSystemEffects({
   const selected = systems.find((system) => system.id === selectedSystemId);
 
   if (selected) {
-    const color = getFactionColor(selected, factionColorById) ?? getStarColors(selected).halo;
+    const isNeutralSelected = selected.status === "neutral" || selected.systemKind === "gaseous";
+    const color = isNeutralSelected
+      ? neutralSystemColors.hover
+      : (getFactionColor(selected, factionColorById) ?? getStarColors(selected).halo);
     const radius = 8.4 * selected.size;
     const pulseRadius = radius * 3.05 + Math.sin(time * 0.08) * radius * 0.34;
     const selectedRing = new PIXI.Graphics();
     selectedRing.circle(selected.x, selected.y, pulseRadius);
-    selectedRing.stroke({ color, alpha: 0.92, width: 2.7 });
+    selectedRing.stroke({ color, alpha: isNeutralSelected ? 0.66 : 0.92, width: isNeutralSelected ? 2.1 : 2.7 });
     selectedRing.circle(selected.x, selected.y, pulseRadius * 1.18);
-    selectedRing.stroke({ color, alpha: 0.22, width: 5.4 });
+    selectedRing.stroke({ color, alpha: isNeutralSelected ? 0.14 : 0.22, width: isNeutralSelected ? 4.1 : 5.4 });
     layer.addChild(selectedRing);
   }
 
   const hovered = systems.find((system) => system.id === hoveredSystemId);
 
   if (hovered && hovered.id !== selectedSystemId) {
+    const isNeutralHovered = hovered.status === "neutral" || hovered.systemKind === "gaseous";
     const colors = getStarColors(hovered);
     const radius = 8.4 * hovered.size;
     const hoverRing = new PIXI.Graphics();
     hoverRing.circle(hovered.x, hovered.y, radius * 2.9);
-    hoverRing.stroke({ color: colors.core, alpha: 0.7, width: 1.6 });
+    hoverRing.stroke({
+      color: isNeutralHovered ? neutralSystemColors.hover : colors.core,
+      alpha: isNeutralHovered ? 0.42 : 0.7,
+      width: isNeutralHovered ? 1.2 : 1.6
+    });
     layer.addChild(hoverRing);
   }
 }
@@ -1167,6 +1201,26 @@ function getRouteColor(
   }
 
   return toPixiColor(factionColorById.get(sharedFactionId) ?? "#67e8f9");
+}
+
+function getAdjacentDestinationColor(
+  edge: SystemEdge,
+  activeSystemId: string,
+  from: StarSystem,
+  to: StarSystem,
+  factionColorById: Map<string, string>
+) {
+  if (edge.isBlocked) {
+    return 0xfb7185;
+  }
+
+  const destination = activeSystemId === from.id ? to : from;
+
+  if (destination.status === "neutral" || !destination.controllerFactionId) {
+    return neutralSystemColors.route;
+  }
+
+  return toPixiColor(factionColorById.get(destination.controllerFactionId) ?? "#94a3b8");
 }
 
 function getBounds(systems: StarSystem[]) {

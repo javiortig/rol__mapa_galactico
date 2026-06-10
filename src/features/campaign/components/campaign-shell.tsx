@@ -1159,8 +1159,8 @@ function MovementPlanner({
             {availableUnits.map((unit) => (
               <UnitSelectionCard
                 key={unit.id}
-                onSetQuantity={(quantity) => onSetUnitQuantity(unit.id, quantity)}
-                selectedQuantity={clampInteger(selectedQuantities[unit.id] ?? 0, 0, unit.quantity)}
+                isSelected={Boolean(selectedQuantities[unit.id])}
+                onToggleSelected={(nextSelected) => onSetUnitQuantity(unit.id, nextSelected ? unit.quantity : 0)}
                 unit={unit}
               />
             ))}
@@ -1170,7 +1170,7 @@ function MovementPlanner({
         <div className="shrink-0 border-t border-cyan-200/15 bg-slate-950/60 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3">
           <div className="mb-3 rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-xs text-slate-300">
             {selectedSelections.length > 0
-              ? `${selectedSelections.length} unidades - ${selectedMiniatures} miniaturas seleccionadas`
+              ? `${selectedSelections.length} unidades seleccionadas listas para mover.`
               : "Selecciona una o varias unidades para trazar una ruta."}
           </div>
           <Button className="w-full" disabled={selectedSelections.length === 0} onClick={onStartMobileRoutePlanning}>
@@ -1199,7 +1199,7 @@ function MovementPlanner({
           <div className="grid grid-cols-3 gap-2 text-xs">
             <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 p-2">
               <div className="text-slate-400">Unidades</div>
-              <div className="font-semibold text-cyan-50">{selectedMiniatures}</div>
+              <div className="font-semibold text-cyan-50">{selectedSelections.length}</div>
             </div>
             <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 p-2">
               <div className="flex items-center gap-1 text-slate-400">
@@ -1283,8 +1283,8 @@ function MovementPlanner({
           {availableUnits.map((unit) => (
             <UnitSelectionCard
               key={unit.id}
-              onSetQuantity={(quantity) => onSetUnitQuantity(unit.id, quantity)}
-              selectedQuantity={clampInteger(selectedQuantities[unit.id] ?? 0, 0, unit.quantity)}
+              isSelected={Boolean(selectedQuantities[unit.id])}
+              onToggleSelected={(nextSelected) => onSetUnitQuantity(unit.id, nextSelected ? unit.quantity : 0)}
               unit={unit}
             />
           ))}
@@ -1331,7 +1331,7 @@ function MovementPlanner({
 
         <div className="mb-4 rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-xs text-slate-300">
           {selectedSelections.length > 0
-            ? `${selectedSelections.length} unidades · ${selectedMiniatures} miniaturas seleccionadas`
+            ? `${selectedSelections.length} unidades seleccionadas · ${selectedMiniatures} miniaturas en total`
             : "Sin unidades seleccionadas"}
         </div>
 
@@ -1354,14 +1354,14 @@ function MovementPlanner({
 
 function UnitSelectionCard({
   unit,
-  selectedQuantity,
-  onSetQuantity
+  isSelected,
+  onToggleSelected
 }: {
   unit: CampaignUnit;
-  selectedQuantity: number;
-  onSetQuantity: (quantity: number) => void;
+  isSelected: boolean;
+  onToggleSelected: (selected: boolean) => void;
 }) {
-  const selected = selectedQuantity > 0;
+  const selected = isSelected;
 
   return (
     <div
@@ -1378,40 +1378,16 @@ function UnitSelectionCard({
             {formatUnitStrength(unit)} · {unit.category}
           </div>
         </div>
-        <Badge tone={selected ? "cyan" : "slate"}>{selected ? "Seleccionada" : "Lista"}</Badge>
+        <Badge tone={selected ? "cyan" : "slate"}>{selected ? "Seleccionada" : "No seleccionada"}</Badge>
       </div>
 
-      <div className="mt-3 flex items-center justify-between rounded-md border border-cyan-200/10 bg-slate-950/40 p-2">
-        <Button
-          disabled={selectedQuantity <= 0}
-          onClick={() => onSetQuantity(0)}
-          size="icon"
-          variant="ghost"
-        >
-          <Minus size={15} />
-        </Button>
-        <div className="text-center">
-          <div className="text-[11px] text-slate-400">Unidad completa</div>
-          <div className="text-base font-semibold text-cyan-50">{selectedQuantity}</div>
-        </div>
-        <Button
-          disabled={selectedQuantity >= unit.quantity}
-          onClick={() => onSetQuantity(unit.quantity)}
-          size="icon"
-          variant="ghost"
-        >
-          <Plus size={15} />
-        </Button>
+      <div className="mt-3 rounded-md border border-cyan-200/10 bg-slate-950/40 px-3 py-2 text-xs text-slate-300">
+        Esta unidad se mueve completa: {unit.quantity} miniaturas.
       </div>
 
-      <div className="mt-2 grid grid-cols-2 gap-2">
-        <Button disabled={selectedQuantity === 0} onClick={() => onSetQuantity(0)} size="sm" variant="ghost">
-          Limpiar
-        </Button>
-        <Button disabled={selectedQuantity === unit.quantity} onClick={() => onSetQuantity(unit.quantity)} size="sm" variant="ghost">
-          Todo
-        </Button>
-      </div>
+      <Button className="mt-3 w-full" onClick={() => onToggleSelected(!selected)} size="sm" variant={selected ? "ghost" : "primary"}>
+        {selected ? "Quitar unidad" : "Seleccionar unidad"}
+      </Button>
     </div>
   );
 }
