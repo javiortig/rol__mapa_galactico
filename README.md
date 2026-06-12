@@ -128,5 +128,5 @@ En movil la experiencia es mapa primero:
 - Para mover tropas: seleccionar sistema, pulsar `Mover tropas`, elegir miniaturas y despues `Trazar ruta en el mapa`.
 - En modo ruta se toca el destino para ruta optima, o sistemas conectados si se usa ruta manual, y se confirma desde la barra inferior.
 - Reclutamiento, reportes, movimiento y tecnologia usan paneles con scroll tactil real compatible con iPhone Safari y Android Chrome.
-- El arbol tecnologico se abre centrado en `doctrina-campana`, sin tecnologia seleccionada; el usuario toca un nodo para abrir el detalle.
+- El arbol tecnologico se abre centrado en `fundacion-planetaria`, sin tecnologia seleccionada; el usuario toca un nodo para abrir el detalle.
 - Antes de desplegar cambios de UI movil hay que probar al menos iPhone Safari y Android Chrome, verificando que todos los paneles scrollean hasta el final y que los botones no quedan bajo la barra del navegador.

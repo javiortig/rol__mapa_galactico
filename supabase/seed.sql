@@ -400,6 +400,201 @@ where technology_nodes.slug in ('logistica-frente', 'cadenas-mando', 'veteranos-
 on conflict (faction_id, technology_node_id) do update
 set status = excluded.status, started_at = null, finishes_at = null, unlocked_at = null, updated_at = now();
 
+insert into public.technology_nodes (
+  id, slug, tree_key, name, description, branch, tier, position_x, position_y, cost_technology, research_time_seconds, icon_key, effect_summary, is_starter, implementation_status
+)
+values
+  (public.seed_uuid('technology_node', 'fundacion-planetaria'), 'fundacion-planetaria', 'common-v1', 'Fundacion Planetaria', 'Protocolos basicos para levantar infraestructura estable de campana.', 'Progreso', 0, 46, 48, 0, 30, 'foundation', 'Permite construir Barracones de Infanteria y Granjas Biologicas.', true, 'active'),
+  (public.seed_uuid('technology_node', 'maquinaria-belica'), 'maquinaria-belica', 'common-v1', 'Maquinaria Belica', 'Talleres, elevadores y servosistemas para fabricar y mantener vehiculos.', 'Progreso', 1, 36, 34, 1, 30, 'war_machine', 'Permite construir Talleres de Guerra.', false, 'active'),
+  (public.seed_uuid('technology_node', 'criadero-guerra'), 'criadero-guerra', 'common-v1', 'Criadero de Guerra', 'Jaulas, ritos de control y habitats adaptados para criaturas de guerra.', 'Progreso', 1, 54, 34, 1, 30, 'beast', 'Permite construir Nidos de Bestias.', false, 'active'),
+  (public.seed_uuid('technology_node', 'asamblea-planetaria'), 'asamblea-planetaria', 'common-v1', 'Asamblea Planetaria', 'Estructura de mando local para sostener oficiales, personajes y estados mayores.', 'Progreso', 2, 45, 22, 2, 30, 'command', 'Permite construir Cuarteles de Mando.', false, 'active'),
+  (public.seed_uuid('technology_node', 'procesado-metalurgico'), 'procesado-metalurgico', 'common-v1', 'Procesado Metalurgico', 'Cadenas industriales para convertir mineral bruto en materiales de construccion.', 'Progreso', 1, 63, 50, 0, 30, 'factory', 'Permite construir Plantas de Fundicion.', false, 'active'),
+  (public.seed_uuid('technology_node', 'cristalizacion-combustible-cuantico'), 'cristalizacion-combustible-cuantico', 'common-v1', 'Cristalizacion de Combustible Cuantico', 'Tecnicas de estabilizacion para refinar Iridium util en rutas de salto.', 'Progreso', 2, 73, 39, 0, 30, 'uridium', 'Permite construir Refinerias de Iridium.', false, 'active'),
+  (public.seed_uuid('technology_node', 'extraccion-subterranea'), 'extraccion-subterranea', 'common-v1', 'Extraccion Subterranea', 'Sondeos profundos y maquinaria pesada para explotar vetas minerales.', 'Progreso', 2, 73, 55, 1, 30, 'mine', 'Permite construir Complejos Mineros.', false, 'active'),
+  (public.seed_uuid('technology_node', 'monumentos-gloria'), 'monumentos-gloria', 'common-v1', 'Monumentos a la Gloria', 'Arquitectura ceremonial para convertir victorias y lealtad en Honor.', 'Progreso', 2, 73, 71, 1, 30, 'honor', 'Permite construir Monumentos.', false, 'active'),
+  (public.seed_uuid('technology_node', 'fiebre-oro'), 'fiebre-oro', 'common-v1', 'La Fiebre del Oro', 'Prospeccion avanzada para localizar y explotar yacimientos preciosos.', 'Progreso', 3, 86, 55, 1, 30, 'gold', 'Permite construir Minas de Oro.', false, 'active'),
+  (public.seed_uuid('technology_node', 'pactos-mercantiles'), 'pactos-mercantiles', 'common-v1', 'Pactos Mercantiles', 'Acuerdos y garantias para atraer camaras de comercio al frente.', 'Progreso', 4, 91, 40, 1, 30, 'commerce', 'Permite construir Camaras de Comercio.', false, 'active'),
+  (public.seed_uuid('technology_node', 'contactos-economicos'), 'contactos-economicos', 'common-v1', 'Contactos Economicos', 'Red de intermediarios y agentes comerciales con acceso al mercader.', 'Progreso', 5, 96, 30, 1, 30, 'merchant', 'Permite comerciar con el Mercader.', false, 'active'),
+  (public.seed_uuid('technology_node', 'tratos-preferentes'), 'tratos-preferentes', 'common-v1', 'Tratos Preferentes', 'Credenciales, favores y rutas protegidas que reducen las tasas del mercader.', 'Progreso', 6, 96, 18, 2, 30, 'trade_discount', 'Mejora precios del Mercader: compra a 1.5x y venta a 0.75x del valor.', false, 'active'),
+  (public.seed_uuid('technology_node', 'mercado-galactico'), 'mercado-galactico', 'common-v1', 'Mercado Galactico', 'Acceso a tablones de oferta y rutas de intercambio entre jugadores.', 'Progreso', 5, 96, 52, 1, 30, 'market', 'Permite usar el Comercio Estelar.', false, 'active'),
+  (public.seed_uuid('technology_node', 'aranceles-privilegiados'), 'aranceles-privilegiados', 'common-v1', 'Aranceles Privilegiados', 'Tratados fiscales que reducen la comision del comercio estelar.', 'Progreso', 6, 96, 64, 2, 30, 'tariff', 'Reduce tu comision de Comercio Estelar al 10%, minimo 1 oro.', false, 'active'),
+  (public.seed_uuid('technology_node', 'oficina-inteligencia'), 'oficina-inteligencia', 'common-v1', 'Oficina de Inteligencia', 'Primer nucleo burocratico para futuras operaciones de espionaje.', 'Inteligencia', 1, 18, 58, 0, 30, 'intelligence', 'Proximamente: desbloqueara Nexos de Inteligencia.', false, 'planned'),
+  (public.seed_uuid('technology_node', 'celulas-informacion'), 'celulas-informacion', 'common-v1', 'Celulas de Informacion', 'Redes discretas de observadores, informadores y escuchas.', 'Inteligencia', 2, 14, 70, 2, 30, 'cells', 'Proximamente: produccion de espionaje y Antenas de Reconocimiento.', false, 'planned'),
+  (public.seed_uuid('technology_node', 'doctrina-clandestina'), 'doctrina-clandestina', 'common-v1', 'Doctrina Clandestina', 'Protocolos de infiltracion sostenida para operaciones encubiertas.', 'Inteligencia', 3, 8, 82, 1, 30, 'cloak', 'Proximamente: mejora de produccion de espionaje.', false, 'planned'),
+  (public.seed_uuid('technology_node', 'doble-agente'), 'doble-agente', 'common-v1', 'Doble Agente', 'Contramedidas para detectar redes enemigas y operaciones infiltradas.', 'Inteligencia', 3, 18, 86, 1, 30, 'agent', 'Proximamente: probabilidad de detectar espionaje enemigo.', false, 'planned'),
+  (public.seed_uuid('technology_node', 'tecnologia-sar'), 'tecnologia-sar', 'common-v1', 'Tecnologia SAR', 'Lectura de largo alcance para reconocimiento y triangulacion avanzada.', 'Inteligencia', 3, 28, 82, 1, 30, 'radar', 'Proximamente: duplicara alcance de Antenas de Reconocimiento.', false, 'planned')
+on conflict (slug) do update
+set tree_key = excluded.tree_key, name = excluded.name, description = excluded.description, branch = excluded.branch, tier = excluded.tier, position_x = excluded.position_x, position_y = excluded.position_y, cost_technology = excluded.cost_technology, research_time_seconds = excluded.research_time_seconds, icon_key = excluded.icon_key, effect_summary = excluded.effect_summary, is_starter = excluded.is_starter, implementation_status = excluded.implementation_status, updated_at = now();
+
+update public.technology_nodes
+set
+  research_time_seconds = 30,
+  implementation_status = case
+    when slug in ('doctrina-campana','estado-mayor-cruzada','honores-batalla','talleres-campana','dominio-bestial','arsenal-pesado','nodo-logistico','manufactorum-local','red-suministro','puerto-uridium','auspex-reliquias','nucleos-datos','cifra-negra') then 'deprecated'
+    else implementation_status
+  end,
+  updated_at = now()
+where tree_key = 'common-v1';
+
+update public.technology_nodes
+set branch = 'Mando militar', position_x = case slug when 'entrenamiento-linea' then 22 when 'logistica-frente' then 10 when 'cadenas-mando' then 25 else position_x end, position_y = case slug when 'entrenamiento-linea' then 32 when 'logistica-frente' then 22 when 'cadenas-mando' then 18 else position_y end, implementation_status = 'active', research_time_seconds = 30, updated_at = now()
+where slug in ('entrenamiento-linea', 'logistica-frente', 'cadenas-mando');
+
+update public.technology_nodes
+set branch = 'Infanteria y elite', position_x = case slug when 'veteranos-guerra' then 30 when 'especializacion-elite' then 18 else position_x end, position_y = case slug when 'veteranos-guerra' then 42 when 'especializacion-elite' then 48 else position_y end, implementation_status = 'active', research_time_seconds = 30, updated_at = now()
+where slug in ('veteranos-guerra', 'especializacion-elite');
+
+update public.technology_nodes
+set branch = 'Blindados y maquinas', position_x = case slug when 'motores-guerra' then 42 when 'blindaje-reforzado' then 55 else position_x end, position_y = case slug when 'motores-guerra' then 15 when 'blindaje-reforzado' then 16 else position_y end, implementation_status = 'active', research_time_seconds = 30, updated_at = now()
+where slug in ('motores-guerra', 'blindaje-reforzado');
+
+update public.technology_nodes
+set branch = 'Arqueotecnologia', position_x = 36, position_y = 62, implementation_status = 'active', research_time_seconds = 30, updated_at = now()
+where slug = 'matrices-eficiencia';
+
+delete from public.technology_prerequisites
+where technology_node_id in (select id from public.technology_nodes where tree_key = 'common-v1');
+
+insert into public.technology_prerequisites (technology_node_id, required_node_id, prerequisite_group)
+select tech.id, req.id, data.prerequisite_group
+from (
+  values
+    ('maquinaria-belica', 'fundacion-planetaria', 1),
+    ('criadero-guerra', 'fundacion-planetaria', 1),
+    ('asamblea-planetaria', 'maquinaria-belica', 1),
+    ('asamblea-planetaria', 'criadero-guerra', 1),
+    ('procesado-metalurgico', 'fundacion-planetaria', 1),
+    ('cristalizacion-combustible-cuantico', 'procesado-metalurgico', 1),
+    ('extraccion-subterranea', 'procesado-metalurgico', 1),
+    ('monumentos-gloria', 'procesado-metalurgico', 1),
+    ('fiebre-oro', 'cristalizacion-combustible-cuantico', 1),
+    ('fiebre-oro', 'extraccion-subterranea', 2),
+    ('fiebre-oro', 'monumentos-gloria', 3),
+    ('pactos-mercantiles', 'fiebre-oro', 1),
+    ('contactos-economicos', 'pactos-mercantiles', 1),
+    ('tratos-preferentes', 'contactos-economicos', 1),
+    ('mercado-galactico', 'pactos-mercantiles', 1),
+    ('aranceles-privilegiados', 'mercado-galactico', 1),
+    ('celulas-informacion', 'oficina-inteligencia', 1),
+    ('doctrina-clandestina', 'celulas-informacion', 1),
+    ('doble-agente', 'celulas-informacion', 1),
+    ('tecnologia-sar', 'celulas-informacion', 1),
+    ('logistica-frente', 'entrenamiento-linea', 1),
+    ('cadenas-mando', 'entrenamiento-linea', 1),
+    ('veteranos-guerra', 'entrenamiento-linea', 1),
+    ('especializacion-elite', 'veteranos-guerra', 1),
+    ('motores-guerra', 'maquinaria-belica', 1),
+    ('blindaje-reforzado', 'motores-guerra', 1),
+    ('matrices-eficiencia', 'procesado-metalurgico', 1)
+) as data(technology_slug, required_slug, prerequisite_group)
+join public.technology_nodes tech on tech.slug = data.technology_slug
+join public.technology_nodes req on req.slug = data.required_slug
+on conflict (technology_node_id, required_node_id) do update
+set prerequisite_group = excluded.prerequisite_group;
+
+delete from public.technology_effects
+where technology_node_id in (select id from public.technology_nodes where tree_key = 'common-v1')
+  and effect_type in (
+    'unlock_unit_template',
+    'recruitment_cost_discount',
+    'recruitment_time_discount',
+    'unlock_building_template',
+    'unlock_building',
+    'unlock_merchant_trade',
+    'merchant_rate_modifier',
+    'unlock_stellar_trade',
+    'stellar_trade_fee_discount'
+  );
+
+insert into public.technology_effects (id, technology_node_id, effect_type, payload)
+select public.seed_uuid('technology_effect', data.effect_slug), nodes.id, data.effect_type, data.payload::jsonb
+from (
+  values
+    ('logistica-frente-supply-infantry-v2', 'logistica-frente', 'recruitment_cost_discount', '{"category":"Infanteria","resource":"supply","percent":10}'),
+    ('cadenas-mando-time-infantry-v2', 'cadenas-mando', 'recruitment_time_discount', '{"category":"Infanteria","percent":10}'),
+    ('veteranos-guerra-units-v2', 'veteranos-guerra', 'unlock_unit_template', '{"unit_template_slugs":["unit-orcos-meganobz","unit-necrones-immortals","unit-necrones-skorpekh","unit-guardia-kasrkin","unit-culto-acolytes","unit-sombra-terminators","unit-muerte-plague-marines"]}'),
+    ('especializacion-elite-minerals-v2', 'especializacion-elite', 'recruitment_cost_discount', '{"category":"Elite","resource":"minerals","percent":10}'),
+    ('motores-guerra-units-v2', 'motores-guerra', 'unlock_unit_template', '{"unit_template_slugs":["unit-orcos-deff-dread","unit-guardia-leman-russ","unit-culto-ridgerunner","unit-sombra-redemptor","unit-muerte-bloat-drone"]}'),
+    ('blindaje-reforzado-minerals-v2', 'blindaje-reforzado', 'recruitment_cost_discount', '{"category":"Vehiculo","resource":"minerals","percent":10}'),
+    ('matrices-efficiency-general-v2', 'matrices-eficiencia', 'recruitment_cost_discount', '{"category":"all","resource":"all","percent":5}'),
+    ('fundacion-planetaria-buildings', 'fundacion-planetaria', 'unlock_building_template', '{"building_template_slugs":["barracon-infanteria","granja-biologica"]}'),
+    ('maquinaria-belica-building', 'maquinaria-belica', 'unlock_building_template', '{"building_template_slugs":["taller-guerra"]}'),
+    ('criadero-guerra-building', 'criadero-guerra', 'unlock_building_template', '{"building_template_slugs":["nido-bestias"]}'),
+    ('asamblea-planetaria-building', 'asamblea-planetaria', 'unlock_building_template', '{"building_template_slugs":["cuartel-mando"]}'),
+    ('procesado-metalurgico-building', 'procesado-metalurgico', 'unlock_building_template', '{"building_template_slugs":["planta-fundicion"]}'),
+    ('cristalizacion-building', 'cristalizacion-combustible-cuantico', 'unlock_building_template', '{"building_template_slugs":["refineria-iridium"]}'),
+    ('extraccion-building', 'extraccion-subterranea', 'unlock_building_template', '{"building_template_slugs":["complejo-minero"]}'),
+    ('monumentos-building', 'monumentos-gloria', 'unlock_building_template', '{"building_template_slugs":["monumento"]}'),
+    ('fiebre-oro-building', 'fiebre-oro', 'unlock_building_template', '{"building_template_slugs":["mina-oro"]}'),
+    ('pactos-building', 'pactos-mercantiles', 'unlock_building_template', '{"building_template_slugs":["camara-comercio"]}'),
+    ('contactos-merchant', 'contactos-economicos', 'unlock_merchant_trade', '{}'),
+    ('tratos-merchant-rates', 'tratos-preferentes', 'merchant_rate_modifier', '{"buy_multiplier":1.5,"sell_multiplier":0.75}'),
+    ('mercado-stellar', 'mercado-galactico', 'unlock_stellar_trade', '{}'),
+    ('aranceles-fee', 'aranceles-privilegiados', 'stellar_trade_fee_discount', '{"percent":10,"minimum_gold":1}')
+) as data(effect_slug, technology_slug, effect_type, payload)
+join public.technology_nodes nodes on nodes.slug = data.technology_slug
+on conflict (id) do update
+set technology_node_id = excluded.technology_node_id, effect_type = excluded.effect_type, payload = excluded.payload;
+
+update public.building_templates
+set slug = 'monumento'
+where slug = 'senado'
+  and not exists (select 1 from public.building_templates existing where existing.slug = 'monumento');
+
+insert into public.building_templates (
+  id, slug, name, description, category, building_kind, supply_cost, minerals_cost, honor_cost, gold_cost, industrial_material_cost, uridium_cost, technology_cost, construction_time_seconds, produced_resource_key, produced_amount, allowed_unit_categories, required_technology_node_id, icon_key, is_available
+)
+values
+  (coalesce((select id from public.building_templates where slug = 'barracon-infanteria'), public.seed_uuid('building_template', 'barracon-infanteria')), 'barracon-infanteria', 'Barracon de Infanteria', 'Centro de instruccion para tropas de linea y cuadros veteranos.', 'Reclutamiento', 'recruitment', 12, 8, 0, 0, 4, 0, 0, 240, null, 0, array['Infanteria','Elite']::text[], public.seed_uuid('technology_node', 'fundacion-planetaria'), 'infantry_barracks', true),
+  (coalesce((select id from public.building_templates where slug = 'cuartel-mando'), public.seed_uuid('building_template', 'cuartel-mando')), 'cuartel-mando', 'Cuartel de Mando', 'Instalacion de oficiales, heroes y personajes de mando.', 'Reclutamiento', 'recruitment', 10, 10, 1, 0, 6, 0, 0, 300, null, 0, array['Personaje']::text[], public.seed_uuid('technology_node', 'asamblea-planetaria'), 'command_quarters', true),
+  (coalesce((select id from public.building_templates where slug = 'taller-guerra'), public.seed_uuid('building_template', 'taller-guerra')), 'taller-guerra', 'Taller de Guerra', 'Bahias de reparacion y ensamblaje de vehiculos.', 'Reclutamiento', 'recruitment', 6, 16, 0, 0, 8, 0, 0, 300, null, 0, array['Vehiculo']::text[], public.seed_uuid('technology_node', 'maquinaria-belica'), 'war_workshop', true),
+  (coalesce((select id from public.building_templates where slug = 'nido-bestias'), public.seed_uuid('building_template', 'nido-bestias')), 'nido-bestias', 'Nido de Bestias', 'Jaulas y rituales de control para monstruos de guerra.', 'Reclutamiento', 'recruitment', 14, 8, 1, 0, 6, 0, 0, 300, null, 0, array['Monstruo']::text[], public.seed_uuid('technology_node', 'criadero-guerra'), 'beast_lair', true),
+  (coalesce((select id from public.building_templates where slug = 'camara-comercio'), public.seed_uuid('building_template', 'camara-comercio')), 'camara-comercio', 'Camara de Comercio', 'Mercado orbital y punto de contacto con rutas mercantes.', 'Comercio', 'commerce', 8, 8, 0, 1, 4, 0, 0, 240, null, 0, array[]::text[], public.seed_uuid('technology_node', 'pactos-mercantiles'), 'commerce', true),
+  (coalesce((select id from public.building_templates where slug = 'nexo-inteligencia'), public.seed_uuid('building_template', 'nexo-inteligencia')), 'nexo-inteligencia', 'Nexo de Inteligencia', 'Centro de analisis para operaciones de espionaje futuras.', 'Inteligencia', 'intelligence', 6, 12, 1, 0, 6, 0, 0, 300, null, 0, array[]::text[], public.seed_uuid('technology_node', 'oficina-inteligencia'), 'intelligence', true),
+  (coalesce((select id from public.building_templates where slug = 'antenas-reconocimiento'), public.seed_uuid('building_template', 'antenas-reconocimiento')), 'antenas-reconocimiento', 'Antenas de Reconocimiento', 'Matrices de escucha y auspex de largo alcance.', 'Inteligencia', 'intelligence', 4, 8, 0, 0, 5, 2, 0, 240, null, 0, array[]::text[], public.seed_uuid('technology_node', 'celulas-informacion'), 'recon', true),
+  (coalesce((select id from public.building_templates where slug = 'granja-biologica'), public.seed_uuid('building_template', 'granja-biologica')), 'granja-biologica', 'Granja Biologica', 'Complejos de biomasa y cultivos adaptados al frente.', 'Produccion', 'production', 4, 4, 0, 0, 3, 0, 0, 180, 'supply', 10, array[]::text[], public.seed_uuid('technology_node', 'fundacion-planetaria'), 'biofarm', true),
+  (coalesce((select id from public.building_templates where slug = 'complejo-minero'), public.seed_uuid('building_template', 'complejo-minero')), 'complejo-minero', 'Complejo Minero', 'Pozos, excavadoras y refinerias de mineral bruto.', 'Produccion', 'production', 4, 6, 0, 0, 4, 0, 0, 180, 'minerals', 6, array[]::text[], public.seed_uuid('technology_node', 'extraccion-subterranea'), 'mine', true),
+  (coalesce((select id from public.building_templates where slug = 'refineria-iridium'), public.seed_uuid('building_template', 'refineria-iridium')), 'refineria-iridium', 'Refineria de Iridium', 'Planta especializada para estabilizar cristales de salto.', 'Produccion', 'production', 4, 8, 0, 0, 5, 0, 0, 240, 'uridium', 4, array[]::text[], public.seed_uuid('technology_node', 'cristalizacion-combustible-cuantico'), 'iridium_refinery', true),
+  (coalesce((select id from public.building_templates where slug = 'mina-oro'), public.seed_uuid('building_template', 'mina-oro')), 'mina-oro', 'Mina de Oro', 'Extraccion de metales preciosos para rutas comerciales.', 'Produccion', 'production', 4, 8, 0, 0, 5, 0, 0, 240, 'gold', 3, array[]::text[], public.seed_uuid('technology_node', 'fiebre-oro'), 'gold_mine', true),
+  (coalesce((select id from public.building_templates where slug = 'planta-fundicion'), public.seed_uuid('building_template', 'planta-fundicion')), 'planta-fundicion', 'Planta de Fundicion', 'Produce Material Industrial para nuevas construcciones.', 'Produccion', 'production', 4, 10, 0, 0, 3, 0, 0, 240, 'industrial_material', 5, array[]::text[], public.seed_uuid('technology_node', 'procesado-metalurgico'), 'foundry', true),
+  (coalesce((select id from public.building_templates where slug = 'monumento'), public.seed_uuid('building_template', 'monumento')), 'monumento', 'Monumento', 'Estructura ceremonial que transforma gloria local en Honor.', 'Produccion', 'production', 8, 8, 0, 1, 5, 0, 0, 300, 'honor', 2, array[]::text[], public.seed_uuid('technology_node', 'monumentos-gloria'), 'monument', true)
+on conflict (slug) do update
+set name = excluded.name, description = excluded.description, category = excluded.category, building_kind = excluded.building_kind, supply_cost = excluded.supply_cost, minerals_cost = excluded.minerals_cost, honor_cost = excluded.honor_cost, gold_cost = excluded.gold_cost, industrial_material_cost = excluded.industrial_material_cost, uridium_cost = excluded.uridium_cost, technology_cost = excluded.technology_cost, construction_time_seconds = excluded.construction_time_seconds, produced_resource_key = excluded.produced_resource_key, produced_amount = excluded.produced_amount, allowed_unit_categories = excluded.allowed_unit_categories, required_technology_node_id = excluded.required_technology_node_id, icon_key = excluded.icon_key, is_available = excluded.is_available, updated_at = now();
+
+update public.system_buildings
+set building_template_id = (select id from public.building_templates where slug = 'monumento')
+where building_template_id in (select id from public.building_templates where slug = 'senado')
+  and exists (select 1 from public.building_templates where slug = 'monumento');
+
+delete from public.building_templates
+where slug in ('senado', 'nodo-logistico', 'bastion-mando', 'manufactorum-local');
+
+delete from public.faction_technologies progress
+using public.technology_nodes nodes
+where progress.technology_node_id = nodes.id
+  and nodes.tree_key = 'common-v1'
+  and (progress.status = 'available' or nodes.implementation_status in ('deprecated', 'planned'));
+
+insert into public.faction_technologies (faction_id, technology_node_id, status, unlocked_at)
+select factions.id, nodes.id, 'unlocked', now()
+from public.factions
+cross join public.technology_nodes nodes
+where nodes.slug in ('fundacion-planetaria', 'entrenamiento-linea')
+on conflict (faction_id, technology_node_id) do update
+set status = excluded.status, unlocked_at = excluded.unlocked_at, started_at = null, finishes_at = null, updated_at = now();
+
+do $$
+declare
+  v_faction_id uuid;
+begin
+  for v_faction_id in select id from public.factions loop
+    perform public.refresh_available_technologies(v_faction_id);
+  end loop;
+end;
+$$;
+
+select public.refresh_system_production_from_buildings();
+
 insert into public.unit_templates (
   id, slug, faction_id, name, category, points, default_quantity, supply_cost, minerals_cost, ancestral_stone_cost, gold_cost, uridium_cost, technology_cost, recruitment_time_seconds, notes, is_available, required_technology_node_id
 )

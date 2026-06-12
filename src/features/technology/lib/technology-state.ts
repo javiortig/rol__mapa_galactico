@@ -1,6 +1,6 @@
 import type { BuildingTemplate, CampaignSnapshot, ResourceKey, TechnologyNode, UnitCategory, UnitTemplate } from "@/domain/campaign";
 
-export type DerivedTechnologyStatus = "locked" | "available" | "researching" | "unlocked";
+export type DerivedTechnologyStatus = "locked" | "planned" | "available" | "researching" | "unlocked";
 
 const resources: ResourceKey[] = ["supply", "minerals", "honor", "gold", "industrialMaterial", "uridium", "technology"];
 
@@ -11,6 +11,14 @@ export function getFactionTechnology(snapshot: CampaignSnapshot, technologyNodeI
 }
 
 export function getTechnologyStatus(snapshot: CampaignSnapshot, node: TechnologyNode): DerivedTechnologyStatus {
+  if (node.implementationStatus === "planned") {
+    return "planned";
+  }
+
+  if (node.implementationStatus === "deprecated") {
+    return "locked";
+  }
+
   const progress = getFactionTechnology(snapshot, node.id);
 
   if (progress?.status) {
@@ -34,6 +42,10 @@ export function isUnitTemplateUnlocked(snapshot: CampaignSnapshot, template: Uni
 
 export function isBuildingTemplateUnlocked(snapshot: CampaignSnapshot, template: BuildingTemplate) {
   return isTechnologyUnlocked(snapshot, template.requiredTechnologyNodeId);
+}
+
+export function isTechnologyNodeVisible(node: TechnologyNode) {
+  return node.implementationStatus !== "deprecated";
 }
 
 export function getRequiredTechnologyName(snapshot: CampaignSnapshot, technologyNodeId?: string | null) {
@@ -82,6 +94,41 @@ export function getRecruitmentDuration(snapshot: CampaignSnapshot, template: Uni
   return duration;
 }
 
+export function hasUnlockedTechnologyEffect(snapshot: CampaignSnapshot, effectType: string) {
+  return getUnlockedEffects(snapshot, effectType).length > 0;
+}
+
+export function getMerchantTradeRates(snapshot: CampaignSnapshot) {
+  const effects = getUnlockedEffects(snapshot, "merchant_rate_modifier");
+  const buyMultiplier = effects.reduce((current, effect) => {
+    const value = Number(effect.payload.buyMultiplier ?? effect.payload.buy_multiplier ?? current);
+    return Number.isFinite(value) && value > 0 ? Math.min(current, value) : current;
+  }, 2);
+  const sellMultiplier = effects.reduce((current, effect) => {
+    const value = Number(effect.payload.sellMultiplier ?? effect.payload.sell_multiplier ?? current);
+    return Number.isFinite(value) && value > 0 ? Math.max(current, value) : current;
+  }, 0.5);
+
+  return { buyMultiplier, sellMultiplier };
+}
+
+export function getStellarTradeFeePercent(snapshot: CampaignSnapshot) {
+  return getUnlockedEffects(snapshot, "stellar_trade_fee_discount").reduce((current, effect) => {
+    const value = Number(effect.payload.percent ?? current);
+    return Number.isFinite(value) && value > 0 ? Math.min(current, value) : current;
+  }, 30);
+}
+
+export function getStellarTradeFee(snapshot: CampaignSnapshot, goldAmount: number) {
+  const amount = Math.max(0, Math.trunc(goldAmount));
+
+  if (amount <= 0) {
+    return 0;
+  }
+
+  return Math.max(1, Math.ceil((amount * getStellarTradeFeePercent(snapshot)) / 100));
+}
+
 export function getBaseRecruitmentCost(template: UnitTemplate, resource: ResourceKey) {
   const costs: Record<ResourceKey, number> = {
     supply: template.supplyCost,
@@ -123,7 +170,21 @@ export function getVisibleRecruitmentCostResources(snapshot: CampaignSnapshot, t
 function areTechnologyPrerequisitesUnlocked(snapshot: CampaignSnapshot, technologyNodeId: string) {
   const prerequisites = snapshot.technologyPrerequisites.filter((item) => item.technologyNodeId === technologyNodeId);
 
-  return prerequisites.every((prerequisite) => isTechnologyUnlocked(snapshot, prerequisite.requiredNodeId));
+  if (prerequisites.length === 0) {
+    return true;
+  }
+
+  const groups = new Map<number, typeof prerequisites>();
+
+  for (const prerequisite of prerequisites) {
+    const group = groups.get(prerequisite.prerequisiteGroup) ?? [];
+    group.push(prerequisite);
+    groups.set(prerequisite.prerequisiteGroup, group);
+  }
+
+  return [...groups.values()].every((group) =>
+    group.some((prerequisite) => isTechnologyUnlocked(snapshot, prerequisite.requiredNodeId))
+  );
 }
 
 function getUnlockedEffects(snapshot: CampaignSnapshot, effectType: string) {

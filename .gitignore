@@ -16,3 +16,4 @@ supabase/.branches/
 supabase/.temp/
 recovery_vercel.txt
 historial-codex.jsonl
+docs/*

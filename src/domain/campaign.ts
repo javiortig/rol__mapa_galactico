@@ -10,6 +10,8 @@ export type MovementStatus = "moving" | "arrived" | "cancelled";
 
 export type TechnologyStatus = "available" | "researching" | "unlocked";
 
+export type TechnologyImplementationStatus = "active" | "planned" | "deprecated";
+
 export type StarClass = "blue" | "white" | "yellow" | "orange" | "red" | "violet" | "green";
 
 export type StarSystemKind = "standard" | "gaseous";
@@ -209,11 +211,13 @@ export interface TechnologyNode {
   iconKey?: string | null;
   effectSummary?: string | null;
   isStarter: boolean;
+  implementationStatus: TechnologyImplementationStatus;
 }
 
 export interface TechnologyPrerequisite {
   technologyNodeId: string;
   requiredNodeId: string;
+  prerequisiteGroup: number;
 }
 
 export interface FactionTechnology {

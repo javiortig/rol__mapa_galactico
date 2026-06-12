@@ -132,7 +132,7 @@ Navegacion movil actual:
 - La barra de recursos superior debe caber completa, con icono y numero compacto para los 6 recursos visibles: Suministro, Mineral, Honor, Oro, Material Industrial y Uridium.
 - El movimiento movil funciona en dos fases: seleccion de unidades desde el sistema y trazado de ruta en el mapa.
 - Al trazar ruta, el panel de sistema se cierra y queda una barra inferior con coste de Uridium, tiempo, cancelar, deshacer, reiniciar y confirmar.
-- Tecnologia abre la constelacion a pantalla completa centrada en `doctrina-campana`, sin nodo seleccionado; tocar un nodo abre el detalle como drawer inferior.
+- Tecnologia abre la constelacion a pantalla completa centrada en `fundacion-planetaria`, sin nodo seleccionado; tocar un nodo abre el detalle como drawer inferior.
 - Reclutamiento, reportes, movimiento y tecnologia usan paneles con scroll tactil real compatible con iPhone Safari y Android Chrome.
 - Cualquier cambio de UI movil debe probarse en iPhone Safari y Android Chrome, verificando que los paneles scrollean hasta el final y que los botones principales no quedan bajo las barras del navegador.
 
@@ -165,7 +165,7 @@ Estado jugable actual:
 - Reclutamiento usa `unit_templates`, costes, tiempos, cola, edificios compatibles y validacion tecnologica.
 - Reabastecimiento completo de unidades danadas desde edificios militares compatibles a mitad del coste completo de la unidad.
 - Cancelar reclutamiento, reabastecimiento o movimiento devuelve el 50% de los recursos gastados, redondeando hacia arriba.
-- Arbol tecnologico comun `common-v1` con progreso independiente por faccion.
+- Arbol tecnologico comun `common-v1` con progreso independiente por faccion. Incluye rama `Progreso` funcional, rama `Inteligencia` visible pero bloqueada como contenido futuro, y una rama militar temporal para desbloqueos de unidades.
 - Oro es un recurso principal visible en la barra superior y se usa sobre todo para comercio.
 - Material Industrial es un recurso visible y comerciable usado principalmente para construccion.
 - Componentes tecnologicos son un recurso especial del arbol tecnologico; no aparecen en la barra superior y no se producen en planetas ni por edificios de produccion.
@@ -193,7 +193,7 @@ Estado movil actual:
 - El dock inferior se oculta cuando hay panel de sistema, movimiento, reclutamiento, tecnologia o reporte abierto.
 - La app usa `--app-height` calculado con `visualViewport` para Safari iOS.
 - Paneles largos usan scroll tactil real mediante clase `mobile-scroll`.
-- El arbol tecnologico usa `tech-scroll`, abre centrado en `doctrina-campana`, sin nodo seleccionado, con zoom inicial reducido y controles de zoom/centrado.
+- El arbol tecnologico usa `tech-scroll`, abre centrado en `fundacion-planetaria`, sin nodo seleccionado, con zoom inicial reducido y controles de zoom/centrado.
 
 Archivos clave actuales:
 
@@ -533,7 +533,7 @@ Honor debe ser raro y usarse para:
 - Reliquias.
 - Desbloqueos narrativos.
 
-No todas las unidades básicas deben costar Honor. Honor se genera mediante el edificio `Senado` y no es comerciable ni con el mercader ni entre jugadores.
+No todas las unidades básicas deben costar Honor. Honor se genera mediante el edificio `Monumento` y no es comerciable ni con el mercader ni entre jugadores.
 
 Nota técnica: las columnas SQL legacy `ancestral_stone` y `ancestral_stone_cost` pueden seguir existiendo temporalmente para despliegues seguros en cloud, pero no deben usarse como contrato nuevo. El frontend debe mapear valores legacy a `honor` solo como compatibilidad.
 
@@ -546,7 +546,7 @@ La producción diaria real ya no sale de producción planetaria manual. Sale de 
 - `Refinería de Iridium` -> Uridium.
 - `Mina de Oro` -> Oro.
 - `Planta de Fundición` -> Material Industrial.
-- `Senado` -> Honor.
+- `Monumento` -> Honor.
 
 En base de datos, `system_production` queda como proyección visible/derivada de edificios activos, no como fuente de verdad manual. El resolver `refresh_system_production_from_buildings()` reconstruye esos valores desde `system_buildings`.
 
@@ -618,14 +618,16 @@ El mercader:
 - Permite comprar y vender `supply`, `minerals`, `industrialMaterial` y `uridium`.
 - No comercia Honor ni Componentes tecnológicos.
 - Requiere que la facción tenga al menos una `Cámara de Comercio` activa.
-- Vende recursos al doble de su valor.
-- Compra recursos a mitad de precio, redondeando hacia arriba.
+- Requiere tecnologia `Contactos Economicos` para operar.
+- Vende recursos al doble de su valor por defecto.
+- Compra recursos a mitad de precio por defecto, redondeando hacia arriba.
+- Con `Tratos Preferentes`, vende a 1.5x y compra a 0.75x del valor.
 
 Ejemplos de fórmulas:
 
 ```text
-Compra al mercader = ceil(valor_puntos_recurso * cantidad * 2 / 5) Oro
-Venta al mercader = ceil(valor_puntos_recurso * cantidad * 0.5 / 5) Oro
+Compra al mercader = ceil(valor_puntos_recurso * cantidad * multiplicador_compra / 5) Oro
+Venta al mercader = ceil(valor_puntos_recurso * cantidad * multiplicador_venta / 5) Oro
 ```
 
 #### Comercio estelar entre jugadores
@@ -638,8 +640,10 @@ El comercio entre jugadores usa ofertas abiertas de recurso contra Oro:
 - No se comercia Oro como recurso objetivo; Oro es la moneda.
 - No se comercian Honor ni Componentes tecnológicos.
 - Requiere que la facción tenga al menos una `Cámara de Comercio` activa.
+- Requiere tecnologia `Mercado Galactico`.
 - Cada transacción cobra una comisión del 30% del Oro de la oferta, redondeada hacia arriba.
 - Cada jugador paga su propia comisión en Oro.
+- Con `Aranceles Privilegiados`, la comision propia baja al 10%, minimo 1 Oro.
 
 Regla vigente: el comercio estelar reserva recursos al publicar.
 
@@ -907,9 +911,9 @@ Catálogo inicial:
 | Refinería de Iridium | Producción | Genera Uridium. |
 | Mina de Oro | Producción | Genera Oro. |
 | Planta de Fundición | Producción | Genera Material Industrial. |
-| Senado | Producción | Genera Honor. |
+| Monumento | Producción | Genera Honor. |
 
-Las capitales del seed empiezan con 4 edificios activos: Barracón de Infantería, Cámara de Comercio, Planta de Fundición y Senado.
+Las capitales del seed empiezan con 4 edificios activos: Barracón de Infantería, Cámara de Comercio, Planta de Fundición y Monumento.
 
 RPCs principales:
 
@@ -1332,7 +1336,7 @@ Reglas:
 Efectos v1:
 
 - `unlock_unit`: una tecnología permite reclutar plantillas de unidad asociadas.
-- `unlock_building`: deja preparado un edificio futuro aunque la construcción aún no esté implementada.
+- `unlock_building_template`: permite construir plantillas de edificio asociadas si la faccion tiene la tecnologia desbloqueada.
 - `recruitment_cost_discount`: reduce costes de reclutamiento por recurso y categoría.
 - `recruitment_time_discount`: reduce tiempo de reclutamiento por categoría.
 
@@ -1384,6 +1388,31 @@ La pantalla de tecnología debe sentirse como interfaz de videojuego:
 - Estados visuales claros.
 - Panel lateral con descripción, coste, tiempo, requisitos y efectos.
 - Botón `Tecnología` en el dock de mando.
+
+Regla vigente del arbol comun:
+
+- La descripcion anterior de ramas antiguas queda obsoleta donde choque con esta lista.
+- `common-v1` tiene rama `Progreso` funcional, rama `Inteligencia` visible pero bloqueada como `planned`, y rama militar temporal.
+- Todas las investigaciones de test duran 30 segundos.
+- `technology_nodes.implementation_status` puede ser `active`, `planned` o `deprecated`.
+- `technology_prerequisites.prerequisite_group` permite requisitos `OR`: todos los grupos deben cumplirse, pero dentro de un mismo grupo basta una tecnologia desbloqueada.
+- `Asamblea Planetaria` requiere `Maquinaria Belica` o `Criadero de Guerra`.
+- `La Fiebre del Oro` requiere Cristalizacion de Combustible Cuantico, Extraccion Subterranea y Monumentos a la Gloria.
+- `fundacion-planetaria` desbloquea Barracon de Infanteria y Granja Biologica.
+- `maquinaria-belica` desbloquea Taller de Guerra.
+- `criadero-guerra` desbloquea Nido de Bestias.
+- `asamblea-planetaria` desbloquea Cuartel de Mando.
+- `procesado-metalurgico` desbloquea Planta de Fundicion.
+- `cristalizacion-combustible-cuantico` desbloquea Refineria de Iridium.
+- `extraccion-subterranea` desbloquea Complejo Minero.
+- `monumentos-gloria` desbloquea Monumento.
+- `fiebre-oro` desbloquea Mina de Oro.
+- `pactos-mercantiles` desbloquea Camara de Comercio.
+- `contactos-economicos` desbloquea el Mercader.
+- `tratos-preferentes` mejora precios del Mercader.
+- `mercado-galactico` desbloquea Comercio Estelar.
+- `aranceles-privilegiados` baja la comision propia de Comercio Estelar al 10%, minimo 1 Oro.
+- La pantalla abre centrada en `fundacion-planetaria`, sin nodo seleccionado por defecto.
 
 ---
 
@@ -1512,8 +1541,10 @@ Mercader:
 - Compra y venta de Suministro, Mineral, Material Industrial y Uridium usando Oro.
 - No comercia Honor ni Componentes tecnologicos.
 - Requiere al menos una Camara de Comercio activa de la faccion.
-- Vende al doble de valor.
-- Compra a mitad de valor, redondeando hacia arriba.
+- Requiere `Contactos Economicos`.
+- Vende al doble de valor por defecto.
+- Compra a mitad de valor por defecto, redondeando hacia arriba.
+- `Tratos Preferentes` mejora precios: compra a 1.5x y venta a 0.75x.
 
 Comercio estelar:
 
@@ -1523,7 +1554,9 @@ Comercio estelar:
 - Solo se comercian Suministro, Mineral, Material Industrial y Uridium.
 - No se comercian Honor ni Componentes tecnologicos.
 - Requiere al menos una Camara de Comercio activa de la faccion.
+- Requiere `Mercado Galactico`.
 - Cada transaccion cobra una comision en Oro del 30%, redondeada hacia arriba, a cada jugador por separado.
+- `Aranceles Privilegiados` reduce la comision propia al 10%, minimo 1 Oro.
 - Publicar una oferta reserva inmediatamente los recursos/oro comprometidos y la comision del creador.
 - Cancelar una oferta devuelve la reserva completa.
 
@@ -1721,9 +1754,11 @@ Para comercio:
 - Recurso comerciable: Suministro, Mineral, Material Industrial o Uridium.
 - Honor y Componentes tecnologicos no comerciables.
 - Camara de Comercio activa para la faccion.
+- `Contactos Economicos` para Mercader.
+- `Mercado Galactico` para Comercio Estelar.
 - Oro suficiente para compras y comisiones.
 - Recursos suficientes para ventas.
-- Comision de 30% calculada por backend.
+- Comision calculada por backend: 30% por defecto, 10% minimo 1 Oro con `Aranceles Privilegiados`.
 - Aceptacion atomica: se revalidan recursos antes de aplicar transferencia.
 - Un jugador no puede aceptar su propia oferta.
 
@@ -2067,6 +2102,7 @@ technology_nodes
 - icon_key text nullable
 - effect_summary text nullable
 - is_starter boolean default false
+- implementation_status text check in ('active', 'planned', 'deprecated')
 - created_at timestamptz
 ```
 
@@ -2076,6 +2112,7 @@ technology_nodes
 technology_prerequisites
 - technology_node_id uuid references technology_nodes(id)
 - required_node_id uuid references technology_nodes(id)
+- prerequisite_group integer default 1
 - primary key (technology_node_id, required_node_id)
 ```
 
@@ -2119,7 +2156,7 @@ building_templates
 - created_at timestamptz
 ```
 
-La construcción aún no está implementada, pero el árbol ya puede desbloquear plantillas de edificios futuros.
+La construccion ya esta implementada. El arbol tecnologico desbloquea `building_templates`, y `start_building_construction()` valida tecnologia, slots, duplicados, control del sistema, bloqueo y capacidades de recurso.
 
 ### 16.11 recruitment_queue
 
@@ -2454,7 +2491,7 @@ Muestra:
 
 Comportamiento implementado actual del arbol:
 
-- El arbol se abre centrado en `doctrina-campana`.
+- El arbol se abre centrado en `fundacion-planetaria`.
 - No debe abrir con ningun nodo seleccionado por defecto; el usuario decide que nodo consultar.
 - Incluye controles compactos de zoom, alejamiento y recentrado.
 - En movil el detalle del nodo se abre como drawer/panel inferior con scroll tactil real y boton de investigar accesible.

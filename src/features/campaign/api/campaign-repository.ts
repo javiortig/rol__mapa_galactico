@@ -504,14 +504,19 @@ function mapTechnologyNode(row: Record<string, unknown>): TechnologyNode {
     researchTimeSeconds: Number(row.research_time_seconds ?? 0),
     iconKey: (row.icon_key as string | null) ?? null,
     effectSummary: (row.effect_summary as string | null) ?? null,
-    isStarter: Boolean(row.is_starter)
+    isStarter: Boolean(row.is_starter),
+    implementationStatus:
+      row.implementation_status === "planned" || row.implementation_status === "deprecated"
+        ? row.implementation_status
+        : "active"
   };
 }
 
 function mapTechnologyPrerequisite(row: Record<string, unknown>): TechnologyPrerequisite {
   return {
     technologyNodeId: row.technology_node_id as string,
-    requiredNodeId: row.required_node_id as string
+    requiredNodeId: row.required_node_id as string,
+    prerequisiteGroup: Number(row.prerequisite_group ?? 1)
   };
 }
 

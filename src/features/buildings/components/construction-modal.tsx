@@ -250,6 +250,14 @@ function getBuildBlockReason(
   }
 
   if (!isBuildingTemplateUnlocked(snapshot, template)) {
+    const requiredTechnology = template.requiredTechnologyNodeId
+      ? snapshot.technologyNodes.find((node) => node.id === template.requiredTechnologyNodeId)
+      : null;
+
+    if (requiredTechnology?.implementationStatus === "planned") {
+      return "Espionaje proximamente";
+    }
+
     return `Requiere ${getRequiredTechnologyName(snapshot, template.requiredTechnologyNodeId)}`;
   }
 

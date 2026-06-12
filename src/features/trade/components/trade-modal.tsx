@@ -17,6 +17,12 @@ import {
   merchantTrade,
   type MerchantTradeDirection
 } from "@/features/trade/api/trade-api";
+import {
+  getMerchantTradeRates,
+  getStellarTradeFee,
+  getStellarTradeFeePercent,
+  hasUnlockedTechnologyEffect
+} from "@/features/technology/lib/technology-state";
 import type { CampaignSnapshot, FactionResources, TradeOffer, TradeOfferType, TradeableResourceKey } from "@/domain/campaign";
 
 const tradeableResources: TradeableResourceKey[] = ["supply", "minerals", "industrialMaterial", "uridium"];
@@ -108,12 +114,14 @@ function MerchantPanel({ snapshot }: { snapshot: CampaignSnapshot }) {
   const rpcReady = canUseTradeRpc();
   const [resourceKey, setResourceKey] = useState<TradeableResourceKey>("minerals");
   const [quantity, setQuantity] = useState(10);
-  const merchantBuyCost = getMerchantBuyCost(resourceKey, quantity);
-  const merchantSellPayout = getMerchantSellPayout(resourceKey, quantity);
+  const merchantUnlocked = hasUnlockedTechnologyEffect(snapshot, "unlock_merchant_trade");
+  const tradeRates = getMerchantTradeRates(snapshot);
+  const merchantBuyCost = getMerchantBuyCost(resourceKey, quantity, tradeRates.buyMultiplier);
+  const merchantSellPayout = getMerchantSellPayout(resourceKey, quantity, tradeRates.sellMultiplier);
   const ownedResource = resources?.[resourceKey] ?? 0;
   const ownedGold = resources?.gold ?? 0;
-  const canBuy = rpcReady && ownedGold >= merchantBuyCost;
-  const canSell = rpcReady && ownedResource >= quantity;
+  const canBuy = rpcReady && merchantUnlocked && ownedGold >= merchantBuyCost;
+  const canSell = rpcReady && merchantUnlocked && ownedResource >= quantity;
   const mutation = useMutation({
     mutationFn: ({ direction }: { direction: MerchantTradeDirection }) => merchantTrade(resourceKey, direction, quantity),
     onSuccess: () => {
@@ -129,7 +137,8 @@ function MerchantPanel({ snapshot }: { snapshot: CampaignSnapshot }) {
         </div>
         <h3 className="mt-4 text-lg font-semibold text-amber-50">Mercader de frontera</h3>
         <p className="mt-2 text-sm leading-6 text-slate-300">
-          Vende recursos al doble de su valor y compra a mitad de precio, redondeando siempre hacia arriba.
+          Compra a {formatRate(tradeRates.buyMultiplier)} del valor y vende a {formatRate(tradeRates.sellMultiplier)}.
+          Los redondeos siempre favorecen al mercader.
         </p>
         <div className="mt-4 rounded-md border border-amber-200/15 bg-slate-950/45 p-3">
           <div className="mb-2 text-xs uppercase tracking-[0.18em] text-amber-200/70">Caja disponible</div>
@@ -141,6 +150,12 @@ function MerchantPanel({ snapshot }: { snapshot: CampaignSnapshot }) {
         {!rpcReady ? (
           <div className="mb-4 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
             Supabase no esta configurado. Puedes revisar precios, pero no comerciar.
+          </div>
+        ) : null}
+
+        {!merchantUnlocked ? (
+          <div className="mb-4 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
+            Investiga Contactos Economicos para desbloquear el Mercader.
           </div>
         ) : null}
 
@@ -231,13 +246,15 @@ function StellarTradePanel({ snapshot }: { snapshot: CampaignSnapshot }) {
   const [resourceKey, setResourceKey] = useState<TradeableResourceKey>("minerals");
   const [resourceAmount, setResourceAmount] = useState(10);
   const [goldAmount, setGoldAmount] = useState(6);
+  const stellarUnlocked = hasUnlockedTechnologyEffect(snapshot, "unlock_stellar_trade");
+  const feePercent = getStellarTradeFeePercent(snapshot);
   const openOffers = useMemo(
     () => snapshot.tradeOffers.filter((offer) => offer.status === "open"),
     [snapshot.tradeOffers]
   );
-  const feeGold = getTradeFee(goldAmount);
+  const feeGold = getStellarTradeFee(snapshot, goldAmount);
   const publishCosts = getOfferPublishCosts(offerType, resourceKey, resourceAmount, goldAmount, feeGold);
-  const canCreate = rpcReady && hasEnoughTradeResources(resources, publishCosts);
+  const canCreate = rpcReady && stellarUnlocked && hasEnoughTradeResources(resources, publishCosts);
   const createMutation = useMutation({
     mutationFn: () => createTradeOffer(offerType, resourceKey, resourceAmount, goldAmount),
     onSuccess: () => {
@@ -262,7 +279,7 @@ function StellarTradePanel({ snapshot }: { snapshot: CampaignSnapshot }) {
       <aside className="rounded-lg border border-cyan-200/15 bg-slate-950/38 p-4">
         <h3 className="text-lg font-semibold text-cyan-50">Publicar oferta</h3>
         <p className="mt-2 text-sm leading-6 text-slate-300">
-          Las ofertas son recurso contra oro. La comision es del 30% en oro para cada jugador al aceptar.
+          Las ofertas son recurso contra oro. Tu comision actual es del {feePercent}% en oro, minimo 1.
         </p>
 
         <ResourceStrip className="mt-4" resources={resources} />
@@ -306,6 +323,12 @@ function StellarTradePanel({ snapshot }: { snapshot: CampaignSnapshot }) {
         {!rpcReady ? (
           <div className="mt-3 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
             Supabase no esta configurado.
+          </div>
+        ) : null}
+
+        {!stellarUnlocked ? (
+          <div className="mt-3 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
+            Investiga Mercado Galactico para desbloquear el Comercio Estelar.
           </div>
         ) : null}
 
@@ -371,8 +394,10 @@ function TradeOfferCard({
   const creator = snapshot.factions.find((faction) => faction.id === offer.creatorFactionId);
   const isOwn = offer.creatorFactionId === snapshot.currentUser.factionId;
   const resources = getCurrentResources(snapshot);
-  const acceptCosts = getOfferAcceptCosts(offer);
-  const canAccept = !isOwn && hasEnoughTradeResources(resources, acceptCosts);
+  const stellarUnlocked = hasUnlockedTechnologyEffect(snapshot, "unlock_stellar_trade");
+  const acceptCosts = getOfferAcceptCosts(snapshot, offer);
+  const acceptFee = getOfferAcceptFee(snapshot, offer);
+  const canAccept = stellarUnlocked && !isOwn && hasEnoughTradeResources(resources, acceptCosts);
 
   return (
     <div className="rounded-lg border border-cyan-200/15 bg-slate-950/35 p-4">
@@ -403,7 +428,8 @@ function TradeOfferCard({
       </div>
 
       <div className="mt-3 rounded-md border border-amber-200/15 bg-amber-300/8 p-3 text-xs text-amber-50">
-        Comision de cada parte: <ResourceAmount className="text-amber-50" resource="gold" value={offer.feeGold} />
+        {isOwn ? "Comision reservada" : "Tu comision"}:{" "}
+        <ResourceAmount className="text-amber-50" resource="gold" value={isOwn ? offer.feeGold : acceptFee} />
       </div>
 
       <div className="mt-3 rounded-md border border-cyan-200/15 bg-slate-950/45 p-3 text-xs text-slate-200">
@@ -552,16 +578,12 @@ function ownedResourceFor(resources: FactionResources | undefined, resource: Tra
   return formatCompactResource(resources?.[resource] ?? 0);
 }
 
-function getMerchantBuyCost(resource: TradeableResourceKey, quantity: number) {
-  return Math.ceil((resourcePointValues[resource] * quantity * 2) / resourcePointValues.gold);
+function getMerchantBuyCost(resource: TradeableResourceKey, quantity: number, buyMultiplier: number) {
+  return Math.ceil((resourcePointValues[resource] * quantity * buyMultiplier) / resourcePointValues.gold);
 }
 
-function getMerchantSellPayout(resource: TradeableResourceKey, quantity: number) {
-  return Math.ceil((resourcePointValues[resource] * quantity * 0.5) / resourcePointValues.gold);
-}
-
-function getTradeFee(goldAmount: number) {
-  return Math.ceil(Math.max(0, goldAmount) * 0.3);
+function getMerchantSellPayout(resource: TradeableResourceKey, quantity: number, sellMultiplier: number) {
+  return Math.ceil((resourcePointValues[resource] * quantity * sellMultiplier) / resourcePointValues.gold);
 }
 
 function getOfferPublishCosts(
@@ -581,17 +603,23 @@ function getOfferPublishCosts(
   };
 }
 
-function getOfferAcceptCosts(offer: TradeOffer): Partial<Record<TradeableResourceKey | "gold", number>> {
+function getOfferAcceptCosts(snapshot: CampaignSnapshot, offer: TradeOffer): Partial<Record<TradeableResourceKey | "gold", number>> {
+  const feeGold = getOfferAcceptFee(snapshot, offer);
+
   if (offer.offerType === "buy") {
     return {
       [offer.resourceKey]: offer.resourceAmount,
-      gold: offer.feeGold
+      gold: feeGold
     };
   }
 
   return {
-    gold: offer.goldAmount + offer.feeGold
+    gold: offer.goldAmount + feeGold
   };
+}
+
+function getOfferAcceptFee(snapshot: CampaignSnapshot, offer: TradeOffer) {
+  return getStellarTradeFee(snapshot, offer.goldAmount);
 }
 
 function hasEnoughTradeResources(
@@ -615,4 +643,8 @@ function formatCompactResource(value: number) {
   }
 
   return String(value);
+}
+
+function formatRate(value: number) {
+  return `${Number.isInteger(value) ? value.toFixed(0) : value.toFixed(2).replace(/0$/, "")}x`;
 }

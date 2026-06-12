@@ -13,6 +13,7 @@ import {
   getActiveTechnologyResearch,
   getFactionTechnology,
   getTechnologyStatus,
+  isTechnologyNodeVisible,
   type DerivedTechnologyStatus
 } from "@/features/technology/lib/technology-state";
 import { cn } from "@/lib/utils";
@@ -28,11 +29,12 @@ type BranchStyle = {
 };
 
 const branchStyles: Record<string, BranchStyle> = {
-  "Mando y doctrina": { color: "#38bdf8", glow: "rgba(56,189,248,0.24)", labelX: 18, labelY: 21 },
-  "Infanteria y elite": { color: "#facc15", glow: "rgba(250,204,21,0.22)", labelX: 10, labelY: 84 },
-  "Blindados y maquinas": { color: "#fb923c", glow: "rgba(251,146,60,0.24)", labelX: 72, labelY: 84 },
-  Infraestructura: { color: "#34d399", glow: "rgba(52,211,153,0.22)", labelX: 77, labelY: 22 },
-  Arqueotecnologia: { color: "#c084fc", glow: "rgba(192,132,252,0.24)", labelX: 47, labelY: 92 }
+  Progreso: { color: "#67e8f9", glow: "rgba(103,232,249,0.18)", labelX: 67, labelY: 26 },
+  Inteligencia: { color: "#94a3b8", glow: "rgba(148,163,184,0.12)", labelX: 10, labelY: 63 },
+  "Mando militar": { color: "#facc15", glow: "rgba(250,204,21,0.16)", labelX: 9, labelY: 16 },
+  "Infanteria y elite": { color: "#fb7185", glow: "rgba(251,113,133,0.15)", labelX: 19, labelY: 47 },
+  "Blindados y maquinas": { color: "#fb923c", glow: "rgba(251,146,60,0.16)", labelX: 43, labelY: 10 },
+  Arqueotecnologia: { color: "#c084fc", glow: "rgba(192,132,252,0.15)", labelX: 32, labelY: 66 }
 };
 
 const treeWidth = 1560;
@@ -57,23 +59,27 @@ export function TechnologyTreeModal({
   const [treeZoom, setTreeZoom] = useState<number | null>(null);
   const currentResources = snapshot.resources.find((item) => item.factionId === snapshot.currentUser.factionId);
   const activeResearch = getActiveTechnologyResearch(snapshot);
+  const visibleTechnologyNodes = useMemo(
+    () => snapshot.technologyNodes.filter(isTechnologyNodeVisible),
+    [snapshot.technologyNodes]
+  );
   const centerNode =
-    snapshot.technologyNodes.find((node) => node.slug === "doctrina-campana") ??
-    snapshot.technologyNodes.find((node) => node.isStarter) ??
-    snapshot.technologyNodes.find((node) => getTechnologyStatus(snapshot, node) === "available") ??
-    snapshot.technologyNodes[0] ??
+    visibleTechnologyNodes.find((node) => node.slug === "fundacion-planetaria") ??
+    visibleTechnologyNodes.find((node) => node.isStarter) ??
+    visibleTechnologyNodes.find((node) => getTechnologyStatus(snapshot, node) === "available") ??
+    visibleTechnologyNodes[0] ??
     null;
-  const selectedNode = selectedNodeId ? snapshot.technologyNodes.find((node) => node.id === selectedNodeId) ?? null : null;
+  const selectedNode = selectedNodeId ? visibleTechnologyNodes.find((node) => node.id === selectedNodeId) ?? null : null;
   const focusNodeId = hoveredNodeId ?? selectedNode?.id ?? null;
   const defaultTreeZoom = isTechnologyDesktop ? 0.9 : isNarrowTechnology ? 0.62 : 0.74;
   const currentTreeZoom = treeZoom ?? defaultTreeZoom;
   const relatedNodeIds = useMemo(
-    () => (focusNodeId ? getRelatedNodeIds(snapshot, focusNodeId) : new Set<string>()),
-    [focusNodeId, snapshot]
+    () => (focusNodeId ? getRelatedNodeIds(snapshot, visibleTechnologyNodes, focusNodeId) : new Set<string>()),
+    [focusNodeId, snapshot, visibleTechnologyNodes]
   );
   const nodeById = useMemo(
-    () => new Map(snapshot.technologyNodes.map((node) => [node.id, node])),
-    [snapshot.technologyNodes]
+    () => new Map(visibleTechnologyNodes.map((node) => [node.id, node])),
+    [visibleTechnologyNodes]
   );
   const hoveredNode = hoveredNodeId ? nodeById.get(hoveredNodeId) ?? null : null;
   const rpcReady = canUseTechnologyRpc();
@@ -139,13 +145,13 @@ export function TechnologyTreeModal({
 
         <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] overflow-hidden md:grid-rows-[minmax(0,1fr)_auto] xl:grid-cols-[minmax(0,1fr)_420px] xl:grid-rows-none">
           <div className="relative min-h-0 overflow-hidden bg-[radial-gradient(circle_at_18%_22%,rgba(14,165,233,0.18),transparent_26%),radial-gradient(circle_at_78%_64%,rgba(192,132,252,0.14),transparent_34%),linear-gradient(180deg,rgba(2,6,23,0.98),rgba(8,13,31,0.98))]">
-            <div className="tech-scroll h-full p-3" ref={treeViewportRef}>
+            <div className="tech-scroll h-full p-2 md:p-3" ref={treeViewportRef}>
               <div
                 className="relative"
                 style={{ height: treeHeight * currentTreeZoom, width: treeWidth * currentTreeZoom }}
               >
                 <div
-                  className="relative origin-top-left overflow-hidden rounded border border-cyan-200/10 bg-slate-950/40 shadow-[inset_0_0_130px_rgba(8,145,178,0.11)]"
+                  className="relative origin-top-left overflow-hidden rounded border border-cyan-200/10 bg-slate-950/45 shadow-[inset_0_0_90px_rgba(8,145,178,0.08)]"
                   style={{
                     height: treeHeight,
                     transform: `scale(${currentTreeZoom})`,
@@ -154,7 +160,7 @@ export function TechnologyTreeModal({
                   }}
                 >
                   <ConstellationBackdrop />
-                  <BranchConstellations branches={[...new Set(snapshot.technologyNodes.map((node) => node.branch))]} />
+                  <BranchConstellations branches={[...new Set(visibleTechnologyNodes.map((node) => node.branch))]} />
                   <TechnologyConnections
                     focusNodeId={focusNodeId}
                     nodeById={nodeById}
@@ -162,7 +168,7 @@ export function TechnologyTreeModal({
                     snapshot={snapshot}
                   />
 
-                  {snapshot.technologyNodes.map((node) => (
+                  {visibleTechnologyNodes.map((node) => (
                     <TechnologyNodeOrb
                       focused={Boolean(focusNodeId && relatedNodeIds.has(node.id))}
                       key={node.id}
@@ -210,8 +216,8 @@ export function TechnologyTreeModal({
 function ConstellationBackdrop() {
   return (
     <div className="pointer-events-none absolute inset-0">
-      <div className="absolute inset-0 opacity-45 [background-image:radial-gradient(circle,rgba(148,163,184,0.55)_1px,transparent_1px)] [background-size:34px_34px]" />
-      <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(103,232,249,0.09)_1px,transparent_1px),linear-gradient(90deg,rgba(103,232,249,0.08)_1px,transparent_1px)] [background-size:120px_120px]" />
+      <div className="absolute inset-0 opacity-35 [background-image:radial-gradient(circle,rgba(148,163,184,0.58)_1px,transparent_1px)] [background-size:42px_42px]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_52%_50%,rgba(103,232,249,0.12),transparent_26%),radial-gradient(circle_at_16%_70%,rgba(148,163,184,0.1),transparent_22%)]" />
     </div>
   );
 }
@@ -224,11 +230,11 @@ function BranchConstellations({ branches }: { branches: string[] }) {
 
         return (
           <div
-            className="absolute rounded-full border border-white/5 px-3 py-2 text-xs uppercase tracking-[0.2em] text-slate-300"
+            className="absolute rounded-full border border-white/5 px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] text-slate-300"
             key={branch}
             style={{
-              background: `linear-gradient(90deg, ${style.glow}, rgba(15,23,42,0.18))`,
-              boxShadow: `0 0 42px ${style.glow}`,
+              background: `linear-gradient(90deg, ${style.glow}, rgba(15,23,42,0.28))`,
+              boxShadow: `0 0 20px ${style.glow}`,
               color: style.color,
               left: `${style.labelX}%`,
               top: `${style.labelY}%`
@@ -280,21 +286,22 @@ function TechnologyConnections({
         const status = getTechnologyStatus(snapshot, to);
         const toStyle = getBranchStyle(to.branch);
         const related = !focusNodeId || (relatedNodeIds.has(from.id) && relatedNodeIds.has(to.id));
-        const color = status === "locked" ? "rgba(100,116,139,0.38)" : toStyle.color;
+        const inactive = status === "locked" || status === "planned";
+        const color = inactive ? "rgba(100,116,139,0.38)" : toStyle.color;
         const path = getConnectionPath(from, to);
 
         return (
           <g key={`${prerequisite.requiredNodeId}-${prerequisite.technologyNodeId}`} opacity={related ? 1 : 0.16}>
-            <path d={path} fill="none" stroke={toStyle.color} strokeLinecap="round" strokeOpacity={0.16} strokeWidth={12} />
+            <path d={path} fill="none" stroke={toStyle.color} strokeLinecap="round" strokeOpacity={0.1} strokeWidth={9} />
             <path
               d={path}
               fill="none"
-              filter={status === "locked" ? undefined : "url(#tech-connection-glow)"}
+              filter={inactive ? undefined : "url(#tech-connection-glow)"}
               stroke={color}
-              strokeDasharray={status === "locked" ? "14 14" : undefined}
+              strokeDasharray={inactive ? "14 14" : undefined}
               strokeLinecap="round"
-              strokeOpacity={status === "locked" ? 0.45 : 0.82}
-              strokeWidth={status === "researching" ? 5 : 3}
+              strokeOpacity={inactive ? 0.45 : 0.76}
+              strokeWidth={status === "researching" ? 4 : 2.5}
             />
           </g>
         );
@@ -323,6 +330,7 @@ function TechnologyNodeOrb({
   const style = getBranchStyle(node.branch);
   const point = getNodePoint(node);
   const locked = status === "locked";
+  const planned = status === "planned";
   const researching = status === "researching";
   const unlocked = status === "unlocked";
   const available = status === "available";
@@ -331,7 +339,7 @@ function TechnologyNodeOrb({
     <button
       aria-label={node.name}
       className={cn(
-        "absolute z-10 grid size-24 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full transition duration-200 hover:scale-110 focus:outline-none",
+        "absolute z-10 grid size-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full transition duration-200 hover:scale-105 focus:outline-none md:size-[5.5rem]",
         selected && "scale-110",
         focused && "scale-105",
         muted && "opacity-25 grayscale"
@@ -352,25 +360,29 @@ function TechnologyNodeOrb({
           selected && "ring-2 ring-cyan-100/70",
           available && "border-cyan-100/70",
           unlocked && "border-emerald-100/70",
-          locked && "border-slate-500/30"
+          locked && "border-slate-500/30",
+          planned && "border-slate-400/25"
         )}
         style={{
-          boxShadow: locked
+          boxShadow: locked || planned
             ? "inset 0 0 24px rgba(15,23,42,0.8)"
-            : `0 0 34px ${style.glow}, inset 0 0 26px rgba(15,23,42,0.86)`
+            : `0 0 24px ${style.glow}, inset 0 0 22px rgba(15,23,42,0.86)`
         }}
       />
       <span
         className="absolute inset-2 rounded-full border border-white/10"
-        style={{ borderColor: locked ? "rgba(100,116,139,0.3)" : style.color }}
+        style={{ borderColor: locked || planned ? "rgba(100,116,139,0.34)" : style.color }}
       />
       <TechnologyIconImage
-        className={cn("relative z-10 size-[78px] object-contain drop-shadow-[0_0_12px_rgba(103,232,249,0.32)]", locked && "opacity-45")}
+        className={cn(
+          "relative z-10 size-[62px] object-contain drop-shadow-[0_0_10px_rgba(103,232,249,0.24)] md:size-[68px]",
+          (locked || planned) && "opacity-45 grayscale"
+        )}
         node={node}
         size={96}
       />
       <span className="absolute right-0 top-0 z-20 grid size-7 place-items-center rounded-full border border-slate-950 bg-slate-950/92">
-        {locked ? (
+        {locked || planned ? (
           <Lock className="text-slate-400" size={15} />
         ) : unlocked ? (
           <Check className="text-emerald-200" size={16} />
@@ -383,7 +395,7 @@ function TechnologyNodeOrb({
       {(selected || node.isStarter) && (
         <span
           className="absolute left-1/2 top-[104%] z-20 max-w-36 -translate-x-1/2 whitespace-nowrap rounded border border-cyan-100/15 bg-slate-950/82 px-2 py-1 text-[11px] font-medium text-cyan-50 shadow-lg"
-          style={{ color: locked ? "#94a3b8" : style.color }}
+          style={{ color: locked || planned ? "#94a3b8" : style.color }}
         >
           {node.name}
         </span>
@@ -421,6 +433,7 @@ function TechnologyLegend() {
     { label: "Disponible", tone: "cyan", className: "border-cyan-200 bg-cyan-300/20" },
     { label: "Investigando", tone: "amber", className: "border-amber-200 bg-amber-300/20" },
     { label: "Desbloqueada", tone: "emerald", className: "border-emerald-200 bg-emerald-300/20" },
+    { label: "Proximamente", tone: "slate", className: "border-slate-400 bg-slate-500/15" },
     { label: "Bloqueada", tone: "slate", className: "border-slate-500 bg-slate-700/20" }
   ];
 
@@ -492,7 +505,7 @@ function TechnologyDetailsPanel({
         <div className="rounded-md border border-cyan-200/15 bg-slate-950/42 p-4">
           <div className="text-sm font-semibold text-cyan-50">Selecciona una tecnologia</div>
           <p className="mt-2 text-sm leading-6 text-slate-400">
-            El arbol se abre centrado en la doctrina principal. Toca un nodo para consultar requisitos, coste y efecto.
+            El arbol se abre centrado en Fundacion Planetaria. Toca un nodo para consultar requisitos, coste y efecto.
           </p>
         </div>
       </aside>
@@ -502,10 +515,7 @@ function TechnologyDetailsPanel({
   const status = getTechnologyStatus(snapshot, node);
   const progress = getFactionTechnology(snapshot, node.id);
   const style = getBranchStyle(node.branch);
-  const prerequisites = snapshot.technologyPrerequisites
-    .filter((item) => item.technologyNodeId === node.id)
-    .map((item) => snapshot.technologyNodes.find((candidate) => candidate.id === item.requiredNodeId))
-    .filter(Boolean) as TechnologyNode[];
+  const prerequisiteGroups = getPrerequisiteGroups(snapshot, node.id);
   const canResearch =
     status === "available" &&
     !activeResearch &&
@@ -569,6 +579,12 @@ function TechnologyDetailsPanel({
         </div>
       ) : null}
 
+      {status === "planned" ? (
+        <div className="mb-4 rounded-md border border-slate-400/25 bg-slate-400/10 p-3 text-sm text-slate-200">
+          Esta rama se muestra para orientar el desarrollo, pero espionaje aun no esta implementado.
+        </div>
+      ) : null}
+
       <section className="mb-4">
         <h4 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Efecto</h4>
         <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-sm text-slate-200">
@@ -579,16 +595,24 @@ function TechnologyDetailsPanel({
       <section className="mb-4">
         <h4 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Requisitos</h4>
         <div className="space-y-2">
-          {prerequisites.length > 0 ? (
-            prerequisites.map((prerequisite) => (
-              <div
-                className="flex items-center justify-between gap-3 rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-sm"
-                key={prerequisite.id}
-              >
-                <span className="text-slate-200">{prerequisite.name}</span>
-                <Badge tone={getTechnologyStatus(snapshot, prerequisite) === "unlocked" ? "cyan" : "slate"}>
-                  {getStatusLabel(getTechnologyStatus(snapshot, prerequisite))}
-                </Badge>
+          {prerequisiteGroups.length > 0 ? (
+            prerequisiteGroups.map((group) => (
+              <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={group.group}>
+                {group.nodes.length > 1 ? (
+                  <div className="mb-2 text-[11px] uppercase tracking-[0.16em] text-cyan-200/60">
+                    Cualquiera de estas tecnologias
+                  </div>
+                ) : null}
+                <div className="space-y-2">
+                  {group.nodes.map((prerequisite) => (
+                    <div className="flex items-center justify-between gap-3 text-sm" key={prerequisite.id}>
+                      <span className="text-slate-200">{prerequisite.name}</span>
+                      <Badge tone={getTechnologyStatus(snapshot, prerequisite) === "unlocked" ? "cyan" : "slate"}>
+                        {getStatusLabel(getTechnologyStatus(snapshot, prerequisite))}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))
           ) : (
@@ -609,7 +633,7 @@ function TechnologyDetailsPanel({
 
       <Button className="sticky bottom-0 w-full" disabled={!canResearch} onClick={() => onResearch(node)}>
         <Sparkles size={16} />
-        {pending ? "Iniciando..." : "Investigar"}
+        {status === "planned" ? "Proximamente" : pending ? "Iniciando..." : "Investigar"}
       </Button>
     </aside>
   );
@@ -634,10 +658,15 @@ function getNodePoint(node: TechnologyNode) {
   };
 }
 
-function getRelatedNodeIds(snapshot: CampaignSnapshot, nodeId: string) {
+function getRelatedNodeIds(snapshot: CampaignSnapshot, visibleNodes: TechnologyNode[], nodeId: string) {
+  const visibleNodeIds = new Set(visibleNodes.map((node) => node.id));
   const related = new Set<string>([nodeId]);
 
   for (const prerequisite of snapshot.technologyPrerequisites) {
+    if (!visibleNodeIds.has(prerequisite.technologyNodeId) || !visibleNodeIds.has(prerequisite.requiredNodeId)) {
+      continue;
+    }
+
     if (prerequisite.technologyNodeId === nodeId) {
       related.add(prerequisite.requiredNodeId);
     }
@@ -651,7 +680,7 @@ function getRelatedNodeIds(snapshot: CampaignSnapshot, nodeId: string) {
 }
 
 function getBranchStyle(branch: string) {
-  return branchStyles[branch] ?? branchStyles["Mando y doctrina"];
+  return branchStyles[branch] ?? branchStyles.Progreso;
 }
 
 function getTechnologyIconSrc(node: TechnologyNode) {
@@ -684,6 +713,7 @@ function TechnologyIconImage({
 function getStatusLabel(status: DerivedTechnologyStatus) {
   const labels: Record<DerivedTechnologyStatus, string> = {
     locked: "Bloqueada",
+    planned: "Proximamente",
     available: "Disponible",
     researching: "Investigando",
     unlocked: "Desbloqueada"
@@ -713,8 +743,32 @@ function formatDuration(seconds: number) {
     return "Instantaneo";
   }
 
+  if (seconds < 60) {
+    return `${seconds}s`;
+  }
+
   const minutes = Math.ceil(seconds / 60);
   return `${minutes}m`;
+}
+
+function getPrerequisiteGroups(snapshot: CampaignSnapshot, technologyNodeId: string) {
+  const groups = new Map<number, TechnologyNode[]>();
+
+  for (const prerequisite of snapshot.technologyPrerequisites.filter((item) => item.technologyNodeId === technologyNodeId)) {
+    const node = snapshot.technologyNodes.find((candidate) => candidate.id === prerequisite.requiredNodeId);
+
+    if (!node || !isTechnologyNodeVisible(node)) {
+      continue;
+    }
+
+    const group = groups.get(prerequisite.prerequisiteGroup) ?? [];
+    group.push(node);
+    groups.set(prerequisite.prerequisiteGroup, group);
+  }
+
+  return [...groups.entries()]
+    .sort(([left], [right]) => left - right)
+    .map(([group, nodes]) => ({ group, nodes }));
 }
 
 function clampNumber(value: number, min: number, max: number) {
