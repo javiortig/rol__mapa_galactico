@@ -429,14 +429,14 @@ function ResourceBar({ snapshot }: { snapshot: CampaignSnapshot }) {
           <div
             className="min-w-0 rounded-md border border-cyan-200/15 bg-slate-950/45 px-1.5 py-1.5 text-center md:min-w-24 md:px-3 md:py-2 md:text-left"
             key={key}
-            title={`${resourceLabels[key]}: ${currentResources?.[key] ?? 0} / ${snapshot.resourceCaps[key]}`}
+            title={`${resourceLabels[key]}: ${currentResources?.[key] ?? 0}`}
           >
             <div className="mb-0.5 flex items-center justify-center gap-1 text-[10px] text-slate-400 md:mb-1 md:justify-start md:gap-2 md:text-[11px]">
               <ResourceIcon className="size-4 shrink-0" resource={key} />
               <span className="hidden md:inline">{resourceLabels[key]}</span>
             </div>
             <div className="truncate text-[clamp(0.68rem,2.7vw,0.9rem)] font-semibold tabular-nums text-cyan-50 md:text-sm">
-              {formatCompactNumber(currentResources?.[key] ?? 0)}/{formatCompactNumber(snapshot.resourceCaps[key])}
+              {formatCompactNumber(currentResources?.[key] ?? 0)}
             </div>
           </div>
         ))}

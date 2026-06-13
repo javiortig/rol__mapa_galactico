@@ -1,5 +1,5 @@
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
-import type { ResourceBundle } from "@/domain/campaign";
+import type { BuildingStatus, ResourceBundle, UnitStatus } from "@/domain/campaign";
 
 type EditableFactionResources = Pick<
   ResourceBundle,
@@ -123,6 +123,69 @@ export async function adminSetCampaignLimits(input: {
   if (error) {
     throw new Error(error.message);
   }
+}
+
+export async function adminSetSystemBlock(input: { systemId: string; blockedUntil: string | null }) {
+  const supabase = getAdminClient();
+
+  const { error } = await supabase.rpc("admin_set_system_block", {
+    target_system_id: input.systemId,
+    blocked_until: input.blockedUntil
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function adminUpdateCampaignUnit(input: {
+  unitId: string;
+  systemId: string | null;
+  quantity: number;
+  woundsTaken: number;
+  status: UnitStatus;
+  isVisiblePublicly: boolean;
+}) {
+  const supabase = getAdminClient();
+
+  const { data, error } = await supabase.rpc("admin_update_campaign_unit", {
+    target_unit_id: input.unitId,
+    target_system_id: input.systemId,
+    quantity: input.quantity,
+    wounds_taken: input.woundsTaken,
+    status: input.status,
+    is_visible_publicly: input.isVisiblePublicly
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as string;
+}
+
+export async function adminUpdateSystemBuilding(input: {
+  systemBuildingId: string;
+  systemId: string;
+  buildingTemplateId: string;
+  status: BuildingStatus;
+  finishesAt: string | null;
+}) {
+  const supabase = getAdminClient();
+
+  const { data, error } = await supabase.rpc("admin_update_system_building", {
+    target_system_building_id: input.systemBuildingId,
+    target_system_id: input.systemId,
+    target_building_template_id: input.buildingTemplateId,
+    status: input.status,
+    finishes_at: input.finishesAt
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as string;
 }
 
 export function canUseAdminRpc() {
