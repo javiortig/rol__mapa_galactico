@@ -10,10 +10,12 @@ import { ResourceIcon, resourceLabels } from "@/components/ui/resource-icon";
 import {
   adminConstructBuilding,
   adminCreateUnit,
+  adminSetCampaignLimits,
   adminSetFactionResources,
   adminSetSystemResourceCapabilities,
   canUseAdminRpc
 } from "@/features/admin/api/admin-api";
+import { getFactionArmyPoints } from "@/features/units/lib/army-points";
 import type { CampaignSnapshot, ResourceBundle } from "@/domain/campaign";
 
 const factionResourceKeys = ["supply", "minerals", "honor", "gold", "industrialMaterial", "uridium", "technology"] as const;
@@ -46,6 +48,8 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
 
   const [capabilitySystemId, setCapabilitySystemId] = useState(snapshot.systems[0]?.id ?? "");
   const [capabilityDraftBySystemId, setCapabilityDraftBySystemId] = useState<Record<string, EditableSystemCapabilities>>({});
+  const [limitDraft, setLimitDraft] = useState<EditableFactionResources>(snapshot.resourceCaps);
+  const [maxArmyPointsDraft, setMaxArmyPointsDraft] = useState(snapshot.maxArmyPoints);
 
   const templatesForFaction = useMemo(
     () => snapshot.unitTemplates.filter((template) => template.factionId === unitFactionId && template.isAvailable),
@@ -135,6 +139,17 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
         delete next[capabilitySystemId];
         return next;
       });
+      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
+  });
+
+  const setLimitsMutation = useMutation({
+    mutationFn: () =>
+      adminSetCampaignLimits({
+        resourceCaps: limitDraft,
+        maxArmyPoints: maxArmyPointsDraft
+      }),
+    onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
     }
   });
@@ -269,6 +284,61 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
             </div>
           </Panel>
         </div>
+
+        <Panel className="p-4 md:p-5">
+          <div className="mb-3 flex items-center gap-2">
+            <span className="grid size-8 place-items-center rounded-md border border-cyan-200/20 bg-cyan-300/10 text-cyan-100">
+              <SlidersHorizontal size={16} />
+            </span>
+            <h2 className="text-base font-semibold text-cyan-50">Limites de campana</h2>
+          </div>
+
+          <div className="grid gap-4 xl:grid-cols-[1fr_320px]">
+            <div className="grid gap-3">
+              <ResourceEditorGrid
+                keys={factionResourceKeys}
+                value={limitDraft}
+                onChange={(resourceKey, nextValue) =>
+                  setLimitDraft((current) => ({
+                    ...current,
+                    [resourceKey]: nextValue
+                  }))
+                }
+              />
+              <label className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-2">
+                <div className="mb-1 text-[11px] text-slate-400">Maximo de puntos de ejercito</div>
+                <input
+                  className="w-full rounded-md border border-cyan-200/15 bg-slate-950/50 px-2 py-1.5 text-sm text-cyan-50"
+                  min={0}
+                  onChange={(event) => setMaxArmyPointsDraft(Math.max(0, toInt(event.target.value, 0)))}
+                  type="number"
+                  value={maxArmyPointsDraft}
+                />
+              </label>
+              <Button disabled={!rpcReady || setLimitsMutation.isPending} onClick={() => setLimitsMutation.mutate()}>
+                Guardar limites
+              </Button>
+              {setLimitsMutation.error ? <p className="text-sm text-rose-200">{setLimitsMutation.error.message}</p> : null}
+            </div>
+
+            <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3">
+              <h3 className="mb-3 text-sm font-semibold text-cyan-50">Puntos usados por faccion</h3>
+              <div className="space-y-2">
+                {snapshot.factions.map((faction) => (
+                  <div className="flex items-center justify-between gap-3 text-sm" key={faction.id}>
+                    <span className="inline-flex min-w-0 items-center gap-2 text-slate-300">
+                      <span className="size-2 shrink-0 rounded-full" style={{ backgroundColor: faction.color }} />
+                      <span className="truncate">{faction.name}</span>
+                    </span>
+                    <span className="font-semibold tabular-nums text-cyan-50">
+                      {getFactionArmyPoints(snapshot, faction.id)}/{snapshot.maxArmyPoints}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Panel>
 
         <div className="grid gap-4 xl:grid-cols-2">
           <Panel className="p-4 md:p-5">

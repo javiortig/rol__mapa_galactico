@@ -25,9 +25,10 @@ import { TradeModal } from "@/features/trade/components/trade-modal";
 import { ConstructionModal } from "@/features/buildings/components/construction-modal";
 import { BuildingActionModal } from "@/features/buildings/components/building-action-modal";
 import { getActiveTechnologyResearch } from "@/features/technology/lib/technology-state";
+import { retireCampaignUnit } from "@/features/units/api/unit-api";
 import { formatCountdown } from "@/lib/time";
 import { useMediaQuery, useViewportHeightCssVar } from "@/lib/use-media-query";
-import type { BuildingTemplate, CampaignSnapshot, CampaignUnit, Conflict, StarSystem, SystemBuilding, UnitMovementSelection } from "@/domain/campaign";
+import type { BuildingTemplate, CampaignSnapshot, CampaignUnit, Conflict, Faction, StarSystem, SystemBuilding, UnitMovementSelection } from "@/domain/campaign";
 
 const GalaxyMap = dynamic(
   () => import("@/features/galaxy-map/components/galaxy-map").then((mod) => mod.GalaxyMap),
@@ -428,13 +429,14 @@ function ResourceBar({ snapshot }: { snapshot: CampaignSnapshot }) {
           <div
             className="min-w-0 rounded-md border border-cyan-200/15 bg-slate-950/45 px-1.5 py-1.5 text-center md:min-w-24 md:px-3 md:py-2 md:text-left"
             key={key}
+            title={`${resourceLabels[key]}: ${currentResources?.[key] ?? 0} / ${snapshot.resourceCaps[key]}`}
           >
             <div className="mb-0.5 flex items-center justify-center gap-1 text-[10px] text-slate-400 md:mb-1 md:justify-start md:gap-2 md:text-[11px]">
               <ResourceIcon className="size-4 shrink-0" resource={key} />
               <span className="hidden md:inline">{resourceLabels[key]}</span>
             </div>
             <div className="truncate text-[clamp(0.68rem,2.7vw,0.9rem)] font-semibold tabular-nums text-cyan-50 md:text-sm">
-              {formatCompactNumber(currentResources?.[key] ?? 0)}
+              {formatCompactNumber(currentResources?.[key] ?? 0)}/{formatCompactNumber(snapshot.resourceCaps[key])}
             </div>
           </div>
         ))}
@@ -526,7 +528,10 @@ function CommandDock({
   );
   const activeMovements = snapshot.movements.filter((movement) => movement.status === "moving");
   const pendingConflicts = snapshot.conflicts.filter((conflict) => conflict.status === "pending");
-  const activeBuildings = snapshot.systemBuildings.filter((building) => building.status === "constructing");
+  const activeBuildings = snapshot.systemBuildings.filter((building) => {
+    const system = snapshot.systems.find((item) => item.id === building.systemId);
+    return building.status === "constructing" && system?.controllerFactionId === snapshot.currentUser.factionId;
+  });
   const activeRecoveries = snapshot.unitRecoveryQueue.filter((item) => item.status === "queued");
   const activeTechnology = getActiveTechnologyResearch(snapshot);
   const activeTechnologyNode = activeTechnology
@@ -766,10 +771,12 @@ function SystemPanel({
   onOpenConstruction: (system: StarSystem) => void;
   onOpenMovement: (system: StarSystem) => void;
 }) {
+  const queryClient = useQueryClient();
   const faction = snapshot.factions.find((item) => item.id === system.controllerFactionId);
   const relatedUnits = snapshot.units.filter(
     (unit) => unit.currentSystemId === system.id && unit.status !== "destroyed" && unit.quantity > 0
   );
+  const hasOwnPresence = relatedUnits.some((unit) => unit.factionId === snapshot.currentUser.factionId);
   const ownReadyUnits = relatedUnits.filter(
     (unit) => unit.factionId === snapshot.currentUser.factionId && unit.status === "ready" && unit.quantity > 0
   );
@@ -778,7 +785,8 @@ function SystemPanel({
   );
   const tone = system.status === "war" ? "rose" : system.status === "controlled" ? "cyan" : "slate";
   const isSharedSystem = !system.isConquerable || system.allowsSharedOccupation;
-  const canInspectBuildings = snapshot.currentUser.role === "admin" || system.controllerFactionId === snapshot.currentUser.factionId;
+  const canUseBuildings = snapshot.currentUser.role === "admin" || system.controllerFactionId === snapshot.currentUser.factionId;
+  const canInspectBuildings = canUseBuildings || hasOwnPresence;
   const systemBuildings = snapshot.systemBuildings.filter(
     (building) => building.systemId === system.id && building.status !== "disabled"
   );
@@ -808,12 +816,29 @@ function SystemPanel({
   const onMergeUnits = (_unitIds: string[]) => {
     void _unitIds;
   };
-  const visibleUnits = relatedUnits.filter(
-    (unit) =>
-      snapshot.currentUser.role === "admin" ||
-      unit.factionId === snapshot.currentUser.factionId ||
-      unit.isVisiblePublicly
-  );
+  const visibleUnits = relatedUnits;
+  const alliedUnits = visibleUnits.filter((unit) => unit.factionId === snapshot.currentUser.factionId);
+  const enemyUnitsByFaction = snapshot.factions
+    .map((enemyFaction) => ({
+      faction: enemyFaction,
+      units: visibleUnits.filter(
+        (unit) => unit.factionId === enemyFaction.id && unit.factionId !== snapshot.currentUser.factionId
+      )
+    }))
+    .filter((group) => group.units.length > 0);
+  const retireUnitMutation = useMutation({
+    mutationFn: retireCampaignUnit,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
+  });
+  const handleRetireUnit = (unit: CampaignUnit) => {
+    if (!window.confirm(`Retirar ${unit.name}? Esta accion no devuelve recursos.`)) {
+      return;
+    }
+
+    retireUnitMutation.mutate(unit.id);
+  };
   const blockExpired = isBlockExpired(system.blockedUntil);
 
   return (
@@ -859,21 +884,12 @@ function SystemPanel({
               {systemBuildings.map((building) => {
                 const template = snapshot.buildingTemplates.find((item) => item.id === building.buildingTemplateId);
 
-                if (!template) {
-                  return null;
-                }
-
-                if (!canInspectBuildings) {
+                if (!canInspectBuildings || !building.detailsVisible || !template) {
                   return <HiddenBuildingSlot building={building} key={building.id} />;
                 }
 
-                return (
-                  <button
-                    className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-left transition hover:border-cyan-200/40"
-                    key={building.id}
-                    onClick={() => onOpenBuilding(building, template)}
-                    type="button"
-                  >
+                const content = (
+                  <>
                     <div className="mb-2 flex items-start justify-between gap-2">
                       <BuildingKindIcon template={template} />
                       <Badge tone={building.status === "active" ? "cyan" : "amber"}>
@@ -884,9 +900,29 @@ function SystemPanel({
                     <div className="mt-1 text-xs text-slate-400">
                       {building.status === "constructing" && building.finishesAt
                         ? formatCountdown(building.finishesAt)
-                        : template.category}
+                        : canUseBuildings
+                          ? template.category
+                          : "Detectado por presencia militar"}
                     </div>
+                  </>
+                );
+
+                return canUseBuildings ? (
+                  <button
+                    className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-left transition hover:border-cyan-200/40"
+                    key={building.id}
+                    onClick={() => onOpenBuilding(building, template)}
+                    type="button"
+                  >
+                    {content}
                   </button>
+                ) : (
+                  <div
+                    className="rounded-md border border-cyan-200/15 bg-slate-950/30 p-3 text-left"
+                    key={building.id}
+                  >
+                    {content}
+                  </div>
                 );
               })}
               {Array.from({ length: Math.max(0, buildingSlots - buildingSlotsUsed) }).map((_, index) => (
@@ -966,17 +1002,32 @@ function SystemPanel({
 
           <section>
             <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Tropas visibles</h2>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {visibleUnits.length > 0 ? (
-                visibleUnits.map((unit) => (
-                  <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={unit.id}>
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="text-sm font-medium text-slate-100">{unit.name}</div>
-                      <Badge tone={getUnitStatusTone(unit.status)}>{getUnitStatusLabel(unit.status)}</Badge>
+                <>
+                  <UnitGroup
+                    canRetire
+                    faction={snapshot.factions.find((item) => item.id === snapshot.currentUser.factionId) ?? null}
+                    onRetireUnit={handleRetireUnit}
+                    retirePendingUnitId={retireUnitMutation.isPending ? retireUnitMutation.variables : null}
+                    title="Aliadas"
+                    units={alliedUnits}
+                  />
+                  {enemyUnitsByFaction.length > 0 ? (
+                    <div className="space-y-2">
+                      <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-rose-200/75">Enemigas</div>
+                      {enemyUnitsByFaction.map((group) => (
+                        <UnitGroup
+                          canRetire={false}
+                          faction={group.faction}
+                          key={group.faction.id}
+                          title={group.faction.name}
+                          units={group.units}
+                        />
+                      ))}
                     </div>
-                    <div className="mt-1 text-xs text-slate-400">{formatUnitStrength(unit)}</div>
-                  </div>
-                ))
+                  ) : null}
+                </>
               ) : (
                 <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-sm text-slate-400">
                   {system.controllerFactionId === snapshot.currentUser.factionId
@@ -984,6 +1035,7 @@ function SystemPanel({
                     : "Sin tropas reveladas por la niebla de guerra."}
                 </div>
               )}
+              {retireUnitMutation.error ? <p className="text-xs text-rose-200">{retireUnitMutation.error.message}</p> : null}
             </div>
           </section>
 
@@ -1065,6 +1117,69 @@ function SystemPanel({
         </div>
       </div>
     </Panel>
+  );
+}
+
+function UnitGroup({
+  title,
+  faction,
+  units,
+  canRetire,
+  retirePendingUnitId,
+  onRetireUnit
+}: {
+  title: string;
+  faction: Faction | null;
+  units: CampaignUnit[];
+  canRetire: boolean;
+  retirePendingUnitId?: string | null;
+  onRetireUnit?: (unit: CampaignUnit) => void;
+}) {
+  return (
+    <div className="rounded-md border border-cyan-200/12 bg-slate-950/22 p-2.5">
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <div className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-cyan-200/75">
+          {faction ? <span className="size-2 rounded-full" style={{ backgroundColor: faction.color }} /> : null}
+          {title}
+        </div>
+        <Badge tone={units.length > 0 ? "cyan" : "slate"}>{units.length}</Badge>
+      </div>
+      <div className="space-y-2">
+        {units.length > 0 ? (
+          units.map((unit) => {
+            const canRetireUnit = canRetire && unit.status === "ready";
+
+            return (
+              <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={unit.id}>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-medium text-slate-100">{unit.name}</div>
+                    <div className="mt-1 text-xs text-slate-400">{formatUnitStrength(unit)}</div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <Badge tone={getUnitStatusTone(unit.status)}>{getUnitStatusLabel(unit.status)}</Badge>
+                    {canRetire ? (
+                      <Button
+                        disabled={!canRetireUnit || retirePendingUnitId === unit.id}
+                        onClick={() => onRetireUnit?.(unit)}
+                        size="sm"
+                        variant="ghost"
+                      >
+                        Retirar
+                      </Button>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <div className="rounded-md border border-cyan-200/10 bg-slate-950/20 p-3 text-sm text-slate-500">
+            Sin unidades visibles.
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 

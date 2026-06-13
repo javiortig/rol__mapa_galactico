@@ -30,6 +30,7 @@ import type {
 import {
   clearSupabaseAuthStorage,
   getSupabaseBrowserClient,
+  isCampaignSessionExpired,
   isStaleSupabaseRefreshTokenError
 } from "@/lib/supabase/client";
 import { mockCampaignSnapshot } from "@/mocks/campaign-data";
@@ -75,6 +76,12 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
 
     if (!user) {
       return getFallbackSnapshotOrThrow(allowMockFallback, "Necesitas iniciar sesion para acceder a la campana.", "auth");
+    }
+
+    if (isCampaignSessionExpired()) {
+      await supabase.auth.signOut();
+      clearSupabaseAuthStorage();
+      return getFallbackSnapshotOrThrow(allowMockFallback, "La sesion ha caducado. Vuelve a iniciar sesion.", "auth");
     }
 
     await Promise.allSettled([
@@ -133,7 +140,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       supabase.from("faction_technologies").select("*"),
       supabase.from("technology_effects").select("*"),
       supabase.from("building_templates").select("*").order("name"),
-      supabase.from("system_buildings").select("*").order("created_at"),
+      supabase.rpc("get_visible_system_buildings"),
       supabase.from("system_resource_capabilities").select("*"),
       supabase.from("unit_recovery_queue").select("*, campaign_units(name)").order("finishes_at"),
       supabase.from("trade_offers").select("*").order("created_at", { ascending: false }),
@@ -192,6 +199,8 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       },
       resourceTickIntervalHours: settingsResult.data?.resource_tick_interval_hours ?? 24,
       nextResourceTickAt: settingsResult.data?.next_resource_tick_at ?? new Date().toISOString(),
+      resourceCaps: mapResourceCaps(settingsResult.data ?? {}),
+      maxArmyPoints: Number(settingsResult.data?.max_army_points ?? 1000),
       factions: factionRows.map(mapFaction),
       systems: getRows(systemsResult, "systems").map((row) =>
         mapSystem(
@@ -383,6 +392,18 @@ function mapFactionResources(row: Record<string, unknown>): FactionResources {
   };
 }
 
+function mapResourceCaps(row: Record<string, unknown>): ResourceBundle {
+  return {
+    supply: Number(row.max_supply ?? 500),
+    minerals: Number(row.max_minerals ?? 500),
+    honor: Number(row.max_honor ?? 500),
+    gold: Number(row.max_gold ?? 500),
+    industrialMaterial: Number(row.max_industrial_material ?? 500),
+    uridium: Number(row.max_uridium ?? 500),
+    technology: Number(row.max_technology ?? 500)
+  };
+}
+
 function mapCampaignUnit(row: Record<string, unknown>): CampaignUnit {
   return {
     id: row.id as string,
@@ -571,8 +592,9 @@ function mapSystemBuilding(row: Record<string, unknown>): SystemBuilding {
   return {
     id: row.id as string,
     systemId: row.system_id as string,
-    buildingTemplateId: row.building_template_id as string,
+    buildingTemplateId: (row.building_template_id as string | null) ?? null,
     status: row.status as SystemBuilding["status"],
+    detailsVisible: row.details_visible === null || row.details_visible === undefined ? true : Boolean(row.details_visible),
     startedAt: (row.started_at as string | null) ?? null,
     finishesAt: (row.finishes_at as string | null) ?? null,
     constructedAt: (row.constructed_at as string | null) ?? null

@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { clearSupabaseAuthStorage, getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { clearSupabaseAuthStorage, getSupabaseBrowserClient, markCampaignSessionStarted } from "@/lib/supabase/client";
 
 const localUsers = [
   "admin@rol40k.local",
@@ -43,6 +43,8 @@ export default function LoginPage() {
       setError(signInError.message);
       return;
     }
+
+    markCampaignSessionStarted();
 
     let destination = "/";
 

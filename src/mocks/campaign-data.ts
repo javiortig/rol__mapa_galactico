@@ -1735,6 +1735,16 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
   },
   resourceTickIntervalHours: 24,
   nextResourceTickAt: inHours(24),
+  resourceCaps: {
+    supply: 500,
+    minerals: 500,
+    honor: 500,
+    gold: 500,
+    industrialMaterial: 500,
+    uridium: 500,
+    technology: 500
+  },
+  maxArmyPoints: 1000,
   factions,
   systems: systemsWithBaseProduction,
   edges,

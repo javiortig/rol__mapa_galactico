@@ -22,6 +22,7 @@ import {
   getVisibleRecruitmentCostResources,
   isUnitTemplateUnlocked
 } from "@/features/technology/lib/technology-state";
+import { getFactionArmyPoints } from "@/features/units/lib/army-points";
 import { formatCountdown } from "@/lib/time";
 import type {
   BuildingTemplate,
@@ -188,6 +189,9 @@ function RecruitTab({
   const selectedResources = selectedTemplate ? getVisibleRecruitmentCostResources(snapshot, selectedTemplate) : [];
   const hasResources = selectedTemplate && resources ? canAffordRecruitment(snapshot, resources, selectedTemplate, quantity) : false;
   const activeQueue = getActiveBuildingQueue(snapshot, building.id);
+  const currentArmyPoints = getFactionArmyPoints(snapshot, snapshot.currentUser.factionId);
+  const selectedPoints = selectedTemplate ? selectedTemplate.points * quantity : 0;
+  const exceedsArmyLimit = currentArmyPoints + selectedPoints > snapshot.maxArmyPoints;
   const mutation = useMutation({
     mutationFn: () => {
       if (!selectedTemplate) {
@@ -271,6 +275,9 @@ function RecruitTab({
               <p className="mt-1 text-xs text-slate-500">
                 Tiempo: {formatDuration(getRecruitmentDuration(snapshot, selectedTemplate, quantity))}
               </p>
+              <p className="mt-2 text-xs text-slate-400">
+                Ejercito: {currentArmyPoints + selectedPoints}/{snapshot.maxArmyPoints} pts
+              </p>
             </div>
 
             <QuantityPicker disabled={mutation.isPending} max={1} min={1} onChange={setQuantity} value={quantity} />
@@ -287,6 +294,12 @@ function RecruitTab({
               </div>
             ) : null}
 
+            {exceedsArmyLimit ? (
+              <div className="rounded-md border border-rose-300/25 bg-rose-400/10 p-3 text-sm text-rose-100">
+                Supera el limite de {snapshot.maxArmyPoints} puntos de ejercito.
+              </div>
+            ) : null}
+
             <CostSummary
               getValue={(resource) => getRecruitmentCost(snapshot, selectedTemplate, resource) * quantity}
               resources={resources}
@@ -297,7 +310,7 @@ function RecruitTab({
 
             <Button
               className="sticky bottom-0 w-full"
-              disabled={!rpcReady || !selectedUnlocked || !hasResources || Boolean(activeQueue) || mutation.isPending}
+              disabled={!rpcReady || !selectedUnlocked || !hasResources || Boolean(activeQueue) || exceedsArmyLimit || mutation.isPending}
               onClick={() => mutation.mutate()}
             >
               {mutation.isPending ? "Enviando..." : "Reclutar"}

@@ -103,6 +103,28 @@ export async function adminSetSystemResourceCapabilities(input: {
   }
 }
 
+export async function adminSetCampaignLimits(input: {
+  resourceCaps: EditableFactionResources;
+  maxArmyPoints: number;
+}) {
+  const supabase = getAdminClient();
+
+  const { error } = await supabase.rpc("admin_set_campaign_limits", {
+    max_supply: input.resourceCaps.supply,
+    max_minerals: input.resourceCaps.minerals,
+    max_honor: input.resourceCaps.honor,
+    max_gold: input.resourceCaps.gold,
+    max_industrial_material: input.resourceCaps.industrialMaterial,
+    max_uridium: input.resourceCaps.uridium,
+    max_technology: input.resourceCaps.technology,
+    max_army_points: input.maxArmyPoints
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
 export function canUseAdminRpc() {
   return Boolean(getSupabaseBrowserClient());
 }

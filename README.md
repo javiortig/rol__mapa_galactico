@@ -104,6 +104,18 @@ guardia-muerte@rol40k.local / rol40k-local-123
 
 La produccion de recursos funciona con tick diario de backend, no por turno estrategico.
 
+## Vision, limites y sesion
+
+- Por defecto cada jugador ve sus sistemas, sus tropas y la informacion publica.
+- Si una faccion tiene tropas en un sistema, ve todas las tropas y edificios de ese sistema, aunque sea enemigo o este en guerra.
+- En sistemas sin presencia propia, los edificios ajenos se muestran solo como slots ocupados sin revelar el edificio.
+- Las tropas visibles en un sistema se agrupan como aliadas y enemigas; las enemigas se separan por faccion.
+- La sesion caduca a los 7 dias y obliga a iniciar sesion otra vez.
+- Los limites globales iniciales son 500 por recurso y 1000 puntos de ejercito.
+- El limite de puntos cuenta unidades vivas mas reclutamientos en cola.
+- El admin puede cambiar limites de recursos y puntos desde `/admin`.
+- Los jugadores pueden retirar unidades propias listas desde el panel del sistema; no hay reembolso.
+
 ## Construcciones v1
 
 - Los sistemas tienen slots de edificio: 6 en capitales y 3 en el resto.

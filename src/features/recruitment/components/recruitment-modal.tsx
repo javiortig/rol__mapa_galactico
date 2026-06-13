@@ -16,6 +16,7 @@ import {
   getVisibleRecruitmentCostResources,
   isUnitTemplateUnlocked
 } from "@/features/technology/lib/technology-state";
+import { getFactionArmyPoints } from "@/features/units/lib/army-points";
 import { formatCountdown } from "@/lib/time";
 import type { CampaignSnapshot, FactionResources, ResourceKey, UnitTemplate } from "@/domain/campaign";
 
@@ -47,7 +48,10 @@ export function RecruitmentModal({
   const rpcReady = canUseRecruitmentRpc();
   const selectedTemplateUnlocked = selectedTemplate ? isUnitTemplateUnlocked(snapshot, selectedTemplate) : false;
   const hasResources = selectedTemplate && resources ? canAfford(snapshot, resources, selectedTemplate, quantity) : false;
-  const canRecruitSelected = Boolean(selectedTemplate && selectedTemplateUnlocked && hasResources);
+  const currentArmyPoints = getFactionArmyPoints(snapshot, snapshot.currentUser.factionId);
+  const selectedPoints = selectedTemplate ? selectedTemplate.points * quantity : 0;
+  const exceedsArmyLimit = currentArmyPoints + selectedPoints > snapshot.maxArmyPoints;
+  const canRecruitSelected = Boolean(selectedTemplate && selectedTemplateUnlocked && hasResources && !exceedsArmyLimit);
   const selectedCostResources = selectedTemplate ? getVisibleRecruitmentCostResources(snapshot, selectedTemplate) : [];
   const selectedRequiredTechnologyName = selectedTemplate
     ? getRequiredTechnologyName(snapshot, selectedTemplate.requiredTechnologyNodeId)
@@ -169,6 +173,9 @@ export function RecruitmentModal({
                       {selectedTemplate.category} · {selectedTemplate.points * quantity} pts · {selectedTemplate.defaultQuantity * quantity} miniaturas
                     </div>
                     <div className="mt-1 text-xs text-slate-500">
+                      Ejercito: {currentArmyPoints + selectedPoints}/{snapshot.maxArmyPoints} pts
+                    </div>
+                    <div className="mt-1 text-xs text-slate-500">
                       Tiempo estimado: {formatDuration(selectedDurationSeconds)}
                     </div>
                   </div>
@@ -234,6 +241,7 @@ export function RecruitmentModal({
 
                   {mutation.error ? <p className="text-sm text-rose-200">{mutation.error.message}</p> : null}
                   {selectedTemplateUnlocked && !hasResources ? <p className="text-sm text-rose-200">Recursos insuficientes.</p> : null}
+                  {exceedsArmyLimit ? <p className="text-sm text-rose-200">Supera el limite de puntos de ejercito.</p> : null}
                 </div>
               ) : (
                 <p className="mt-3 text-sm text-slate-400">No hay unidades disponibles.</p>

@@ -262,8 +262,9 @@ export interface BuildingTemplate {
 export interface SystemBuilding {
   id: string;
   systemId: string;
-  buildingTemplateId: string;
+  buildingTemplateId?: string | null;
   status: BuildingStatus;
+  detailsVisible?: boolean;
   startedAt?: string | null;
   finishesAt?: string | null;
   constructedAt?: string | null;
@@ -338,6 +339,8 @@ export interface CampaignSnapshot {
   };
   resourceTickIntervalHours: number;
   nextResourceTickAt: string;
+  resourceCaps: ResourceBundle;
+  maxArmyPoints: number;
   factions: Faction[];
   systems: StarSystem[];
   edges: SystemEdge[];
