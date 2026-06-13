@@ -132,7 +132,7 @@ Navegacion movil actual:
 - La barra de recursos superior debe caber completa, con icono y numero compacto para los 6 recursos visibles: Suministro, Mineral, Honor, Oro, Material Industrial y Uridium.
 - El movimiento movil funciona en dos fases: seleccion de unidades desde el sistema y trazado de ruta en el mapa.
 - Al trazar ruta, el panel de sistema se cierra y queda una barra inferior con coste de Uridium, tiempo, cancelar, deshacer, reiniciar y confirmar.
-- Tecnologia abre la constelacion a pantalla completa centrada en `fundacion-planetaria`, sin nodo seleccionado; tocar un nodo abre el detalle como drawer inferior.
+- Tecnologia abre una constelacion radial simple a pantalla completa con nucleo central de faccion, circulos pequenos con iconos Lucide y ramas desde el centro; no abre con nodo seleccionado y tocar un nodo abre el detalle como drawer inferior.
 - Reclutamiento, reportes, movimiento y tecnologia usan paneles con scroll tactil real compatible con iPhone Safari y Android Chrome.
 - Cualquier cambio de UI movil debe probarse en iPhone Safari y Android Chrome, verificando que los paneles scrollean hasta el final y que los botones principales no quedan bajo las barras del navegador.
 
@@ -193,7 +193,7 @@ Estado movil actual:
 - El dock inferior se oculta cuando hay panel de sistema, movimiento, reclutamiento, tecnologia o reporte abierto.
 - La app usa `--app-height` calculado con `visualViewport` para Safari iOS.
 - Paneles largos usan scroll tactil real mediante clase `mobile-scroll`.
-- El arbol tecnologico usa `tech-scroll`, abre centrado en `fundacion-planetaria`, sin nodo seleccionado, con zoom inicial reducido y controles de zoom/centrado.
+- El arbol tecnologico usa una constelacion radial simple con nucleo central de faccion, ramas desde el centro, circulos pequenos con iconos Lucide, sin nodo seleccionado al abrir y con scroll nativo para mantener fluidez.
 
 Archivos clave actuales:
 
@@ -202,7 +202,7 @@ Archivos clave actuales:
 - `src/features/buildings/components/construction-modal.tsx`: construccion de edificios.
 - `src/features/buildings/components/building-action-modal.tsx`: acciones de edificio, reclutamiento, curacion, cola y placeholders.
 - `src/features/recruitment/components/recruitment-modal.tsx`: componente legacy/fallback; el flujo principal actual recluta desde edificios.
-- `src/features/technology/components/technology-tree-modal.tsx`: arbol tecnologico tipo constelacion.
+- `src/features/technology/components/technology-tree-modal.tsx`: constelacion tecnologica radial simple con nucleo visual de faccion y ramas de investigacion.
 - `src/lib/use-media-query.ts`: media queries cliente y `useViewportHeightCssVar`.
 - `supabase/migrations`: esquema/RLS/RPCs.
 - `supabase/seed.sql`: estado inicial jugable.
@@ -1380,11 +1380,10 @@ La pantalla de tecnología debe sentirse como interfaz de videojuego:
 - Modal grande, casi a pantalla completa.
 - Fondo espacial táctico oscuro.
 - Árbol tipo constelación tecnológica, no tabla lineal.
-- Nodos circulares o hexagonales basados en iconos PNG propios.
-- Iconos coherentes por tecnología en `public/tech-icons/common-v1/{slug}.png`.
-- Conectores curvos luminosos tipo rutas estelares.
-- Hover que resalta prerequisitos y dependientes directos.
-- Tooltip breve al pasar el ratón.
+- Nodos circulares pequenos basados en iconos vectoriales Lucide.
+- Los PNG de `public/tech-icons/common-v1/{slug}.png` quedan como assets disponibles, pero no se usan en la vista principal del arbol para evitar lag.
+- Conectores curvos simples tipo rutas estelares, sin filtros pesados.
+- El arbol no muestra nombres en hover; el nombre y detalle aparecen solo al seleccionar un nodo.
 - Estados visuales claros.
 - Panel lateral con descripción, coste, tiempo, requisitos y efectos.
 - Botón `Tecnología` en el dock de mando.
@@ -1412,7 +1411,9 @@ Regla vigente del arbol comun:
 - `tratos-preferentes` mejora precios del Mercader.
 - `mercado-galactico` desbloquea Comercio Estelar.
 - `aranceles-privilegiados` baja la comision propia de Comercio Estelar al 10%, minimo 1 Oro.
-- La pantalla abre centrada en `fundacion-planetaria`, sin nodo seleccionado por defecto.
+- La pantalla abre como constelacion radial simple con nucleo central de faccion, ramas saliendo desde el centro y sin nodo seleccionado por defecto.
+- No hay zoom ni pan custom: la navegacion usa scroll nativo para ser fluida en desktop, Android e iPhone Safari.
+- Los nodos usan iconos Lucide simples en circulos pequenos para evitar el coste de decodificar PNGs pesados dentro del arbol.
 
 ---
 
@@ -2491,9 +2492,9 @@ Muestra:
 
 Comportamiento implementado actual del arbol:
 
-- El arbol se abre centrado en `fundacion-planetaria`.
+- El arbol se abre como constelacion radial simple desde un nucleo visual de faccion.
 - No debe abrir con ningun nodo seleccionado por defecto; el usuario decide que nodo consultar.
-- Incluye controles compactos de zoom, alejamiento y recentrado.
+- No usa controles de zoom ni pan custom; usa scroll nativo e iconos vectoriales simples para evitar lag y mantener respuesta inmediata.
 - En movil el detalle del nodo se abre como drawer/panel inferior con scroll tactil real y boton de investigar accesible.
 
 ### 17.5 Panel de comercio
