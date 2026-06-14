@@ -28,6 +28,8 @@ export type UnitCategory =
   | "Superpesado"
   | "Otro";
 
+export type UnitType = "beast" | "vehicle" | "character" | "infantry" | "mounted";
+
 export type ResourceKey = "supply" | "minerals" | "honor" | "gold" | "industrialMaterial" | "uridium" | "technology";
 
 export type TradeableResourceKey = "supply" | "minerals" | "industrialMaterial" | "uridium";
@@ -40,9 +42,11 @@ export type ResourceBundle = Record<ResourceKey, number>;
 
 export type BuildingStatus = "constructing" | "active" | "disabled";
 
-export type BuildingKind = "recruitment" | "commerce" | "intelligence" | "production";
+export type BuildingKind = "recruitment" | "commerce" | "intelligence" | "production" | "relic";
 
 export type RecoveryStatus = "queued" | "completed" | "cancelled";
+
+export type RelicRarity = "common" | "rare" | "epic" | "legendary";
 
 export interface Faction {
   id: string;
@@ -103,6 +107,7 @@ export interface CampaignUnit {
   currentSystemId?: string | null;
   status: UnitStatus;
   category: UnitCategory;
+  unitType: UnitType;
   points: number;
   quantity: number;
   startingQuantity: number;
@@ -163,6 +168,7 @@ export interface UnitTemplate {
   factionId: string;
   name: string;
   category: UnitCategory;
+  unitType: UnitType;
   points: number;
   defaultQuantity: number;
   woundsPerModel: number;
@@ -295,6 +301,22 @@ export interface UnitRecoveryQueueItem {
   status: RecoveryStatus;
 }
 
+export interface CampaignRelic {
+  id: string;
+  slug?: string | null;
+  factionId?: string | null;
+  systemId?: string | null;
+  equippedUnitId?: string | null;
+  name: string;
+  description: string;
+  effectText?: string | null;
+  iconKey?: string | null;
+  rarity: RelicRarity;
+  isPublic: boolean;
+  equippedAt?: string | null;
+  createdAt?: string | null;
+}
+
 export interface Conflict {
   id: string;
   systemId: string;
@@ -357,6 +379,7 @@ export interface CampaignSnapshot {
   systemBuildings: SystemBuilding[];
   systemResourceCapabilities: SystemResourceCapability[];
   unitRecoveryQueue: UnitRecoveryQueueItem[];
+  relics: CampaignRelic[];
   tradeOffers: TradeOffer[];
   conflicts: Conflict[];
   battleReports: BattleReport[];

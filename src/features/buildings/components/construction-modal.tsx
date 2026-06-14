@@ -287,7 +287,8 @@ function getKindLabel(template: BuildingTemplate) {
     recruitment: "Militar",
     commerce: "Comercio",
     intelligence: "Intel",
-    production: "Produccion"
+    production: "Produccion",
+    relic: "Reliquias"
   };
 
   return labels[template.buildingKind];
@@ -299,6 +300,10 @@ function getKindTone(template: BuildingTemplate): "cyan" | "rose" | "amber" | "s
   }
 
   if (template.buildingKind === "intelligence") {
+    return "violet";
+  }
+
+  if (template.buildingKind === "relic") {
     return "violet";
   }
 

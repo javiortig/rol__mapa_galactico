@@ -525,6 +525,7 @@ from (
     ('cristalizacion-building', 'cristalizacion-combustible-cuantico', 'unlock_building_template', '{"building_template_slugs":["refineria-iridium"]}'),
     ('extraccion-building', 'extraccion-subterranea', 'unlock_building_template', '{"building_template_slugs":["complejo-minero"]}'),
     ('monumentos-building', 'monumentos-gloria', 'unlock_building_template', '{"building_template_slugs":["monumento"]}'),
+    ('monumentos-relic-sanctuary', 'monumentos-gloria', 'unlock_building_template', '{"building_template_slugs":["santuario-reliquias"]}'),
     ('fiebre-oro-building', 'fiebre-oro', 'unlock_building_template', '{"building_template_slugs":["mina-oro"]}'),
     ('pactos-building', 'pactos-mercantiles', 'unlock_building_template', '{"building_template_slugs":["camara-comercio"]}'),
     ('contactos-merchant', 'contactos-economicos', 'unlock_merchant_trade', '{}'),
@@ -557,7 +558,8 @@ values
   (coalesce((select id from public.building_templates where slug = 'refineria-iridium'), public.seed_uuid('building_template', 'refineria-iridium')), 'refineria-iridium', 'Refineria de Iridium', 'Planta especializada para estabilizar cristales de salto.', 'Produccion', 'production', 4, 8, 0, 0, 5, 0, 0, 240, 'uridium', 4, array[]::text[], public.seed_uuid('technology_node', 'cristalizacion-combustible-cuantico'), 'iridium_refinery', true),
   (coalesce((select id from public.building_templates where slug = 'mina-oro'), public.seed_uuid('building_template', 'mina-oro')), 'mina-oro', 'Mina de Oro', 'Extraccion de metales preciosos para rutas comerciales.', 'Produccion', 'production', 4, 8, 0, 0, 5, 0, 0, 240, 'gold', 3, array[]::text[], public.seed_uuid('technology_node', 'fiebre-oro'), 'gold_mine', true),
   (coalesce((select id from public.building_templates where slug = 'planta-fundicion'), public.seed_uuid('building_template', 'planta-fundicion')), 'planta-fundicion', 'Planta de Fundicion', 'Produce Material Industrial para nuevas construcciones.', 'Produccion', 'production', 4, 10, 0, 0, 3, 0, 0, 240, 'industrial_material', 5, array[]::text[], public.seed_uuid('technology_node', 'procesado-metalurgico'), 'foundry', true),
-  (coalesce((select id from public.building_templates where slug = 'monumento'), public.seed_uuid('building_template', 'monumento')), 'monumento', 'Monumento', 'Estructura ceremonial que transforma gloria local en Honor.', 'Produccion', 'production', 8, 8, 0, 1, 5, 0, 0, 300, 'honor', 2, array[]::text[], public.seed_uuid('technology_node', 'monumentos-gloria'), 'monument', true)
+  (coalesce((select id from public.building_templates where slug = 'monumento'), public.seed_uuid('building_template', 'monumento')), 'monumento', 'Monumento', 'Estructura ceremonial que transforma gloria local en Honor.', 'Produccion', 'production', 8, 8, 0, 1, 5, 0, 0, 300, 'honor', 2, array[]::text[], public.seed_uuid('technology_node', 'monumentos-gloria'), 'monument', true),
+  (coalesce((select id from public.building_templates where slug = 'santuario-reliquias'), public.seed_uuid('building_template', 'santuario-reliquias')), 'santuario-reliquias', 'Santuario de Reliquias', 'Camara sellada donde se custodian reliquias narrativas y se equipan a characters veteranos.', 'Reliquias', 'relic', 8, 8, 2, 1, 5, 0, 0, 30, null, 0, array[]::text[], public.seed_uuid('technology_node', 'monumentos-gloria'), 'relic_sanctuary', true)
 on conflict (slug) do update
 set name = excluded.name, description = excluded.description, category = excluded.category, building_kind = excluded.building_kind, supply_cost = excluded.supply_cost, minerals_cost = excluded.minerals_cost, honor_cost = excluded.honor_cost, gold_cost = excluded.gold_cost, industrial_material_cost = excluded.industrial_material_cost, uridium_cost = excluded.uridium_cost, technology_cost = excluded.technology_cost, construction_time_seconds = excluded.construction_time_seconds, produced_resource_key = excluded.produced_resource_key, produced_amount = excluded.produced_amount, allowed_unit_categories = excluded.allowed_unit_categories, required_technology_node_id = excluded.required_technology_node_id, icon_key = excluded.icon_key, is_available = excluded.is_available, updated_at = now();
 
@@ -568,6 +570,23 @@ where building_template_id in (select id from public.building_templates where sl
 
 delete from public.building_templates
 where slug in ('senado', 'nodo-logistico', 'bastion-mando', 'manufactorum-local');
+
+insert into public.system_buildings (
+  id, system_id, building_template_id, status, started_at, finishes_at, constructed_at
+)
+select
+  public.seed_uuid('system_building', systems.slug || ':santuario-reliquias'),
+  systems.id,
+  (select id from public.building_templates where slug = 'santuario-reliquias'),
+  'active',
+  now() - interval '30 minutes',
+  now() - interval '25 minutes',
+  now() - interval '25 minutes'
+from public.systems
+where systems.is_capital = true
+  and exists (select 1 from public.building_templates where slug = 'santuario-reliquias')
+on conflict (system_id, building_template_id) do update
+set status = excluded.status, started_at = excluded.started_at, finishes_at = excluded.finishes_at, constructed_at = excluded.constructed_at, updated_at = now();
 
 delete from public.faction_technologies progress
 using public.technology_nodes nodes
@@ -624,6 +643,7 @@ update public.unit_templates
 set
   honor_cost = ancestral_stone_cost,
   industrial_material_cost = 0,
+  unit_type = public.map_unit_category_to_type(category),
   wounds_per_model = case slug
     when 'unit-orcos-boyz' then 1
     when 'unit-orcos-meganobz' then 3
@@ -651,6 +671,45 @@ set
     when category = 'Monstruo' then 'nido-bestias'
     else 'barracon-infanteria'
   end;
+
+insert into public.unit_templates (
+  id, slug, faction_id, name, category, unit_type, points, default_quantity, wounds_per_model, supply_cost, minerals_cost, ancestral_stone_cost, honor_cost, gold_cost, industrial_material_cost, uridium_cost, technology_cost, recruitment_time_seconds, recruitment_building_type, notes, is_available, required_technology_node_id
+)
+select
+  public.seed_uuid('unit_template', data.slug),
+  data.slug,
+  factions.id,
+  data.name,
+  'Personaje',
+  'character',
+  data.points,
+  1,
+  data.wounds_per_model,
+  data.supply_cost,
+  data.minerals_cost,
+  data.honor_cost,
+  data.honor_cost,
+  data.gold_cost,
+  data.industrial_material_cost,
+  0,
+  0,
+  30,
+  'cuartel-mando',
+  data.notes,
+  true,
+  public.seed_uuid('technology_node', 'asamblea-planetaria')
+from (
+  values
+    ('unit-orcos-warboss', 'orcos', 'Warboss', 110, 6, 8, 5, 2, 1, 2, 'Jefe de guerra preparado para portar trofeos sagrados.'),
+    ('unit-necrones-overlord', 'necrones', 'Overlord', 100, 5, 6, 6, 2, 1, 2, 'Noble inmortal con protocolos de mando dinastico.'),
+    ('unit-guardia-castellan', 'guardia-imperial', 'Cadian Castellan', 70, 4, 8, 4, 1, 1, 1, 'Oficial veterano de campana y enlace de mando.'),
+    ('unit-culto-primus', 'culto-genestelar', 'Primus', 80, 4, 7, 4, 2, 1, 1, 'Lider de celula capaz de guiar la insurreccion.'),
+    ('unit-sombra-captain', 'sombra-emperador', 'Captain', 95, 6, 6, 6, 3, 1, 2, 'Capitan de la Sombra del Emperador.'),
+    ('unit-muerte-lord-contagion', 'guardia-muerte', 'Lord of Contagion', 100, 6, 7, 6, 3, 1, 2, 'Campeon corrupto de resistencia sobrenatural.')
+) as data(slug, faction_slug, name, points, wounds_per_model, supply_cost, minerals_cost, honor_cost, gold_cost, industrial_material_cost, notes)
+join public.factions on factions.slug = data.faction_slug
+on conflict (slug) do update
+set faction_id = excluded.faction_id, name = excluded.name, category = excluded.category, unit_type = excluded.unit_type, points = excluded.points, default_quantity = excluded.default_quantity, wounds_per_model = excluded.wounds_per_model, supply_cost = excluded.supply_cost, minerals_cost = excluded.minerals_cost, ancestral_stone_cost = excluded.ancestral_stone_cost, honor_cost = excluded.honor_cost, gold_cost = excluded.gold_cost, industrial_material_cost = excluded.industrial_material_cost, uridium_cost = excluded.uridium_cost, technology_cost = excluded.technology_cost, recruitment_time_seconds = excluded.recruitment_time_seconds, recruitment_building_type = excluded.recruitment_building_type, notes = excluded.notes, is_available = excluded.is_available, required_technology_node_id = excluded.required_technology_node_id;
 
 insert into public.campaign_units (
   id, slug, faction_id, unit_template_id, name, category, points, quantity, starting_quantity, experience, rank, enhancement_text, current_system_id, status, is_visible_publicly
@@ -683,12 +742,82 @@ values
 on conflict (slug) do update
 set faction_id = excluded.faction_id, unit_template_id = excluded.unit_template_id, name = excluded.name, category = excluded.category, points = excluded.points, quantity = excluded.quantity, starting_quantity = excluded.starting_quantity, experience = excluded.experience, rank = excluded.rank, enhancement_text = excluded.enhancement_text, current_system_id = excluded.current_system_id, status = excluded.status, is_visible_publicly = excluded.is_visible_publicly, updated_at = now();
 
+insert into public.campaign_units (
+  id, slug, faction_id, unit_template_id, name, category, unit_type, points, quantity, starting_quantity, wounds_taken, experience, rank, enhancement_text, current_system_id, status, is_visible_publicly
+)
+select
+  public.seed_uuid('campaign_unit', data.slug),
+  data.slug,
+  factions.id,
+  unit_templates.id,
+  data.name,
+  'Personaje',
+  'character',
+  unit_templates.points,
+  1,
+  1,
+  0,
+  data.character_level,
+  public.character_rank_for_level(data.character_level),
+  null,
+  factions.capital_system_id,
+  'ready',
+  false
+from (
+  values
+    ('character-orcos-warboss', 'orcos', 'Warboss Gorbad Krumpa', 'unit-orcos-warboss', 3),
+    ('character-necrones-overlord', 'necrones', 'Overlord Sekh-Nemesor', 'unit-necrones-overlord', 3),
+    ('character-guardia-castellan', 'guardia-imperial', 'Castellan Mira Holt', 'unit-guardia-castellan', 3),
+    ('character-culto-primus', 'culto-genestelar', 'Primus Korda Vhal', 'unit-culto-primus', 3),
+    ('character-sombra-captain', 'sombra-emperador', 'Captain Aster Valen', 'unit-sombra-captain', 3),
+    ('character-muerte-lord-contagion', 'guardia-muerte', 'Lord Morbus Vane', 'unit-muerte-lord-contagion', 3)
+) as data(slug, faction_slug, name, template_slug, character_level)
+join public.factions on factions.slug = data.faction_slug
+join public.unit_templates on unit_templates.slug = data.template_slug
+where factions.capital_system_id is not null
+on conflict (slug) do update
+set faction_id = excluded.faction_id, unit_template_id = excluded.unit_template_id, name = excluded.name, category = excluded.category, unit_type = excluded.unit_type, points = excluded.points, quantity = excluded.quantity, starting_quantity = excluded.starting_quantity, wounds_taken = excluded.wounds_taken, experience = excluded.experience, rank = excluded.rank, enhancement_text = excluded.enhancement_text, current_system_id = excluded.current_system_id, status = excluded.status, is_visible_publicly = excluded.is_visible_publicly, updated_at = now();
+
 update public.campaign_units
 set wounds_taken = 0;
 
 update public.campaign_units
 set quantity = 7, wounds_taken = 2
 where slug = 'imperial-kharon-cadians';
+
+insert into public.relics (
+  id, slug, faction_id, system_id, name, description, effect_text, icon_key, rarity, is_public
+)
+select
+  public.seed_uuid('relic', data.slug),
+  data.slug,
+  factions.id,
+  factions.capital_system_id,
+  data.name,
+  data.description,
+  data.effect_text,
+  data.icon_key,
+  data.rarity,
+  false
+from (
+  values
+    ('relic-orcos-krozius-chatarra', 'orcos', 'Krozius de Chatarra Sagrada', 'Trofeo brutal cubierto de sellos arrancados a enemigos imperiales.', 'Reliquia narrativa: simboliza autoridad brutal y victorias de abordaje.', 'hammer', 'rare'),
+    ('relic-orcos-diente-gorko', 'orcos', 'Diente de Gorko', 'Colmillo enorme engarzado en hierro candente.', 'Reliquia narrativa: inspira cargas temerarias y duelos de jefes.', 'tooth', 'common'),
+    ('relic-necrones-orbe-hekatep', 'necrones', 'Orbe de Hekatep', 'Esfera de mando que pulsa con codigo dinastico verde.', 'Reliquia narrativa: ancla protocolos de reanimacion y autoridad de tumba.', 'orb', 'rare'),
+    ('relic-necrones-cetro-fase', 'necrones', 'Cetro de Fase', 'Baston de nobleza con filo que vibra entre realidades.', 'Reliquia narrativa: marca derecho de conquista sobre mundos dormidos.', 'scepter', 'common'),
+    ('relic-guardia-estandarte-kasr', 'guardia-imperial', 'Estandarte de Kasr Vhal', 'Bandera de guerra recuperada de una fortaleza perdida.', 'Reliquia narrativa: concede legitimidad y valor a una linea imperial.', 'banner', 'rare'),
+    ('relic-guardia-aquila-rota', 'guardia-imperial', 'Aquila Rota', 'Fragmento dorado de un santuario bombardeado.', 'Reliquia narrativa: juramento de resistencia bajo fuego imposible.', 'aquila', 'common'),
+    ('relic-culto-garra-patriarca', 'culto-genestelar', 'Garra del Patriarca', 'Taliman oseo oculto en un relicario de manufactorum.', 'Reliquia narrativa: refuerza la fe de celulas insurgentes.', 'claw', 'rare'),
+    ('relic-culto-mascara-vidrio', 'culto-genestelar', 'Mascara de Vidrio Negro', 'Mascara ritual usada por predicadores de la cuarta generacion.', 'Reliquia narrativa: simboliza infiltracion y control de masas.', 'mask', 'common'),
+    ('relic-sombra-crux-eclipsada', 'sombra-emperador', 'Crux Eclipsada', 'Insignia de honor ennegrecida por la luz de un sol muerto.', 'Reliquia narrativa: recuerda juramentos de purga y defensa del sector.', 'crux', 'rare'),
+    ('relic-sombra-fragmento-narthex', 'sombra-emperador', 'Fragmento del Narthex', 'Pieza de un altar sellado antes de la guerra actual.', 'Reliquia narrativa: legitima campanas de recuperacion sagrada.', 'reliquary', 'common'),
+    ('relic-muerte-campana-putrida', 'guardia-muerte', 'Campana Putrida', 'Campana menor cubierta de oxido y letanias enfermas.', 'Reliquia narrativa: anuncia avances inevitables de la plaga.', 'bell', 'rare'),
+    ('relic-muerte-incensario-morbus', 'guardia-muerte', 'Incensario de Morbus', 'Artefacto que exhala niebla toxica en susurros.', 'Reliquia narrativa: acompana procesiones de corrupcion y asedio.', 'censer', 'common')
+) as data(slug, faction_slug, name, description, effect_text, icon_key, rarity)
+join public.factions on factions.slug = data.faction_slug
+where factions.capital_system_id is not null
+on conflict (slug) do update
+set faction_id = excluded.faction_id, system_id = coalesce(public.relics.system_id, excluded.system_id), name = excluded.name, description = excluded.description, effect_text = excluded.effect_text, icon_key = excluded.icon_key, rarity = excluded.rarity, is_public = excluded.is_public;
 
 insert into public.movement_orders (
   id, faction_id, from_system_id, to_system_id, uridium_cost, started_at, arrival_at, status, path_system_ids, segment_count, duration_seconds

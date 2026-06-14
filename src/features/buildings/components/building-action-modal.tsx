@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Activity, Building2, Clock3, HeartPulse, Minus, Plus, Shield, X } from "lucide-react";
+import { Activity, Building2, Clock3, Gem, HeartPulse, Minus, Plus, Shield, Sparkles, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
@@ -14,6 +14,7 @@ import {
   recruitUnitAtBuilding,
   resupplyUnitAtBuilding
 } from "@/features/recruitment/api/recruitment-api";
+import { canUseRelicRpc, equipRelicToCharacter, unequipRelicFromCharacter } from "@/features/relics/api/relic-api";
 import {
   getBaseRecruitmentCost,
   getRecruitmentCost,
@@ -23,9 +24,11 @@ import {
   isUnitTemplateUnlocked
 } from "@/features/technology/lib/technology-state";
 import { getFactionArmyPoints } from "@/features/units/lib/army-points";
+import { getCharacterLevel, getCharacterRank, getCharacterRelicSlots } from "@/features/units/lib/character-ranks";
 import { formatCountdown } from "@/lib/time";
 import type {
   BuildingTemplate,
+  CampaignRelic,
   CampaignSnapshot,
   FactionResources,
   RecruitmentQueueItem,
@@ -89,6 +92,8 @@ export function BuildingActionModal({
           />
         ) : template.buildingKind === "production" ? (
           <ProductionBuildingView template={template} />
+        ) : template.buildingKind === "relic" ? (
+          <RelicSanctuaryView building={building} snapshot={snapshot} />
         ) : (
           <PlaceholderBuildingView template={template} />
         )}
@@ -551,6 +556,240 @@ function QueueSection({
         )}
       </div>
     </section>
+  );
+}
+
+function RelicSanctuaryView({ snapshot, building }: { snapshot: CampaignSnapshot; building: SystemBuilding }) {
+  const queryClient = useQueryClient();
+  const [selectedRelicId, setSelectedRelicId] = useState<string | null>(null);
+  const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
+  const rpcReady = canUseRelicRpc();
+  const isAdmin = snapshot.currentUser.role === "admin";
+  const storedRelics = snapshot.relics.filter(
+    (relic) =>
+      (isAdmin || relic.factionId === snapshot.currentUser.factionId) &&
+      relic.systemId === building.systemId &&
+      !relic.equippedUnitId
+  );
+  const characters = snapshot.units.filter(
+    (unit) =>
+      (isAdmin || unit.factionId === snapshot.currentUser.factionId) &&
+      unit.currentSystemId === building.systemId &&
+      unit.unitType === "character" &&
+      unit.status === "ready" &&
+      unit.quantity > 0
+  );
+  const selectedRelic = storedRelics.find((relic) => relic.id === selectedRelicId) ?? storedRelics[0] ?? null;
+  const selectedCharacter = characters.find((unit) => unit.id === selectedCharacterId) ?? characters[0] ?? null;
+  const equippedRelics = snapshot.relics.filter((relic) =>
+    characters.some((character) => character.id === relic.equippedUnitId)
+  );
+  const selectedCharacterRelics = selectedCharacter
+    ? snapshot.relics.filter((relic) => relic.equippedUnitId === selectedCharacter.id)
+    : [];
+  const selectedCharacterSlots = selectedCharacter ? getCharacterRelicSlots(selectedCharacter) : 0;
+  const canEquip =
+    Boolean(selectedRelic && selectedCharacter) &&
+    selectedCharacterSlots > selectedCharacterRelics.length;
+  const equipMutation = useMutation({
+    mutationFn: () => {
+      if (!selectedRelic || !selectedCharacter) {
+        throw new Error("Selecciona una reliquia y un character.");
+      }
+
+      return equipRelicToCharacter(selectedRelic.id, selectedCharacter.id, building.id);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
+  });
+  const unequipMutation = useMutation({
+    mutationFn: (relicId: string) => unequipRelicFromCharacter(relicId, building.id),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
+  });
+
+  return (
+    <div className="mobile-scroll flex-1 lg:grid lg:grid-cols-[1fr_340px] lg:overflow-hidden">
+      <div className="p-4 md:p-5 lg:min-h-0 lg:overflow-y-auto">
+        <div className="mb-4 flex items-center gap-3">
+          <div className="grid size-11 place-items-center rounded-md border border-violet-300/30 bg-violet-400/10 text-violet-100">
+            <Gem size={22} />
+          </div>
+          <div>
+            <h3 className="text-xl font-semibold text-cyan-50">Reliquias almacenadas</h3>
+            <p className="mt-1 text-sm text-slate-400">Las reliquias narrativas se equipan a characters presentes en este sistema.</p>
+          </div>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {storedRelics.length > 0 ? (
+            storedRelics.map((relic) => (
+              <RelicCard
+                key={relic.id}
+                relic={relic}
+                selected={relic.id === selectedRelic?.id}
+                onSelect={() => setSelectedRelicId(relic.id)}
+              />
+            ))
+          ) : (
+            <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-4 text-sm text-slate-400">
+              No hay reliquias guardadas en este Santuario.
+            </div>
+          )}
+        </div>
+
+        {equippedRelics.length > 0 ? (
+          <section className="mt-5">
+            <h3 className="mb-3 text-sm font-semibold text-cyan-50">Reliquias equipadas en characters presentes</h3>
+            <div className="grid gap-2 md:grid-cols-2">
+              {equippedRelics.map((relic) => {
+                const character = characters.find((unit) => unit.id === relic.equippedUnitId) ?? null;
+
+                return (
+                  <div className="rounded-md border border-violet-300/20 bg-violet-400/10 p-3" key={relic.id}>
+                    <div className="font-semibold text-violet-50">{relic.name}</div>
+                    <div className="mt-1 text-xs text-slate-300">{character?.name ?? "Character desconocido"}</div>
+                    <Button
+                      className="mt-3 w-full"
+                      disabled={!rpcReady || unequipMutation.isPending}
+                      onClick={() => unequipMutation.mutate(relic.id)}
+                      size="sm"
+                      variant="ghost"
+                    >
+                      Desequipar al Santuario
+                    </Button>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        ) : null}
+      </div>
+
+      <aside className="border-t border-cyan-200/15 bg-slate-950/35 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-4 md:p-5 lg:border-l lg:border-t-0">
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-lg font-semibold text-cyan-50">Equipar reliquia</h3>
+            <p className="mt-1 text-sm text-slate-400">Nivel 3 desbloquea 1 reliquia; nivel 6 desbloquea 2.</p>
+          </div>
+
+          <label className="block text-xs text-slate-400">
+            Reliquia
+            <select
+              className="mt-1 w-full rounded-md border border-cyan-200/15 bg-slate-950/50 px-2 py-2 text-sm text-cyan-50"
+              onChange={(event) => setSelectedRelicId(event.target.value)}
+              value={selectedRelic?.id ?? ""}
+            >
+              {storedRelics.length > 0 ? (
+                storedRelics.map((relic) => (
+                  <option key={relic.id} value={relic.id}>
+                    {relic.name}
+                  </option>
+                ))
+              ) : (
+                <option value="">Sin reliquias</option>
+              )}
+            </select>
+          </label>
+
+          <label className="block text-xs text-slate-400">
+            Character presente
+            <select
+              className="mt-1 w-full rounded-md border border-cyan-200/15 bg-slate-950/50 px-2 py-2 text-sm text-cyan-50"
+              onChange={(event) => setSelectedCharacterId(event.target.value)}
+              value={selectedCharacter?.id ?? ""}
+            >
+              {characters.length > 0 ? (
+                characters.map((character) => (
+                  <option key={character.id} value={character.id}>
+                    {character.name} - nivel {getCharacterLevel(character)}
+                  </option>
+                ))
+              ) : (
+                <option value="">Sin characters</option>
+              )}
+            </select>
+          </label>
+
+          {selectedCharacter ? (
+            <div className="rounded-md border border-cyan-200/15 bg-slate-950/40 p-3 text-sm">
+              <div className="font-semibold text-cyan-50">{selectedCharacter.name}</div>
+              <div className="mt-1 text-xs text-amber-100">
+                Nivel {getCharacterLevel(selectedCharacter)} - {getCharacterRank(selectedCharacter)}
+              </div>
+              <div className="mt-1 text-xs text-slate-400">
+                Slots: {selectedCharacterRelics.length}/{selectedCharacterSlots}
+              </div>
+            </div>
+          ) : null}
+
+          {selectedRelic ? (
+            <div className="rounded-md border border-violet-300/20 bg-violet-400/10 p-3 text-sm text-violet-50">
+              <div className="font-semibold">{selectedRelic.name}</div>
+              <p className="mt-1 text-xs leading-5 text-violet-100/85">{selectedRelic.effectText ?? selectedRelic.description}</p>
+            </div>
+          ) : null}
+
+          {!rpcReady ? (
+            <div className="rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
+              Supabase no esta configurado.
+            </div>
+          ) : null}
+
+          {selectedCharacter && selectedCharacterSlots <= selectedCharacterRelics.length ? (
+            <div className="rounded-md border border-rose-300/25 bg-rose-400/10 p-3 text-sm text-rose-100">
+              Este character no tiene slots de reliquia libres.
+            </div>
+          ) : null}
+
+          {equipMutation.error ? <p className="text-sm text-rose-200">{equipMutation.error.message}</p> : null}
+          {unequipMutation.error ? <p className="text-sm text-rose-200">{unequipMutation.error.message}</p> : null}
+
+          <Button
+            className="sticky bottom-0 w-full"
+            disabled={!rpcReady || !canEquip || equipMutation.isPending}
+            onClick={() => equipMutation.mutate()}
+          >
+            <Sparkles size={16} />
+            {equipMutation.isPending ? "Equipando..." : "Equipar reliquia"}
+          </Button>
+        </div>
+      </aside>
+    </div>
+  );
+}
+
+function RelicCard({
+  relic,
+  selected,
+  onSelect
+}: {
+  relic: CampaignRelic;
+  selected: boolean;
+  onSelect: () => void;
+}) {
+  return (
+    <button
+      className={`rounded-lg border p-4 text-left transition ${
+        selected
+          ? "border-violet-200/60 bg-violet-400/15 shadow-[0_0_24px_rgba(168,85,247,0.14)]"
+          : "border-cyan-200/15 bg-slate-950/35 hover:border-violet-200/35"
+      }`}
+      onClick={onSelect}
+      type="button"
+    >
+      <div className="mb-3 flex items-start justify-between gap-3">
+        <div>
+          <div className="font-semibold text-cyan-50">{relic.name}</div>
+          <div className="mt-1 text-xs uppercase tracking-[0.14em] text-violet-200/80">{relic.rarity}</div>
+        </div>
+        <Gem className="text-violet-100" size={19} />
+      </div>
+      <p className="text-xs leading-5 text-slate-300">{relic.description}</p>
+      {relic.effectText ? <p className="mt-2 text-xs leading-5 text-violet-100">{relic.effectText}</p> : null}
+    </button>
   );
 }
 

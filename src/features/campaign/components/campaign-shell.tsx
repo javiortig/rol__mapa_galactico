@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AlertTriangle, Building2, Check, Clock3, Cpu, Crosshair, Factory, HandCoins, Hammer, Landmark, Minus, MousePointer2, Plus, RadioTower, Route, Shield, Swords, Undo2, X } from "lucide-react";
+import { AlertTriangle, Building2, Check, Clock3, Cpu, Crosshair, Factory, Gem, HandCoins, Hammer, Landmark, Minus, MousePointer2, Plus, RadioTower, Route, Shield, Swords, Undo2, X } from "lucide-react";
 import { getCampaignSnapshot, isCampaignAuthRequiredError } from "@/features/campaign/api/campaign-repository";
 import { useCampaignUiStore } from "@/features/campaign/store/campaign-ui-store";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +26,7 @@ import { ConstructionModal } from "@/features/buildings/components/construction-
 import { BuildingActionModal } from "@/features/buildings/components/building-action-modal";
 import { getActiveTechnologyResearch } from "@/features/technology/lib/technology-state";
 import { retireCampaignUnit } from "@/features/units/api/unit-api";
+import { getCharacterLevel, getCharacterRank, unitTypeLabels } from "@/features/units/lib/character-ranks";
 import { formatCountdown } from "@/lib/time";
 import { useMediaQuery, useViewportHeightCssVar } from "@/lib/use-media-query";
 import type { BuildingTemplate, CampaignSnapshot, CampaignUnit, Conflict, Faction, StarSystem, SystemBuilding, UnitMovementSelection } from "@/domain/campaign";
@@ -478,6 +479,8 @@ function BuildingKindIcon({ template }: { template: BuildingTemplate }) {
       <RadioTower className={className} />
     ) : template.buildingKind === "production" ? (
       <Factory className={className} />
+    ) : template.buildingKind === "relic" ? (
+      <Gem className={className} />
     ) : template.slug === "cuartel-mando" || template.iconKey === "command_quarters" ? (
       <Landmark className={className} />
     ) : (
@@ -1009,6 +1012,7 @@ function SystemPanel({
                     canRetire
                     faction={snapshot.factions.find((item) => item.id === snapshot.currentUser.factionId) ?? null}
                     onRetireUnit={handleRetireUnit}
+                    relics={snapshot.relics}
                     retirePendingUnitId={retireUnitMutation.isPending ? retireUnitMutation.variables : null}
                     title="Aliadas"
                     units={alliedUnits}
@@ -1021,6 +1025,7 @@ function SystemPanel({
                           canRetire={false}
                           faction={group.faction}
                           key={group.faction.id}
+                          relics={snapshot.relics}
                           title={group.faction.name}
                           units={group.units}
                         />
@@ -1124,6 +1129,7 @@ function UnitGroup({
   title,
   faction,
   units,
+  relics,
   canRetire,
   retirePendingUnitId,
   onRetireUnit
@@ -1131,6 +1137,7 @@ function UnitGroup({
   title: string;
   faction: Faction | null;
   units: CampaignUnit[];
+  relics: CampaignSnapshot["relics"];
   canRetire: boolean;
   retirePendingUnitId?: string | null;
   onRetireUnit?: (unit: CampaignUnit) => void;
@@ -1148,13 +1155,34 @@ function UnitGroup({
         {units.length > 0 ? (
           units.map((unit) => {
             const canRetireUnit = canRetire && unit.status === "ready";
+            const equippedRelics = relics.filter((relic) => relic.equippedUnitId === unit.id);
+            const characterRank = getCharacterRank(unit);
 
             return (
               <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={unit.id}>
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
                     <div className="truncate text-sm font-medium text-slate-100">{unit.name}</div>
-                    <div className="mt-1 text-xs text-slate-400">{formatUnitStrength(unit)}</div>
+                    <div className="mt-1 text-xs text-slate-400">
+                      {formatUnitStrength(unit)} - {unitTypeLabels[unit.unitType]}
+                    </div>
+                    {characterRank ? (
+                      <div className="mt-1 text-xs text-amber-100">
+                        Nivel {getCharacterLevel(unit)} - {characterRank}
+                      </div>
+                    ) : null}
+                    {equippedRelics.length > 0 ? (
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {equippedRelics.map((relic) => (
+                          <span
+                            className="rounded border border-violet-300/25 bg-violet-400/10 px-2 py-0.5 text-[11px] text-violet-100"
+                            key={relic.id}
+                          >
+                            {relic.name}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
                     <Badge tone={getUnitStatusTone(unit.status)}>{getUnitStatusLabel(unit.status)}</Badge>
@@ -1513,8 +1541,13 @@ function UnitSelectionCard({
         <div>
           <div className="font-medium text-slate-100">{unit.name}</div>
           <div className="mt-1 text-xs text-slate-400">
-            {formatUnitStrength(unit)} · {unit.category}
+            {formatUnitStrength(unit)} - {unitTypeLabels[unit.unitType]}
           </div>
+          {unit.unitType === "character" ? (
+            <div className="mt-1 text-xs text-amber-100">
+              Nivel {getCharacterLevel(unit)} - {getCharacterRank(unit)}
+            </div>
+          ) : null}
         </div>
         <Badge tone={selected ? "cyan" : "slate"}>{selected ? "Seleccionada" : "No seleccionada"}</Badge>
       </div>

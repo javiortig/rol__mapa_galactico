@@ -1,6 +1,7 @@
 import type {
   BattleReport,
   BuildingTemplate,
+  CampaignRelic,
   CampaignUnit,
   CampaignSnapshot,
   Conflict,
@@ -24,6 +25,7 @@ import type {
   TradeOffer,
   UnitRecoveryQueueItem,
   UnitCategory,
+  UnitType,
   UnitMovementSelection,
   UnitTemplate
 } from "@/domain/campaign";
@@ -116,6 +118,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       systemBuildingsResult,
       systemResourceCapabilitiesResult,
       unitRecoveryQueueResult,
+      relicsResult,
       tradeOffersResult,
       conflictsResult,
       battleReportsResult,
@@ -143,6 +146,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       supabase.rpc("get_visible_system_buildings"),
       supabase.from("system_resource_capabilities").select("*"),
       supabase.from("unit_recovery_queue").select("*, campaign_units(name)").order("finishes_at"),
+      supabase.from("relics").select("*").order("name"),
       supabase.from("trade_offers").select("*").order("created_at", { ascending: false }),
       supabase.from("conflicts").select("*").order("created_at"),
       supabase.from("battle_reports").select("*").order("created_at"),
@@ -225,6 +229,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       systemBuildings: getRows(systemBuildingsResult, "system_buildings").map(mapSystemBuilding),
       systemResourceCapabilities,
       unitRecoveryQueue: getRows(unitRecoveryQueueResult, "unit_recovery_queue").map(mapUnitRecoveryQueueItem),
+      relics: getRows(relicsResult, "relics").map(mapCampaignRelic),
       tradeOffers: getRows(tradeOffersResult, "trade_offers").map(mapTradeOffer),
       conflicts: getRows(conflictsResult, "conflicts").map(mapConflict),
       battleReports: getRows(battleReportsResult, "battle_reports").map(mapBattleReport),
@@ -412,6 +417,7 @@ function mapCampaignUnit(row: Record<string, unknown>): CampaignUnit {
     currentSystemId: (row.current_system_id as string | null) ?? null,
     status: row.status as CampaignUnit["status"],
     category: row.category as CampaignUnit["category"],
+    unitType: mapUnitType(row.unit_type ?? row.category),
     points: Number(row.points ?? 0),
     quantity: Number(row.quantity ?? 1),
     startingQuantity: Number(row.starting_quantity ?? row.quantity ?? 1),
@@ -462,6 +468,7 @@ function mapUnitTemplate(row: Record<string, unknown>): UnitTemplate {
     factionId: row.faction_id as string,
     name: row.name as string,
     category: row.category as UnitCategory,
+    unitType: mapUnitType(row.unit_type ?? row.category),
     points: Number(row.points ?? 0),
     defaultQuantity: Number(row.default_quantity ?? 1),
     woundsPerModel: Number(row.wounds_per_model ?? 1),
@@ -656,6 +663,27 @@ function mapUnitRecoveryQueueItem(row: Record<string, unknown>): UnitRecoveryQue
   };
 }
 
+function mapCampaignRelic(row: Record<string, unknown>): CampaignRelic {
+  return {
+    id: row.id as string,
+    slug: (row.slug as string | null) ?? null,
+    factionId: (row.faction_id as string | null) ?? null,
+    systemId: (row.system_id as string | null) ?? null,
+    equippedUnitId: (row.equipped_unit_id as string | null) ?? null,
+    name: row.name as string,
+    description: row.description as string,
+    effectText: (row.effect_text as string | null) ?? null,
+    iconKey: (row.icon_key as string | null) ?? null,
+    rarity:
+      row.rarity === "rare" || row.rarity === "epic" || row.rarity === "legendary"
+        ? row.rarity
+        : "common",
+    isPublic: Boolean(row.is_public),
+    equippedAt: (row.equipped_at as string | null) ?? null,
+    createdAt: (row.created_at as string | null) ?? null
+  };
+}
+
 function mapConflict(row: Record<string, unknown>): Conflict {
   return {
     id: row.id as string,
@@ -675,6 +703,34 @@ function mapNullableResourceKey(value: unknown): ResourceKey | null {
   }
 
   return mapResourceKey(value);
+}
+
+function mapUnitType(value: unknown): UnitType {
+  const normalized = String(value ?? "").toLowerCase();
+
+  if (normalized === "beast" || normalized === "monstruo" || normalized === "monster") {
+    return "beast";
+  }
+
+  if (
+    normalized === "vehicle" ||
+    normalized === "vehiculo" ||
+    normalized === "vehÃ­culo" ||
+    normalized === "vehículo" ||
+    normalized === "superpesado"
+  ) {
+    return "vehicle";
+  }
+
+  if (normalized === "character" || normalized === "characters" || normalized === "personaje") {
+    return "character";
+  }
+
+  if (normalized === "mounted" || normalized === "montado" || normalized === "montada") {
+    return "mounted";
+  }
+
+  return "infantry";
 }
 
 function mapResourceKey(value: unknown): ResourceKey {

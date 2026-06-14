@@ -160,6 +160,9 @@ Estado jugable actual:
 - Movimiento, reclutamiento e investigacion funcionan por timestamps y resolvers backend/lazy processing.
 - Unidades jugables son `campaign_units`, no ejercitos abstractos.
 - Las unidades tienen miniaturas actuales, miniaturas iniciales y heridas agregadas; no pueden separarse al mover.
+- Las unidades tienen `unit_type` Warhammer: `infantry`, `vehicle`, `character`, `beast` o `mounted`; `category` queda como etiqueta visible/legacy.
+- Los `characters` usan `experience` como nivel directo `1..10`, con rangos militares y slots de reliquia por nivel.
+- Las reliquias v1 son narrativas: se guardan en Santuarios de Reliquias, se equipan a characters veteranos y no aplican bonos automaticos.
 - Construccion planetaria con slots por sistema: 6 en capitales y 3 en el resto.
 - Reclutamiento desde edificios militares activos, no desde un boton global de capital.
 - Reclutamiento usa `unit_templates`, costes, tiempos, cola, edificios compatibles y validacion tecnologica.
@@ -912,8 +915,9 @@ Catálogo inicial:
 | Mina de Oro | Producción | Genera Oro. |
 | Planta de Fundición | Producción | Genera Material Industrial. |
 | Monumento | Producción | Genera Honor. |
+| Santuario de Reliquias | Reliquias | Guarda reliquias y permite equiparlas o desequiparlas en characters presentes. |
 
-Las capitales del seed empiezan con 4 edificios activos: Barracón de Infantería, Cámara de Comercio, Planta de Fundición y Monumento.
+Las capitales del seed empiezan con 5 edificios activos: Barracón de Infantería, Cámara de Comercio, Planta de Fundición, Monumento y Santuario de Reliquias.
 
 RPCs principales:
 
@@ -1232,6 +1236,12 @@ Cada unidad debe tener:
 - Tiempo de producción.
 - Requisitos opcionales.
 - Edificio/categoría de reclutamiento compatible.
+- `unit_type` funcional:
+  - `infantry`
+  - `vehicle`
+  - `character`
+  - `beast`
+  - `mounted`
 - Categoría:
   - Infantería.
   - Élite.
@@ -1241,6 +1251,8 @@ Cada unidad debe tener:
   - Superpesado.
   - Otro.
 - Notas.
+
+`unit_type` se usa para validaciones nuevas como reliquias, characters y futuros efectos. `category` se mantiene como etiqueta visible y compatibilidad con datos anteriores.
 
 ### 9.4 Al reclutar
 
@@ -1404,7 +1416,7 @@ Regla vigente del arbol comun:
 - `procesado-metalurgico` desbloquea Planta de Fundicion.
 - `cristalizacion-combustible-cuantico` desbloquea Refineria de Iridium.
 - `extraccion-subterranea` desbloquea Complejo Minero.
-- `monumentos-gloria` desbloquea Monumento.
+- `monumentos-gloria` desbloquea Monumento y Santuario de Reliquias.
 - `fiebre-oro` desbloquea Mina de Oro.
 - `pactos-mercantiles` desbloquea Camara de Comercio.
 - `contactos-economicos` desbloquea el Mercader.
@@ -1417,42 +1429,98 @@ Regla vigente del arbol comun:
 
 ---
 
-## 10. Experiencia y enhancements narrativos
+## 10. Rangos de characters y reliquias
 
-Algunas tropas que sobrevivan a combates pueden ganar experiencia.
+`experience` ya no representa una barra de XP generica para cualquier tropa. En v1 se usa como nivel directo `1..10` solo en unidades con `unit_type = character`.
 
-La experiencia servirá para que el admin les asigne buffs narrativos llamados enhancements narrativos.
+Las unidades que no son `character` pueden seguir teniendo `rank`, `enhancement_text` y `notes` como texto narrativo/admin, pero no usan slots de reliquia.
 
-No se automatizan reglas complejas. Solo se guardan como datos editables.
+### 10.1 Rangos de character
 
-### 10.1 Campos recomendados para unidades
+| Nivel | Rango |
+|---:|---|
+| 1 | Oficial |
+| 2 | Oficial Veterano |
+| 3 | Campeon |
+| 4 | Capitan |
+| 5 | Comandante |
+| 6 | Senor de Guerra |
+| 7 | Alto Senor |
+| 8 | Heroe de Cruzada |
+| 9 | Leyenda de Guerra |
+| 10 | Leyenda del Sector |
 
-- `experience`
-- `rank`
-- `enhancement_text`
-- `notes`
-- `battle_history`
+Slots de reliquia:
 
-### 10.2 Ejemplo
+- Nivel 1-2: 0 reliquias.
+- Nivel 3-5: 1 reliquia.
+- Nivel 6-10: 2 reliquias.
+
+### 10.2 Santuario de Reliquias
+
+El `Santuario de Reliquias` es un edificio `building_kind = relic`.
+
+Reglas:
+
+- Requiere tecnologia `monumentos-gloria`.
+- Coste v1: 8 Suministro, 8 Mineral, 2 Honor, 1 Oro y 5 Material Industrial.
+- Tiempo de construccion de test: 30 segundos.
+- Cada capital empieza con un Santuario activo para probar la feature.
+- Al abrirlo muestra reliquias guardadas en ese sistema, characters propios presentes y reliquias equipadas.
+
+### 10.3 Equipar reliquias
+
+RPC principal:
 
 ```text
-Unidad: Veteranos de Kharon
-XP: 3
-Rango: Curtidos
-Enhancement narrativo:
-"Juramento de venganza: una vez por batalla pueden repetir una tirada de carga contra Necrones."
+equip_relic_to_character(relic_id, character_unit_id, system_building_id)
 ```
 
-### 10.3 Admin
+Validaciones:
+
+- Usuario autenticado y miembro de la faccion de la reliquia, o admin.
+- Santuario activo y propio.
+- Reliquia propia almacenada en el sistema del Santuario.
+- Character propio, vivo, `ready`, en el mismo sistema.
+- `unit_type = character`.
+- Nivel suficiente y slot libre.
+
+Al equipar:
+
+- La reliquia queda con `equipped_unit_id = character.id`.
+- `system_id` pasa a `null`.
+- La reliquia viaja con el character.
+- Se registra log `relic_equipped`.
+
+### 10.4 Desequipar reliquias
+
+RPC principal:
+
+```text
+unequip_relic_from_character(relic_id, system_building_id)
+```
+
+Validaciones:
+
+- Santuario activo y propio.
+- La reliquia esta equipada en un character propio.
+- El character esta `ready` en el mismo sistema del Santuario.
+
+Al desequipar:
+
+- La reliquia vuelve a `relics.system_id = system_building.system_id`.
+- `equipped_unit_id` y `equipped_at` pasan a `null`.
+- Se registra log `relic_unequipped`.
+
+Las reliquias v1 son narrativas: muestran descripcion y texto de efecto, pero no aplican modificadores automaticos a combate, movimiento, reclutamiento ni economia.
+
+### 10.5 Admin
 
 El admin puede:
 
-- Sumar XP.
-- Cambiar rango.
-- Añadir enhancement.
-- Cambiar nombre narrativo.
-- Escribir notas.
-- Registrar historia de batalla.
+- Ajustar nivel `experience` de characters entre 1 y 10.
+- Cambiar nombre narrativo, rango textual si hace falta, enhancement y notas.
+- Mover reliquias o editar su estado desde base de datos si hay que corregir una situacion de campana.
 
 ---
 
@@ -1632,6 +1700,7 @@ Puede:
 - Subir misiones.
 - Editar recursos de facciones.
 - Crear/editar/borrar tropas.
+- Crear/editar/mover reliquias.
 - Inspeccionar y corregir progreso tecnológico.
 - Resolver batallas.
 - Confirmar reportes de batalla.
@@ -1651,6 +1720,7 @@ Puede:
 - Ver movimientos propios.
 - Construir edificios en sistemas propios.
 - Reclutar y curar unidades desde edificios compatibles.
+- Equipar o desequipar reliquias propias en characters desde un Santuario propio.
 - Investigar tecnologías disponibles.
 - Comerciar con el mercader si tiene Camara de Comercio activa.
 - Crear, aceptar y cancelar ofertas propias de comercio estelar.
@@ -1698,6 +1768,8 @@ resolve_unit_recovery_queue()
 cancel_recruitment_queue(queue_id)
 cancel_unit_recovery_queue(queue_id)
 start_technology_research(technology_node_id)
+equip_relic_to_character(relic_id, character_unit_id, system_building_id)
+unequip_relic_from_character(relic_id, system_building_id)
 merchant_trade(resource_key, direction, trade_quantity)
 create_trade_offer(offer_type, resource_key, resource_amount, gold_amount)
 accept_trade_offer(offer_id)
@@ -1986,9 +2058,11 @@ faction_resources
 - faction_id uuid primary key references factions(id)
 - supply integer default 0
 - minerals integer default 0
-- ancestral_stone integer default 0
+- honor integer default 0
 - gold integer default 0
+- industrial_material integer default 0
 - uridium integer default 0
+- ancestral_stone integer default 0 -- legacy temporal sin uso funcional
 - technology integer default 0 -- Componentes tecnológicos
 - updated_at timestamptz
 ```
@@ -2002,9 +2076,11 @@ system_production
 - system_id uuid primary key references systems(id)
 - supply_per_tick integer default 0
 - minerals_per_tick integer default 0
-- ancestral_stone_per_tick integer default 0
-- gold_per_tick integer default 0 -- en seed v1 empieza a 0; oro es principalmente comercial
+- honor_per_tick integer default 0
+- gold_per_tick integer default 0
+- industrial_material_per_tick integer default 0
 - uridium_per_tick integer default 0
+- ancestral_stone_per_tick integer default 0 -- legacy temporal sin uso funcional
 - technology_per_tick integer default 0 -- debe permanecer en 0; los Componentes tecnológicos no son producción planetaria
 ```
 
@@ -2031,6 +2107,7 @@ campaign_units
 - unit_template_id uuid nullable references unit_templates(id)
 - name text
 - category text
+- unit_type text check in ('beast', 'vehicle', 'character', 'infantry', 'mounted')
 - points integer
 - quantity integer default 1 -- miniaturas actuales
 - starting_quantity integer default 1 -- tamano completo de la unidad
@@ -2049,6 +2126,10 @@ campaign_units
 ```
 
 Cada fila representa una unidad Warhammer concreta movible en el mapa. Las unidades son indivisibles: no se separan miniaturas al mover y no se crean nuevas filas hijas en el flujo actual. La validacion de heridas es `wounds_taken <= quantity * unit_templates.wounds_per_model`.
+
+`unit_type` es el campo funcional para reglas nuevas. `category` queda como etiqueta visible/legacy.
+
+Si `unit_type = 'character'`, `experience` se interpreta como nivel directo `1..10`, `rank` se sincroniza con el rango militar y los slots de reliquia se calculan desde ese nivel.
 
 ### 16.9 movement_order_units
 
@@ -2069,15 +2150,19 @@ unit_templates
 - faction_id uuid references factions(id)
 - name text
 - category text
+- unit_type text check in ('beast', 'vehicle', 'character', 'infantry', 'mounted')
 - points integer
 - default_quantity integer default 1
 - wounds_per_model integer default 1
 - supply_cost integer
 - minerals_cost integer
 - ancestral_stone_cost integer
+- honor_cost integer
 - gold_cost integer default 0
+- industrial_material_cost integer default 0
 - uridium_cost integer default 0
 - technology_cost integer default 0
+- recruitment_building_type text nullable
 - recruitment_time_seconds integer
 - required_technology_node_id uuid nullable references technology_nodes(id)
 - requirements jsonb nullable
@@ -2152,7 +2237,20 @@ building_templates
 - name text
 - description text
 - category text
+- building_kind text check in ('recruitment', 'commerce', 'intelligence', 'production', 'relic')
+- supply_cost integer
+- minerals_cost integer
+- honor_cost integer
+- gold_cost integer
+- industrial_material_cost integer
+- uridium_cost integer
+- technology_cost integer
+- construction_time_seconds integer
+- produced_resource_key text nullable
+- produced_amount integer
+- allowed_unit_categories text[]
 - required_technology_node_id uuid nullable references technology_nodes(id)
+- icon_key text nullable
 - is_available boolean default true
 - created_at timestamptz
 ```
@@ -2167,10 +2265,14 @@ recruitment_queue
 - faction_id uuid references factions(id)
 - unit_template_id uuid references unit_templates(id)
 - quantity integer default 1
+- system_building_id uuid nullable references system_buildings(id)
+- origin_system_id uuid nullable references systems(id)
 - supply_cost integer
 - minerals_cost integer
 - ancestral_stone_cost integer
+- honor_cost integer
 - gold_cost integer default 0
+- industrial_material_cost integer default 0
 - uridium_cost integer
 - technology_cost integer default 0
 - started_at timestamptz
@@ -2290,13 +2392,27 @@ missions
 ```sql
 relics
 - id uuid primary key
+- slug text unique nullable
 - faction_id uuid nullable references factions(id)
-- system_id uuid nullable references systems(id)
+- system_id uuid nullable references systems(id) -- reliquia guardada en Santuario de ese sistema
+- equipped_unit_id uuid nullable references campaign_units(id)
 - name text
 - description text
 - effect_text text nullable
+- icon_key text nullable
+- rarity text check in ('common', 'rare', 'epic', 'legendary')
+- equipped_at timestamptz nullable
 - is_public boolean default false
 - created_at timestamptz
+```
+
+Una reliquia no equipada debe tener `system_id`. Una reliquia equipada debe tener `equipped_unit_id` y viaja con ese character. Al desequipar, vuelve al Santuario usado y recupera `system_id`.
+
+RPCs:
+
+```text
+equip_relic_to_character(relic_id, character_unit_id, system_building_id)
+unequip_relic_from_character(relic_id, system_building_id)
 ```
 
 También puede existir:

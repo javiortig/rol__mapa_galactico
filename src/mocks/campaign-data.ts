@@ -1060,9 +1060,10 @@ const unitGroups: MockUnitGroup[] = [
   }
 ];
 
-const units: CampaignSnapshot["units"] = unitGroups.flatMap((group) =>
+const baseUnits: CampaignSnapshot["units"] = unitGroups.flatMap((group) =>
   group.units.map((unit) => {
     const startingQuantity = unit.startingQuantity ?? getMockDefaultQuantity(unit.name);
+    const category = getMockUnitCategory(unit.name);
 
     return {
       id: unit.id,
@@ -1071,7 +1072,8 @@ const units: CampaignSnapshot["units"] = unitGroups.flatMap((group) =>
       name: unit.name,
       currentSystemId: group.currentSystemId,
       status: group.status,
-      category: getMockUnitCategory(unit.name),
+      category,
+      unitType: getMockUnitType(category),
       points: unit.points,
       quantity: unit.quantity,
       startingQuantity,
@@ -1086,6 +1088,17 @@ const units: CampaignSnapshot["units"] = unitGroups.flatMap((group) =>
     };
   })
 );
+
+const characterUnits: CampaignSnapshot["units"] = [
+  makeMockCharacterUnit("character-orcos-warboss", "orcos", "Warboss Gorbad Krumpa", "unit-orcos-warboss", "cinder-maw", 110),
+  makeMockCharacterUnit("character-necrones-overlord", "necrones", "Overlord Sekh-Nemesor", "unit-necrones-overlord", "thokt-vault", 100),
+  makeMockCharacterUnit("character-guardia-castellan", "guardia-imperial", "Castellan Mira Holt", "unit-guardia-castellan", "kharon-prime", 70),
+  makeMockCharacterUnit("character-culto-primus", "culto-genestelar", "Primus Korda Vhal", "unit-culto-primus", "blackglass", 80),
+  makeMockCharacterUnit("character-sombra-captain", "sombra-emperador", "Captain Aster Valen", "unit-sombra-captain", "sa-cea-gate", 95),
+  makeMockCharacterUnit("character-muerte-lord-contagion", "guardia-muerte", "Lord Morbus Vane", "unit-muerte-lord-contagion", "mordax", 100)
+];
+
+const units: CampaignSnapshot["units"] = [...baseUnits, ...characterUnits];
 
 const movements: CampaignSnapshot["movements"] = [
   {
@@ -1180,7 +1193,7 @@ const movements: CampaignSnapshot["movements"] = [
   }
 ];
 
-type MockUnitTemplate = Omit<CampaignSnapshot["unitTemplates"][number], "defaultQuantity" | "woundsPerModel">;
+type MockUnitTemplate = Omit<CampaignSnapshot["unitTemplates"][number], "defaultQuantity" | "woundsPerModel" | "unitType">;
 
 const unitTemplateBase: MockUnitTemplate[] = [
   {
@@ -1488,11 +1501,114 @@ const unitTemplateBase: MockUnitTemplate[] = [
     recruitmentTimeSeconds: 420,
     notes: "Dron demoniaco de apoyo y hostigamiento.",
     isAvailable: true
+  },
+  {
+    id: "unit-orcos-warboss",
+    factionId: "orcos",
+    name: "Warboss",
+    category: "Personaje",
+    points: 110,
+    supplyCost: 8,
+    mineralsCost: 5,
+    honorCost: 2,
+    goldCost: 1,
+    industrialMaterialCost: 2,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 30,
+    notes: "Jefe de guerra preparado para portar trofeos sagrados.",
+    isAvailable: true
+  },
+  {
+    id: "unit-necrones-overlord",
+    factionId: "necrones",
+    name: "Overlord",
+    category: "Personaje",
+    points: 100,
+    supplyCost: 6,
+    mineralsCost: 6,
+    honorCost: 2,
+    goldCost: 1,
+    industrialMaterialCost: 2,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 30,
+    notes: "Noble inmortal con protocolos de mando dinastico.",
+    isAvailable: true
+  },
+  {
+    id: "unit-guardia-castellan",
+    factionId: "guardia-imperial",
+    name: "Cadian Castellan",
+    category: "Personaje",
+    points: 70,
+    supplyCost: 8,
+    mineralsCost: 4,
+    honorCost: 1,
+    goldCost: 1,
+    industrialMaterialCost: 1,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 30,
+    notes: "Oficial veterano de campana y enlace de mando.",
+    isAvailable: true
+  },
+  {
+    id: "unit-culto-primus",
+    factionId: "culto-genestelar",
+    name: "Primus",
+    category: "Personaje",
+    points: 80,
+    supplyCost: 7,
+    mineralsCost: 4,
+    honorCost: 2,
+    goldCost: 1,
+    industrialMaterialCost: 1,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 30,
+    notes: "Lider de celula capaz de guiar la insurreccion.",
+    isAvailable: true
+  },
+  {
+    id: "unit-sombra-captain",
+    factionId: "sombra-emperador",
+    name: "Captain",
+    category: "Personaje",
+    points: 95,
+    supplyCost: 6,
+    mineralsCost: 6,
+    honorCost: 3,
+    goldCost: 1,
+    industrialMaterialCost: 2,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 30,
+    notes: "Capitan de la Sombra del Emperador.",
+    isAvailable: true
+  },
+  {
+    id: "unit-muerte-lord-contagion",
+    factionId: "guardia-muerte",
+    name: "Lord of Contagion",
+    category: "Personaje",
+    points: 100,
+    supplyCost: 7,
+    mineralsCost: 6,
+    honorCost: 3,
+    goldCost: 1,
+    industrialMaterialCost: 2,
+    uridiumCost: 0,
+    technologyCost: 0,
+    recruitmentTimeSeconds: 30,
+    notes: "Campeon corrupto de resistencia sobrenatural.",
+    isAvailable: true
   }
 ];
 
 const unitTemplates: CampaignSnapshot["unitTemplates"] = unitTemplateBase.map((template) => ({
   ...template,
+  unitType: getMockUnitType(template.category),
   defaultQuantity: getMockDefaultQuantity(template.name),
   woundsPerModel: getMockWoundsPerModel(template.name),
   recruitmentBuildingType: getRecruitmentBuildingType(template.category),
@@ -1650,6 +1766,7 @@ const technologyEffects: CampaignSnapshot["technologyEffects"] = [
   { id: "effect-cristalizacion-building", technologyNodeId: "cristalizacion-combustible-cuantico", effectType: "unlock_building_template", payload: { buildingTemplateSlugs: ["refineria-iridium"] } },
   { id: "effect-extraccion-building", technologyNodeId: "extraccion-subterranea", effectType: "unlock_building_template", payload: { buildingTemplateSlugs: ["complejo-minero"] } },
   { id: "effect-monumentos-building", technologyNodeId: "monumentos-gloria", effectType: "unlock_building_template", payload: { buildingTemplateSlugs: ["monumento"] } },
+  { id: "effect-monumentos-relic-sanctuary", technologyNodeId: "monumentos-gloria", effectType: "unlock_building_template", payload: { buildingTemplateSlugs: ["santuario-reliquias"] } },
   { id: "effect-fiebre-building", technologyNodeId: "fiebre-oro", effectType: "unlock_building_template", payload: { buildingTemplateSlugs: ["mina-oro"] } },
   { id: "effect-pactos-building", technologyNodeId: "pactos-mercantiles", effectType: "unlock_building_template", payload: { buildingTemplateSlugs: ["camara-comercio"] } },
   { id: "effect-contactos-merchant", technologyNodeId: "contactos-economicos", effectType: "unlock_merchant_trade", payload: {} },
@@ -1671,7 +1788,8 @@ const buildingTemplates: CampaignSnapshot["buildingTemplates"] = [
   makeBuildingTemplate({ id: "refineria-iridium", name: "Refineria de Iridium", category: "Produccion", description: "Planta especializada para estabilizar cristales de salto.", buildingKind: "production", supplyCost: 4, mineralsCost: 8, industrialMaterialCost: 5, constructionTimeSeconds: 240, producedResourceKey: "uridium", producedAmount: 4, requiredTechnologyNodeId: "cristalizacion-combustible-cuantico", iconKey: "iridium_refinery" }),
   makeBuildingTemplate({ id: "mina-oro", name: "Mina de Oro", category: "Produccion", description: "Extraccion de metales preciosos para rutas comerciales.", buildingKind: "production", supplyCost: 4, mineralsCost: 8, industrialMaterialCost: 5, constructionTimeSeconds: 240, producedResourceKey: "gold", producedAmount: 3, requiredTechnologyNodeId: "fiebre-oro", iconKey: "gold_mine" }),
   makeBuildingTemplate({ id: "planta-fundicion", name: "Planta de Fundicion", category: "Produccion", description: "Produce Material Industrial para nuevas construcciones.", buildingKind: "production", supplyCost: 4, mineralsCost: 10, industrialMaterialCost: 3, constructionTimeSeconds: 240, producedResourceKey: "industrialMaterial", producedAmount: 5, requiredTechnologyNodeId: "procesado-metalurgico", iconKey: "foundry" }),
-  makeBuildingTemplate({ id: "monumento", name: "Monumento", category: "Produccion", description: "Estructura ceremonial que transforma gloria local en Honor.", buildingKind: "production", supplyCost: 8, mineralsCost: 8, goldCost: 1, industrialMaterialCost: 5, constructionTimeSeconds: 300, producedResourceKey: "honor", producedAmount: 2, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "monument" })
+  makeBuildingTemplate({ id: "monumento", name: "Monumento", category: "Produccion", description: "Estructura ceremonial que transforma gloria local en Honor.", buildingKind: "production", supplyCost: 8, mineralsCost: 8, goldCost: 1, industrialMaterialCost: 5, constructionTimeSeconds: 300, producedResourceKey: "honor", producedAmount: 2, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "monument" }),
+  makeBuildingTemplate({ id: "santuario-reliquias", name: "Santuario de Reliquias", category: "Reliquias", description: "Camara sellada donde se custodian reliquias narrativas y se equipan a characters veteranos.", buildingKind: "relic", supplyCost: 8, mineralsCost: 8, honorCost: 2, goldCost: 1, industrialMaterialCost: 5, constructionTimeSeconds: 30, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "relic_sanctuary" })
 ];
 
 type ProductionResourceKey = Exclude<CampaignSnapshot["systemResourceCapabilities"][number]["resourceKey"], "technology">;
@@ -1692,6 +1810,21 @@ const systemResourceCapabilities: CampaignSnapshot["systemResourceCapabilities"]
 const systemBuildings: CampaignSnapshot["systemBuildings"] = systems.flatMap(getMockStartingBuildings);
 
 const unitRecoveryQueue: CampaignSnapshot["unitRecoveryQueue"] = [];
+
+const relics: CampaignSnapshot["relics"] = [
+  makeMockRelic("relic-orcos-krozius-chatarra", "orcos", "cinder-maw", "Krozius de Chatarra Sagrada", "Trofeo brutal cubierto de sellos arrancados a enemigos imperiales.", "Reliquia narrativa: simboliza autoridad brutal y victorias de abordaje.", "hammer", "rare"),
+  makeMockRelic("relic-orcos-diente-gorko", "orcos", "cinder-maw", "Diente de Gorko", "Colmillo enorme engarzado en hierro candente.", "Reliquia narrativa: inspira cargas temerarias y duelos de jefes.", "tooth", "common"),
+  makeMockRelic("relic-necrones-orbe-hekatep", "necrones", "thokt-vault", "Orbe de Hekatep", "Esfera de mando que pulsa con codigo dinastico verde.", "Reliquia narrativa: ancla protocolos de reanimacion y autoridad de tumba.", "orb", "rare"),
+  makeMockRelic("relic-necrones-cetro-fase", "necrones", "thokt-vault", "Cetro de Fase", "Baston de nobleza con filo que vibra entre realidades.", "Reliquia narrativa: marca derecho de conquista sobre mundos dormidos.", "scepter", "common"),
+  makeMockRelic("relic-guardia-estandarte-kasr", "guardia-imperial", "kharon-prime", "Estandarte de Kasr Vhal", "Bandera de guerra recuperada de una fortaleza perdida.", "Reliquia narrativa: concede legitimidad y valor a una linea imperial.", "banner", "rare"),
+  makeMockRelic("relic-guardia-aquila-rota", "guardia-imperial", "kharon-prime", "Aquila Rota", "Fragmento dorado de un santuario bombardeado.", "Reliquia narrativa: juramento de resistencia bajo fuego imposible.", "aquila", "common"),
+  makeMockRelic("relic-culto-garra-patriarca", "culto-genestelar", "blackglass", "Garra del Patriarca", "Taliman oseo oculto en un relicario de manufactorum.", "Reliquia narrativa: refuerza la fe de celulas insurgentes.", "claw", "rare"),
+  makeMockRelic("relic-culto-mascara-vidrio", "culto-genestelar", "blackglass", "Mascara de Vidrio Negro", "Mascara ritual usada por predicadores de la cuarta generacion.", "Reliquia narrativa: simboliza infiltracion y control de masas.", "mask", "common"),
+  makeMockRelic("relic-sombra-crux-eclipsada", "sombra-emperador", "sa-cea-gate", "Crux Eclipsada", "Insignia de honor ennegrecida por la luz de un sol muerto.", "Reliquia narrativa: recuerda juramentos de purga y defensa del sector.", "crux", "rare"),
+  makeMockRelic("relic-sombra-fragmento-narthex", "sombra-emperador", "sa-cea-gate", "Fragmento del Narthex", "Pieza de un altar sellado antes de la guerra actual.", "Reliquia narrativa: legitima campanas de recuperacion sagrada.", "reliquary", "common"),
+  makeMockRelic("relic-muerte-campana-putrida", "guardia-muerte", "mordax", "Campana Putrida", "Campana menor cubierta de oxido y letanias enfermas.", "Reliquia narrativa: anuncia avances inevitables de la plaga.", "bell", "rare"),
+  makeMockRelic("relic-muerte-incensario-morbus", "guardia-muerte", "mordax", "Incensario de Morbus", "Artefacto que exhala niebla toxica en susurros.", "Reliquia narrativa: acompana procesiones de corrupcion y asedio.", "censer", "common")
+];
 
 const systemsWithBaseProduction: CampaignSnapshot["systems"] = systems.map((system) => ({
   ...system,
@@ -1761,6 +1894,7 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
   systemBuildings,
   systemResourceCapabilities,
   unitRecoveryQueue,
+  relics,
   tradeOffers,
   conflicts,
   battleReports: [],
@@ -1795,7 +1929,7 @@ function getMockStartingBuildings(system: CampaignSnapshot["systems"][number]): 
   }
 
   if (system.isCapital) {
-    return ["barracon-infanteria", "camara-comercio", "planta-fundicion", "monumento"].map((slug) =>
+    return ["barracon-infanteria", "camara-comercio", "planta-fundicion", "monumento", "santuario-reliquias"].map((slug) =>
       makeSystemBuilding(system.id, slug)
     );
   }
@@ -1929,6 +2063,64 @@ function makeSystemBuilding(systemId: string, buildingTemplateSlug: string): Cam
   };
 }
 
+function makeMockCharacterUnit(
+  id: string,
+  factionId: string,
+  name: string,
+  unitTemplateId: string,
+  currentSystemId: string,
+  points: number
+): CampaignSnapshot["units"][number] {
+  return {
+    id,
+    factionId,
+    unitTemplateId,
+    name,
+    currentSystemId,
+    status: "ready",
+    category: "Personaje",
+    unitType: "character",
+    points,
+    quantity: 1,
+    startingQuantity: 1,
+    woundsTaken: 0,
+    experience: 3,
+    isVisiblePublicly: false,
+    parentUnitId: null,
+    destroyedAt: null,
+    rank: "Campeon",
+    enhancementText: null,
+    notes: null
+  };
+}
+
+function makeMockRelic(
+  id: string,
+  factionId: string,
+  systemId: string,
+  name: string,
+  description: string,
+  effectText: string,
+  iconKey: string,
+  rarity: CampaignSnapshot["relics"][number]["rarity"]
+): CampaignSnapshot["relics"][number] {
+  return {
+    id,
+    slug: id,
+    factionId,
+    systemId,
+    equippedUnitId: null,
+    name,
+    description,
+    effectText,
+    iconKey,
+    rarity,
+    isPublic: false,
+    equippedAt: null,
+    createdAt: inMinutes(-30)
+  };
+}
+
 function makeTechnologyNode(
   node: Omit<CampaignSnapshot["technologyNodes"][number], "treeKey" | "implementationStatus"> &
     Partial<Pick<CampaignSnapshot["technologyNodes"][number], "treeKey" | "implementationStatus">>
@@ -1968,6 +2160,10 @@ function makeBuildingTemplate(
 }
 
 function getMockUnitCategory(name: string): CampaignSnapshot["units"][number]["category"] {
+  if (["Warboss", "Overlord", "Cadian Castellan", "Primus", "Captain", "Lord of Contagion"].includes(name)) {
+    return "Personaje";
+  }
+
   if (["Deff Dread", "Leman Russ Battle Tank", "Achilles Ridgerunner", "Redemptor Dreadnought", "Foetid Bloat-drone"].includes(name)) {
     return "Vehiculo";
   }
@@ -1979,8 +2175,24 @@ function getMockUnitCategory(name: string): CampaignSnapshot["units"][number]["c
   return "Infanteria";
 }
 
+function getMockUnitType(category: CampaignSnapshot["unitTemplates"][number]["category"]): CampaignSnapshot["unitTemplates"][number]["unitType"] {
+  if (String(category).toLowerCase().startsWith("veh")) {
+    return "vehicle";
+  }
+
+  if (category === "Personaje") {
+    return "character";
+  }
+
+  if (category === "Monstruo") {
+    return "beast";
+  }
+
+  return "infantry";
+}
+
 function getRecruitmentBuildingType(category: CampaignSnapshot["unitTemplates"][number]["category"]) {
-  if (category === "Vehiculo" || category === "Vehículo") {
+  if (String(category).toLowerCase().startsWith("veh")) {
     return "taller-guerra";
   }
 
@@ -2014,7 +2226,13 @@ function getMockUnitTemplateId(name: string) {
     "Redemptor Dreadnought": "unit-sombra-redemptor",
     Poxwalkers: "unit-muerte-poxwalkers",
     "Plague Marines": "unit-muerte-plague-marines",
-    "Foetid Bloat-drone": "unit-muerte-bloat-drone"
+    "Foetid Bloat-drone": "unit-muerte-bloat-drone",
+    Warboss: "unit-orcos-warboss",
+    Overlord: "unit-necrones-overlord",
+    "Cadian Castellan": "unit-guardia-castellan",
+    Primus: "unit-culto-primus",
+    Captain: "unit-sombra-captain",
+    "Lord of Contagion": "unit-muerte-lord-contagion"
   };
 
   return templateIds[name] ?? null;
@@ -2039,7 +2257,13 @@ function getMockDefaultQuantity(name: string) {
     "Redemptor Dreadnought": 1,
     Poxwalkers: 10,
     "Plague Marines": 7,
-    "Foetid Bloat-drone": 1
+    "Foetid Bloat-drone": 1,
+    Warboss: 1,
+    Overlord: 1,
+    "Cadian Castellan": 1,
+    Primus: 1,
+    Captain: 1,
+    "Lord of Contagion": 1
   };
 
   return defaultQuantities[name] ?? 1;
@@ -2064,7 +2288,13 @@ function getMockWoundsPerModel(name: string) {
     "Redemptor Dreadnought": 12,
     Poxwalkers: 1,
     "Plague Marines": 2,
-    "Foetid Bloat-drone": 10
+    "Foetid Bloat-drone": 10,
+    Warboss: 6,
+    Overlord: 5,
+    "Cadian Castellan": 4,
+    Primus: 4,
+    Captain: 6,
+    "Lord of Contagion": 6
   };
 
   return wounds[name] ?? 1;
@@ -2087,6 +2317,7 @@ function getRequiredTechnologyForUnit(name: string) {
     "Redemptor Dreadnought",
     "Foetid Bloat-drone"
   ]);
+  const characterUnits = new Set(["Warboss", "Overlord", "Cadian Castellan", "Primus", "Captain", "Lord of Contagion"]);
 
   if (veteranUnits.has(name)) {
     return "veteranos-guerra";
@@ -2094,6 +2325,10 @@ function getRequiredTechnologyForUnit(name: string) {
 
   if (vehicleUnits.has(name)) {
     return "motores-guerra";
+  }
+
+  if (characterUnits.has(name)) {
+    return "asamblea-planetaria";
   }
 
   return null;
