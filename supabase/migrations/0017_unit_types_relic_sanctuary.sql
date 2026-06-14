@@ -164,7 +164,8 @@ alter table public.relics
   add column if not exists equipped_unit_id uuid references public.campaign_units(id) on delete set null,
   add column if not exists equipped_at timestamptz;
 
-create unique index if not exists relics_slug_key on public.relics (slug) where slug is not null;
+drop index if exists public.relics_slug_key;
+create unique index if not exists relics_slug_key on public.relics (slug);
 create index if not exists relics_faction_system_idx on public.relics (faction_id, system_id);
 create index if not exists relics_equipped_unit_idx on public.relics (equipped_unit_id);
 
