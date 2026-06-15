@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
 import { ResourceIcon, resourceLabels } from "@/components/ui/resource-icon";
-import { canUseMovementRpc, cancelMovementOrder, createMovementOrder } from "@/features/movement/api/movement-api";
+import { canUseMovementRpc, createMovementOrder } from "@/features/movement/api/movement-api";
 import { canUseBattleReportRpc, submitBattleReport } from "@/features/battle-reports/api/battle-report-api";
 import {
   calculateRoutePlan,
@@ -24,7 +24,6 @@ import { TechnologyTreeModal } from "@/features/technology/components/technology
 import { TradeModal } from "@/features/trade/components/trade-modal";
 import { ConstructionModal } from "@/features/buildings/components/construction-modal";
 import { BuildingActionModal } from "@/features/buildings/components/building-action-modal";
-import { getActiveTechnologyResearch } from "@/features/technology/lib/technology-state";
 import { retireCampaignUnit } from "@/features/units/api/unit-api";
 import { formatUnitKeywords, getCharacterLevel, getCharacterRank, isCharacterUnit } from "@/features/units/lib/character-ranks";
 import { formatCountdown } from "@/lib/time";
@@ -44,7 +43,6 @@ const planetProductionResources = ["supply", "minerals", "honor", "gold", "indus
 
 export function CampaignShell() {
   const router = useRouter();
-  const queryClient = useQueryClient();
   useViewportHeightCssVar();
   const selectedSystemId = useCampaignUiStore((state) => state.selectedSystemId);
   const hoveredSystemId = useCampaignUiStore((state) => state.hoveredSystemId);
@@ -71,12 +69,6 @@ export function CampaignShell() {
   const { data, error } = useQuery({
     queryKey: ["campaign-snapshot"],
     queryFn: getCampaignSnapshot
-  });
-  const cancelMovementMutation = useMutation({
-    mutationFn: cancelMovementOrder,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
-    }
   });
 
   useEffect(() => {
@@ -304,9 +296,6 @@ export function CampaignShell() {
         <div className="flex min-h-0 flex-1 items-stretch justify-end gap-4 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:px-4 md:pb-4 lg:justify-between">
           {showCommandDock ? (
             <CommandDock
-              cancelMovementError={cancelMovementMutation.error?.message}
-              cancelMovementPending={cancelMovementMutation.isPending}
-              onCancelMovement={(movementId) => cancelMovementMutation.mutate(movementId)}
               onOpenTechnology={() => setTechnologyOpen(true)}
               onOpenTrade={openTradeFromDock}
               snapshot={data}
@@ -514,39 +503,21 @@ function HiddenBuildingSlot({ building }: { building: SystemBuilding }) {
 function CommandDock({
   snapshot,
   onOpenTrade,
-  onOpenTechnology,
-  onCancelMovement,
-  cancelMovementPending,
-  cancelMovementError
+  onOpenTechnology
 }: {
   snapshot: CampaignSnapshot;
   onOpenTrade: () => void;
   onOpenTechnology: () => void;
-  onCancelMovement: (movementId: string) => void;
-  cancelMovementPending: boolean;
-  cancelMovementError?: string;
 }) {
-  const ownUnits = snapshot.units.filter(
-    (unit) => unit.factionId === snapshot.currentUser.factionId && unit.status !== "destroyed" && unit.quantity > 0
-  );
-  const activeMovements = snapshot.movements.filter((movement) => movement.status === "moving");
-  const pendingConflicts = snapshot.conflicts.filter((conflict) => conflict.status === "pending");
-  const activeBuildings = snapshot.systemBuildings.filter((building) => {
-    const system = snapshot.systems.find((item) => item.id === building.systemId);
-    return building.status === "constructing" && system?.controllerFactionId === snapshot.currentUser.factionId;
-  });
-  const activeRecoveries = snapshot.unitRecoveryQueue.filter((item) => item.status === "queued");
-  const activeTechnology = getActiveTechnologyResearch(snapshot);
-  const activeTechnologyNode = activeTechnology
-    ? snapshot.technologyNodes.find((node) => node.id === activeTechnology.technologyNodeId)
-    : null;
-  const activeChronosCount =
-    activeMovements.length +
-    snapshot.recruitmentQueue.length +
-    activeBuildings.length +
-    activeRecoveries.length +
-    pendingConflicts.length +
-    (activeTechnology ? 1 : 0);
+  const currentFactionId = snapshot.currentUser.factionId;
+  const pendingBattles = currentFactionId
+    ? snapshot.conflicts.filter(
+        (conflict) =>
+          conflict.status === "pending" &&
+          (conflict.attackerFactionId === currentFactionId || conflict.defenderFactionId === currentFactionId)
+      )
+    : [];
+  const pendingBattlesCount = pendingBattles.length;
 
   return (
     <>
@@ -567,7 +538,7 @@ function CommandDock({
           </Button>
           <Button className="h-12 flex-col gap-1 px-1 text-[11px]" size="sm" variant="ghost">
             <Swords size={16} />
-            {activeChronosCount > 0 ? `${activeChronosCount} avisos` : "Estado"}
+            {pendingBattlesCount > 0 ? `${pendingBattlesCount} avisos` : "Estado"}
           </Button>
         </div>
       </Panel>
@@ -601,83 +572,33 @@ function CommandDock({
       </Panel>
 
       <Panel className="p-4">
-        <h2 className="mb-3 text-sm font-semibold text-cyan-50">Cronos activos</h2>
+        <h2 className="mb-3 text-sm font-semibold text-cyan-50">Batallas pendientes</h2>
         <div className="space-y-3 text-sm">
-          {activeMovements.map((movement) => (
-            <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={movement.id}>
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-slate-200">Movimiento</span>
-                <Badge tone="cyan">{formatCountdown(movement.arrivalAt)}</Badge>
-              </div>
-              {movement.factionId === snapshot.currentUser.factionId || snapshot.currentUser.role === "admin" ? (
-                <div className="mt-2 flex items-center justify-between gap-2 text-xs text-slate-400">
-                  <span>Reembolso: {Math.ceil(movement.uridiumCost / 2)} Uridium</span>
-                  <Button disabled={cancelMovementPending} onClick={() => onCancelMovement(movement.id)} size="sm" variant="ghost">
-                    Cancelar
-                  </Button>
-                </div>
-              ) : null}
-            </div>
-          ))}
-          {cancelMovementError ? <p className="text-xs text-rose-200">{cancelMovementError}</p> : null}
-          {snapshot.recruitmentQueue.map((item) => (
-            <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={item.id}>
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-slate-200">{item.unitName}</span>
-                <Badge tone="violet">{formatCountdown(item.finishesAt)}</Badge>
-              </div>
-            </div>
-          ))}
-          {activeBuildings.map((building) => {
-            const template = snapshot.buildingTemplates.find((item) => item.id === building.buildingTemplateId);
+          {pendingBattles.map((conflict) => {
+            const system = snapshot.systems.find((item) => item.id === conflict.systemId);
+            const isAttacker = conflict.attackerFactionId === currentFactionId;
+            const enemyFactionId = isAttacker ? conflict.defenderFactionId : conflict.attackerFactionId;
+            const enemyFaction = snapshot.factions.find((item) => item.id === enemyFactionId);
 
             return (
-              <div className="rounded-md border border-amber-300/20 bg-amber-400/8 p-3" key={building.id}>
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-amber-50">{template?.name ?? "Construccion"}</span>
-                  <Badge tone="amber">{formatCountdown(building.finishesAt)}</Badge>
-                </div>
-              </div>
-            );
-          })}
-          {activeRecoveries.map((item) => (
-            <div className="rounded-md border border-rose-300/20 bg-rose-400/8 p-3" key={item.id}>
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-rose-50">{item.unitName}</span>
-                <Badge tone="rose">{formatCountdown(item.finishesAt)}</Badge>
-              </div>
-            </div>
-          ))}
-          {pendingConflicts.map((conflict) => (
             <div className="rounded-md border border-rose-300/20 bg-rose-400/8 p-3" key={conflict.id}>
               <div className="flex items-center justify-between gap-3">
-                <span className="text-rose-50">Batalla pendiente</span>
+                <span className="text-rose-50">{system?.name ?? "Sistema en conflicto"}</span>
                 <Badge tone={isBlockExpired(conflict.blockedUntil) ? "slate" : "rose"}>
                   {formatBlockCountdown(conflict.blockedUntil)}
                 </Badge>
               </div>
+              <p className="mt-1 text-xs text-rose-100/80">
+                Rival: {enemyFaction?.name ?? "Fuerza neutral"}
+              </p>
             </div>
-          ))}
-          {activeTechnology?.finishesAt ? (
-            <div className="rounded-md border border-violet-300/20 bg-violet-400/8 p-3" key={activeTechnology.technologyNodeId}>
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-violet-50">{activeTechnologyNode?.name ?? "Investigacion"}</span>
-                <Badge tone="violet">{formatCountdown(activeTechnology.finishesAt)}</Badge>
-              </div>
+            );
+          })}
+          {pendingBattles.length === 0 ? (
+            <div className="rounded-md border border-slate-400/20 bg-slate-900/30 p-3 text-xs text-slate-400">
+              No tienes batallas pendientes por librar.
             </div>
           ) : null}
-        </div>
-      </Panel>
-
-      <Panel className="p-4">
-        <h2 className="mb-3 text-sm font-semibold text-cyan-50">Unidades propias</h2>
-        <div className="space-y-2">
-          {ownUnits.slice(0, 6).map((unit) => (
-            <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={unit.id}>
-              <div className="font-medium text-slate-100">{unit.name}</div>
-              <div className="mt-1 text-xs text-slate-400">{formatUnitStrength(unit)} · {getUnitStatusLabel(unit.status)}</div>
-            </div>
-          ))}
         </div>
       </Panel>
     </div>
