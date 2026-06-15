@@ -160,9 +160,9 @@ Estado jugable actual:
 - Movimiento, reclutamiento e investigacion funcionan por timestamps y resolvers backend/lazy processing.
 - Unidades jugables son `campaign_units`, no ejercitos abstractos.
 - Las unidades tienen miniaturas actuales, miniaturas iniciales y heridas agregadas; no pueden separarse al mover.
-- Las unidades tienen `unit_type` Warhammer: `infantry`, `vehicle`, `character`, `beast` o `mounted`; `category` queda como etiqueta visible/legacy.
-- Los `characters` usan `experience` como nivel directo `1..10`, con rangos militares y slots de reliquia por nivel.
-- Las reliquias v1 son narrativas: se guardan en Santuarios de Reliquias, se equipan a characters veteranos y no aplican bonos automaticos.
+- Las unidades tienen hasta dos `unit_keywords` Warhammer en espanol: `Infanteria`, `Caracter`, `Vehiculo`, `Bestia` o `Montado`; `unit_type` queda como legacy tecnico.
+- Las unidades con keyword `Caracter` usan `experience` como nivel directo `1..10`, con rangos militares y slots de reliquia por nivel.
+- Las reliquias v1 son narrativas: se guardan en Santuarios de Reliquias, se equipan a Caracteres veteranos y no aplican bonos automaticos.
 - Construccion planetaria con slots por sistema: 6 en capitales y 3 en el resto.
 - Reclutamiento desde edificios militares activos, no desde un boton global de capital.
 - Reclutamiento usa `unit_templates`, costes, tiempos, cola, edificios compatibles y validacion tecnologica.
@@ -915,7 +915,7 @@ Catálogo inicial:
 | Mina de Oro | Producción | Genera Oro. |
 | Planta de Fundición | Producción | Genera Material Industrial. |
 | Monumento | Producción | Genera Honor. |
-| Santuario de Reliquias | Reliquias | Guarda reliquias y permite equiparlas o desequiparlas en characters presentes. |
+| Santuario de Reliquias | Reliquias | Guarda reliquias y permite equiparlas o desequiparlas en Caracteres presentes. |
 
 Las capitales del seed empiezan con 5 edificios activos: Barracón de Infantería, Cámara de Comercio, Planta de Fundición, Monumento y Santuario de Reliquias.
 
@@ -1236,12 +1236,12 @@ Cada unidad debe tener:
 - Tiempo de producción.
 - Requisitos opcionales.
 - Edificio/categoría de reclutamiento compatible.
-- `unit_type` funcional:
-  - `infantry`
-  - `vehicle`
-  - `character`
-  - `beast`
-  - `mounted`
+- `unit_keywords` funcionales, maximo 2 por unidad:
+  - `Infanteria`
+  - `Caracter`
+  - `Vehiculo`
+  - `Bestia`
+  - `Montado`
 - Categoría:
   - Infantería.
   - Élite.
@@ -1252,7 +1252,7 @@ Cada unidad debe tener:
   - Otro.
 - Notas.
 
-`unit_type` se usa para validaciones nuevas como reliquias, characters y futuros efectos. `category` se mantiene como etiqueta visible y compatibilidad con datos anteriores.
+`unit_keywords` se usa para validaciones nuevas como reliquias, Caracteres y futuros efectos. `unit_type` queda como campo legacy/derivado y `category` se mantiene como etiqueta visible y compatibilidad con datos anteriores.
 
 ### 9.4 Al reclutar
 
@@ -1429,11 +1429,11 @@ Regla vigente del arbol comun:
 
 ---
 
-## 10. Rangos de characters y reliquias
+## 10. Rangos de Caracteres y reliquias
 
-`experience` ya no representa una barra de XP generica para cualquier tropa. En v1 se usa como nivel directo `1..10` solo en unidades con `unit_type = character`.
+`experience` ya no representa una barra de XP generica para cualquier tropa. En v1 se usa como nivel directo `1..10` solo en unidades con keyword `Caracter`.
 
-Las unidades que no son `character` pueden seguir teniendo `rank`, `enhancement_text` y `notes` como texto narrativo/admin, pero no usan slots de reliquia.
+Las unidades que no tienen keyword `Caracter` pueden seguir teniendo `rank`, `enhancement_text` y `notes` como texto narrativo/admin, pero no usan slots de reliquia.
 
 ### 10.1 Rangos de character
 
@@ -1466,7 +1466,7 @@ Reglas:
 - Coste v1: 8 Suministro, 8 Mineral, 2 Honor, 1 Oro y 5 Material Industrial.
 - Tiempo de construccion de test: 30 segundos.
 - Cada capital empieza con un Santuario activo para probar la feature.
-- Al abrirlo muestra reliquias guardadas en ese sistema, characters propios presentes y reliquias equipadas.
+- Al abrirlo muestra reliquias guardadas en ese sistema, Caracteres propios presentes y reliquias equipadas.
 
 ### 10.3 Equipar reliquias
 
@@ -1481,8 +1481,8 @@ Validaciones:
 - Usuario autenticado y miembro de la faccion de la reliquia, o admin.
 - Santuario activo y propio.
 - Reliquia propia almacenada en el sistema del Santuario.
-- Character propio, vivo, `ready`, en el mismo sistema.
-- `unit_type = character`.
+- Caracter propio, vivo, `ready`, en el mismo sistema.
+- Debe tener keyword `Caracter`.
 - Nivel suficiente y slot libre.
 
 Al equipar:
@@ -1503,8 +1503,8 @@ unequip_relic_from_character(relic_id, system_building_id)
 Validaciones:
 
 - Santuario activo y propio.
-- La reliquia esta equipada en un character propio.
-- El character esta `ready` en el mismo sistema del Santuario.
+- La reliquia esta equipada en un Caracter propio.
+- El Caracter esta `ready` en el mismo sistema del Santuario.
 
 Al desequipar:
 
@@ -1518,7 +1518,7 @@ Las reliquias v1 son narrativas: muestran descripcion y texto de efecto, pero no
 
 El admin puede:
 
-- Ajustar nivel `experience` de characters entre 1 y 10.
+- Ajustar nivel `experience` de Caracteres entre 1 y 10.
 - Cambiar nombre narrativo, rango textual si hace falta, enhancement y notas.
 - Mover reliquias o editar su estado desde base de datos si hay que corregir una situacion de campana.
 
@@ -1720,7 +1720,7 @@ Puede:
 - Ver movimientos propios.
 - Construir edificios en sistemas propios.
 - Reclutar y curar unidades desde edificios compatibles.
-- Equipar o desequipar reliquias propias en characters desde un Santuario propio.
+- Equipar o desequipar reliquias propias en Caracteres desde un Santuario propio.
 - Investigar tecnologías disponibles.
 - Comerciar con el mercader si tiene Camara de Comercio activa.
 - Crear, aceptar y cancelar ofertas propias de comercio estelar.
@@ -2108,6 +2108,7 @@ campaign_units
 - name text
 - category text
 - unit_type text check in ('beast', 'vehicle', 'character', 'infantry', 'mounted')
+- unit_keywords text[] check max 2 in ('Vehiculo', 'Caracter', 'Infanteria', 'Bestia', 'Montado')
 - points integer
 - quantity integer default 1 -- miniaturas actuales
 - starting_quantity integer default 1 -- tamano completo de la unidad
@@ -2127,9 +2128,9 @@ campaign_units
 
 Cada fila representa una unidad Warhammer concreta movible en el mapa. Las unidades son indivisibles: no se separan miniaturas al mover y no se crean nuevas filas hijas en el flujo actual. La validacion de heridas es `wounds_taken <= quantity * unit_templates.wounds_per_model`.
 
-`unit_type` es el campo funcional para reglas nuevas. `category` queda como etiqueta visible/legacy.
+`unit_keywords` es el campo funcional para reglas nuevas. Puede tener 1 o 2 valores y siempre usa nombres en espanol sin acento: `Vehiculo`, `Caracter`, `Infanteria`, `Bestia`, `Montado`.
 
-Si `unit_type = 'character'`, `experience` se interpreta como nivel directo `1..10`, `rank` se sincroniza con el rango militar y los slots de reliquia se calculan desde ese nivel.
+`unit_type` queda como legacy derivado desde `unit_keywords`. Si `unit_keywords` contiene `Caracter`, `experience` se interpreta como nivel directo `1..10`, `rank` se sincroniza con el rango militar y los slots de reliquia se calculan desde ese nivel.
 
 ### 16.9 movement_order_units
 
@@ -2151,6 +2152,7 @@ unit_templates
 - name text
 - category text
 - unit_type text check in ('beast', 'vehicle', 'character', 'infantry', 'mounted')
+- unit_keywords text[] check max 2 in ('Vehiculo', 'Caracter', 'Infanteria', 'Bestia', 'Montado')
 - points integer
 - default_quantity integer default 1
 - wounds_per_model integer default 1

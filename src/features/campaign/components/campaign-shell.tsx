@@ -26,7 +26,7 @@ import { ConstructionModal } from "@/features/buildings/components/construction-
 import { BuildingActionModal } from "@/features/buildings/components/building-action-modal";
 import { getActiveTechnologyResearch } from "@/features/technology/lib/technology-state";
 import { retireCampaignUnit } from "@/features/units/api/unit-api";
-import { getCharacterLevel, getCharacterRank, unitTypeLabels } from "@/features/units/lib/character-ranks";
+import { formatUnitKeywords, getCharacterLevel, getCharacterRank, isCharacterUnit } from "@/features/units/lib/character-ranks";
 import { formatCountdown } from "@/lib/time";
 import { useMediaQuery, useViewportHeightCssVar } from "@/lib/use-media-query";
 import type { BuildingTemplate, CampaignSnapshot, CampaignUnit, Conflict, Faction, StarSystem, SystemBuilding, UnitMovementSelection } from "@/domain/campaign";
@@ -1164,7 +1164,7 @@ function UnitGroup({
                   <div className="min-w-0">
                     <div className="truncate text-sm font-medium text-slate-100">{unit.name}</div>
                     <div className="mt-1 text-xs text-slate-400">
-                      {formatUnitStrength(unit)} - {unitTypeLabels[unit.unitType]}
+                      {formatUnitStrength(unit)} - {formatUnitKeywords(unit)}
                     </div>
                     {characterRank ? (
                       <div className="mt-1 text-xs text-amber-100">
@@ -1541,9 +1541,9 @@ function UnitSelectionCard({
         <div>
           <div className="font-medium text-slate-100">{unit.name}</div>
           <div className="mt-1 text-xs text-slate-400">
-            {formatUnitStrength(unit)} - {unitTypeLabels[unit.unitType]}
+            {formatUnitStrength(unit)} - {formatUnitKeywords(unit)}
           </div>
-          {unit.unitType === "character" ? (
+          {isCharacterUnit(unit) ? (
             <div className="mt-1 text-xs text-amber-100">
               Nivel {getCharacterLevel(unit)} - {getCharacterRank(unit)}
             </div>

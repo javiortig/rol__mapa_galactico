@@ -210,7 +210,7 @@ values (
   coalesce((select id from public.building_templates where slug = 'santuario-reliquias'), gen_random_uuid()),
   'santuario-reliquias',
   'Santuario de Reliquias',
-  'Camara sellada donde se custodian reliquias narrativas y se equipan a characters veteranos.',
+  'Camara sellada donde se custodian reliquias narrativas y se equipan a Caracteres veteranos.',
   'Reliquias',
   'relic',
   8,

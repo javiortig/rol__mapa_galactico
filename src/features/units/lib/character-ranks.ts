@@ -1,11 +1,11 @@
-import type { CampaignUnit, UnitType } from "@/domain/campaign";
+import type { CampaignUnit, UnitKeyword } from "@/domain/campaign";
 
-export const unitTypeLabels: Record<UnitType, string> = {
-  beast: "Beast",
-  vehicle: "Vehicle",
-  character: "Character",
-  infantry: "Infantry",
-  mounted: "Mounted"
+export const unitKeywordLabels: Record<UnitKeyword, string> = {
+  Vehiculo: "Vehiculo",
+  Caracter: "Caracter",
+  Infanteria: "Infanteria",
+  Bestia: "Bestia",
+  Montado: "Montado"
 };
 
 const characterRanks = [
@@ -25,8 +25,19 @@ export function getCharacterLevel(unit: CampaignUnit) {
   return Math.min(10, Math.max(1, unit.experience || 1));
 }
 
+export function isCharacterUnit(unit: Pick<CampaignUnit, "unitKeywords" | "unitType">) {
+  return unit.unitKeywords.includes("Caracter") || unit.unitType === "character";
+}
+
+export function formatUnitKeywords(unit: Pick<CampaignUnit, "unitKeywords" | "unitType">) {
+  const fallbackKeywords: UnitKeyword[] = unit.unitType === "character" ? ["Infanteria", "Caracter"] : ["Infanteria"];
+  const keywords: UnitKeyword[] = unit.unitKeywords.length > 0 ? unit.unitKeywords : fallbackKeywords;
+
+  return keywords.map((keyword) => unitKeywordLabels[keyword]).join(" / ");
+}
+
 export function getCharacterRank(unit: CampaignUnit) {
-  if (unit.unitType !== "character") {
+  if (!isCharacterUnit(unit)) {
     return null;
   }
 
@@ -34,7 +45,7 @@ export function getCharacterRank(unit: CampaignUnit) {
 }
 
 export function getCharacterRelicSlots(unit: CampaignUnit) {
-  if (unit.unitType !== "character") {
+  if (!isCharacterUnit(unit)) {
     return 0;
   }
 

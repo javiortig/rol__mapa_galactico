@@ -24,7 +24,7 @@ import {
   isUnitTemplateUnlocked
 } from "@/features/technology/lib/technology-state";
 import { getFactionArmyPoints } from "@/features/units/lib/army-points";
-import { getCharacterLevel, getCharacterRank, getCharacterRelicSlots } from "@/features/units/lib/character-ranks";
+import { getCharacterLevel, getCharacterRank, getCharacterRelicSlots, isCharacterUnit } from "@/features/units/lib/character-ranks";
 import { formatCountdown } from "@/lib/time";
 import type {
   BuildingTemplate,
@@ -575,7 +575,7 @@ function RelicSanctuaryView({ snapshot, building }: { snapshot: CampaignSnapshot
     (unit) =>
       (isAdmin || unit.factionId === snapshot.currentUser.factionId) &&
       unit.currentSystemId === building.systemId &&
-      unit.unitType === "character" &&
+      isCharacterUnit(unit) &&
       unit.status === "ready" &&
       unit.quantity > 0
   );
@@ -594,7 +594,7 @@ function RelicSanctuaryView({ snapshot, building }: { snapshot: CampaignSnapshot
   const equipMutation = useMutation({
     mutationFn: () => {
       if (!selectedRelic || !selectedCharacter) {
-        throw new Error("Selecciona una reliquia y un character.");
+        throw new Error("Selecciona una reliquia y un Caracter.");
       }
 
       return equipRelicToCharacter(selectedRelic.id, selectedCharacter.id, building.id);
@@ -619,7 +619,7 @@ function RelicSanctuaryView({ snapshot, building }: { snapshot: CampaignSnapshot
           </div>
           <div>
             <h3 className="text-xl font-semibold text-cyan-50">Reliquias almacenadas</h3>
-            <p className="mt-1 text-sm text-slate-400">Las reliquias narrativas se equipan a characters presentes en este sistema.</p>
+            <p className="mt-1 text-sm text-slate-400">Las reliquias narrativas se equipan a unidades con keyword Caracter presentes en este sistema.</p>
           </div>
         </div>
 
@@ -642,7 +642,7 @@ function RelicSanctuaryView({ snapshot, building }: { snapshot: CampaignSnapshot
 
         {equippedRelics.length > 0 ? (
           <section className="mt-5">
-            <h3 className="mb-3 text-sm font-semibold text-cyan-50">Reliquias equipadas en characters presentes</h3>
+            <h3 className="mb-3 text-sm font-semibold text-cyan-50">Reliquias equipadas en Caracteres presentes</h3>
             <div className="grid gap-2 md:grid-cols-2">
               {equippedRelics.map((relic) => {
                 const character = characters.find((unit) => unit.id === relic.equippedUnitId) ?? null;
@@ -650,7 +650,7 @@ function RelicSanctuaryView({ snapshot, building }: { snapshot: CampaignSnapshot
                 return (
                   <div className="rounded-md border border-violet-300/20 bg-violet-400/10 p-3" key={relic.id}>
                     <div className="font-semibold text-violet-50">{relic.name}</div>
-                    <div className="mt-1 text-xs text-slate-300">{character?.name ?? "Character desconocido"}</div>
+                    <div className="mt-1 text-xs text-slate-300">{character?.name ?? "Caracter desconocido"}</div>
                     <Button
                       className="mt-3 w-full"
                       disabled={!rpcReady || unequipMutation.isPending}
@@ -695,7 +695,7 @@ function RelicSanctuaryView({ snapshot, building }: { snapshot: CampaignSnapshot
           </label>
 
           <label className="block text-xs text-slate-400">
-            Character presente
+            Caracter presente
             <select
               className="mt-1 w-full rounded-md border border-cyan-200/15 bg-slate-950/50 px-2 py-2 text-sm text-cyan-50"
               onChange={(event) => setSelectedCharacterId(event.target.value)}
@@ -708,7 +708,7 @@ function RelicSanctuaryView({ snapshot, building }: { snapshot: CampaignSnapshot
                   </option>
                 ))
               ) : (
-                <option value="">Sin characters</option>
+                <option value="">Sin Caracteres</option>
               )}
             </select>
           </label>
@@ -740,7 +740,7 @@ function RelicSanctuaryView({ snapshot, building }: { snapshot: CampaignSnapshot
 
           {selectedCharacter && selectedCharacterSlots <= selectedCharacterRelics.length ? (
             <div className="rounded-md border border-rose-300/25 bg-rose-400/10 p-3 text-sm text-rose-100">
-              Este character no tiene slots de reliquia libres.
+              Este Caracter no tiene slots de reliquia libres.
             </div>
           ) : null}
 

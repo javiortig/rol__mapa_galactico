@@ -1064,6 +1064,7 @@ const baseUnits: CampaignSnapshot["units"] = unitGroups.flatMap((group) =>
   group.units.map((unit) => {
     const startingQuantity = unit.startingQuantity ?? getMockDefaultQuantity(unit.name);
     const category = getMockUnitCategory(unit.name);
+    const unitKeywords = getMockUnitKeywords(category);
 
     return {
       id: unit.id,
@@ -1074,6 +1075,7 @@ const baseUnits: CampaignSnapshot["units"] = unitGroups.flatMap((group) =>
       status: group.status,
       category,
       unitType: getMockUnitType(category),
+      unitKeywords,
       points: unit.points,
       quantity: unit.quantity,
       startingQuantity,
@@ -1193,7 +1195,7 @@ const movements: CampaignSnapshot["movements"] = [
   }
 ];
 
-type MockUnitTemplate = Omit<CampaignSnapshot["unitTemplates"][number], "defaultQuantity" | "woundsPerModel" | "unitType">;
+type MockUnitTemplate = Omit<CampaignSnapshot["unitTemplates"][number], "defaultQuantity" | "woundsPerModel" | "unitType" | "unitKeywords">;
 
 const unitTemplateBase: MockUnitTemplate[] = [
   {
@@ -1609,6 +1611,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
 const unitTemplates: CampaignSnapshot["unitTemplates"] = unitTemplateBase.map((template) => ({
   ...template,
   unitType: getMockUnitType(template.category),
+  unitKeywords: getMockUnitKeywords(template.category),
   defaultQuantity: getMockDefaultQuantity(template.name),
   woundsPerModel: getMockWoundsPerModel(template.name),
   recruitmentBuildingType: getRecruitmentBuildingType(template.category),
@@ -1789,7 +1792,7 @@ const buildingTemplates: CampaignSnapshot["buildingTemplates"] = [
   makeBuildingTemplate({ id: "mina-oro", name: "Mina de Oro", category: "Produccion", description: "Extraccion de metales preciosos para rutas comerciales.", buildingKind: "production", supplyCost: 4, mineralsCost: 8, industrialMaterialCost: 5, constructionTimeSeconds: 240, producedResourceKey: "gold", producedAmount: 3, requiredTechnologyNodeId: "fiebre-oro", iconKey: "gold_mine" }),
   makeBuildingTemplate({ id: "planta-fundicion", name: "Planta de Fundicion", category: "Produccion", description: "Produce Material Industrial para nuevas construcciones.", buildingKind: "production", supplyCost: 4, mineralsCost: 10, industrialMaterialCost: 3, constructionTimeSeconds: 240, producedResourceKey: "industrialMaterial", producedAmount: 5, requiredTechnologyNodeId: "procesado-metalurgico", iconKey: "foundry" }),
   makeBuildingTemplate({ id: "monumento", name: "Monumento", category: "Produccion", description: "Estructura ceremonial que transforma gloria local en Honor.", buildingKind: "production", supplyCost: 8, mineralsCost: 8, goldCost: 1, industrialMaterialCost: 5, constructionTimeSeconds: 300, producedResourceKey: "honor", producedAmount: 2, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "monument" }),
-  makeBuildingTemplate({ id: "santuario-reliquias", name: "Santuario de Reliquias", category: "Reliquias", description: "Camara sellada donde se custodian reliquias narrativas y se equipan a characters veteranos.", buildingKind: "relic", supplyCost: 8, mineralsCost: 8, honorCost: 2, goldCost: 1, industrialMaterialCost: 5, constructionTimeSeconds: 30, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "relic_sanctuary" })
+  makeBuildingTemplate({ id: "santuario-reliquias", name: "Santuario de Reliquias", category: "Reliquias", description: "Camara sellada donde se custodian reliquias narrativas y se equipan a Caracteres veteranos.", buildingKind: "relic", supplyCost: 8, mineralsCost: 8, honorCost: 2, goldCost: 1, industrialMaterialCost: 5, constructionTimeSeconds: 30, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "relic_sanctuary" })
 ];
 
 type ProductionResourceKey = Exclude<CampaignSnapshot["systemResourceCapabilities"][number]["resourceKey"], "technology">;
@@ -2080,6 +2083,7 @@ function makeMockCharacterUnit(
     status: "ready",
     category: "Personaje",
     unitType: "character",
+    unitKeywords: ["Infanteria", "Caracter"],
     points,
     quantity: 1,
     startingQuantity: 1,
@@ -2189,6 +2193,22 @@ function getMockUnitType(category: CampaignSnapshot["unitTemplates"][number]["ca
   }
 
   return "infantry";
+}
+
+function getMockUnitKeywords(category: CampaignSnapshot["unitTemplates"][number]["category"]): CampaignSnapshot["unitTemplates"][number]["unitKeywords"] {
+  if (String(category).toLowerCase().startsWith("veh")) {
+    return ["Vehiculo"];
+  }
+
+  if (category === "Personaje") {
+    return ["Infanteria", "Caracter"];
+  }
+
+  if (category === "Monstruo") {
+    return ["Bestia"];
+  }
+
+  return ["Infanteria"];
 }
 
 function getRecruitmentBuildingType(category: CampaignSnapshot["unitTemplates"][number]["category"]) {

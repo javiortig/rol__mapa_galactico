@@ -30,6 +30,8 @@ export type UnitCategory =
 
 export type UnitType = "beast" | "vehicle" | "character" | "infantry" | "mounted";
 
+export type UnitKeyword = "Vehiculo" | "Caracter" | "Infanteria" | "Bestia" | "Montado";
+
 export type ResourceKey = "supply" | "minerals" | "honor" | "gold" | "industrialMaterial" | "uridium" | "technology";
 
 export type TradeableResourceKey = "supply" | "minerals" | "industrialMaterial" | "uridium";
@@ -108,6 +110,7 @@ export interface CampaignUnit {
   status: UnitStatus;
   category: UnitCategory;
   unitType: UnitType;
+  unitKeywords: UnitKeyword[];
   points: number;
   quantity: number;
   startingQuantity: number;
@@ -169,6 +172,7 @@ export interface UnitTemplate {
   name: string;
   category: UnitCategory;
   unitType: UnitType;
+  unitKeywords: UnitKeyword[];
   points: number;
   defaultQuantity: number;
   woundsPerModel: number;

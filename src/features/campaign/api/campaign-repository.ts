@@ -25,6 +25,7 @@ import type {
   TradeOffer,
   UnitRecoveryQueueItem,
   UnitCategory,
+  UnitKeyword,
   UnitType,
   UnitMovementSelection,
   UnitTemplate
@@ -418,6 +419,7 @@ function mapCampaignUnit(row: Record<string, unknown>): CampaignUnit {
     status: row.status as CampaignUnit["status"],
     category: row.category as CampaignUnit["category"],
     unitType: mapUnitType(row.unit_type ?? row.category),
+    unitKeywords: mapUnitKeywords(row.unit_keywords, row.unit_type ?? row.category),
     points: Number(row.points ?? 0),
     quantity: Number(row.quantity ?? 1),
     startingQuantity: Number(row.starting_quantity ?? row.quantity ?? 1),
@@ -469,6 +471,7 @@ function mapUnitTemplate(row: Record<string, unknown>): UnitTemplate {
     name: row.name as string,
     category: row.category as UnitCategory,
     unitType: mapUnitType(row.unit_type ?? row.category),
+    unitKeywords: mapUnitKeywords(row.unit_keywords, row.unit_type ?? row.category),
     points: Number(row.points ?? 0),
     defaultQuantity: Number(row.default_quantity ?? 1),
     woundsPerModel: Number(row.wounds_per_model ?? 1),
@@ -731,6 +734,58 @@ function mapUnitType(value: unknown): UnitType {
   }
 
   return "infantry";
+}
+
+function mapUnitKeywords(value: unknown, fallback: unknown): UnitKeyword[] {
+  const rawValues = Array.isArray(value) ? value : [];
+  const keywords = rawValues
+    .map(normalizeUnitKeyword)
+    .filter((keyword): keyword is UnitKeyword => Boolean(keyword));
+  const uniqueKeywords = Array.from(new Set(keywords)).slice(0, 2);
+
+  if (uniqueKeywords.length > 0) {
+    return uniqueKeywords;
+  }
+
+  const normalizedFallback = normalizeUnitKeyword(fallback);
+
+  if (normalizedFallback === "Caracter") {
+    return ["Infanteria", "Caracter"];
+  }
+
+  return normalizedFallback ? [normalizedFallback] : ["Infanteria"];
+}
+
+function normalizeUnitKeyword(value: unknown): UnitKeyword | null {
+  const normalized = String(value ?? "").toLowerCase();
+
+  if (normalized === "vehiculo" || normalized === "vehicle" || normalized === "superpesado" || normalized.startsWith("veh")) {
+    return "Vehiculo";
+  }
+
+  if (
+    normalized === "caracter" ||
+    normalized === "character" ||
+    normalized === "characters" ||
+    normalized === "personaje" ||
+    normalized.includes("person")
+  ) {
+    return "Caracter";
+  }
+
+  if (normalized === "bestia" || normalized === "beast" || normalized === "monstruo" || normalized.includes("monstru")) {
+    return "Bestia";
+  }
+
+  if (normalized === "montado" || normalized === "montada" || normalized === "mounted" || normalized.includes("montad")) {
+    return "Montado";
+  }
+
+  if (normalized === "infanteria" || normalized === "infantry" || normalized === "elite" || normalized.includes("infan")) {
+    return "Infanteria";
+  }
+
+  return null;
 }
 
 function mapResourceKey(value: unknown): ResourceKey {
