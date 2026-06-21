@@ -156,6 +156,8 @@ Estado tecnico actual:
 Estado jugable actual:
 
 - Campana en tiempo real, sin turnos estrategicos.
+- Facciones jugables finales importadas desde `40kPoints.txt`: Legiones Daemonicas, Agentes del Imperium, Cultos Genestealer, Aeldari, Space Marines, Astra Militarum y Necrones.
+- El catalogo final de unidades se genera con `npm run units:generate`; importa 400 hojas de unidad reales y omite 14 cabeceras/totales del archivo.
 - Produccion diaria por tick temporal configurable, calculada desde edificios activos.
 - Movimiento, reclutamiento e investigacion funcionan por timestamps y resolvers backend/lazy processing.
 - Unidades jugables son `campaign_units`, no ejercitos abstractos.
@@ -166,6 +168,7 @@ Estado jugable actual:
 - Construccion planetaria con slots por sistema: 6 en capitales y 3 en el resto.
 - Reclutamiento desde edificios militares activos, no desde un boton global de capital.
 - Reclutamiento usa `unit_templates`, costes, tiempos, cola, edificios compatibles y validacion tecnologica.
+- Las unidades importadas quedan inicialmente bloqueadas (`is_available = false`) hasta que los arboles tecnologicos por faccion las desbloqueen.
 - Reabastecimiento completo de unidades danadas desde edificios militares compatibles a mitad del coste completo de la unidad.
 - Cancelar reclutamiento, reabastecimiento o movimiento devuelve el 50% de los recursos gastados, redondeando hacia arriba.
 - Arbol tecnologico comun `common-v1` con progreso independiente por faccion. Incluye rama `Progreso` funcional, rama `Inteligencia` visible pero bloqueada como contenido futuro, y una rama militar temporal para desbloqueos de unidades.
@@ -1231,8 +1234,8 @@ Cada unidad debe tener:
 - Coste en Mineral.
 - Coste en Honor.
 - Coste en Oro si es una unidad de élite o especial que lo requiera.
-- Coste en Material Industrial si alguna unidad especial lo requiere.
-- Coste en Uridium si alguna unidad especial lo requiere, aunque normalmente no.
+- Coste en Material Industrial siempre 0 para unidades.
+- Coste en Uridium siempre 0 para unidades.
 - Tiempo de producción.
 - Requisitos opcionales.
 - Edificio/categoría de reclutamiento compatible.
@@ -1253,6 +1256,8 @@ Cada unidad debe tener:
 - Notas.
 
 `unit_keywords` se usa para validaciones nuevas como reliquias, Caracteres y futuros efectos. `unit_type` queda como campo legacy/derivado y `category` se mantiene como etiqueta visible y compatibilidad con datos anteriores.
+
+Las unidades se pagan solo con Suministro vital, Mineral, Honor y Oro. Material Industrial queda reservado para construcción y Uridium queda reservado para movimiento/comercio, no para generar tropas.
 
 ### 9.4 Al reclutar
 
@@ -2161,8 +2166,8 @@ unit_templates
 - ancestral_stone_cost integer
 - honor_cost integer
 - gold_cost integer default 0
-- industrial_material_cost integer default 0
-- uridium_cost integer default 0
+- industrial_material_cost integer default 0 -- siempre 0 para unidades
+- uridium_cost integer default 0 -- siempre 0 para unidades
 - technology_cost integer default 0
 - recruitment_building_type text nullable
 - recruitment_time_seconds integer
@@ -2170,6 +2175,9 @@ unit_templates
 - requirements jsonb nullable
 - notes text nullable
 - is_available boolean default true
+- source_section text nullable
+- source_faction_name text nullable
+- is_allied_unit boolean default false
 ```
 
 ### 16.10.1 technology_nodes

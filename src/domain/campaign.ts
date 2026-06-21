@@ -24,6 +24,10 @@ export type UnitCategory =
   | "Elite"
   | "Vehiculo"
   | "Personaje"
+  | "Linea de batalla"
+  | "Transporte"
+  | "Hoja de datos"
+  | "Aliada"
   | "Monstruo"
   | "Superpesado"
   | "Otro";
@@ -188,6 +192,9 @@ export interface UnitTemplate {
   notes?: string | null;
   isAvailable: boolean;
   requiredTechnologyNodeId?: string | null;
+  sourceSection?: string | null;
+  sourceFactionName?: string | null;
+  isAlliedUnit?: boolean;
 }
 
 export interface TradeOffer {

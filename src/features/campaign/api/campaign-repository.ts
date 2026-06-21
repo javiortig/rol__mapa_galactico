@@ -486,7 +486,10 @@ function mapUnitTemplate(row: Record<string, unknown>): UnitTemplate {
     recruitmentBuildingType: (row.recruitment_building_type as string | null) ?? null,
     notes: (row.notes as string | null) ?? null,
     isAvailable: Boolean(row.is_available),
-    requiredTechnologyNodeId: (row.required_technology_node_id as string | null) ?? null
+    requiredTechnologyNodeId: (row.required_technology_node_id as string | null) ?? null,
+    sourceSection: (row.source_section as string | null) ?? null,
+    sourceFactionName: (row.source_faction_name as string | null) ?? null,
+    isAlliedUnit: Boolean(row.is_allied_unit)
   };
 }
 

@@ -14,7 +14,8 @@
     "db:reset": "supabase db reset",
     "db:push:prod": "supabase db push --include-seed",
     "db:sync-env": "node scripts/sync-local-env.mjs",
-    "db:seed:users": "node scripts/seed-local-users.mjs"
+    "db:seed:users": "node scripts/seed-local-users.mjs",
+    "units:generate": "node scripts/generate-40k-unit-catalog.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "latest",

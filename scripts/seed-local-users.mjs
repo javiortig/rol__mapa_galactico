@@ -9,14 +9,49 @@ const users = [
     password: "admin-local-123",
     displayName: "Administrador de Campana",
     role: "admin",
-    factionSlug: "guardia-imperial"
+    factionSlug: "astra-militarum"
   },
   {
-    email: "orcos@rol40k.local",
+    email: "legiones-daemonicas@rol40k.local",
     password: "rol40k-local-123",
-    displayName: "Kaudillo Orko",
+    displayName: "Heraldo de las Legiones",
     role: "player",
-    factionSlug: "orcos"
+    factionSlug: "legiones-daemonicas"
+  },
+  {
+    email: "agentes-imperium@rol40k.local",
+    password: "rol40k-local-123",
+    displayName: "Ordo del Imperium",
+    role: "player",
+    factionSlug: "agentes-imperium"
+  },
+  {
+    email: "cultos-genestealer@rol40k.local",
+    password: "rol40k-local-123",
+    displayName: "Magus del Culto",
+    role: "player",
+    factionSlug: "cultos-genestealer"
+  },
+  {
+    email: "aeldari@rol40k.local",
+    password: "rol40k-local-123",
+    displayName: "Vidente Aeldari",
+    role: "player",
+    factionSlug: "aeldari"
+  },
+  {
+    email: "space-marines@rol40k.local",
+    password: "rol40k-local-123",
+    displayName: "Capitan Astartes",
+    role: "player",
+    factionSlug: "space-marines"
+  },
+  {
+    email: "astra-militarum@rol40k.local",
+    password: "rol40k-local-123",
+    displayName: "Alto Mando Astra",
+    role: "player",
+    factionSlug: "astra-militarum"
   },
   {
     email: "necrones@rol40k.local",
@@ -24,34 +59,6 @@ const users = [
     displayName: "Noble Necron",
     role: "player",
     factionSlug: "necrones"
-  },
-  {
-    email: "guardia-imperial@rol40k.local",
-    password: "rol40k-local-123",
-    displayName: "Alto Mando Imperial",
-    role: "player",
-    factionSlug: "guardia-imperial"
-  },
-  {
-    email: "culto-genestelar@rol40k.local",
-    password: "rol40k-local-123",
-    displayName: "Magus del Culto",
-    role: "player",
-    factionSlug: "culto-genestelar"
-  },
-  {
-    email: "sombra-emperador@rol40k.local",
-    password: "rol40k-local-123",
-    displayName: "Capitan de la Sombra",
-    role: "player",
-    factionSlug: "sombra-emperador"
-  },
-  {
-    email: "guardia-muerte@rol40k.local",
-    password: "rol40k-local-123",
-    displayName: "Campeon de la Plaga",
-    role: "player",
-    factionSlug: "guardia-muerte"
   }
 ];
 

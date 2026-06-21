@@ -90,16 +90,23 @@ NEXT_PUBLIC_ALLOW_MOCK_FALLBACK=false
 npm run deploy:check
 ```
 
+Para regenerar el catalogo final de unidades desde `40kPoints.txt`:
+
+```bash
+npm run units:generate
+```
+
 Usuarios locales:
 
 ```text
 admin@rol40k.local / admin-local-123
-orcos@rol40k.local / rol40k-local-123
+legiones-daemonicas@rol40k.local / rol40k-local-123
+agentes-imperium@rol40k.local / rol40k-local-123
+cultos-genestealer@rol40k.local / rol40k-local-123
+aeldari@rol40k.local / rol40k-local-123
+space-marines@rol40k.local / rol40k-local-123
+astra-militarum@rol40k.local / rol40k-local-123
 necrones@rol40k.local / rol40k-local-123
-guardia-imperial@rol40k.local / rol40k-local-123
-culto-genestelar@rol40k.local / rol40k-local-123
-sombra-emperador@rol40k.local / rol40k-local-123
-guardia-muerte@rol40k.local / rol40k-local-123
 ```
 
 La produccion de recursos funciona con tick diario de backend, no por turno estrategico.

@@ -1,4 +1,9 @@
 import type { CampaignSnapshot, ResourceBundle } from "@/domain/campaign";
+import {
+  generated40kFactions,
+  generated40kInitialUnits,
+  generated40kUnitTemplates
+} from "@/mocks/generated/40k-unit-templates";
 
 const emptyResources: ResourceBundle = {
   supply: 0,
@@ -19,14 +24,7 @@ const dailyProduction = (resources: Partial<ResourceBundle>): ResourceBundle => 
   ...resources
 });
 
-const factions: CampaignSnapshot["factions"] = [
-  { id: "orcos", name: "Orcos", color: "#84cc16", capitalSystemId: "cinder-maw" },
-  { id: "necrones", name: "Necrones", color: "#2dd4bf", capitalSystemId: "thokt-vault" },
-  { id: "guardia-imperial", name: "Guardia Imperial", color: "#38bdf8", capitalSystemId: "kharon-prime" },
-  { id: "culto-genestelar", name: "Culto Genestelar", color: "#c084fc", capitalSystemId: "blackglass" },
-  { id: "sombra-emperador", name: "Sombra del Emperador", color: "#facc15", capitalSystemId: "sa-cea-gate" },
-  { id: "guardia-muerte", name: "Guardia de la Muerte", color: "#b6c35a", capitalSystemId: "mordax" }
-];
+const factions: CampaignSnapshot["factions"] = generated40kFactions;
 
 type BaseSystem = Omit<CampaignSnapshot["systems"][number], "systemKind" | "isConquerable" | "allowsSharedOccupation">;
 
@@ -40,7 +38,7 @@ const baseSystems: BaseSystem[] = [
     starClass: "blue",
     type: "Capital fortificada",
     status: "controlled",
-    controllerFactionId: "guardia-imperial",
+    controllerFactionId: "astra-militarum",
     isCapital: true,
     publicDescription: "Bastion manufactorum y astropuerto militar del frente imperial.",
     production: dailyProduction({ supply: 9, minerals: 6, uridium: 2 })
@@ -54,7 +52,7 @@ const baseSystems: BaseSystem[] = [
     starClass: "orange",
     type: "Cinturon minero",
     status: "controlled",
-    controllerFactionId: "guardia-imperial",
+    controllerFactionId: "astra-militarum",
     isCapital: false,
     publicDescription: "Asteroides ricos en mineral defendidos por baterias orbitales.",
     production: dailyProduction({ supply: 1, minerals: 7, uridium: 1 })
@@ -68,7 +66,7 @@ const baseSystems: BaseSystem[] = [
     starClass: "white",
     type: "Bastion exterior",
     status: "controlled",
-    controllerFactionId: "guardia-imperial",
+    controllerFactionId: "astra-militarum",
     isCapital: false,
     publicDescription: "Fortaleza avanzada que vigila las rutas hacia la Zanja Azul.",
     production: dailyProduction({ supply: 5, minerals: 3, uridium: 1 })
@@ -82,7 +80,7 @@ const baseSystems: BaseSystem[] = [
     starClass: "white",
     type: "Capital orbital",
     status: "controlled",
-    controllerFactionId: "sombra-emperador",
+    controllerFactionId: "space-marines",
     isCapital: true,
     publicDescription: "Estacion de paso con matrices de navegacion de largo alcance.",
     production: dailyProduction({ supply: 5, minerals: 4, uridium: 5 })
@@ -96,7 +94,7 @@ const baseSystems: BaseSystem[] = [
     starClass: "blue",
     type: "Puerto externo",
     status: "controlled",
-    controllerFactionId: "sombra-emperador",
+    controllerFactionId: "space-marines",
     isCapital: false,
     publicDescription: "Puerto orbital en el borde del subsector.",
     production: dailyProduction({ supply: 3, minerals: 1, uridium: 4 })
@@ -110,7 +108,7 @@ const baseSystems: BaseSystem[] = [
     starClass: "yellow",
     type: "Santuario sellado",
     status: "controlled",
-    controllerFactionId: "sombra-emperador",
+    controllerFactionId: "space-marines",
     isCapital: false,
     publicDescription: "Complejo sacro con rutas de descenso peligrosas.",
     production: dailyProduction({ supply: 2, honor: 2, uridium: 1 })
@@ -124,7 +122,7 @@ const baseSystems: BaseSystem[] = [
     starClass: "white",
     type: "Capital cristalina",
     status: "controlled",
-    controllerFactionId: "culto-genestelar",
+    controllerFactionId: "cultos-genestealer",
     isCapital: true,
     publicDescription: "Honor bajo oceanos de vidrio oscuro.",
     production: dailyProduction({ supply: 3, minerals: 4, honor: 2, uridium: 1 })
@@ -138,7 +136,7 @@ const baseSystems: BaseSystem[] = [
     starClass: "red",
     type: "Mundo sermonario",
     status: "controlled",
-    controllerFactionId: "culto-genestelar",
+    controllerFactionId: "cultos-genestealer",
     isCapital: false,
     publicDescription: "Ciudades santuario infiltradas por redes de culto.",
     production: dailyProduction({ supply: 5, minerals: 2, honor: 1, uridium: 1 })
@@ -152,7 +150,7 @@ const baseSystems: BaseSystem[] = [
     starClass: "violet",
     type: "Enjambre orbital",
     status: "controlled",
-    controllerFactionId: "culto-genestelar",
+    controllerFactionId: "cultos-genestealer",
     isCapital: false,
     publicDescription: "Estaciones gemelas que repiten senales falsas hacia el centro.",
     production: dailyProduction({ supply: 2, minerals: 2, honor: 1, uridium: 3 })
@@ -208,7 +206,7 @@ const baseSystems: BaseSystem[] = [
     starClass: "red",
     type: "Capital corrupta",
     status: "controlled",
-    controllerFactionId: "guardia-muerte",
+    controllerFactionId: "legiones-daemonicas",
     isCapital: true,
     publicDescription: "Mundo industrial desgarrado por senales disformes.",
     production: dailyProduction({ supply: 5, minerals: 6, honor: 1, uridium: 2 })
@@ -222,7 +220,7 @@ const baseSystems: BaseSystem[] = [
     starClass: "orange",
     type: "Bastion menor",
     status: "controlled",
-    controllerFactionId: "guardia-muerte",
+    controllerFactionId: "legiones-daemonicas",
     isCapital: false,
     publicDescription: "Fortaleza tomada tras una campana sangrienta.",
     production: dailyProduction({ supply: 4, minerals: 4, uridium: 1 })
@@ -236,7 +234,7 @@ const baseSystems: BaseSystem[] = [
     starClass: "green",
     type: "Bastion infectado",
     status: "controlled",
-    controllerFactionId: "guardia-muerte",
+    controllerFactionId: "legiones-daemonicas",
     isCapital: false,
     publicDescription: "Plataformas de asedio cubiertas por esporas y ceniza.",
     production: dailyProduction({ supply: 3, minerals: 5, honor: 1, uridium: 1 })
@@ -250,7 +248,7 @@ const baseSystems: BaseSystem[] = [
     starClass: "orange",
     type: "Capital volcanica",
     status: "controlled",
-    controllerFactionId: "orcos",
+    controllerFactionId: "aeldari",
     isCapital: true,
     publicDescription: "Forjas geotermicas y tormentas de ceniza.",
     production: dailyProduction({ supply: 4, minerals: 7, uridium: 1 })
@@ -264,7 +262,7 @@ const baseSystems: BaseSystem[] = [
     starClass: "red",
     type: "Forja abandonada",
     status: "controlled",
-    controllerFactionId: "orcos",
+    controllerFactionId: "aeldari",
     isCapital: false,
     publicDescription: "Estructuras de manufactura latentes convertidas en talleres orkos.",
     production: dailyProduction({ supply: 1, minerals: 6, uridium: 1 })
@@ -278,7 +276,7 @@ const baseSystems: BaseSystem[] = [
     starClass: "orange",
     type: "Corredor chatarrero",
     status: "controlled",
-    controllerFactionId: "orcos",
+    controllerFactionId: "aeldari",
     isCapital: false,
     publicDescription: "Ruta de pecios saqueados que apunta hacia el centro.",
     production: dailyProduction({ supply: 3, minerals: 5, uridium: 2 })
@@ -451,9 +449,14 @@ const gaseousSystemIds = new Set(["nexus-aster", "ashen-road"]);
 
 const systems: CampaignSnapshot["systems"] = baseSystems.map((system) => {
   const isGaseous = gaseousSystemIds.has(system.id);
+  const isAgentsSystem = system.id === "argent-rift" || system.id === "orison" || system.id === "vesper-halo";
 
   return {
     ...system,
+    status: isAgentsSystem ? "controlled" : system.status,
+    controllerFactionId: isAgentsSystem ? "agentes-imperium" : system.controllerFactionId,
+    isCapital: system.id === "argent-rift" ? true : system.isCapital,
+    buildingSlots: system.id === "argent-rift" ? 6 : system.buildingSlots,
     systemKind: isGaseous ? "gaseous" : "standard",
     isConquerable: !isGaseous,
     allowsSharedOccupation: isGaseous
@@ -505,7 +508,7 @@ const edges: CampaignSnapshot["edges"] = [
 
 const resources: CampaignSnapshot["resources"] = [
   {
-    factionId: "guardia-imperial",
+    factionId: "astra-militarum",
     supply: 180,
     minerals: 130,
     honor: 12,
@@ -516,7 +519,7 @@ const resources: CampaignSnapshot["resources"] = [
     updatedAt: new Date(now).toISOString()
   },
   {
-    factionId: "orcos",
+    factionId: "aeldari",
     supply: 190,
     minerals: 135,
     honor: 7,
@@ -538,7 +541,7 @@ const resources: CampaignSnapshot["resources"] = [
     updatedAt: new Date(now).toISOString()
   },
   {
-    factionId: "culto-genestelar",
+    factionId: "cultos-genestealer",
     supply: 185,
     minerals: 115,
     honor: 13,
@@ -549,7 +552,7 @@ const resources: CampaignSnapshot["resources"] = [
     updatedAt: new Date(now).toISOString()
   },
   {
-    factionId: "sombra-emperador",
+    factionId: "space-marines",
     supply: 135,
     minerals: 130,
     honor: 18,
@@ -560,7 +563,7 @@ const resources: CampaignSnapshot["resources"] = [
     updatedAt: new Date(now).toISOString()
   },
   {
-    factionId: "guardia-muerte",
+    factionId: "legiones-daemonicas",
     supply: 155,
     minerals: 135,
     honor: 15,
@@ -596,7 +599,7 @@ type MockUnitGroup = {
 const unitGroups: MockUnitGroup[] = [
   {
     id: "imperial-kharon-garrison",
-    factionId: "guardia-imperial",
+    factionId: "astra-militarum",
     name: "Guarnicion de Kharon",
     currentSystemId: "kharon-prime",
     status: "ready",
@@ -615,7 +618,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "imperial-arx-front",
-    factionId: "guardia-imperial",
+    factionId: "astra-militarum",
     name: "117o Grupo de Choque",
     currentSystemId: "arx-solum",
     status: "ready",
@@ -637,7 +640,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "imperial-helios-column",
-    factionId: "guardia-imperial",
+    factionId: "astra-militarum",
     name: "Columna Helios",
     currentSystemId: "kharon-prime",
     status: "moving",
@@ -656,7 +659,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "imperial-azur-line",
-    factionId: "guardia-imperial",
+    factionId: "astra-militarum",
     name: "Linea de Azur",
     currentSystemId: "azur-trench",
     status: "in_war",
@@ -675,7 +678,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "ork-cinder-garrison",
-    factionId: "orcos",
+    factionId: "aeldari",
     name: "Kampamento de Cinder Maw",
     currentSystemId: "cinder-maw",
     status: "ready",
@@ -694,7 +697,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "ork-rustmaw-front",
-    factionId: "orcos",
+    factionId: "aeldari",
     name: "Peaje de Rustmaw",
     currentSystemId: "rustmaw-run",
     status: "ready",
@@ -714,7 +717,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "ork-eclipse-riders",
-    factionId: "orcos",
+    factionId: "aeldari",
     name: "Jinetes de Eclipse",
     currentSystemId: "cinder-maw",
     status: "moving",
@@ -733,7 +736,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "ork-azur-waaagh",
-    factionId: "orcos",
+    factionId: "aeldari",
     name: "Waaagh de la Zanja Azul",
     currentSystemId: "azur-trench",
     status: "in_war",
@@ -752,7 +755,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "sombra-gate-watch",
-    factionId: "sombra-emperador",
+    factionId: "space-marines",
     name: "Guardia de Sa'cea Gate",
     currentSystemId: "sa-cea-gate",
     status: "ready",
@@ -771,7 +774,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "sombra-narthex-spear",
-    factionId: "sombra-emperador",
+    factionId: "space-marines",
     name: "Punta de Lanza Narthex",
     currentSystemId: "narthex",
     status: "ready",
@@ -791,7 +794,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "sombra-lyra-talon",
-    factionId: "sombra-emperador",
+    factionId: "space-marines",
     name: "Garra de Lyra",
     currentSystemId: "sa-cea-gate",
     status: "moving",
@@ -810,7 +813,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "sombra-saint-veil",
-    factionId: "sombra-emperador",
+    factionId: "space-marines",
     name: "Escuadra del Velo",
     currentSystemId: "saint-veil",
     status: "in_war",
@@ -829,7 +832,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "cult-blackglass-garrison",
-    factionId: "culto-genestelar",
+    factionId: "cultos-genestealer",
     name: "Celula de Blackglass",
     currentSystemId: "blackglass",
     status: "ready",
@@ -848,7 +851,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "cult-mirrorcoil-front",
-    factionId: "culto-genestelar",
+    factionId: "cultos-genestealer",
     name: "Alzamiento de Mirrorcoil",
     currentSystemId: "mirrorcoil",
     status: "ready",
@@ -868,7 +871,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "cult-sabbath-convoy",
-    factionId: "culto-genestelar",
+    factionId: "cultos-genestealer",
     name: "Convoy del Sabbath",
     currentSystemId: "blackglass",
     status: "moving",
@@ -887,7 +890,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "cult-saint-revolt",
-    factionId: "culto-genestelar",
+    factionId: "cultos-genestealer",
     name: "Revuelta del Velo",
     currentSystemId: "saint-veil",
     status: "in_war",
@@ -983,7 +986,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "death-mordax-vector",
-    factionId: "guardia-muerte",
+    factionId: "legiones-daemonicas",
     name: "Vector de Mordax",
     currentSystemId: "mordax",
     status: "ready",
@@ -1002,7 +1005,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "death-plaguefall-front",
-    factionId: "guardia-muerte",
+    factionId: "legiones-daemonicas",
     name: "Hueste Plaguefall",
     currentSystemId: "plaguefall-bastion",
     status: "ready",
@@ -1022,7 +1025,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "death-drusus-procession",
-    factionId: "guardia-muerte",
+    factionId: "legiones-daemonicas",
     name: "Procesion de Drusus",
     currentSystemId: "mordax",
     status: "moving",
@@ -1041,7 +1044,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "death-ossuary-pox",
-    factionId: "guardia-muerte",
+    factionId: "legiones-daemonicas",
     name: "Marea Pox del Osario",
     currentSystemId: "ossuary-reach",
     status: "in_war",
@@ -1092,22 +1095,22 @@ const baseUnits: CampaignSnapshot["units"] = unitGroups.flatMap((group) =>
 );
 
 const characterUnits: CampaignSnapshot["units"] = [
-  makeMockCharacterUnit("character-orcos-warboss", "orcos", "Warboss Gorbad Krumpa", "unit-orcos-warboss", "cinder-maw", 110),
+  makeMockCharacterUnit("character-aeldari-warboss", "aeldari", "Warboss Gorbad Krumpa", "unit-aeldari-warboss", "cinder-maw", 110),
   makeMockCharacterUnit("character-necrones-overlord", "necrones", "Overlord Sekh-Nemesor", "unit-necrones-overlord", "thokt-vault", 100),
-  makeMockCharacterUnit("character-guardia-castellan", "guardia-imperial", "Castellan Mira Holt", "unit-guardia-castellan", "kharon-prime", 70),
-  makeMockCharacterUnit("character-culto-primus", "culto-genestelar", "Primus Korda Vhal", "unit-culto-primus", "blackglass", 80),
-  makeMockCharacterUnit("character-sombra-captain", "sombra-emperador", "Captain Aster Valen", "unit-sombra-captain", "sa-cea-gate", 95),
-  makeMockCharacterUnit("character-muerte-lord-contagion", "guardia-muerte", "Lord Morbus Vane", "unit-muerte-lord-contagion", "mordax", 100)
+  makeMockCharacterUnit("character-guardia-castellan", "astra-militarum", "Castellan Mira Holt", "unit-guardia-castellan", "kharon-prime", 70),
+  makeMockCharacterUnit("character-culto-primus", "cultos-genestealer", "Primus Korda Vhal", "unit-culto-primus", "blackglass", 80),
+  makeMockCharacterUnit("character-sombra-captain", "space-marines", "Captain Aster Valen", "unit-sombra-captain", "sa-cea-gate", 95),
+  makeMockCharacterUnit("character-muerte-lord-contagion", "legiones-daemonicas", "Lord Morbus Vane", "unit-muerte-lord-contagion", "mordax", 100)
 ];
 
-const units: CampaignSnapshot["units"] = [...baseUnits, ...characterUnits];
+const units: CampaignSnapshot["units"] = [...generated40kInitialUnits, ...baseUnits, ...characterUnits];
 
 const movements: CampaignSnapshot["movements"] = [
   {
     id: "move-imperial-helios",
     unitIds: ["imperial-helios-cadians"],
     unitSelections: [{ unitId: "imperial-helios-cadians", quantity: 2 }],
-    factionId: "guardia-imperial",
+    factionId: "astra-militarum",
     fromSystemId: "kharon-prime",
     toSystemId: "helios-drift",
     pathSystemIds: ["kharon-prime", "helios-drift"],
@@ -1122,7 +1125,7 @@ const movements: CampaignSnapshot["movements"] = [
     id: "move-ork-eclipse",
     unitIds: ["ork-eclipse-boyz"],
     unitSelections: [{ unitId: "ork-eclipse-boyz", quantity: 3 }],
-    factionId: "orcos",
+    factionId: "aeldari",
     fromSystemId: "cinder-maw",
     toSystemId: "eclipse-forge",
     pathSystemIds: ["cinder-maw", "eclipse-forge"],
@@ -1137,7 +1140,7 @@ const movements: CampaignSnapshot["movements"] = [
     id: "move-sombra-lyra",
     unitIds: ["sombra-lyra-intercessors"],
     unitSelections: [{ unitId: "sombra-lyra-intercessors", quantity: 1 }],
-    factionId: "sombra-emperador",
+    factionId: "space-marines",
     fromSystemId: "sa-cea-gate",
     toSystemId: "lyra-terminus",
     pathSystemIds: ["sa-cea-gate", "lyra-terminus"],
@@ -1152,7 +1155,7 @@ const movements: CampaignSnapshot["movements"] = [
     id: "move-cult-sabbath",
     unitIds: ["cult-sabbath-ridgerunner"],
     unitSelections: [{ unitId: "cult-sabbath-ridgerunner", quantity: 1 }],
-    factionId: "culto-genestelar",
+    factionId: "cultos-genestealer",
     fromSystemId: "blackglass",
     toSystemId: "red-sabbath",
     pathSystemIds: ["blackglass", "red-sabbath"],
@@ -1182,7 +1185,7 @@ const movements: CampaignSnapshot["movements"] = [
     id: "move-death-drusus",
     unitIds: ["death-drusus-drone"],
     unitSelections: [{ unitId: "death-drusus-drone", quantity: 1 }],
-    factionId: "guardia-muerte",
+    factionId: "legiones-daemonicas",
     fromSystemId: "mordax",
     toSystemId: "drusus",
     pathSystemIds: ["mordax", "drusus"],
@@ -1199,8 +1202,8 @@ type MockUnitTemplate = Omit<CampaignSnapshot["unitTemplates"][number], "default
 
 const unitTemplateBase: MockUnitTemplate[] = [
   {
-    id: "unit-orcos-boyz",
-    factionId: "orcos",
+    id: "unit-aeldari-boyz",
+    factionId: "aeldari",
     name: "Boyz",
     category: "Infanteria",
     points: 80,
@@ -1216,8 +1219,8 @@ const unitTemplateBase: MockUnitTemplate[] = [
     isAvailable: true
   },
   {
-    id: "unit-orcos-meganobz",
-    factionId: "orcos",
+    id: "unit-aeldari-meganobz",
+    factionId: "aeldari",
     name: "Meganobz",
     category: "Elite",
     points: 105,
@@ -1233,8 +1236,8 @@ const unitTemplateBase: MockUnitTemplate[] = [
     isAvailable: true
   },
   {
-    id: "unit-orcos-deff-dread",
-    factionId: "orcos",
+    id: "unit-aeldari-deff-dread",
+    factionId: "aeldari",
     name: "Deff Dread",
     category: "Vehiculo",
     points: 135,
@@ -1302,7 +1305,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-guardia-cadian",
-    factionId: "guardia-imperial",
+    factionId: "astra-militarum",
     name: "Cadian Shock Troops",
     category: "Infanteria",
     points: 80,
@@ -1319,7 +1322,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-guardia-kasrkin",
-    factionId: "guardia-imperial",
+    factionId: "astra-militarum",
     name: "Kasrkin",
     category: "Elite",
     points: 105,
@@ -1336,7 +1339,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-guardia-leman-russ",
-    factionId: "guardia-imperial",
+    factionId: "astra-militarum",
     name: "Leman Russ Battle Tank",
     category: "Vehiculo",
     points: 145,
@@ -1353,7 +1356,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-culto-neophytes",
-    factionId: "culto-genestelar",
+    factionId: "cultos-genestealer",
     name: "Neophyte Hybrids",
     category: "Infanteria",
     points: 80,
@@ -1370,7 +1373,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-culto-acolytes",
-    factionId: "culto-genestelar",
+    factionId: "cultos-genestealer",
     name: "Acolyte Hybrids",
     category: "Elite",
     points: 95,
@@ -1387,7 +1390,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-culto-ridgerunner",
-    factionId: "culto-genestelar",
+    factionId: "cultos-genestealer",
     name: "Achilles Ridgerunner",
     category: "Vehiculo",
     points: 120,
@@ -1404,7 +1407,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-sombra-intercessors",
-    factionId: "sombra-emperador",
+    factionId: "space-marines",
     name: "Intercessor Squad",
     category: "Infanteria",
     points: 105,
@@ -1421,7 +1424,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-sombra-terminators",
-    factionId: "sombra-emperador",
+    factionId: "space-marines",
     name: "Terminator Squad",
     category: "Elite",
     points: 160,
@@ -1438,7 +1441,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-sombra-redemptor",
-    factionId: "sombra-emperador",
+    factionId: "space-marines",
     name: "Redemptor Dreadnought",
     category: "Vehiculo",
     points: 185,
@@ -1455,7 +1458,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-muerte-poxwalkers",
-    factionId: "guardia-muerte",
+    factionId: "legiones-daemonicas",
     name: "Poxwalkers",
     category: "Infanteria",
     points: 70,
@@ -1472,7 +1475,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-muerte-plague-marines",
-    factionId: "guardia-muerte",
+    factionId: "legiones-daemonicas",
     name: "Plague Marines",
     category: "Infanteria",
     points: 115,
@@ -1489,7 +1492,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-muerte-bloat-drone",
-    factionId: "guardia-muerte",
+    factionId: "legiones-daemonicas",
     name: "Foetid Bloat-drone",
     category: "Vehiculo",
     points: 145,
@@ -1505,8 +1508,8 @@ const unitTemplateBase: MockUnitTemplate[] = [
     isAvailable: true
   },
   {
-    id: "unit-orcos-warboss",
-    factionId: "orcos",
+    id: "unit-aeldari-warboss",
+    factionId: "aeldari",
     name: "Warboss",
     category: "Personaje",
     points: 110,
@@ -1540,7 +1543,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-guardia-castellan",
-    factionId: "guardia-imperial",
+    factionId: "astra-militarum",
     name: "Cadian Castellan",
     category: "Personaje",
     points: 70,
@@ -1557,7 +1560,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-culto-primus",
-    factionId: "culto-genestelar",
+    factionId: "cultos-genestealer",
     name: "Primus",
     category: "Personaje",
     points: 80,
@@ -1574,7 +1577,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-sombra-captain",
-    factionId: "sombra-emperador",
+    factionId: "space-marines",
     name: "Captain",
     category: "Personaje",
     points: 95,
@@ -1591,7 +1594,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-muerte-lord-contagion",
-    factionId: "guardia-muerte",
+    factionId: "legiones-daemonicas",
     name: "Lord of Contagion",
     category: "Personaje",
     points: 100,
@@ -1608,22 +1611,25 @@ const unitTemplateBase: MockUnitTemplate[] = [
   }
 ];
 
-const unitTemplates: CampaignSnapshot["unitTemplates"] = unitTemplateBase.map((template) => ({
-  ...template,
-  unitType: getMockUnitType(template.category),
-  unitKeywords: getMockUnitKeywords(template.category),
-  defaultQuantity: getMockDefaultQuantity(template.name),
-  woundsPerModel: getMockWoundsPerModel(template.name),
-  recruitmentBuildingType: getRecruitmentBuildingType(template.category),
-  requiredTechnologyNodeId: getRequiredTechnologyForUnit(template.name)
-}));
+const unitTemplates: CampaignSnapshot["unitTemplates"] = [
+  ...generated40kUnitTemplates,
+  ...unitTemplateBase.map((template) => ({
+    ...template,
+    unitType: getMockUnitType(template.category),
+    unitKeywords: getMockUnitKeywords(template.category),
+    defaultQuantity: getMockDefaultQuantity(template.name),
+    woundsPerModel: getMockWoundsPerModel(template.name),
+    recruitmentBuildingType: getRecruitmentBuildingType(template.category),
+    requiredTechnologyNodeId: getRequiredTechnologyForUnit(template.name)
+  }))
+];
 
 const conflicts: CampaignSnapshot["conflicts"] = [
   {
     id: "conflict-azur-trench",
     systemId: "azur-trench",
-    attackerFactionId: "orcos",
-    defenderFactionId: "guardia-imperial",
+    attackerFactionId: "aeldari",
+    defenderFactionId: "astra-militarum",
     status: "pending",
     blockedUntil: inDays(14),
     notes: "Orcos e Imperiales han colisionado en la ruta central de la Zanja Azul. Pendiente de batalla fisica."
@@ -1631,7 +1637,7 @@ const conflicts: CampaignSnapshot["conflicts"] = [
   {
     id: "conflict-ossuary-reach",
     systemId: "ossuary-reach",
-    attackerFactionId: "guardia-muerte",
+    attackerFactionId: "legiones-daemonicas",
     defenderFactionId: "necrones",
     status: "pending",
     blockedUntil: inDays(14),
@@ -1640,8 +1646,8 @@ const conflicts: CampaignSnapshot["conflicts"] = [
   {
     id: "conflict-saint-veil",
     systemId: "saint-veil",
-    attackerFactionId: "sombra-emperador",
-    defenderFactionId: "culto-genestelar",
+    attackerFactionId: "space-marines",
+    defenderFactionId: "cultos-genestealer",
     status: "pending",
     blockedUntil: inDays(14),
     notes: "La Sombra del Emperador ha descubierto una insurreccion genestelar en el santuario. Pendiente de batalla fisica."
@@ -1756,9 +1762,9 @@ const factionTechnologies: CampaignSnapshot["factionTechnologies"] = factions.fl
 const technologyEffects: CampaignSnapshot["technologyEffects"] = [
   { id: "effect-logistica-frente", technologyNodeId: "logistica-frente", effectType: "recruitment_cost_discount", payload: { category: "Infanteria", resource: "supply", percent: 10 } },
   { id: "effect-cadenas-mando", technologyNodeId: "cadenas-mando", effectType: "recruitment_time_discount", payload: { category: "Infanteria", percent: 10 } },
-  { id: "effect-veteranos-guerra", technologyNodeId: "veteranos-guerra", effectType: "unlock_unit_template", payload: { unitTemplateSlugs: ["unit-orcos-meganobz", "unit-necrones-immortals", "unit-necrones-skorpekh", "unit-guardia-kasrkin", "unit-culto-acolytes", "unit-sombra-terminators", "unit-muerte-plague-marines"] } },
+  { id: "effect-veteranos-guerra", technologyNodeId: "veteranos-guerra", effectType: "unlock_unit_template", payload: { unitTemplateSlugs: ["unit-aeldari-meganobz", "unit-necrones-immortals", "unit-necrones-skorpekh", "unit-guardia-kasrkin", "unit-culto-acolytes", "unit-sombra-terminators", "unit-muerte-plague-marines"] } },
   { id: "effect-especializacion-elite", technologyNodeId: "especializacion-elite", effectType: "recruitment_cost_discount", payload: { category: "Elite", resource: "minerals", percent: 10 } },
-  { id: "effect-motores-guerra", technologyNodeId: "motores-guerra", effectType: "unlock_unit_template", payload: { unitTemplateSlugs: ["unit-orcos-deff-dread", "unit-guardia-leman-russ", "unit-culto-ridgerunner", "unit-sombra-redemptor", "unit-muerte-bloat-drone"] } },
+  { id: "effect-motores-guerra", technologyNodeId: "motores-guerra", effectType: "unlock_unit_template", payload: { unitTemplateSlugs: ["unit-aeldari-deff-dread", "unit-guardia-leman-russ", "unit-culto-ridgerunner", "unit-sombra-redemptor", "unit-muerte-bloat-drone"] } },
   { id: "effect-blindaje-reforzado", technologyNodeId: "blindaje-reforzado", effectType: "recruitment_cost_discount", payload: { category: "Vehiculo", resource: "minerals", percent: 10 } },
   { id: "effect-matrices-eficiencia", technologyNodeId: "matrices-eficiencia", effectType: "recruitment_cost_discount", payload: { category: "all", resource: "all", percent: 5 } },
   { id: "effect-fundacion-buildings", technologyNodeId: "fundacion-planetaria", effectType: "unlock_building_template", payload: { buildingTemplateSlugs: ["barracon-infanteria", "granja-biologica"] } },
@@ -1815,18 +1821,18 @@ const systemBuildings: CampaignSnapshot["systemBuildings"] = systems.flatMap(get
 const unitRecoveryQueue: CampaignSnapshot["unitRecoveryQueue"] = [];
 
 const relics: CampaignSnapshot["relics"] = [
-  makeMockRelic("relic-orcos-krozius-chatarra", "orcos", "cinder-maw", "Krozius de Chatarra Sagrada", "Trofeo brutal cubierto de sellos arrancados a enemigos imperiales.", "Reliquia narrativa: simboliza autoridad brutal y victorias de abordaje.", "hammer", "rare"),
-  makeMockRelic("relic-orcos-diente-gorko", "orcos", "cinder-maw", "Diente de Gorko", "Colmillo enorme engarzado en hierro candente.", "Reliquia narrativa: inspira cargas temerarias y duelos de jefes.", "tooth", "common"),
+  makeMockRelic("relic-aeldari-krozius-chatarra", "aeldari", "cinder-maw", "Krozius de Chatarra Sagrada", "Trofeo brutal cubierto de sellos arrancados a enemigos imperiales.", "Reliquia narrativa: simboliza autoridad brutal y victorias de abordaje.", "hammer", "rare"),
+  makeMockRelic("relic-aeldari-diente-gorko", "aeldari", "cinder-maw", "Diente de Gorko", "Colmillo enorme engarzado en hierro candente.", "Reliquia narrativa: inspira cargas temerarias y duelos de jefes.", "tooth", "common"),
   makeMockRelic("relic-necrones-orbe-hekatep", "necrones", "thokt-vault", "Orbe de Hekatep", "Esfera de mando que pulsa con codigo dinastico verde.", "Reliquia narrativa: ancla protocolos de reanimacion y autoridad de tumba.", "orb", "rare"),
   makeMockRelic("relic-necrones-cetro-fase", "necrones", "thokt-vault", "Cetro de Fase", "Baston de nobleza con filo que vibra entre realidades.", "Reliquia narrativa: marca derecho de conquista sobre mundos dormidos.", "scepter", "common"),
-  makeMockRelic("relic-guardia-estandarte-kasr", "guardia-imperial", "kharon-prime", "Estandarte de Kasr Vhal", "Bandera de guerra recuperada de una fortaleza perdida.", "Reliquia narrativa: concede legitimidad y valor a una linea imperial.", "banner", "rare"),
-  makeMockRelic("relic-guardia-aquila-rota", "guardia-imperial", "kharon-prime", "Aquila Rota", "Fragmento dorado de un santuario bombardeado.", "Reliquia narrativa: juramento de resistencia bajo fuego imposible.", "aquila", "common"),
-  makeMockRelic("relic-culto-garra-patriarca", "culto-genestelar", "blackglass", "Garra del Patriarca", "Taliman oseo oculto en un relicario de manufactorum.", "Reliquia narrativa: refuerza la fe de celulas insurgentes.", "claw", "rare"),
-  makeMockRelic("relic-culto-mascara-vidrio", "culto-genestelar", "blackglass", "Mascara de Vidrio Negro", "Mascara ritual usada por predicadores de la cuarta generacion.", "Reliquia narrativa: simboliza infiltracion y control de masas.", "mask", "common"),
-  makeMockRelic("relic-sombra-crux-eclipsada", "sombra-emperador", "sa-cea-gate", "Crux Eclipsada", "Insignia de honor ennegrecida por la luz de un sol muerto.", "Reliquia narrativa: recuerda juramentos de purga y defensa del sector.", "crux", "rare"),
-  makeMockRelic("relic-sombra-fragmento-narthex", "sombra-emperador", "sa-cea-gate", "Fragmento del Narthex", "Pieza de un altar sellado antes de la guerra actual.", "Reliquia narrativa: legitima campanas de recuperacion sagrada.", "reliquary", "common"),
-  makeMockRelic("relic-muerte-campana-putrida", "guardia-muerte", "mordax", "Campana Putrida", "Campana menor cubierta de oxido y letanias enfermas.", "Reliquia narrativa: anuncia avances inevitables de la plaga.", "bell", "rare"),
-  makeMockRelic("relic-muerte-incensario-morbus", "guardia-muerte", "mordax", "Incensario de Morbus", "Artefacto que exhala niebla toxica en susurros.", "Reliquia narrativa: acompana procesiones de corrupcion y asedio.", "censer", "common")
+  makeMockRelic("relic-guardia-estandarte-kasr", "astra-militarum", "kharon-prime", "Estandarte de Kasr Vhal", "Bandera de guerra recuperada de una fortaleza perdida.", "Reliquia narrativa: concede legitimidad y valor a una linea imperial.", "banner", "rare"),
+  makeMockRelic("relic-guardia-aquila-rota", "astra-militarum", "kharon-prime", "Aquila Rota", "Fragmento dorado de un santuario bombardeado.", "Reliquia narrativa: juramento de resistencia bajo fuego imposible.", "aquila", "common"),
+  makeMockRelic("relic-culto-garra-patriarca", "cultos-genestealer", "blackglass", "Garra del Patriarca", "Taliman oseo oculto en un relicario de manufactorum.", "Reliquia narrativa: refuerza la fe de celulas insurgentes.", "claw", "rare"),
+  makeMockRelic("relic-culto-mascara-vidrio", "cultos-genestealer", "blackglass", "Mascara de Vidrio Negro", "Mascara ritual usada por predicadores de la cuarta generacion.", "Reliquia narrativa: simboliza infiltracion y control de masas.", "mask", "common"),
+  makeMockRelic("relic-sombra-crux-eclipsada", "space-marines", "sa-cea-gate", "Crux Eclipsada", "Insignia de honor ennegrecida por la luz de un sol muerto.", "Reliquia narrativa: recuerda juramentos de purga y defensa del sector.", "crux", "rare"),
+  makeMockRelic("relic-sombra-fragmento-narthex", "space-marines", "sa-cea-gate", "Fragmento del Narthex", "Pieza de un altar sellado antes de la guerra actual.", "Reliquia narrativa: legitima campanas de recuperacion sagrada.", "reliquary", "common"),
+  makeMockRelic("relic-muerte-campana-putrida", "legiones-daemonicas", "mordax", "Campana Putrida", "Campana menor cubierta de oxido y letanias enfermas.", "Reliquia narrativa: anuncia avances inevitables de la plaga.", "bell", "rare"),
+  makeMockRelic("relic-muerte-incensario-morbus", "legiones-daemonicas", "mordax", "Incensario de Morbus", "Artefacto que exhala niebla toxica en susurros.", "Reliquia narrativa: acompana procesiones de corrupcion y asedio.", "censer", "common")
 ];
 
 const systemsWithBaseProduction: CampaignSnapshot["systems"] = systems.map((system) => ({
@@ -1838,7 +1844,7 @@ const systemsWithBaseProduction: CampaignSnapshot["systems"] = systems.map((syst
 const tradeOffers: CampaignSnapshot["tradeOffers"] = [
   {
     id: "trade-imperial-sell-minerals",
-    creatorFactionId: "guardia-imperial",
+    creatorFactionId: "astra-militarum",
     offerType: "sell",
     resourceKey: "minerals",
     resourceAmount: 15,
@@ -1849,8 +1855,8 @@ const tradeOffers: CampaignSnapshot["tradeOffers"] = [
     createdAt: inMinutes(-8)
   },
   {
-    id: "trade-orcos-buy-supply",
-    creatorFactionId: "orcos",
+    id: "trade-aeldari-buy-supply",
+    creatorFactionId: "aeldari",
     offerType: "buy",
     resourceKey: "supply",
     resourceAmount: 20,
@@ -2229,9 +2235,9 @@ function getRecruitmentBuildingType(category: CampaignSnapshot["unitTemplates"][
 
 function getMockUnitTemplateId(name: string) {
   const templateIds: Record<string, string> = {
-    Boyz: "unit-orcos-boyz",
-    Meganobz: "unit-orcos-meganobz",
-    "Deff Dread": "unit-orcos-deff-dread",
+    Boyz: "unit-aeldari-boyz",
+    Meganobz: "unit-aeldari-meganobz",
+    "Deff Dread": "unit-aeldari-deff-dread",
     "Necron Warriors": "unit-necrones-warriors",
     Immortals: "unit-necrones-immortals",
     "Skorpekh Destroyers": "unit-necrones-skorpekh",
@@ -2247,7 +2253,7 @@ function getMockUnitTemplateId(name: string) {
     Poxwalkers: "unit-muerte-poxwalkers",
     "Plague Marines": "unit-muerte-plague-marines",
     "Foetid Bloat-drone": "unit-muerte-bloat-drone",
-    Warboss: "unit-orcos-warboss",
+    Warboss: "unit-aeldari-warboss",
     Overlord: "unit-necrones-overlord",
     "Cadian Castellan": "unit-guardia-castellan",
     Primus: "unit-culto-primus",
