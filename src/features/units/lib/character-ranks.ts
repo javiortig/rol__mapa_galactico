@@ -5,7 +5,9 @@ export const unitKeywordLabels: Record<UnitKeyword, string> = {
   Caracter: "Caracter",
   Infanteria: "Infanteria",
   Bestia: "Bestia",
-  Montado: "Montado"
+  Montado: "Montado",
+  Aeronave: "Aeronave",
+  Fortificacion: "Fortificacion"
 };
 
 const characterRanks = [

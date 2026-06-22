@@ -1257,6 +1257,10 @@ Cada unidad debe tener:
 
 `unit_keywords` se usa para validaciones nuevas como reliquias, Caracteres y futuros efectos. `unit_type` queda como campo legacy/derivado y `category` se mantiene como etiqueta visible y compatibilidad con datos anteriores.
 
+En el catalogo final importado desde `40kPoints.txt`, `category` se extrae de la seccion real del roster y se normaliza a una de estas categorias visibles: `Personaje`, `Linea de batalla`, `Transporte`, `Otras hojas de datos` o `Aliada`. Los equivalentes en ingles (`CHARACTERS`, `DEDICATED TRANSPORTS`, `OTHER DATASHEETS`) se normalizan a la misma taxonomia.
+
+Las etiquetas funcionales de unidad (`unit_keywords`) se cruzan con datos estructurados de BSData/wh40k-10e durante `npm run units:generate`. El importador guarda hasta dos etiquetas reales relevantes para el rol, normalizadas al espanol: `Infanteria`, `Caracter`, `Vehiculo`, `Bestia`, `Montado`, `Aeronave` y `Fortificacion`. Ejemplos validos: `Infanteria + Caracter`, `Vehiculo + Aeronave`, `Vehiculo + Caracter`. El informe `docs/generated/40k-unit-import-report.md` debe quedar con `Unidades con keywords reales cruzadas: 400` y `fallback heuristico: 0`.
+
 Las unidades se pagan solo con Suministro vital, Mineral, Honor y Oro. Material Industrial queda reservado para construcción y Uridium queda reservado para movimiento/comercio, no para generar tropas.
 
 ### 9.4 Al reclutar

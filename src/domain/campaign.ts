@@ -26,6 +26,7 @@ export type UnitCategory =
   | "Personaje"
   | "Linea de batalla"
   | "Transporte"
+  | "Otras hojas de datos"
   | "Hoja de datos"
   | "Aliada"
   | "Monstruo"
@@ -34,7 +35,7 @@ export type UnitCategory =
 
 export type UnitType = "beast" | "vehicle" | "character" | "infantry" | "mounted";
 
-export type UnitKeyword = "Vehiculo" | "Caracter" | "Infanteria" | "Bestia" | "Montado";
+export type UnitKeyword = "Vehiculo" | "Caracter" | "Infanteria" | "Bestia" | "Montado" | "Aeronave" | "Fortificacion";
 
 export type ResourceKey = "supply" | "minerals" | "honor" | "gold" | "industrialMaterial" | "uridium" | "technology";
 

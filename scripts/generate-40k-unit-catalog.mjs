@@ -1,10 +1,13 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { execSync } from "node:child_process";
 import { dirname } from "node:path";
 
 const SOURCE_PATH = "40kPoints.txt";
 const SEED_PATH = "supabase/seed.sql";
 const MOCK_PATH = "src/mocks/generated/40k-unit-templates.ts";
 const REPORT_PATH = "docs/generated/40k-unit-import-report.md";
+const BSDATA_REPO_URL = "https://github.com/BSData/wh40k-10e.git";
+const BSDATA_PATH = ".tmp/wh40k-10e";
 
 const SECTION_LABELS = new Set([
   "PERSONAJE",
@@ -17,6 +20,50 @@ const SECTION_LABELS = new Set([
   "OTHER DATASHEETS",
   "UNIDADES ALIADAS"
 ]);
+
+const CANONICAL_CATEGORIES = new Set([
+  "Personaje",
+  "Linea de batalla",
+  "Transporte",
+  "Otras hojas de datos",
+  "Aliada"
+]);
+
+const REAL_KEYWORD_MAP = new Map([
+  ["Infantry", "Infanteria"],
+  ["Character", "Caracter"],
+  ["Vehicle", "Vehiculo"],
+  ["Aircraft", "Aeronave"],
+  ["Fortification", "Fortificacion"],
+  ["Mounted", "Montado"],
+  ["Beast", "Bestia"],
+  ["Monster", "Bestia"],
+  ["Swarm", "Bestia"]
+]);
+
+const REAL_KEYWORD_NAME_ALIASES = new Map([
+  ["aeldari:vyper", "vypers"],
+  ["space-marines:ancient in terminator armour", "ancient in terminator armor"],
+  ["space-marines:eradicator squad with heavy bolters", "eradicator squad"]
+]);
+
+const FACTION_SOURCE_HINTS = {
+  "legiones-daemonicas": ["Chaos - Chaos Daemons"],
+  "agentes-imperium": [
+    "Imperium - Agents of the Imperium",
+    "Imperium - Adepta Sororitas",
+    "Imperium - Deathwatch",
+    "Imperium - Grey Knights",
+    "Imperium - Imperial Knights",
+    "Imperium - Adeptus Titanicus",
+    "Library - Titans"
+  ],
+  "cultos-genestealer": ["Genestealer Cults"],
+  aeldari: ["Aeldari"],
+  "space-marines": ["Imperium - Space Marines"],
+  "astra-militarum": ["Imperium - Astra Militarum"],
+  necrones: ["Necrons"]
+};
 
 const FACTION_DEFS = [
   {
@@ -112,7 +159,8 @@ const MOVEMENT_ORDERS = [
 
 function main() {
   const text = readFileSync(SOURCE_PATH, "utf8");
-  const catalog = parseCatalog(text);
+  const keywordSource = buildBsDataKeywordSource();
+  const catalog = parseCatalog(text, keywordSource);
   const report = buildReport(catalog);
   writeText(REPORT_PATH, report);
   writeText(MOCK_PATH, buildMockFile(catalog.units));
@@ -122,10 +170,12 @@ function main() {
   console.log(`Lineas de cabecera omitidas: ${catalog.skippedHeaders.length}.`);
 }
 
-function parseCatalog(text) {
+function parseCatalog(text, keywordSource) {
   const segments = text.split(/\r?\n\.\.\.\.\.\r?\n/g);
   const units = [];
   const skippedHeaders = [];
+  const keywordFallbacks = [];
+  const keywordMatches = [];
 
   for (const segment of segments) {
     const rawLines = segment.split(/\r?\n/);
@@ -163,7 +213,13 @@ function parseCatalog(text) {
       const points = Number(pointsText);
       const isAlliedUnit = section === "UNIDADES ALIADAS";
       const category = mapCategory(section);
-      const unitKeywords = inferKeywords(name, section);
+      const keywordMatch = findRealKeywordMatch(name, faction.slug, keywordSource.index);
+      const unitKeywords = keywordMatch?.keywords ?? inferKeywords(name, section);
+      if (keywordMatch) {
+        keywordMatches.push(`${faction.sourceName}: ${name} -> ${unitKeywords.join(", ")} (${keywordMatch.fileName})`);
+      } else {
+        keywordFallbacks.push(`${faction.sourceName}: ${name} (${section})`);
+      }
       const defaultQuantity = inferModelCount(name, section, unitLines);
       const costs = computeCosts(points, unitKeywords, category);
       const slug = uniqueSlug(units, `unit-${faction.slug}-${slugify(name)}`);
@@ -189,7 +245,172 @@ function parseCatalog(text) {
     }
   }
 
-  return { units, skippedHeaders };
+  return { units, skippedHeaders, keywordSource, keywordMatches, keywordFallbacks };
+}
+
+function buildBsDataKeywordSource() {
+  ensureBsDataRepository();
+  const files = execSync("git ls-files *.cat", {
+    cwd: BSDATA_PATH,
+    encoding: "utf8"
+  })
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const commit = execSync("git rev-parse HEAD", {
+    cwd: BSDATA_PATH,
+    encoding: "utf8"
+  }).trim();
+  const index = new Map();
+  let entriesScanned = 0;
+  let entriesWithTrackedKeywords = 0;
+
+  for (const fileName of files) {
+    const content = readFileSync(`${BSDATA_PATH}/${fileName}`, "utf8");
+    for (const entry of extractSelectionEntries(content)) {
+      entriesScanned += 1;
+      const rawKeywords = extractCategoryNames(entry.block);
+      const keywords = normalizeRealKeywords(rawKeywords);
+      if (keywords.length === 0) {
+        continue;
+      }
+      entriesWithTrackedKeywords += 1;
+      const key = normalizeUnitName(entry.name);
+      if (!index.has(key)) {
+        index.set(key, []);
+      }
+      index.get(key).push({
+        name: entry.name,
+        fileName,
+        keywords,
+        rawKeywords
+      });
+    }
+  }
+
+  return { commit, index, filesScanned: files.length, entriesScanned, entriesWithTrackedKeywords };
+}
+
+function ensureBsDataRepository() {
+  if (existsSync(`${BSDATA_PATH}/.git`)) {
+    execSync("git fetch --depth 1 origin", { cwd: BSDATA_PATH, stdio: "ignore" });
+    const remoteHead = execSync("git symbolic-ref refs/remotes/origin/HEAD --short", {
+      cwd: BSDATA_PATH,
+      encoding: "utf8"
+    }).trim();
+    execSync(`git reset --hard ${remoteHead}`, { cwd: BSDATA_PATH, stdio: "ignore" });
+    return;
+  }
+  mkdirSync(dirname(BSDATA_PATH), { recursive: true });
+  execSync(`git clone --depth 1 ${BSDATA_REPO_URL} ${BSDATA_PATH}`, { stdio: "ignore" });
+}
+
+function extractSelectionEntries(content) {
+  const lines = content.split(/\r?\n/);
+  const entries = [];
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+    if (!line.includes("<selectionEntry")) {
+      continue;
+    }
+    const tag = line.match(/<selectionEntry\b[^>]*>/)?.[0];
+    if (!tag) {
+      continue;
+    }
+    const attributes = parseXmlAttributes(tag);
+    if (attributes.type !== "model" && attributes.type !== "unit") {
+      continue;
+    }
+    if (!attributes.name) {
+      continue;
+    }
+
+    const name = decodeXml(attributes.name);
+    const blockLines = [line];
+    let depth = countRegex(line, /<selectionEntry\b/g) - countOccurrences(line, "</selectionEntry>");
+
+    while (depth > 0 && index + 1 < lines.length) {
+      index += 1;
+      const nextLine = lines[index];
+      blockLines.push(nextLine);
+      depth += countRegex(nextLine, /<selectionEntry\b/g) - countOccurrences(nextLine, "</selectionEntry>");
+    }
+
+    entries.push({
+      name,
+      block: blockLines.join("\n")
+    });
+  }
+
+  return entries;
+}
+
+function parseXmlAttributes(tag) {
+  return Object.fromEntries(
+    [...tag.matchAll(/\b([A-Za-z_:][-A-Za-z0-9_:.]*)="([^"]*)"/g)].map((match) => [match[1], match[2]])
+  );
+}
+
+function extractCategoryNames(block) {
+  return [...block.matchAll(/<categoryLink\b[^>]*\bname="([^"]+)"/g)].map((match) => decodeXml(match[1]));
+}
+
+function normalizeRealKeywords(rawKeywords) {
+  const keywords = [];
+  for (const rawKeyword of rawKeywords) {
+    const keyword = REAL_KEYWORD_MAP.get(rawKeyword);
+    if (keyword && !keywords.includes(keyword)) {
+      keywords.push(keyword);
+    }
+  }
+  return sortUnitKeywords(keywords).slice(0, 2);
+}
+
+function findRealKeywordMatch(name, factionSlug, index) {
+  const key = normalizeUnitName(name);
+  const lookupKey = REAL_KEYWORD_NAME_ALIASES.get(`${factionSlug}:${key}`) ?? key;
+  const candidates = index.get(lookupKey) ?? [];
+  if (candidates.length === 0) {
+    return null;
+  }
+  const hints = FACTION_SOURCE_HINTS[factionSlug] ?? [];
+  const preferred = candidates.find((candidate) => hints.some((hint) => candidate.fileName.includes(hint)));
+  return preferred ?? candidates[0];
+}
+
+function normalizeUnitName(name) {
+  return decodeXml(name)
+    .replace(/\[[^\]]+\]/g, "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[’'`´]/g, "")
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function sortUnitKeywords(keywords) {
+  const order = ["Infanteria", "Montado", "Bestia", "Vehiculo", "Aeronave", "Fortificacion", "Caracter"];
+  return [...keywords].sort((a, b) => order.indexOf(a) - order.indexOf(b));
+}
+
+function decodeXml(value) {
+  return value
+    .replace(/&apos;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, "&")
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)));
+}
+
+function countOccurrences(value, needle) {
+  return value.split(needle).length - 1;
+}
+
+function countRegex(value, regex) {
+  return value.match(regex)?.length ?? 0;
 }
 
 function collectUnitLines(lines, startIndex) {
@@ -212,7 +433,8 @@ function mapCategory(section) {
   if (section === "PERSONAJE" || section === "CHARACTERS") return "Personaje";
   if (section === "LÍNEA DE BATALLA" || section === "LINEA DE BATALLA") return "Linea de batalla";
   if (section === "TRANSPORTES DEDICADOS" || section === "DEDICATED TRANSPORTS") return "Transporte";
-  return "Hoja de datos";
+  if (section === "OTRAS HOJAS DE DATOS" || section === "OTHER DATASHEETS") return "Otras hojas de datos";
+  throw new Error(`Categoria no mapeada para la seccion: ${section}`);
 }
 
 function inferKeywords(name, section) {
@@ -308,7 +530,7 @@ function costProfile(unitKeywords, category) {
   if (unitKeywords.includes("Caracter")) {
     return { minerals: 0.25, honor: 0.35, gold: 0.15 };
   }
-  if (unitKeywords.includes("Vehiculo")) {
+  if (unitKeywords.includes("Vehiculo") || unitKeywords.includes("Aeronave") || unitKeywords.includes("Fortificacion")) {
     return { minerals: 0.7, honor: 0.1, gold: category === "Aliada" ? 0.1 : 0.05 };
   }
   if (unitKeywords.includes("Bestia")) {
@@ -325,7 +547,8 @@ function costProfile(unitKeywords, category) {
 
 function inferWoundsPerModel(name, unitKeywords) {
   const lower = name.toLowerCase();
-  if (unitKeywords.includes("Vehiculo")) return lower.includes("knight") || lower.includes("baneblade") ? 24 : 10;
+  if (unitKeywords.includes("Fortificacion")) return 12;
+  if (unitKeywords.includes("Vehiculo") || unitKeywords.includes("Aeronave")) return lower.includes("knight") || lower.includes("baneblade") ? 24 : 10;
   if (unitKeywords.includes("Bestia")) return unitKeywords.includes("Caracter") ? 8 : 3;
   if (unitKeywords.includes("Montado")) return 3;
   if (unitKeywords.includes("Caracter")) return 5;
@@ -336,7 +559,7 @@ function inferWoundsPerModel(name, unitKeywords) {
 
 function legacyUnitType(unitKeywords) {
   if (unitKeywords.includes("Caracter")) return "character";
-  if (unitKeywords.includes("Vehiculo")) return "vehicle";
+  if (unitKeywords.includes("Vehiculo") || unitKeywords.includes("Aeronave") || unitKeywords.includes("Fortificacion")) return "vehicle";
   if (unitKeywords.includes("Bestia")) return "beast";
   if (unitKeywords.includes("Montado")) return "mounted";
   return "infantry";
@@ -344,7 +567,7 @@ function legacyUnitType(unitKeywords) {
 
 function recruitmentBuildingType(unitKeywords) {
   if (unitKeywords.includes("Caracter")) return "cuartel-mando";
-  if (unitKeywords.includes("Vehiculo")) return "taller-guerra";
+  if (unitKeywords.includes("Vehiculo") || unitKeywords.includes("Aeronave") || unitKeywords.includes("Fortificacion")) return "taller-guerra";
   if (unitKeywords.includes("Bestia")) return "nido-bestias";
   return "barracon-infanteria";
 }
@@ -593,8 +816,13 @@ export const generated40kInitialUnits = ${JSON.stringify(initialUnits, null, 2)}
 
 function buildReport(catalog) {
   const byFaction = new Map();
+  const byCategory = new Map();
   for (const unit of catalog.units) {
     byFaction.set(unit.sourceFactionName, (byFaction.get(unit.sourceFactionName) ?? 0) + 1);
+    byCategory.set(unit.category, (byCategory.get(unit.category) ?? 0) + 1);
+    if (!CANONICAL_CATEGORIES.has(unit.category)) {
+      throw new Error(`Categoria no canonica detectada: ${unit.category}`);
+    }
   }
 
   const lines = [
@@ -604,6 +832,12 @@ function buildReport(catalog) {
     "",
     `- Hojas de unidad importadas: ${catalog.units.length}.`,
     `- Cabeceras/totales omitidos: ${catalog.skippedHeaders.length}.`,
+    `- Fuente de keywords reales: BSData/wh40k-10e @ ${catalog.keywordSource.commit}.`,
+    `- Archivos BSData escaneados: ${catalog.keywordSource.filesScanned}.`,
+    `- Entradas BSData escaneadas: ${catalog.keywordSource.entriesScanned}.`,
+    `- Entradas BSData con keywords de tipo usadas por el rol: ${catalog.keywordSource.entriesWithTrackedKeywords}.`,
+    `- Unidades con keywords reales cruzadas: ${catalog.keywordMatches.length}.`,
+    `- Unidades con fallback heuristico: ${catalog.keywordFallbacks.length}.`,
     "- Material Industrial y Uridium: siempre 0 en costes de unidades.",
     "- Disponibilidad inicial: todas las plantillas importadas quedan bloqueadas (`is_available = false`).",
     "",
@@ -611,9 +845,17 @@ function buildReport(catalog) {
     "",
     ...[...byFaction.entries()].map(([name, count]) => `- ${name}: ${count}`),
     "",
+    "## Unidades por categoria",
+    "",
+    ...[...byCategory.entries()].map(([name, count]) => `- ${name}: ${count}`),
+    "",
     "## Cabeceras omitidas",
     "",
-    ...catalog.skippedHeaders.map((line) => `- ${line}`)
+    ...catalog.skippedHeaders.map((line) => `- ${line}`),
+    "",
+    "## Unidades sin cruce exacto de keywords",
+    "",
+    ...(catalog.keywordFallbacks.length > 0 ? catalog.keywordFallbacks.map((line) => `- ${line}`) : ["- Ninguna."])
   ];
 
   return `${lines.join("\n")}\n`;
