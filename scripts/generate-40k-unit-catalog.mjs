@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { dirname } from "node:path";
 
-const SOURCE_PATH = "40kPoints.txt";
+const SOURCE_PATH = "data/11th40kPoints.txt";
 const SEED_PATH = "supabase/seed.sql";
 const MOCK_PATH = "src/mocks/generated/40k-unit-templates.ts";
 const REPORT_PATH = "docs/generated/40k-unit-import-report.md";
@@ -61,11 +61,27 @@ const FACTION_SOURCE_HINTS = {
   "cultos-genestealer": ["Genestealer Cults"],
   aeldari: ["Aeldari"],
   "space-marines": ["Imperium - Space Marines"],
-  "astra-militarum": ["Imperium - Astra Militarum"],
+  "adeptus-custodes": [
+    "Imperium - Adeptus Custodes",
+    "Imperium - Agents of the Imperium",
+    "Imperium - Imperial Knights",
+    "Imperium - Adeptus Titanicus",
+    "Library - Titans"
+  ],
   necrones: ["Necrons"]
 };
 
-const FACTION_DEFS = [
+const PRIMARY_FACTION_SOURCE_HINTS = {
+  "legiones-daemonicas": ["Chaos - Chaos Daemons"],
+  "agentes-imperium": ["Imperium - Agents of the Imperium"],
+  "cultos-genestealer": ["Genestealer Cults"],
+  aeldari: ["Aeldari"],
+  "space-marines": ["Imperium - Space Marines"],
+  "adeptus-custodes": ["Imperium - Adeptus Custodes"],
+  necrones: ["Necrons"]
+};
+
+const LEGACY_FACTION_DEFS = [
   {
     sourceName: "Legiones Daemónicas",
     slug: "legiones-daemonicas",
@@ -74,21 +90,21 @@ const FACTION_DEFS = [
     capitalSystemId: "mordax"
   },
   {
-    sourceName: "Agentes del Imperium",
+    sourceName: "Imperium - Agents of the Imperium",
     slug: "agentes-imperium",
     name: "Agentes del Imperium",
     color: "#f59e0b",
     capitalSystemId: "argent-rift"
   },
   {
-    sourceName: "Cultos Genestealer",
+    sourceName: "Xenos - Genestealer Cults",
     slug: "cultos-genestealer",
     name: "Cultos Genestealer",
     color: "#c084fc",
     capitalSystemId: "blackglass"
   },
   {
-    sourceName: "Aeldari",
+    sourceName: "Xenos - Aeldari",
     slug: "aeldari",
     name: "Aeldari",
     color: "#fb7185",
@@ -102,14 +118,68 @@ const FACTION_DEFS = [
     capitalSystemId: "sa-cea-gate"
   },
   {
-    sourceName: "Astra Militarum",
-    slug: "astra-militarum",
-    name: "Astra Militarum",
-    color: "#38bdf8",
+    sourceName: "Imperium - Adeptus Custodes",
+    slug: "adeptus-custodes",
+    name: "Adeptus Custodes",
+    color: "#d4af37",
     capitalSystemId: "kharon-prime"
   },
   {
-    sourceName: "Necrones",
+    sourceName: "Xenos - Necrons",
+    slug: "necrones",
+    name: "Necrones",
+    color: "#2dd4bf",
+    capitalSystemId: "thokt-vault"
+  }
+];
+
+void LEGACY_FACTION_DEFS;
+
+const FACTION_DEFS = [
+  {
+    sourceName: "Chaos - Chaos Daemons",
+    slug: "legiones-daemonicas",
+    name: "Legiones Daemonicas",
+    color: "#ef4444",
+    capitalSystemId: "mordax"
+  },
+  {
+    sourceName: "Imperium - Agents of the Imperium",
+    slug: "agentes-imperium",
+    name: "Agentes del Imperium",
+    color: "#f59e0b",
+    capitalSystemId: "argent-rift"
+  },
+  {
+    sourceName: "Xenos - Genestealer Cults",
+    slug: "cultos-genestealer",
+    name: "Cultos Genestealer",
+    color: "#c084fc",
+    capitalSystemId: "blackglass"
+  },
+  {
+    sourceName: "Xenos - Aeldari",
+    slug: "aeldari",
+    name: "Aeldari",
+    color: "#fb7185",
+    capitalSystemId: "cinder-maw"
+  },
+  {
+    sourceName: "Imperium - Adeptus Astartes - Space Marines",
+    slug: "space-marines",
+    name: "Space Marines",
+    color: "#facc15",
+    capitalSystemId: "sa-cea-gate"
+  },
+  {
+    sourceName: "Imperium - Adeptus Custodes",
+    slug: "adeptus-custodes",
+    name: "Adeptus Custodes",
+    color: "#d4af37",
+    capitalSystemId: "kharon-prime"
+  },
+  {
+    sourceName: "Xenos - Necrons",
     slug: "necrones",
     name: "Necrones",
     color: "#2dd4bf",
@@ -118,10 +188,10 @@ const FACTION_DEFS = [
 ];
 
 const INITIAL_UNITS = [
-  ["astra-kharon-cadians", "astra-militarum", "Cadian Shock Troops", "kharon-prime", "ready", 1, null, 0],
-  ["astra-arx-leman", "astra-militarum", "Leman Russ Battle Tank", "arx-solum", "moving", 1, null, 0],
-  ["astra-castellan", "astra-militarum", "Cadian Castellan", "kharon-prime", "ready", 3, null, 0],
-  ["astra-azur-cadians", "astra-militarum", "Cadian Shock Troops", "azur-trench", "in_war", 1, null, 0],
+  ["custodes-kharon-guard", "adeptus-custodes", "Custodian Guard", "kharon-prime", "ready", 1, null, 0],
+  ["custodes-arx-caladius", "adeptus-custodes", "Caladius Grav-tank", "arx-solum", "moving", 1, null, 0],
+  ["custodes-shield-captain", "adeptus-custodes", "Shield-Captain", "kharon-prime", "ready", 3, null, 0],
+  ["custodes-azur-guard", "adeptus-custodes", "Custodian Guard", "azur-trench", "in_war", 1, null, 0],
   ["aeldari-cinder-guardians", "aeldari", "Guardian Defenders", "cinder-maw", "ready", 1, null, 0],
   ["aeldari-rust-dire-avengers", "aeldari", "Dire Avengers", "rustmaw-run", "moving", 1, null, 0],
   ["aeldari-farseer", "aeldari", "Farseer", "cinder-maw", "ready", 3, null, 0],
@@ -148,7 +218,7 @@ const INITIAL_UNITS = [
 ];
 
 const MOVEMENT_ORDERS = [
-  ["move-astra-helios", "astra-militarum", "astra-arx-leman", "arx-solum", "helios-drift"],
+  ["move-custodes-helios", "adeptus-custodes", "custodes-arx-caladius", "arx-solum", "helios-drift"],
   ["move-aeldari-eclipse", "aeldari", "aeldari-rust-dire-avengers", "rustmaw-run", "eclipse-forge"],
   ["move-space-lyra", "space-marines", "space-narthex-rhino", "narthex", "lyra-terminus"],
   ["move-cult-red-sabbath", "cultos-genestealer", "cult-mirror-ridgerunner", "mirrorcoil", "red-sabbath"],
@@ -167,69 +237,62 @@ function main() {
   updateSeed(catalog.units);
 
   console.log(`Catalogo generado: ${catalog.units.length} unidades reales.`);
-  console.log(`Lineas de cabecera omitidas: ${catalog.skippedHeaders.length}.`);
+  console.log(`Facciones procesadas: ${catalog.factionSummaries.length}.`);
 }
 
 function parseCatalog(text, keywordSource) {
-  const segments = text.split(/\r?\n\.\.\.\.\.\r?\n/g);
+  const segments = text
+    .split(/(?=\+ FACTION KEYWORD: )/g)
+    .map((segment) => segment.trim())
+    .filter((segment) => segment.includes("+ FACTION KEYWORD:"));
   const units = [];
-  const skippedHeaders = [];
-  const keywordFallbacks = [];
+  const missingKeywordMatches = [];
   const keywordMatches = [];
+  const factionSummaries = [];
 
   for (const segment of segments) {
-    const rawLines = segment.split(/\r?\n/);
-    const lines = rawLines.map((line) => line.trimEnd());
-    const nonEmpty = lines.map((line) => line.trim()).filter(Boolean);
-    const sourceFactionName = nonEmpty.find((line) => FACTION_DEFS.some((faction) => faction.sourceName === line));
+    const lines = segment.split(/\r?\n/).map((line) => line.trim());
+    const sourceFactionName = extractRequired(segment, /\+ FACTION KEYWORD:\s*(.+)/, "FACTION KEYWORD");
+    const expectedUnits = Number(extractRequired(segment, /\+ NUMBER OF UNITS:\s*(\d+)/, "NUMBER OF UNITS"));
+    const totalPoints = Number(extractRequired(segment, /\+ TOTAL ARMY POINTS:\s*(\d+)pts/, "TOTAL ARMY POINTS"));
     const faction = FACTION_DEFS.find((item) => item.sourceName === sourceFactionName);
 
     if (!faction) {
-      throw new Error(`No se pudo identificar la faccion del segmento: ${nonEmpty.slice(0, 4).join(" | ")}`);
+      throw new Error(`No se pudo identificar la faccion del bloque: ${sourceFactionName}`);
     }
 
-    let section = "";
-    for (let index = 0; index < lines.length; index += 1) {
-      const trimmed = lines[index].trim();
-      const normalized = trimmed.toUpperCase();
-
-      if (SECTION_LABELS.has(normalized)) {
-        section = normalized;
-        continue;
-      }
-
-      const unitMatch = trimmed.match(/^(.+?) \((\d+) puntos\)$/);
+    let importedForFaction = 0;
+    let pointsForFaction = 0;
+    for (const trimmed of lines) {
+      const unitMatch = trimmed.match(/^(Char\d+:\s*)?(\d+)x\s+(.+?)\s+\((\d+)\s+pts\)(?::.*)?$/);
       if (!unitMatch) {
         continue;
       }
 
-      if (!section) {
-        skippedHeaders.push(`${faction.sourceName}: ${trimmed}`);
+      const isCharacterLine = Boolean(unitMatch[1]);
+      const defaultQuantity = Number(unitMatch[2]);
+      const name = unitMatch[3].trim();
+      const points = Number(unitMatch[4]);
+      const keywordMatch = findRealKeywordMatch(name, faction.slug, keywordSource.index);
+      if (!keywordMatch) {
+        missingKeywordMatches.push(`${faction.sourceName}: ${name}`);
         continue;
       }
 
-      const [, name, pointsText] = unitMatch;
-      const unitLines = collectUnitLines(lines, index + 1);
-      const points = Number(pointsText);
-      const isAlliedUnit = section === "UNIDADES ALIADAS";
-      const category = mapCategory(section);
-      const keywordMatch = findRealKeywordMatch(name, faction.slug, keywordSource.index);
-      const unitKeywords = keywordMatch?.keywords ?? inferKeywords(name, section);
-      if (keywordMatch) {
-        keywordMatches.push(`${faction.sourceName}: ${name} -> ${unitKeywords.join(", ")} (${keywordMatch.fileName})`);
-      } else {
-        keywordFallbacks.push(`${faction.sourceName}: ${name} (${section})`);
-      }
-      const defaultQuantity = inferModelCount(name, section, unitLines);
+      const unitKeywords = keywordMatch.keywords;
+      const isAlliedUnit = isAlliedMatch(faction.slug, keywordMatch);
+      const category = deriveCategory(isAlliedUnit, isCharacterLine, keywordMatch.rawKeywords);
+      const sourceSection = deriveSourceSection(category, isCharacterLine);
       const costs = computeCosts(points, unitKeywords, category);
       const slug = uniqueSlug(units, `unit-${faction.slug}-${slugify(name)}`);
+      keywordMatches.push(`${faction.sourceName}: ${name} -> ${unitKeywords.join(", ")} (${keywordMatch.fileName})`);
 
       units.push({
         slug,
         factionSlug: faction.slug,
         sourceFactionName: faction.sourceName,
         name,
-        sourceSection: section,
+        sourceSection,
         isAlliedUnit,
         category,
         unitKeywords,
@@ -239,13 +302,42 @@ function parseCatalog(text, keywordSource) {
         woundsPerModel: inferWoundsPerModel(name, unitKeywords),
         recruitmentBuildingType: recruitmentBuildingType(unitKeywords),
         ...costs,
-        notes: `${isAlliedUnit ? "Unidad aliada" : "Unidad"} importada desde 40kPoints.txt (${section}).`,
+        notes: `${isAlliedUnit ? "Unidad aliada" : "Unidad"} importada desde data/11th40kPoints.txt (${sourceSection}).`,
         isAvailable: false
       });
+      importedForFaction += 1;
+      pointsForFaction += points;
+    }
+
+    factionSummaries.push({
+      sourceFactionName: faction.sourceName,
+      slug: faction.slug,
+      expectedUnits,
+      importedUnits: importedForFaction,
+      totalPoints,
+      importedPoints: pointsForFaction
+    });
+
+    if (importedForFaction !== expectedUnits) {
+      throw new Error(
+        `El bloque ${faction.sourceName} esperaba ${expectedUnits} unidades pero se importaron ${importedForFaction}.`
+      );
     }
   }
 
-  return { units, skippedHeaders, keywordSource, keywordMatches, keywordFallbacks };
+  if (missingKeywordMatches.length > 0) {
+    throw new Error(`Faltan cruces BSData para:\n${missingKeywordMatches.map((line) => `- ${line}`).join("\n")}`);
+  }
+
+  return { units, factionSummaries, keywordSource, keywordMatches, missingKeywordMatches };
+}
+
+function extractRequired(text, regex, label) {
+  const match = text.match(regex);
+  if (!match) {
+    throw new Error(`No se encontro ${label} en un bloque del catalogo.`);
+  }
+  return match[1].trim();
 }
 
 function buildBsDataKeywordSource() {
@@ -364,7 +456,14 @@ function normalizeRealKeywords(rawKeywords) {
       keywords.push(keyword);
     }
   }
-  return sortUnitKeywords(keywords).slice(0, 2);
+  const sorted = sortUnitKeywords(keywords);
+  if (sorted.length <= 2) {
+    return sorted;
+  }
+  if (sorted.includes("Caracter")) {
+    return [sorted.find((keyword) => keyword !== "Caracter"), "Caracter"].filter(Boolean);
+  }
+  return sorted.slice(0, 2);
 }
 
 function findRealKeywordMatch(name, factionSlug, index) {
@@ -377,6 +476,27 @@ function findRealKeywordMatch(name, factionSlug, index) {
   const hints = FACTION_SOURCE_HINTS[factionSlug] ?? [];
   const preferred = candidates.find((candidate) => hints.some((hint) => candidate.fileName.includes(hint)));
   return preferred ?? candidates[0];
+}
+
+function isAlliedMatch(factionSlug, keywordMatch) {
+  const primaryHints = PRIMARY_FACTION_SOURCE_HINTS[factionSlug] ?? [];
+  return !primaryHints.some((hint) => keywordMatch.fileName.includes(hint));
+}
+
+function deriveCategory(isAlliedUnit, isCharacterLine, rawKeywords) {
+  if (isAlliedUnit) return "Aliada";
+  if (isCharacterLine || rawKeywords.includes("Character")) return "Personaje";
+  if (rawKeywords.includes("Battleline")) return "Linea de batalla";
+  if (rawKeywords.includes("Dedicated Transport") || rawKeywords.includes("Dedicated Transports")) return "Transporte";
+  return "Otras hojas de datos";
+}
+
+function deriveSourceSection(category, isCharacterLine) {
+  if (category === "Aliada") return "UNIDADES ALIADAS";
+  if (isCharacterLine || category === "Personaje") return "CHARACTERS";
+  if (category === "Linea de batalla") return "BATTLELINE";
+  if (category === "Transporte") return "DEDICATED TRANSPORTS";
+  return "OTHER DATASHEETS";
 }
 
 function normalizeUnitName(name) {
@@ -824,22 +944,33 @@ function buildReport(catalog) {
       throw new Error(`Categoria no canonica detectada: ${unit.category}`);
     }
   }
+  const astraCount = catalog.units.filter((unit) => unit.factionSlug === "astra-militarum").length;
+  const custodesCount = catalog.units.filter((unit) => unit.factionSlug === "adeptus-custodes").length;
 
   const lines = [
     "# Informe de importacion de unidades 40K",
     "",
-    "Generado por `npm run units:generate` desde `40kPoints.txt`.",
+    "Generado por `npm run units:generate` desde `data/11th40kPoints.txt`.",
     "",
     `- Hojas de unidad importadas: ${catalog.units.length}.`,
-    `- Cabeceras/totales omitidos: ${catalog.skippedHeaders.length}.`,
+    `- Adeptus Custodes: ${custodesCount}.`,
+    `- Astra Militarum: ${astraCount}.`,
     `- Fuente de keywords reales: BSData/wh40k-10e @ ${catalog.keywordSource.commit}.`,
     `- Archivos BSData escaneados: ${catalog.keywordSource.filesScanned}.`,
     `- Entradas BSData escaneadas: ${catalog.keywordSource.entriesScanned}.`,
     `- Entradas BSData con keywords de tipo usadas por el rol: ${catalog.keywordSource.entriesWithTrackedKeywords}.`,
     `- Unidades con keywords reales cruzadas: ${catalog.keywordMatches.length}.`,
-    `- Unidades con fallback heuristico: ${catalog.keywordFallbacks.length}.`,
+    `- Cruces BSData faltantes: ${catalog.missingKeywordMatches.length}.`,
+    "- Fallback heuristico: 0.",
     "- Material Industrial y Uridium: siempre 0 en costes de unidades.",
     "- Disponibilidad inicial: todas las plantillas importadas quedan bloqueadas (`is_available = false`).",
+    "",
+    "## Validacion por bloque",
+    "",
+    ...catalog.factionSummaries.map(
+      (summary) =>
+        `- ${summary.sourceFactionName}: ${summary.importedUnits}/${summary.expectedUnits} unidades, ${summary.importedPoints}/${summary.totalPoints} puntos.`
+    ),
     "",
     "## Unidades por faccion",
     "",
@@ -849,13 +980,9 @@ function buildReport(catalog) {
     "",
     ...[...byCategory.entries()].map(([name, count]) => `- ${name}: ${count}`),
     "",
-    "## Cabeceras omitidas",
+    "## Cruces BSData faltantes",
     "",
-    ...catalog.skippedHeaders.map((line) => `- ${line}`),
-    "",
-    "## Unidades sin cruce exacto de keywords",
-    "",
-    ...(catalog.keywordFallbacks.length > 0 ? catalog.keywordFallbacks.map((line) => `- ${line}`) : ["- Ninguna."])
+    ...(catalog.missingKeywordMatches.length > 0 ? catalog.missingKeywordMatches.map((line) => `- ${line}`) : ["- Ninguno."])
   ];
 
   return `${lines.join("\n")}\n`;
@@ -876,5 +1003,16 @@ function writeText(path, content) {
   }
   writeFileSync(path, content);
 }
+
+void SECTION_LABELS;
+void collectUnitLines;
+void mapCategory;
+void inferKeywords;
+void isVehicleName;
+void isBeastName;
+void isMountedName;
+void inferModelCount;
+void isMultiModelCharacter;
+void looksLikeWargear;
 
 main();

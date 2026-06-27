@@ -9,7 +9,7 @@ const users = [
     password: "admin-local-123",
     displayName: "Administrador de Campana",
     role: "admin",
-    factionSlug: "astra-militarum"
+    factionSlug: "adeptus-custodes"
   },
   {
     email: "legiones-daemonicas@rol40k.local",
@@ -47,11 +47,11 @@ const users = [
     factionSlug: "space-marines"
   },
   {
-    email: "astra-militarum@rol40k.local",
+    email: "adeptus-custodes@rol40k.local",
     password: "rol40k-local-123",
-    displayName: "Alto Mando Astra",
+    displayName: "Custodio del Trono",
     role: "player",
-    factionSlug: "astra-militarum"
+    factionSlug: "adeptus-custodes"
   },
   {
     email: "necrones@rol40k.local",

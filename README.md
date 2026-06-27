@@ -90,7 +90,7 @@ NEXT_PUBLIC_ALLOW_MOCK_FALLBACK=false
 npm run deploy:check
 ```
 
-Para regenerar el catalogo final de unidades desde `40kPoints.txt`:
+Para regenerar el catalogo final de unidades desde `data/11th40kPoints.txt`:
 
 ```bash
 npm run units:generate
@@ -105,7 +105,7 @@ agentes-imperium@rol40k.local / rol40k-local-123
 cultos-genestealer@rol40k.local / rol40k-local-123
 aeldari@rol40k.local / rol40k-local-123
 space-marines@rol40k.local / rol40k-local-123
-astra-militarum@rol40k.local / rol40k-local-123
+adeptus-custodes@rol40k.local / rol40k-local-123
 necrones@rol40k.local / rol40k-local-123
 ```
 

@@ -1,0 +1,588 @@
++++++++++++++++++++++++++++++++++++++++++++++++
++ FACTION KEYWORD: Xenos - Necrons
++ DETACHMENT: 
++ TOTAL ARMY POINTS: 7575pts
++
++ WARLORD: Char8: The Silent King
++ ENHANCEMENT: 
++ NUMBER OF UNITS: 55
++ SECONDARY: - Bring It Down: (12x2) + (4x4) + (5x6) - Assassination: 25 Characters
++++++++++++++++++++++++++++++++++++++++++++++++
+
+Char1: 1x C'tan Shard of the Deceiver (310 pts): Cosmic insanity, Golden fists
+Char2: 1x C'tan Shard of the Nightbringer (340 pts): Gaze of death, Scythe of the Nightbringer
+Char3: 1x C'tan Shard of the Void Dragon (330 pts): Canoptek tail blades, Spear of the Void Dragon, Voltaic storm
+Char10: 1x Catacomb Command Barge (120 pts): Gauss cannon, Staff of light
+Char11: 1x Chronomancer (65 pts): Chronomancer's stave
+Char12: 1x Dynastic Conqueror [Crucible] (85 pts): 
+Char13: 1x Geomancer (75 pts): Tremorglaive
+Char14: 1x Hexmark Destroyer (75 pts): Close combat weapon, Enmitic disintegrator pistols
+Char15: 1x Hyperscientist [Crucible] (85 pts): 
+Char4: 1x Illuminor Szeras (165 pts): Eldritch lance, Impaling legs
+Char5: 1x Imotekh the Stormlord (100 pts): Gauntlet of Fire, Staff of the Destroyer
+Char16: 1x Lokhust Lord (80 pts): Staff of light
+Char6: 1x Nekrosor Ammentar (185 pts): Nullstone field generator, Blade tail and whip coils, Enmitic disintegrators, Unmaker gauntlet
+Char7: 1x Orikan the Diviner (80 pts): Staff of Tomorrow
+Char17: 1x Overlord (85 pts): Overlord's blade, Tachyon arrow
+Char18: 1x Overlord with Translocation Shroud (85 pts): Resurrection orb, Overlord's blade
+Char19: 1x Plasmancer (55 pts): Plasmic lance
+Char20: 1x Psychomancer (55 pts): Abyssal lance
+Char21: 1x Royal Warden (50 pts): Close combat weapon, Relic gauss blaster
+Char22: 1x Skorpekh Lord (90 pts): Enmitic annihilator, Flensing claw, Hyperphase harvester
+Char23: 1x Technomancer (80 pts): Staff of light
+Char8: 3x The Silent King (400 pts): Warlord
+• 1x Szarekh: Sceptre of Eternal Glory, Staff of Stars, Weapons of the Final Triarch
+• 2x Triarchal Menhir: 2 with Annihilator beam, Armoured bulk
+Char24: 1x Transcendent C'tan (325 pts): Crackling tendrils, Seismic assault
+Char9: 1x Trazyn the Infinite (75 pts): Empathic Obliterator
+Char25: 1x Triarchal Overseer [Crucible] (120 pts): 
+
+5x Immortals (70 pts): 5 with Close combat weapon, Gauss blaster
+10x Necron Warriors (90 pts): 10 with Close combat weapon, Gauss flayer
+
+1x Annihilation Barge (105 pts): Armoured bulk, Twin tesla destructor, Gauss cannon
+1x Canoptek Doomstalker (140 pts): Doomsday blaster, Doomstalker limbs, Twin gauss flayer
+5x Canoptek Macrocytes (85 pts): 5 with Claws, Gauss scalpel
+1x Canoptek Reanimator (75 pts): 2x Atomiser beam, Reanimator's claws
+3x Canoptek Scarab Swarms (40 pts): 3 with Feeder mandibles
+1x Canoptek Spyders (75 pts): Automaton claws
+2x Canoptek Tomb Crawlers (50 pts)
+  1 with Claws, Twin gauss reaper
+  1 with Claws, Twin gauss reaper
+3x Canoptek Wraiths (110 pts): 3 with Vicious claws
+1x Convergence of Dominion (60 pts): Transdimensional abductor
+2x Cryptothralls (60 pts): 2 with Scouring eye, Scythed limbs
+5x Deathmarks (60 pts): 5 with Close combat weapon, Synaptic disintegrator
+1x Doom Scythe (230 pts): Armoured bulk, Heavy death ray, Twin tesla destructor
+1x Doomsday Ark (200 pts): Armoured bulk, Doomsday cannon, 2x Gauss flayer array
+5x Flayed Ones (60 pts): 5 with Flayer claws
+1x Ghost Ark (115 pts): Armoured bulk, 2x Gauss flayer array
+1x Lokhust Destroyers (40 pts): Close combat weapon, Gauss cannon
+1x Lokhust Heavy Destroyers (55 pts): Close combat weapon, Enmitic exterminator
+5x Lychguard (85 pts): 5 with Warscythe
+1x Monolith (400 pts): Particle whip, Portal of exile, 4x Gauss flux arc
+1x Night Scythe (145 pts): Armoured bulk, Twin tesla destructor
+1x Obelisk (300 pts): Armoured bulk, 4x Tesla sphere
+3x Ophydian Destroyers (80 pts): 3 with Ophydian hyperphase weapons
+1x Seraptek Heavy Construct (540 pts): Titanic forelimbs, 2x Singularity generator
+3x Skorpekh Destroyers (90 pts): 3 with Skorpekh hyperphase weapons
+1x Tesseract Vault (425 pts): C'tan Powers, Armoured bulk, 4x Tesla sphere
+3x Tomb Blades (75 pts): 3 with Close combat weapon, Twin gauss blaster
+5x Triarch Praetorians (90 pts): 5 with Rod of covenant
+1x Triarch Stalker (110 pts): Stalker's forelimbs, Heat ray
+
+
++++++++++++++++++++++++++++++++++++++++++++++++
++ FACTION KEYWORD: Chaos - Chaos Daemons
++ DETACHMENT: 
++ TOTAL ARMY POINTS: 2655pts
++
++ WARLORD: Char1: Be'lakor
++ ENHANCEMENT: 
++ NUMBER OF UNITS: 19
++ SECONDARY: - Bring It Down: (3x2) + (1x4) + (2x6) - Assassination: 13 Characters
++++++++++++++++++++++++++++++++++++++++++++++++
+
+Char1: 1x Be'lakor (375 pts): Warlord, Betraying Shades, The Blade of Shadows
+Char5: 1x Changecaster (60 pts): Arcane Fireball, Herald combat weapon
+Char6: 1x Daemon Prince of Chaos (190 pts): Khorne, Hellforged weapons, Infernal cannon
+Char7: 1x Daemon Prince of Chaos with wings (180 pts): Khorne, Hellforged weapons, Infernal cannon
+Char8: 1x Daemonic Charioteer [Crucible] (120 pts): 
+Char9: 1x Daemonic Herald [Crucible] (60 pts): 
+Char10: 1x Exalted Flamer (65 pts): Fires of Tzeentch, Flamer mouths
+Char11: 1x Fateskimmer (95 pts): Arcane Fireball, Herald combat weapon, Screamer bites
+Char12: 1x Fluxmaster (60 pts): Arcane Fireball, Herald combat weapon
+Char2: 1x Kairos Fateweaver (295 pts): Infernal Gateway, Staff of Tomorrow
+Char13: 1x Lord of Change (285 pts): Bolt of Change, Staff of Tzeentch
+Char3: 1x The Blue Scribes (75 pts): Sharp quills
+Char4: 1x The Changeling (90 pts): Infernal Flames, The Trickster's Staff
+
+10x Blue Horrors (125 pts): 10 with Blue claws, Coruscating Blue flames
+10x Pink Horrors (140 pts): 10 with Coruscating Pink flames, Pink claws
+
+1x Burning Chariot (115 pts): Fires of Tzeentch, Flamer mouths, Screamer bites
+3x Flamers (65 pts)
+• 1x Pyrocaster: Flamer mouths, Flickering Flames
+• 2x Flamer: 2 with Flamer mouths, Flickering Flames
+3x Screamers (80 pts): 3 with Lamprey bite
+1x Tzeentch Soul Grinder (180 pts): Harvester cannon, Iron claw, Warp gaze, Warpsword
+
+
++++++++++++++++++++++++++++++++++++++++++++++++
++ FACTION KEYWORD: Imperium - Agents of the Imperium
++ DETACHMENT: 
++ TOTAL ARMY POINTS: 2860pts
++
++ ENHANCEMENT: 
++ NUMBER OF UNITS: 32
++ SECONDARY: - Bring It Down: (5x2) - Assassination: 17 Characters
++++++++++++++++++++++++++++++++++++++++++++++++
+
+Char1: 1x Callidus Assassin (100 pts): Neural shredder, Phase sword and poison blades
+Char2: 1x Culexus Assassin (85 pts): Animus speculum, Life-draining touch
+Char10: 1x Deathwatch Agent [Crucible] (105 pts): 
+Char11: 1x Enthroned Agent [Crucible] (120 pts): 
+Char3: 1x Eversor Assassin (110 pts): Executioner pistol, Power sword and neuro gauntlet
+Char12: 1x Inquisitor (55 pts): Blessed wardings, Inquisitorial melee weapon, Bolt pistol
+Char4: 1x Inquisitor Coteaz (75 pts): Glovodan Psyber-eagle, Bolt pistol, Nemesis daemon hammer, Psychic Blast
+Char5: 1x Inquisitor Draxus (75 pts): Dirgesinger, Power fist, Psychic Tempest
+Char6: 1x Inquisitor Greyfax (65 pts): Castigation, Condemnor stake, Master-crafted power sword
+Char7: 1x Inquisitor Kroyle (100 pts): Jindarii tox-cycler, Stubcarbine, Butcher blade, Garralisk's claws and teeth
+Char13: 1x Martial Agent [Crucible] (60 pts): 
+Char14: 1x Ministorum Priest (40 pts): Zealot's vindictor
+Char15: 1x Navigator (60 pts): Force-orb cane, Laspistol
+Char16: 4x Rogue Trader Entourage (75 pts)
+• 1x Rogue Trader: Household pistol, Monomolecular cane-rapier
+• 1x Death Cult Assassin: Dartmask, Death Cult power blade
+• 1x Lectro-maester: Close combat weapon, Voltaic pistol
+• 1x Rejuvenant Adept: Healing Serum, Close combat weapon, Laspistol
+Char8: 1x Vindicare Assassin (110 pts): Exitus pistol, Exitus rifle, Vindicare combat knife
+Char9: 1x Watch Captain Artemis (65 pts): Hellfire Extremis, Master-crafted power weapon
+Char17: 1x Watch Master (95 pts): Vigil spear
+
+5x Aquila Kill Team (100 pts)
+• 3x Deathwatch Veteran
+    1 with Bolt pistol, Close combat weapon, Stalker bolt rifle
+    1 with Bolt pistol, Heavy thunder hammer
+    1 with Close combat weapon, Special-issue bolt pistol, Deathwatch marksman bolt carbine
+• 1x Kill Team Sergeant: Plasma pistol, Power weapon
+• 1x Gravis Veteran: Bolt pistol, Close combat weapon, Frag cannon
+5x Deathwatch Kill Team (100 pts)
+• 1x Watch Sergeant: Boltgun, Power weapon
+• 4x Veteran: 4 with Boltgun, Power weapon
+10x Imperial Navy Breachers (90 pts)
+• 9x Navis Armsman
+    7 with Close combat weapon, Navis shotgun
+    1 with Close combat weapon, Navis las-volley
+    1 with Endurant shield, Close combat weapon, Navis heavy shotgun
+• 1x Navis Sergeant-at-Arms: Close combat weapon, Navis shotgun
+11x Vigilant Squad (85 pts)
+• 1x Proctor-Vigilant: Arbites combat shotgun, Arbites shotpistol, Close combat weapon
+• 9x Vigilant: 9 with Arbites combat shotgun, Arbites shotpistol, Close combat weapon
+• 1x Cyber-mastiff: Mechanical bite
+
+1x Corvus Blackstar (180 pts): Armoured hull, Twin assault cannon, 2x Blackstar rocket launcher
+11x Exaction Squad (90 pts)
+• 1x Proctor-Exactant: Arbites combat shotgun, Arbites shotpistol, Close combat weapon
+• 9x Exaction Vigilant: 9 with Arbites combat shotgun, Arbites shotpistol, Close combat weapon
+• 1x Cyber-mastiff: Mechanical bite
+5x Grey Knights Terminator Squad (190 pts)
+• 1x Terminator Justicar: Nemesis force weapon, Storm bolter
+• 4x Terminator: 4 with Nemesis force weapon, Storm bolter
+1x Imperial Rhino (75 pts): Armoured tracks, Storm bolter
+5x Inquisitorial Agents (50 pts): 5 with Agent firearm, Agent melee weapon
+1x Inquisitorial Chimera (70 pts): Armoured tracks, Lasgun array, Heavy bolter, Multi-laser
+9x Sanctifiers (100 pts)
+• 2x Missionary
+    1 with Sanctifier melee weapon, Plasma gun
+    1 with Ministorum flamer, Sanctifier melee weapon
+• 4x Sanctifier: 4 with Ministorum hand flamer, Sanctifier melee weapon
+• 1x Miraculist: Burning hands, Holy fire
+• 1x Death Cult Assassin: Death Cult blades
+• 1x Salvationist: Salvationist Medikit, Close combat weapon
+1x Sisters of Battle Immolator (100 pts): Armoured tracks, Heavy bolter, Immolation flamers
+10x Sisters of Battle Squad (100 pts)
+• 1x Sister Superior: Bolt pistol, Close combat weapon, Boltgun
+• 9x Battle Sister: 9 with Bolt pistol, Boltgun, Close combat weapon
+11x Subductor Squad (85 pts)
+• 1x Proctor Subductor: Arbites shotpistol, Shock maul
+• 9x Subductor: 9 with Arbites shotpistol, Shock maul
+• 1x Cyber-mastiff: Mechanical bite
+6x Voidsmen-at-Arms (50 pts)
+• 4x Voidsman
+    3 with Close combat weapon, Lasgun, Laspistol
+    1 with Close combat weapon, Laspistol, Voidsman rotor cannon
+• 1x Voidmaster: Artificer shotgun, Close combat weapon, Laspistol
+• 1x Canid: Vicious bite
+
+
++++++++++++++++++++++++++++++++++++++++++++++++
++ FACTION KEYWORD: Xenos - Aeldari
++ DETACHMENT: 
++ TOTAL ARMY POINTS: 10200pts
++
++ ENHANCEMENT: 
++ NUMBER OF UNITS: 64
++ SECONDARY: - Bring It Down: (14x2) + (2x4) + (2x6) - Assassination: 23 Characters
++++++++++++++++++++++++++++++++++++++++++++++++
+
+Char1: 1x Asurmen (135 pts): The Bloody Twins, The Sword of Asur
+Char12: 1x Autarch (85 pts): Star Glaive, Shuriken Pistol
+Char13: 1x Autarch Wayleaper (80 pts): Star Glaive, Shuriken Pistol
+Char2: 1x Avatar of Khaine (280 pts): The Wailing Doom
+Char3: 1x Baharroth (115 pts): Fury of the Tempest, The Shining Blade
+Char14: 1x Craftworld Warleader [Crucible] (75 pts): 
+Char15: 1x Death Jester (90 pts): Jester's Blade, Shrieker Cannon
+Char4: 1x Eldrad Ulthran (120 pts): Mind War, Shuriken Pistol, Staff of Ulthamar and witchblade
+Char16: 1x Farseer (70 pts): Eldritch Storm, Shuriken Pistol, Witchblade
+Char17: 1x Farseer Skyrunner (80 pts): Eldritch Storm, Shuriken Pistol, Twin Shuriken Catapult, Witchblade
+Char5: 1x Fuegan (120 pts): Searsong, The Fire Axe
+Char18: 1x Ghost Warrior [Crucible] (160 pts): 
+Char6: 1x Jain Zar (120 pts): Silent Death, The Blade of Destruction
+Char7: 1x Kharseth (95 pts): Dread of the Deep Void, Waystave
+Char8: 1x Lhykhis (135 pts): Brood Twain, Spider's Fangs, Weaverender
+Char9: 1x Maugan Ra (100 pts): Maugetar
+Char10: 1x Prince Yriel (95 pts): Shuriken Pistol, The Eye of Wrath, The Spear of Twilight
+Char19: 1x Shadowseer (60 pts): Miststave, Shuriken Pistol
+Char20: 1x Skyrunner [Crucible] (80 pts): 
+Char11: 1x Solitaire (115 pts): Solitaire Weapons
+Char21: 1x Spiritseer (65 pts): Shuriken Pistol, Witch Staff
+Char22: 1x Troupe Master (75 pts): Harlequin's Special Weapon, Shuriken Pistol
+Char23: 1x Warlock (45 pts): Destructor, Shuriken Pistol, Witchblade
+
+5x Corsair Voidreavers (65 pts)
+• 1x Voidreaver Felarch: Close Combat Weapon, Power sword, Shuriken pistol
+• 4x Voidreaver with Shuriken rifle: 4 with Close Combat Weapon, Shuriken rifle
+11x Guardian Defenders (100 pts)
+• 10x Guardian Defender: 10 with Close Combat Weapon, Shuriken Catapult
+• 1x Heavy Weapon Platform: Close Combat Weapon, Shuriken Cannon
+11x Storm Guardians (110 pts)
+• 10x Storm Guardian: 10 with Close Combat Weapon, Shuriken Pistol
+• 1x Serpent's Scale Platform: Close Combat Weapon
+
+5x Corsair Skyreavers (75 pts)
+• 1x Skyreaver Felarch: Corsair Blade, Shuriken pistol
+• 4x Skyreaver: 4 with Corsair Blade, Shuriken Pistol
+5x Corsair Voidscarred (80 pts)
+• 1x Voidscarred Felarch: Close Combat Weapon, Power sword, Shuriken pistol
+• 4x Voidscarred: 4 with Close Combat Weapon, Power sword, Shuriken Pistol
+1x Crimson Hunter (160 pts): Pulse Laser, Wraithbone Hull, 2x Starcannon
+1x D-Cannon Platform (125 pts): Close Combat Weapon, D-cannon, Shuriken Catapult
+5x Dark Reapers (90 pts)
+• 1x Dark Reaper Exarch: Close combat weapon, Reaper Launcher
+• 4x Dark Reaper: 4 with Close combat weapon, Reaper Launcher
+5x Dire Avengers (75 pts)
+• 1x Dire Avenger Exarch: Close Combat Weapon, Avenger Shuriken Catapult
+• 4x Dire Avenger: 4 with Avenger Shuriken Catapult, Close Combat Weapon
+1x Falcon (130 pts): Pulse Laser, Wraithbone hull, Shuriken Cannon, Twin Shuriken Catapult
+5x Fire Dragons (120 pts)
+• 1x Fire Dragon Exarch: Close combat weapon, Exarch's Dragon Fusion Gun
+• 4x Fire Dragon: 4 with Close combat weapon, Dragon Fusion Gun
+1x Fire Prism (150 pts): Prism Cannon, Wraithbone hull, Twin Shuriken Catapult
+1x Hemlock Wraithfighter (155 pts): 2x Heavy D-Scythe
+5x Howling Banshees (95 pts)
+• 1x Howling Banshee Exarch: Banshee Blade, Shuriken Pistol
+• 4x Howling Banshee: 4 with Banshee Blade, Shuriken Pistol
+1x Night Spinner (190 pts): Doomweaver, Wraithbone hull, Twin Shuriken Catapult
+1x Phantom Titan (2100 pts): Phantom feet, Voidstorm missile launcher, D-bombard, Phantom pulsar, Phantom starcannon
+5x Rangers (55 pts): 5 with Close Combat Weapon, Long rifle, Shuriken Pistol
+1x Revenant Titan (1100 pts): Cloudburst missile launcher, Revenant feet, Revenant Pulsar, Sonic Lance
+1x Shadow Weaver Platform (75 pts): Close Combat Weapon, Shadow weaver, Shuriken Catapult
+3x Shining Spears (110 pts)
+• 1x Shining Spear Exarch: Twin Shuriken Catapult, Laser Lance
+• 2x Shining Spear: 2 with Laser Lance, Twin Shuriken Catapult
+3x Shroud Runners (80 pts): 3 with Close Combat Weapon, Long rifle, Scatter Laser, Shuriken Pistol
+2x Skyweavers (95 pts): 2 with Close Combat Weapon, Shuriken Cannon, Star Bolas
+1x Starfangs (75 pts): Disintegrator Cannon, Starfang Grenade Launcher, Wraithbone hull
+1x Starweaver (80 pts): Close Combat Weapon, 2x Shuriken Cannon
+5x Striking Scorpions (85 pts)
+• 1x Striking Scorpion Exarch: Scorpion chainsword, Scorpion's claw, Shuriken pistol
+• 4x Striking Scorpion: 4 with Scorpion chainsword, Shuriken pistol
+5x Swooping Hawks (95 pts)
+• 1x Swooping Hawk Exarch: Close combat weapon, Hawk's Talon
+• 4x Swooping Hawk: 4 with Close combat weapon, Lasblaster
+5x Troupe (85 pts)
+• 1x Lead Player: Harlequin's Blade, Shuriken Pistol
+• 4x Player with Harlequin's Blade: 4 with Harlequin's Blade, Shuriken Pistol
+1x Vibro Cannon Platform (60 pts): Close Combat Weapon, Shuriken Catapult, Vibro Cannon
+1x Voidweaver (125 pts): Close Combat Weapon, 2x Shuriken Cannon, Voidweaver Haywire Cannon
+1x Vypers (75 pts): Wraithbone hull, Bright Lance, Shuriken Cannon
+1x War Walkers (85 pts): War Walker feet, 2x Shuriken Cannon
+2x Warlock Conclave (55 pts): 2 with Destructor, Shuriken Pistol, Witchblade
+1x Warlock Skyrunners (45 pts): Destructor, Shuriken Pistol, Twin Shuriken Catapult, Witchblade
+5x Warp Spiders (105 pts)
+• 1x Warp Spider Exarch: Close Combat Weapon, Exarch's death spinner
+• 4x Warp Spider: 4 with Close Combat Weapon, Death spinner
+1x Wave Serpent (125 pts): Wraithbone Hull, Twin Shuriken Catapult, Twin Shuriken Cannon
+3x Windriders (80 pts): 3 with Close Combat Weapon, Twin Shuriken Catapult
+5x Wraithblades (150 pts): 5 with Ghostswords
+5x Wraithguard (160 pts): 5 with Close Combat Weapon, Wraithcannon
+1x Wraithknight (435 pts): Scattershield, Titanic feet, Suncannon
+1x Wraithknight with Ghostglaive (420 pts): Scattershield, Titanic Ghostglaive
+1x Wraithlord (130 pts): Wraithbone Fists, 2x Shuriken Catapult
+
+
++++++++++++++++++++++++++++++++++++++++++++++++
++ FACTION KEYWORD: Xenos - Genestealer Cults
++ DETACHMENT: 
++ TOTAL ARMY POINTS: 1910pts
++
++ WARLORD: Char13: Patriarch
++ ENHANCEMENT: 
++ NUMBER OF UNITS: 27
++ SECONDARY: - Bring It Down: (3x2) - Assassination: 17 Characters
++++++++++++++++++++++++++++++++++++++++++++++++
+
+Char1: 1x Abominant (85 pts): Power sledgehammer
+Char2: 1x Acolyte Iconward (50 pts): Autopistol, Cult claws
+Char3: 1x Benefictus (70 pts): Close combat weapon, Psionic cascade
+Char4: 1x Biophagus (50 pts): Alchemicus familiar, Autopistol, Chemical vials, Injector goad
+Char5: 1x Clamavus (50 pts): Autopistol, Close combat weapon
+Char6: 1x Cult Guerrilla [Crucible] (60 pts): 
+Char7: 1x Cult Insurrectionist [Crucible] (80 pts): 
+Char8: 1x Jackal Alphus (55 pts): Autopistol, Close combat weapon, Cult sniper rifle
+Char9: 1x Kelermorph (60 pts): Close combat weapon, Liberator autostubs
+Char10: 1x Locus (45 pts): Locus blades
+Char11: 1x Magus (50 pts): Autopistol, Force stave
+Char12: 1x Nexos (60 pts): Autopistol, Close combat weapon
+Char13: 1x Patriarch (75 pts): Warlord, Patriarch's claws
+Char14: 1x Primus (70 pts): Cult bonesword, Scoped needle pistol, Toxin injector claw
+Char15: 1x Reductus Saboteur (65 pts): Autopistol, Close combat weapon, Demolition charges, Remote explosives
+Char16: 1x Sanctus (50 pts): Sanctus bio-dagger
+Char17: 1x Voice of the Patriarch [Crucible] (70 pts): 
+
+5x Acolyte Hybrids with Autopistols (65 pts)
+• 1x Acolyte Leader: Autopistol, Cult claws and knife
+• 4x Acolyte Hybrid: 4 with Autopistol, Cult claws and knife
+5x Acolyte Hybrids with Hand Flamers (70 pts)
+• 1x Acolyte Leader: Hand flamer, Cult claws and knife
+• 4x Acolyte Hybrid: 4 with Cult claws and knife, Hand flamer
+10x Neophyte Hybrids (65 pts)
+• 1x Neophyte Leader: Autopistol, Close combat weapon, Hybrid firearm
+• 9x Neophyte Hybrid: 9 with Autopistol, Close combat weapon, Hybrid firearm
+
+5x Aberrants (135 pts)
+• 1x Aberrant Hypermorph: Aberrant weapons
+• 4x Aberrant: 4 with Aberrant weapons
+1x Achilles Ridgerunners (95 pts): Flare launcher, Armoured hull, Twin heavy stubber, Heavy mining laser
+5x Atalan Jackals (85 pts)
+• 4x Atalan Jackal: 4 with Atalan small arms, Close combat weapon
+• 1x Atalan Wolfquad: Atalan small arms, Close combat weapon, Heavy stubber
+1x Goliath Rockgrinder (120 pts): Demolition charge cache, Drilldozer blade, Heavy stubber, Heavy mining laser
+1x Goliath Truck (85 pts): Demolition charge cache, Goliath wheels, Heavy stubber, Twin autocannon
+5x Hybrid Metamorphs (70 pts)
+• 1x Metamorph Leader: Leader's Bio-weapons, Autopistol
+• 4x Hybrid Metamorph: 4 with Autopistol, Metamorph mutations
+5x Purestrain Genestealers (75 pts): 5 with Cult claws and talons
+
+
++++++++++++++++++++++++++++++++++++++++++++++++
++ FACTION KEYWORD: Imperium - Adeptus Astartes - Space Marines
++ DETACHMENT: 
++ TOTAL ARMY POINTS: 10785pts
++
++ ENHANCEMENT: 
++ NUMBER OF UNITS: 85
++ SECONDARY: - Bring It Down: (24x2) + (5x4) + (2x6) - Assassination: 26 Characters
++++++++++++++++++++++++++++++++++++++++++++++++
+
+Char1: 1x Ancient (50 pts): Bolt pistol, Bolt Rifle, Close combat weapon
+Char2: 1x Ancient in Terminator Armor (75 pts): Storm bolter, Chainfist
+Char3: 1x Apothecary (50 pts): Absolvor bolt pistol, Close combat weapon, Reductor Pistol
+Char4: 1x Apothecary Biologis (70 pts): Absolvor bolt pistol, Close combat weapon
+Char5: 1x Bladeguard Ancient (45 pts): Close combat weapon, Heavy Bolt Pistol
+Char6: 1x Captain (80 pts): Bolt pistol, Master-crafted bolter, Close combat weapon
+Char7: 1x Captain in Gravis Armour (80 pts): Master-crafted Heavy Bolt Rifle, Master-crafted power weapon
+Char8: 1x Captain in Phobos Armour (70 pts): Bolt pistol, Combat Knife, Instigator Bolt Carbine
+Char9: 1x Captain in Terminator Armour (95 pts): Storm bolter, Relic Weapon
+Char10: 1x Captain with Jump Pack (75 pts): Astartes Chainsword, Heavy Bolt Pistol
+Char11: 1x Champion of the Chapter [Crucible] (70 pts): 
+Char12: 1x Chaplain (60 pts): Absolvor bolt pistol, Crozius arcanum
+Char13: 1x Chaplain in Terminator Armour (75 pts): Crozius arcanum, Storm bolter
+Char14: 1x Chaplain on Bike (75 pts): Absolvor bolt pistol, Crozius arcanum, Twin bolt rifle
+Char15: 1x Chaplain with Jump Pack (75 pts): Crozius arcanum, Bolt pistol
+Char16: 1x Judiciar (70 pts): Absolvor bolt pistol, Executioner Relic Blade
+Char17: 1x Librarian (65 pts): Bolt pistol, Force weapon, Smite
+Char18: 1x Librarian in Phobos Armour (70 pts): Bolt pistol, Force weapon, Smite
+Char19: 1x Librarian in Terminator Armour (75 pts): Force weapon, Smite
+Char20: 1x Librarius Adept [Crucible] (70 pts): 
+Char21: 1x Lieutenant (55 pts): Close combat weapon, Bolt pistol, Master-crafted bolter
+Char22: 1x Lieutenant in Phobos Armour (55 pts): Bolt pistol, Master-crafted Scoped Bolt Carbine, Paired Combat Blades
+Char23: 1x Lieutenant in Reiver Armour (55 pts): Combat Knife, Master-crafted Special Issue Bolt Pistol
+Char24: 1x Lieutenant with Combi-weapon (85 pts): Combi-weapon, Paired Combat Blades
+Char25: 1x Techmarine (55 pts): Forge Bolter, Grav-pistol, Omnissian power axe, Servo-arm
+Char26: 1x Venerable Battle-Brother [Crucible] (160 pts): 
+
+5x Assault Intercessor Squad (75 pts)
+• 1x Assault Intercessor Sergeant: Heavy Bolt Pistol, Astartes Chainsword
+• 4x Assault Intercessors: 4 with Astartes Chainsword, Heavy Bolt Pistol
+5x Heavy Intercessor Squad (100 pts)
+• 1x Heavy Intercessor Sergeant: Bolt pistol, Close combat weapon, Heavy Bolt Rifle
+• 4x Heavy Intercessors: 4 with Bolt pistol, Close combat weapon, Heavy Bolt Rifle
+5x Intercessor Squad (80 pts)
+• 1x Intercessor Sergeant: Bolt pistol, Bolt Rifle, Close combat weapon
+• 4x Intercessor: 4 with Bolt pistol, Bolt Rifle, Close combat weapon
+10x Tactical Squad (140 pts)
+• 9x Tactical Marine: 9 with Bolt pistol, Boltgun, Close combat weapon
+• 1x Tactical Marine Sergeant: Close combat weapon, Bolt pistol, Boltgun
+
+3x Aggressor Squad (95 pts)
+• 1x Aggressor Sergeant: Twin power fist, Flamestorm Gauntlets
+• 2x Aggressors: 2 with Twin power fist, Flamestorm Gauntlets
+5x Assault Intercessors with Jump Packs (90 pts)
+• 1x Assault Intercessor Sergeant with Jump Pack: Heavy Bolt Pistol, Astartes Chainsword
+• 4x Assault Intercessors with Jump Pack: 4 with Astartes Chainsword, Heavy Bolt Pistol
+1x Astraeus (525 pts): Armoured hull, Ironhail Heavy Stubber, Storm bolter, Twin macro-accelerator cannon, Twin heavy bolter, 2x Astraeus las-ripper
+1x Ballistus Dreadnought (150 pts): Armoured Feet, Ballistus Lascannon, Ballistus Missile Launcher, Twin Storm Bolter
+3x Bladeguard Veteran Squad (80 pts)
+• 1x Bladeguard Veteran Sergeant: Master-crafted power weapon, Heavy Bolt Pistol
+• 2x Bladeguard Veterans: 2 with Heavy Bolt Pistol, Master-crafted power weapon
+1x Brutalis Dreadnought (160 pts): Twin Icarus ironhail heavy stubber, Brutalis Bolt Rifles, Brutalis Fists, Twin heavy bolter
+3x Centurion Assault Squad (150 pts)
+• 2x Assault Centurion: 2 with Siege Drills, Centurion Bolters, Twin flamer
+• 1x Assault Centurion Sergeant: Centurion Assault Launchers, Siege Drills, Twin flamer
+3x Centurion Devastator Squad (175 pts)
+• 2x Devastator Centurion: 2 with Centurion Fists, Centurion Bolters, Grav-cannon
+• 1x Devastator Centurion Sergeant: Centurion Fists, Centurion Bolters, Grav-cannon
+4x Company Heroes (105 pts)
+• 2x Company Veteran
+    1 with Bolt pistol, Close combat weapon, Master-crafted Bolt Rifle
+    1 with Bolt pistol, Close combat weapon, Master-crafted Heavy Bolter
+• 1x Ancient: Bolt pistol, Bolt Rifle, Close combat weapon
+• 1x Company Champion: Bolt pistol, Master-crafted Power Weapon
+5x Desolation Squad (200 pts)
+• 4x Desolation Marine: 4 with Bolt pistol, Castellan Launcher, Close combat weapon, Superfrag Rocket Launcher
+• 1x Desolation Sergeant: Bolt pistol, Castellan Launcher, Close combat weapon, Superfrag Rocket Launcher
+5x Devastator Squad (120 pts)
+• 1x Devastator Sergeant: Close combat weapon, Bolt pistol, Boltgun
+• 4x Devastator Marine: 4 with Bolt pistol, Close combat weapon, Grav-cannon
+1x Dreadnought (135 pts): Close combat weapon, Missile Launcher, Assault Cannon
+1x Drop Pod (70 pts): 
+3x Eliminator Squad (85 pts)
+• 2x Eliminator: 2 with Bolt pistol, Close combat weapon, Bolt Sniper Rifle
+• 1x Eliminator Sergeant: Bolt pistol, Close combat weapon, Bolt Sniper Rifle
+3x Eradicator Squad (90 pts)
+• 2x Eradicator: 2 with Bolt pistol, Close combat weapon, Melta rifle
+• 1x Eradicator Sergeant: Bolt pistol, Close combat weapon, Melta rifle
+1x Firestrike Servo-Turrets (75 pts): Close combat weapon, Twin Firestrike Las-talon
+1x Gladiator Lancer (160 pts): Armoured Hull, Lancer Laser Destroyer, 2x Fragstorm grenade launcher
+1x Gladiator Reaper (160 pts): Armoured Hull, 2x Tempest Bolter, Twin Heavy Onslaught Gatling Cannon
+1x Gladiator Valiant (150 pts): Armoured Hull, 2x Multi-melta, Twin Las-talon
+1x Hammerfall Bunker (175 pts): Hammerfall Missile Launcher, Hammerfall Heavy Bolter Array
+5x Hellblaster Squad (110 pts)
+• 4x Hellblaster: 4 with Bolt pistol, Close combat weapon, Plasma Incinerator
+• 1x Hellblaster Sergeant: Close combat weapon, Plasma Incinerator, Bolt pistol
+1x Impulsor (80 pts): Armoured Hull, 2x Fragstorm grenade launcher
+3x Inceptor Squad (120 pts)
+• 2x Inceptor: 2 with Close combat weapon, Assault Bolters
+• 1x Inceptor Sergeant: Close combat weapon, Assault Bolters
+5x Incursor Squad (80 pts)
+• 4x Incursor: 4 with Bolt pistol, Occulus Bolt Carbine, Paired Combat Blades
+• 1x Incursor Sergeant: Bolt pistol, Occulus Bolt Carbine, Paired Combat Blades
+5x Infernus Squad (90 pts)
+• 4x Infernus Marines: 4 with Bolt pistol, Close combat weapon, Pyreblaster
+• 1x Infernus Sergeant: Bolt pistol, Close combat weapon, Pyreblaster
+5x Infiltrator Squad (100 pts)
+• 4x Infiltrator: 4 with Bolt pistol, Close combat weapon, Marksman Bolt Carbine
+• 1x Infiltrator Sergeant: Bolt pistol, Close combat weapon, Marksman Bolt Carbine
+1x Invader ATV (60 pts): Bolt pistol, Close combat weapon, Twin bolt rifle, Onslaught gatling cannon
+1x Invictor Tactical Warsuit (125 pts): Fragstorm grenade launcher, Heavy Bolter, Invictor Fist, Twin Ironhail Heavy Stubber, Incendium Cannon
+1x Land Raider (220 pts): Armoured Tracks, 2x Godhammer Lascannon, Twin heavy bolter
+1x Land Raider Crusader (220 pts): Armoured Tracks, 2x Hurricane Bolter, Twin assault cannon
+1x Land Raider Redeemer (270 pts): Armoured Tracks, 2x Flamestorm Cannon, Twin assault cannon
+3x Outrider Squad (80 pts)
+• 2x Outrider: 2 with Astartes Chainsword, Heavy Bolt Pistol, Twin bolt rifle
+• 1x Outrider Sergeant: Astartes Chainsword, Heavy Bolt Pistol, Twin bolt rifle
+1x Predator Annihilator (135 pts): Armoured Tracks, Predator Twin Lascannon
+1x Predator Destructor (140 pts): Armoured Tracks, Predator Autocannon
+1x Razorback (95 pts): Armoured Tracks, Twin heavy bolter
+1x Redemptor Dreadnought (205 pts): Redemptor Fist, Heavy Onslaught Gatling Cannon, Heavy Flamer, Twin Fragstorm Grenade Launcher
+5x Reiver Squad (80 pts)
+• 1x Reiver Sergeant: Combat Knife, Special Issue Bolt Pistol
+• 4x Reivers: 4 with Special Issue Bolt Pistol, Combat Knife
+1x Repulsor (180 pts): Armoured Hull, Hunter-slayer missile, Repulsor Defensive Array, Twin heavy bolter, Heavy Onslaught Gatling Cannon
+1x Repulsor Executioner (230 pts): Armoured Hull, Heavy Onslaught Gatling Cannon, Repulsor Executioner Defensive Array, Twin heavy bolter, Twin Icarus ironhail heavy stubber, Macro Plasma Incinerator
+1x Rhino (75 pts): Armoured Tracks, Storm bolter
+5x Scout Squad (70 pts)
+• 1x Scout Sergeant: Bolt pistol, Close combat weapon, Boltgun
+• 4x Scouts: 4 with Bolt pistol, Boltgun, Close combat weapon
+5x Sternguard Veteran Squad (100 pts)
+• 1x Sternguard Veteran Sergeant: Close combat weapon, Sternguard Bolt Pistol, Sternguard Bolt Rifle
+• 4x Sternguard Veteran: 4 with Close combat weapon, Sternguard Bolt Pistol, Sternguard Bolt Rifle
+1x Storm Speeder Hailstrike (115 pts): Close combat weapon, 2x Fragstorm grenade launcher, Onslaught gatling cannon, Twin Ironhail Heavy Stubber
+1x Storm Speeder Hammerstrike (125 pts): Close combat weapon, Hammerstrike Missile Launcher, 2x Krakstorm Grenade Launcher, Melta Destroyer
+1x Storm Speeder Thunderstrike (135 pts): Close combat weapon, Stormfury Missiles, Thunderstrike Las-talon, Twin Icarus Rocket Pod
+1x Stormhawk Interceptor (155 pts): Armoured Hull, Twin assault cannon, Las-talon, Skyhammer Missile Launcher
+1x Stormraven Gunship (280 pts): Armoured Hull, 2x Stormstrike Missiles, Twin assault cannon, Typhoon missile launcher
+1x Stormtalon Gunship (165 pts): Armoured Hull, Twin assault cannon, Skyhammer Missile Launcher
+3x Suppressor Squad (75 pts)
+• 2x Suppressor: 2 with Accelerator Autocannon, Bolt pistol, Close combat weapon
+• 1x Suppressor Sergeant: Accelerator Autocannon, Bolt pistol, Close combat weapon
+5x Terminator Assault Squad (180 pts)
+• 1x Assault Terminator Sergeant: Storm Shield, Thunder Hammer
+• 4x Assault Terminator: 4 with Storm Shield, Thunder Hammer
+5x Terminator Squad (170 pts)
+• 1x Terminator Sergeant: Storm bolter, Power fist
+• 4x Terminator: 4 with Power fist, Storm bolter
+1x Thunderhawk Gunship (840 pts): Thunderhawk cluster bombs, Armoured hull, 2x Lascannon, 4x Twin heavy bolter, Thunderhawk heavy cannon
+5x Vanguard Veteran Squad with Jump Packs (100 pts)
+• 1x Vanguard Veteran Sergeant with Jump Pack: Vanguard Veteran Weapon, Bolt pistol
+• 4x Vanguard Veterans with Jump Packs: 4 with Vanguard Veteran Weapon, Bolt pistol
+1x Vindicator (185 pts): Armoured Tracks, Demolisher Cannon
+1x Whirlwind (190 pts): Armoured Tracks, Whirlwind Vengeance Launcher
+
+
++++++++++++++++++++++++++++++++++++++++++++++++
++ FACTION KEYWORD: Imperium - Adeptus Custodes
++ DETACHMENT: 
++ TOTAL ARMY POINTS: 16160pts
++ ALLIED UNITS: Adeptus Titanicus & Imperial Knights & Agents of the Imperium
++
++ WARLORD: Char2: Trajann Valoris
++ ENHANCEMENT: 
++ NUMBER OF UNITS: 51
++ SECONDARY: - Bring It Down: (10x2) + (3x4) + (16x6) - Assassination: 23 Characters
++++++++++++++++++++++++++++++++++++++++++++++++
+
+Char1: 1x Aleya (65 pts): Somnus
+Char4: 1x Blade Champion (120 pts): Vaultswords
+Char5: 1x Guardian of the Throne [Crucible] (130 pts): 
+Char6: 1x Kataphraktoi Exemplar [Crucible] (150 pts): 
+Char7: 1x Knight-Centura (55 pts): Executioner Greatblade
+Char8: 1x Null Maiden [Crucible] (65 pts): 
+Char9: 1x Shield-Captain (120 pts): Guardian Spear
+Char10: 1x Shield-Captain in Allarus Terminator Armour (130 pts): Balistus grenade launcher, Guardian Spear
+Char11: 1x Shield-Captain on Dawneagle Jetbike (150 pts): Interceptor lance, Salvo launcher
+Char2: 1x Trajann Valoris (140 pts): Warlord, Eagle's Scream, Watcher's Axe
+Char3: 1x Valerian (110 pts): Gnosis
+
+4x Custodian Guard (160 pts): 4 with Guardian Spear
+
+2x Allarus Custodians (110 pts): 2 with Balistus grenade launcher, Guardian Spear
+1x Anathema Psykana Rhino (75 pts): Armoured tracks, Storm Bolter
+3x Aquilon Custodians (195 pts): 3 with Lastrum storm bolter, Solerite power gauntlet
+1x Ares Gunship (580 pts): 2x Arachnus heavy blaze cannon, Arachnus magna-blaze cannon, Armoured hull
+1x Caladius Grav-tank (215 pts): Armoured hull, Twin lastrum bolt cannon, Twin iliastus accelerator cannon
+1x Contemptor-Achillus Dreadnought (155 pts): Achillus dreadspear, 2x Lastrum storm bolter
+1x Contemptor-Galatus Dreadnought (165 pts): Galatus warblade
+1x Coronus Grav-carrier (200 pts): Armoured hull, Twin arachnus blaze cannon, Twin lastrum bolt cannon
+5x Custodian Guard with Adrasite and Pyrithite spears (250 pts): 5 with Adrasite spear
+4x Custodian Wardens (210 pts): 4 with Guardian Spear
+1x Orion Assault Dropship (690 pts): 2x Arachnus heavy blaze cannon, Armoured hull, 2x Spiculus heavy bolt launcher, 2x Twin lastrum bolt cannon
+1x Pallas Grav-attack (105 pts): Armoured hull, Twin arachnus blaze cannon
+4x Prosecutors (40 pts)
+• 1x Prosecutor Sister Superior: Boltgun, Close combat weapon
+• 3x Prosecutor: 3 with Boltgun, Close combat weapon
+5x Sagittarum Custodians (225 pts): 5 with Adrastus bolt caliver, Misericordia
+1x Telemon Heavy Dreadnought (225 pts): Armoured feet, Spiculus bolt launcher, 2x Iliastus accelerator culverin
+3x Venatari Custodians (165 pts): 3 with Venatari lance
+1x Venerable Contemptor Dreadnought (170 pts): Combi-bolter, Contemptor combat weapon, Multi-melta
+1x Venerable Land Raider (220 pts): Armoured tracks, 2x Godhammer lascannon, Twin heavy bolter
+4x Vigilators (45 pts)
+• 1x Vigilator Sister Superior: Executioner greatblade
+• 3x Vigilator: 3 with Executioner greatblade
+4x Witchseekers (45 pts)
+• 1x Witchseeker Sister Superior: Close combat weapon, Witchseeker flamer
+• 3x Witchseeker: 3 with Close combat weapon, Witchseeker flamer
+
+1x Acastus Knight Asterius (765 pts): 2x Asterius volkite culverin, Karacnos mortar battery, Titanic feet, 2x Twin conversion beam cannon
+1x Acastus Knight Porphyrion (700 pts): Titanic feet, 2x Twin magna lascannon, 2x Acastus autocannon, Acastus ironstorm missile pod
+1x Armiger Helverin (135 pts): 2x Armiger autocannon, Armoured feet, Questoris heavy stubber
+1x Armiger Moirax (150 pts): Armoured feet, Graviton pulsar, Volkite veuglaire
+1x Armiger Warglaive (140 pts): Reaper chain-cleaver, Thermal spear, Questoris heavy stubber
+Char12: 2x Canis Rex (415 pts)
+• 1x Canis Rex: Freedom's Hand, Las-impulsor, Questoris multi-laser
+• 1x Sir Hekhtur: Close combat weapon, Hekhtur's pistol
+Char13: 1x Cerastus Knight Lancer (395 pts): Cerastus shock lance
+Char14: 1x Knight Castellan (410 pts): Plasma decimator, Titanic feet, 2x Twin meltagun, Volcano lance, 2x Shieldbreaker missile launcher, Twin siegebreaker cannon
+Char15: 1x Knight Crusader (385 pts): Avenger gatling cannon, Heavy flamer, Titanic feet, Meltagun, Thermal cannon
+Char16: 1x Knight Defender (415 pts): Conversion beam obliterator, Phosphor blaster, Plasma executor, Titanic feet, Twin incendine combustor
+Char17: 1x Knight Destrier (250 pts): Questoris heavy stubber, Titanic feet, Chastiser gatling cannon, Frag bombard
+Char18: 1x Knight Gallant (355 pts): Reaper chainsword, Thunderstrike gauntlet, Meltagun
+Char19: 1x Knight Paladin (375 pts): Questoris heavy stubber, Rapid-fire battle cannon, Meltagun, Reaper chainsword
+Char20: 1x Knight Preceptor (365 pts): Las-impulsor, Preceptor multi-laser, Reaper chainsword
+Char21: 1x Knight Valiant (410 pts): Conflagration cannon, Thundercoil harpoon, Titanic feet, 2x Twin meltagun, 2x Shieldbreaker missile launcher, Twin siegebreaker cannon
+Char22: 1x Knight Warden (375 pts): Avenger gatling cannon, Heavy flamer, Meltagun, Reaper chainsword
+Char23: 1x Ministorum Priest (40 pts): Zealot's vindictor
+1x Warhound Titan (1100 pts): Warhound feet, Warhound plasma blastgun, Warhound vulcan mega-bolter
+1x Warlord Titan (3500 pts): 2x Ardex-defensor lascannon, 2x Ardex-defensor mauler, Warlord feet, 2x Apocalypse launcher, Arioch power claw, Macro gatling blaster

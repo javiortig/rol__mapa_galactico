@@ -38,9 +38,9 @@ const baseSystems: BaseSystem[] = [
     starClass: "blue",
     type: "Capital fortificada",
     status: "controlled",
-    controllerFactionId: "astra-militarum",
+    controllerFactionId: "adeptus-custodes",
     isCapital: true,
-    publicDescription: "Bastion manufactorum y astropuerto militar del frente imperial.",
+    publicDescription: "Bastion aurico y astropuerto militar custodiado por los guardianes del Trono.",
     production: dailyProduction({ supply: 9, minerals: 6, uridium: 2 })
   },
   {
@@ -52,9 +52,9 @@ const baseSystems: BaseSystem[] = [
     starClass: "orange",
     type: "Cinturon minero",
     status: "controlled",
-    controllerFactionId: "astra-militarum",
+    controllerFactionId: "adeptus-custodes",
     isCapital: false,
-    publicDescription: "Asteroides ricos en mineral defendidos por baterias orbitales.",
+    publicDescription: "Asteroides ricos en mineral defendidos por baterias orbitales custodes.",
     production: dailyProduction({ supply: 1, minerals: 7, uridium: 1 })
   },
   {
@@ -66,7 +66,7 @@ const baseSystems: BaseSystem[] = [
     starClass: "white",
     type: "Bastion exterior",
     status: "controlled",
-    controllerFactionId: "astra-militarum",
+    controllerFactionId: "adeptus-custodes",
     isCapital: false,
     publicDescription: "Fortaleza avanzada que vigila las rutas hacia la Zanja Azul.",
     production: dailyProduction({ supply: 5, minerals: 3, uridium: 1 })
@@ -508,7 +508,7 @@ const edges: CampaignSnapshot["edges"] = [
 
 const resources: CampaignSnapshot["resources"] = [
   {
-    factionId: "astra-militarum",
+    factionId: "adeptus-custodes",
     supply: 180,
     minerals: 130,
     honor: 12,
@@ -599,7 +599,7 @@ type MockUnitGroup = {
 const unitGroups: MockUnitGroup[] = [
   {
     id: "imperial-kharon-garrison",
-    factionId: "astra-militarum",
+    factionId: "adeptus-custodes",
     name: "Guarnicion de Kharon",
     currentSystemId: "kharon-prime",
     status: "ready",
@@ -608,7 +608,7 @@ const unitGroups: MockUnitGroup[] = [
     units: [
       {
         id: "imperial-kharon-cadians",
-        name: "Cadian Shock Troops",
+        name: "Custodian Guard",
         points: 80,
         quantity: 3,
         experience: 1,
@@ -618,7 +618,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "imperial-arx-front",
-    factionId: "astra-militarum",
+    factionId: "adeptus-custodes",
     name: "117o Grupo de Choque",
     currentSystemId: "arx-solum",
     status: "ready",
@@ -640,7 +640,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "imperial-helios-column",
-    factionId: "astra-militarum",
+    factionId: "adeptus-custodes",
     name: "Columna Helios",
     currentSystemId: "kharon-prime",
     status: "moving",
@@ -649,7 +649,7 @@ const unitGroups: MockUnitGroup[] = [
     units: [
       {
         id: "imperial-helios-cadians",
-        name: "Cadian Shock Troops",
+        name: "Custodian Guard",
         points: 80,
         quantity: 2,
         experience: 0,
@@ -659,7 +659,7 @@ const unitGroups: MockUnitGroup[] = [
   },
   {
     id: "imperial-azur-line",
-    factionId: "astra-militarum",
+    factionId: "adeptus-custodes",
     name: "Linea de Azur",
     currentSystemId: "azur-trench",
     status: "in_war",
@@ -668,7 +668,7 @@ const unitGroups: MockUnitGroup[] = [
     units: [
       {
         id: "imperial-azur-tank",
-        name: "Leman Russ Battle Tank",
+        name: "Caladius Grav-tank",
         points: 145,
         quantity: 2,
         experience: 1,
@@ -1097,23 +1097,23 @@ const baseUnits: CampaignSnapshot["units"] = unitGroups.flatMap((group) =>
 const characterUnits: CampaignSnapshot["units"] = [
   makeMockCharacterUnit("character-aeldari-warboss", "aeldari", "Warboss Gorbad Krumpa", "unit-aeldari-warboss", "cinder-maw", 110),
   makeMockCharacterUnit("character-necrones-overlord", "necrones", "Overlord Sekh-Nemesor", "unit-necrones-overlord", "thokt-vault", 100),
-  makeMockCharacterUnit("character-guardia-castellan", "astra-militarum", "Castellan Mira Holt", "unit-guardia-castellan", "kharon-prime", 70),
+  makeMockCharacterUnit("character-custodes-shield-captain", "adeptus-custodes", "Shield-Captain Valerian Kha", "unit-adeptus-custodes-shield-captain", "kharon-prime", 120),
   makeMockCharacterUnit("character-culto-primus", "cultos-genestealer", "Primus Korda Vhal", "unit-culto-primus", "blackglass", 80),
   makeMockCharacterUnit("character-sombra-captain", "space-marines", "Captain Aster Valen", "unit-sombra-captain", "sa-cea-gate", 95),
   makeMockCharacterUnit("character-muerte-lord-contagion", "legiones-daemonicas", "Lord Morbus Vane", "unit-muerte-lord-contagion", "mordax", 100)
 ];
 
-const units: CampaignSnapshot["units"] = [...generated40kInitialUnits, ...baseUnits, ...characterUnits];
+const units: CampaignSnapshot["units"] = generated40kInitialUnits;
 
 const movements: CampaignSnapshot["movements"] = [
   {
-    id: "move-imperial-helios",
-    unitIds: ["imperial-helios-cadians"],
-    unitSelections: [{ unitId: "imperial-helios-cadians", quantity: 2 }],
-    factionId: "astra-militarum",
-    fromSystemId: "kharon-prime",
+    id: "move-custodes-helios",
+    unitIds: ["custodes-arx-caladius"],
+    unitSelections: [{ unitId: "custodes-arx-caladius", quantity: 1 }],
+    factionId: "adeptus-custodes",
+    fromSystemId: "arx-solum",
     toSystemId: "helios-drift",
-    pathSystemIds: ["kharon-prime", "helios-drift"],
+    pathSystemIds: ["arx-solum", "helios-drift"],
     uridiumCost: 1,
     segmentCount: 1,
     durationSeconds: 120,
@@ -1305,8 +1305,8 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-guardia-cadian",
-    factionId: "astra-militarum",
-    name: "Cadian Shock Troops",
+    factionId: "adeptus-custodes",
+    name: "Custodian Guard",
     category: "Infanteria",
     points: 80,
     supplyCost: 12,
@@ -1322,7 +1322,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-guardia-kasrkin",
-    factionId: "astra-militarum",
+    factionId: "adeptus-custodes",
     name: "Kasrkin",
     category: "Elite",
     points: 105,
@@ -1339,8 +1339,8 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-guardia-leman-russ",
-    factionId: "astra-militarum",
-    name: "Leman Russ Battle Tank",
+    factionId: "adeptus-custodes",
+    name: "Caladius Grav-tank",
     category: "Vehiculo",
     points: 145,
     supplyCost: 2,
@@ -1543,8 +1543,8 @@ const unitTemplateBase: MockUnitTemplate[] = [
   },
   {
     id: "unit-guardia-castellan",
-    factionId: "astra-militarum",
-    name: "Cadian Castellan",
+    factionId: "adeptus-custodes",
+    name: "Shield-Captain",
     category: "Personaje",
     points: 70,
     supplyCost: 8,
@@ -1611,28 +1611,21 @@ const unitTemplateBase: MockUnitTemplate[] = [
   }
 ];
 
-const unitTemplates: CampaignSnapshot["unitTemplates"] = [
-  ...generated40kUnitTemplates,
-  ...unitTemplateBase.map((template) => ({
-    ...template,
-    unitType: getMockUnitType(template.category),
-    unitKeywords: getMockUnitKeywords(template.category),
-    defaultQuantity: getMockDefaultQuantity(template.name),
-    woundsPerModel: getMockWoundsPerModel(template.name),
-    recruitmentBuildingType: getRecruitmentBuildingType(template.category),
-    requiredTechnologyNodeId: getRequiredTechnologyForUnit(template.name)
-  }))
-];
+const unitTemplates: CampaignSnapshot["unitTemplates"] = generated40kUnitTemplates;
+
+void baseUnits;
+void characterUnits;
+void unitTemplateBase;
 
 const conflicts: CampaignSnapshot["conflicts"] = [
   {
     id: "conflict-azur-trench",
     systemId: "azur-trench",
     attackerFactionId: "aeldari",
-    defenderFactionId: "astra-militarum",
+    defenderFactionId: "adeptus-custodes",
     status: "pending",
     blockedUntil: inDays(14),
-    notes: "Orcos e Imperiales han colisionado en la ruta central de la Zanja Azul. Pendiente de batalla fisica."
+    notes: "Aeldari y Adeptus Custodes han colisionado en la ruta central de la Zanja Azul. Pendiente de batalla fisica."
   },
   {
     id: "conflict-ossuary-reach",
@@ -1825,8 +1818,8 @@ const relics: CampaignSnapshot["relics"] = [
   makeMockRelic("relic-aeldari-diente-gorko", "aeldari", "cinder-maw", "Diente de Gorko", "Colmillo enorme engarzado en hierro candente.", "Reliquia narrativa: inspira cargas temerarias y duelos de jefes.", "tooth", "common"),
   makeMockRelic("relic-necrones-orbe-hekatep", "necrones", "thokt-vault", "Orbe de Hekatep", "Esfera de mando que pulsa con codigo dinastico verde.", "Reliquia narrativa: ancla protocolos de reanimacion y autoridad de tumba.", "orb", "rare"),
   makeMockRelic("relic-necrones-cetro-fase", "necrones", "thokt-vault", "Cetro de Fase", "Baston de nobleza con filo que vibra entre realidades.", "Reliquia narrativa: marca derecho de conquista sobre mundos dormidos.", "scepter", "common"),
-  makeMockRelic("relic-guardia-estandarte-kasr", "astra-militarum", "kharon-prime", "Estandarte de Kasr Vhal", "Bandera de guerra recuperada de una fortaleza perdida.", "Reliquia narrativa: concede legitimidad y valor a una linea imperial.", "banner", "rare"),
-  makeMockRelic("relic-guardia-aquila-rota", "astra-militarum", "kharon-prime", "Aquila Rota", "Fragmento dorado de un santuario bombardeado.", "Reliquia narrativa: juramento de resistencia bajo fuego imposible.", "aquila", "common"),
+  makeMockRelic("relic-custodes-aquila-aurica", "adeptus-custodes", "kharon-prime", "Aquila Aurica", "Fragmento dorado de una camara de juramento sellada.", "Reliquia narrativa: representa vigilancia, pureza y autoridad del Trono.", "aquila", "rare"),
+  makeMockRelic("relic-custodes-sello-auramita", "adeptus-custodes", "kharon-prime", "Sello de Auramita", "Placa votiva marcada con juramentos de defensa imposibles.", "Reliquia narrativa: inspira duelos ceremoniales y defensa inquebrantable.", "shield", "common"),
   makeMockRelic("relic-culto-garra-patriarca", "cultos-genestealer", "blackglass", "Garra del Patriarca", "Taliman oseo oculto en un relicario de manufactorum.", "Reliquia narrativa: refuerza la fe de celulas insurgentes.", "claw", "rare"),
   makeMockRelic("relic-culto-mascara-vidrio", "cultos-genestealer", "blackglass", "Mascara de Vidrio Negro", "Mascara ritual usada por predicadores de la cuarta generacion.", "Reliquia narrativa: simboliza infiltracion y control de masas.", "mask", "common"),
   makeMockRelic("relic-sombra-crux-eclipsada", "space-marines", "sa-cea-gate", "Crux Eclipsada", "Insignia de honor ennegrecida por la luz de un sol muerto.", "Reliquia narrativa: recuerda juramentos de purga y defensa del sector.", "crux", "rare"),
@@ -1843,8 +1836,8 @@ const systemsWithBaseProduction: CampaignSnapshot["systems"] = systems.map((syst
 
 const tradeOffers: CampaignSnapshot["tradeOffers"] = [
   {
-    id: "trade-imperial-sell-minerals",
-    creatorFactionId: "astra-militarum",
+    id: "trade-custodes-sell-minerals",
+    creatorFactionId: "adeptus-custodes",
     offerType: "sell",
     resourceKey: "minerals",
     resourceAmount: 15,
@@ -2170,11 +2163,11 @@ function makeBuildingTemplate(
 }
 
 function getMockUnitCategory(name: string): CampaignSnapshot["units"][number]["category"] {
-  if (["Warboss", "Overlord", "Cadian Castellan", "Primus", "Captain", "Lord of Contagion"].includes(name)) {
+  if (["Warboss", "Overlord", "Shield-Captain", "Primus", "Captain", "Lord of Contagion"].includes(name)) {
     return "Personaje";
   }
 
-  if (["Deff Dread", "Leman Russ Battle Tank", "Achilles Ridgerunner", "Redemptor Dreadnought", "Foetid Bloat-drone"].includes(name)) {
+  if (["Deff Dread", "Caladius Grav-tank", "Achilles Ridgerunner", "Redemptor Dreadnought", "Foetid Bloat-drone"].includes(name)) {
     return "Vehiculo";
   }
 
@@ -2241,9 +2234,9 @@ function getMockUnitTemplateId(name: string) {
     "Necron Warriors": "unit-necrones-warriors",
     Immortals: "unit-necrones-immortals",
     "Skorpekh Destroyers": "unit-necrones-skorpekh",
-    "Cadian Shock Troops": "unit-guardia-cadian",
+    "Custodian Guard": "unit-adeptus-custodes-custodian-guard",
     Kasrkin: "unit-guardia-kasrkin",
-    "Leman Russ Battle Tank": "unit-guardia-leman-russ",
+    "Caladius Grav-tank": "unit-adeptus-custodes-caladius-grav-tank",
     "Neophyte Hybrids": "unit-culto-neophytes",
     "Acolyte Hybrids": "unit-culto-acolytes",
     "Achilles Ridgerunner": "unit-culto-ridgerunner",
@@ -2255,7 +2248,7 @@ function getMockUnitTemplateId(name: string) {
     "Foetid Bloat-drone": "unit-muerte-bloat-drone",
     Warboss: "unit-aeldari-warboss",
     Overlord: "unit-necrones-overlord",
-    "Cadian Castellan": "unit-guardia-castellan",
+    "Shield-Captain": "unit-adeptus-custodes-shield-captain",
     Primus: "unit-culto-primus",
     Captain: "unit-sombra-captain",
     "Lord of Contagion": "unit-muerte-lord-contagion"
@@ -2272,9 +2265,9 @@ function getMockDefaultQuantity(name: string) {
     "Necron Warriors": 10,
     Immortals: 5,
     "Skorpekh Destroyers": 3,
-    "Cadian Shock Troops": 10,
+    "Custodian Guard": 4,
     Kasrkin: 10,
-    "Leman Russ Battle Tank": 1,
+    "Caladius Grav-tank": 1,
     "Neophyte Hybrids": 10,
     "Acolyte Hybrids": 5,
     "Achilles Ridgerunner": 1,
@@ -2286,7 +2279,7 @@ function getMockDefaultQuantity(name: string) {
     "Foetid Bloat-drone": 1,
     Warboss: 1,
     Overlord: 1,
-    "Cadian Castellan": 1,
+    "Shield-Captain": 1,
     Primus: 1,
     Captain: 1,
     "Lord of Contagion": 1
@@ -2303,9 +2296,9 @@ function getMockWoundsPerModel(name: string) {
     "Necron Warriors": 1,
     Immortals: 1,
     "Skorpekh Destroyers": 3,
-    "Cadian Shock Troops": 1,
+    "Custodian Guard": 1,
     Kasrkin: 1,
-    "Leman Russ Battle Tank": 13,
+    "Caladius Grav-tank": 10,
     "Neophyte Hybrids": 1,
     "Acolyte Hybrids": 1,
     "Achilles Ridgerunner": 8,
@@ -2317,7 +2310,7 @@ function getMockWoundsPerModel(name: string) {
     "Foetid Bloat-drone": 10,
     Warboss: 6,
     Overlord: 5,
-    "Cadian Castellan": 4,
+    "Shield-Captain": 5,
     Primus: 4,
     Captain: 6,
     "Lord of Contagion": 6
@@ -2338,12 +2331,12 @@ function getRequiredTechnologyForUnit(name: string) {
   ]);
   const vehicleUnits = new Set([
     "Deff Dread",
-    "Leman Russ Battle Tank",
+    "Caladius Grav-tank",
     "Achilles Ridgerunner",
     "Redemptor Dreadnought",
     "Foetid Bloat-drone"
   ]);
-  const characterUnits = new Set(["Warboss", "Overlord", "Cadian Castellan", "Primus", "Captain", "Lord of Contagion"]);
+  const characterUnits = new Set(["Warboss", "Overlord", "Shield-Captain", "Primus", "Captain", "Lord of Contagion"]);
 
   if (veteranUnits.has(name)) {
     return "veteranos-guerra";
@@ -2359,3 +2352,10 @@ function getRequiredTechnologyForUnit(name: string) {
 
   return null;
 }
+
+void getMockUnitType;
+void getMockUnitKeywords;
+void getRecruitmentBuildingType;
+void getMockDefaultQuantity;
+void getMockWoundsPerModel;
+void getRequiredTechnologyForUnit;

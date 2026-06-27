@@ -69,12 +69,13 @@ Usuarios locales de prueba:
 
 ```text
 admin@rol40k.local / admin-local-123
-orcos@rol40k.local / rol40k-local-123
+legiones-daemonicas@rol40k.local / rol40k-local-123
+agentes-imperium@rol40k.local / rol40k-local-123
+cultos-genestealer@rol40k.local / rol40k-local-123
+aeldari@rol40k.local / rol40k-local-123
+space-marines@rol40k.local / rol40k-local-123
+adeptus-custodes@rol40k.local / rol40k-local-123
 necrones@rol40k.local / rol40k-local-123
-guardia-imperial@rol40k.local / rol40k-local-123
-culto-genestelar@rol40k.local / rol40k-local-123
-sombra-emperador@rol40k.local / rol40k-local-123
-guardia-muerte@rol40k.local / rol40k-local-123
 ```
 
 Si aparece un error de refresh token después de resetear Supabase, entrar de nuevo desde `/login`. Si el navegador conserva una sesión antigua, cerrar sesión o borrar el almacenamiento local del sitio.
@@ -156,13 +157,14 @@ Estado tecnico actual:
 Estado jugable actual:
 
 - Campana en tiempo real, sin turnos estrategicos.
-- Facciones jugables finales importadas desde `40kPoints.txt`: Legiones Daemonicas, Agentes del Imperium, Cultos Genestealer, Aeldari, Space Marines, Astra Militarum y Necrones.
-- El catalogo final de unidades se genera con `npm run units:generate`; importa 400 hojas de unidad reales y omite 14 cabeceras/totales del archivo.
+- Facciones jugables finales importadas desde `data/11th40kPoints.txt`: Legiones Daemonicas, Agentes del Imperium, Cultos Genestealer, Aeldari, Space Marines, Adeptus Custodes y Necrones.
+- `Astra Militarum` ya no es faccion jugable; `Adeptus Custodes` ocupa su hueco de campana en `kharon-prime`.
+- El catalogo final de unidades se genera con `npm run units:generate`; importa 333 hojas de unidad reales de 11a edicion y valida que cada bloque coincide con `NUMBER OF UNITS`.
 - Produccion diaria por tick temporal configurable, calculada desde edificios activos.
 - Movimiento, reclutamiento e investigacion funcionan por timestamps y resolvers backend/lazy processing.
 - Unidades jugables son `campaign_units`, no ejercitos abstractos.
 - Las unidades tienen miniaturas actuales, miniaturas iniciales y heridas agregadas; no pueden separarse al mover.
-- Las unidades tienen hasta dos `unit_keywords` Warhammer en espanol: `Infanteria`, `Caracter`, `Vehiculo`, `Bestia` o `Montado`; `unit_type` queda como legacy tecnico.
+- Las unidades tienen hasta dos `unit_keywords` Warhammer en espanol: `Infanteria`, `Caracter`, `Vehiculo`, `Bestia`, `Montado`, `Aeronave` o `Fortificacion`; `unit_type` queda como legacy tecnico.
 - Las unidades con keyword `Caracter` usan `experience` como nivel directo `1..10`, con rangos militares y slots de reliquia por nivel.
 - Las reliquias v1 son narrativas: se guardan en Santuarios de Reliquias, se equipan a Caracteres veteranos y no aplican bonos automaticos.
 - Construccion planetaria con slots por sistema: 6 en capitales y 3 en el resto.
@@ -943,7 +945,7 @@ Una orden de movimiento puede incluir una o varias unidades propias que esten `r
 
 Cada fila de `campaign_units` representa una unidad Warhammer persistente e indivisible. El campo `quantity` representa cuantas miniaturas actuales quedan vivas en esa unidad, `starting_quantity` representa su tamano completo y `wounds_taken` representa heridas agregadas en miniaturas supervivientes. Por ejemplo, una unidad de `Boyz` puede empezar como `10/10`, quedar `6/10` y `2 heridas` tras una batalla, pero no puede separarse en grupos hijos para moverse por otra ruta.
 
-Cada unidad movible es una unidad real de faccion, por ejemplo `Boyz`, `Meganobz`, `Deff Dread`, `Necron Warriors`, `Kasrkin`, `Leman Russ Battle Tank`, `Intercessor Squad`, `Plague Marines` o `Foetid Bloat-drone`.
+Cada unidad movible es una unidad real de faccion importada desde `data/11th40kPoints.txt`, por ejemplo `Custodian Guard`, `Shield-Captain`, `Caladius Grav-tank`, `Necron Warriors`, `Guardian Defenders`, `Intercessor Squad`, `Pink Horrors` o `Imperial Navy Breachers`.
 
 El coste se paga con Uridium.
 
@@ -991,12 +993,12 @@ Ejemplo:
 
 ```text
 Sistema: Kharon Prime
-Controlador: Guardia Imperial
+Controlador: Adeptus Custodes
 Estado: Controlado
 
 Tropas presentes:
-- Cadian Shock Troops 10/10 miniaturas - 80 pts
-- Kasrkin 10/10 miniaturas - 105 pts
+- Custodian Guard 4/4 miniaturas - 160 pts
+- Shield-Captain 1/1 miniaturas - 120 pts
 
 Acciones:
 [Mover tropas]
@@ -1011,9 +1013,9 @@ Se abre panel o modal:
 Mover tropas desde Kharon Prime
 
 Selecciona unidades:
-[ ] Cadian Shock Troops - 10/10 miniaturas - 80 pts
-[ ] Kasrkin - 10/10 miniaturas - 105 pts
-[ ] Leman Russ Battle Tank - 1/1 miniaturas - 145 pts
+[ ] Custodian Guard - 4/4 miniaturas - 160 pts
+[ ] Shield-Captain - 1/1 miniaturas - 120 pts
+[ ] Caladius Grav-tank - 1/1 miniaturas - 215 pts
 ```
 
 Primera version:
@@ -1257,9 +1259,9 @@ Cada unidad debe tener:
 
 `unit_keywords` se usa para validaciones nuevas como reliquias, Caracteres y futuros efectos. `unit_type` queda como campo legacy/derivado y `category` se mantiene como etiqueta visible y compatibilidad con datos anteriores.
 
-En el catalogo final importado desde `40kPoints.txt`, `category` se extrae de la seccion real del roster y se normaliza a una de estas categorias visibles: `Personaje`, `Linea de batalla`, `Transporte`, `Otras hojas de datos` o `Aliada`. Los equivalentes en ingles (`CHARACTERS`, `DEDICATED TRANSPORTS`, `OTHER DATASHEETS`) se normalizan a la misma taxonomia.
+En el catalogo final importado desde `data/11th40kPoints.txt`, `category` se deriva de la linea `CharN`, de keywords reales BSData como `Battleline`/`Dedicated Transport` y de si la unidad viene de una fuente aliada. Se normaliza a: `Personaje`, `Linea de batalla`, `Transporte`, `Otras hojas de datos` o `Aliada`.
 
-Las etiquetas funcionales de unidad (`unit_keywords`) se cruzan con datos estructurados de BSData/wh40k-10e durante `npm run units:generate`. El importador guarda hasta dos etiquetas reales relevantes para el rol, normalizadas al espanol: `Infanteria`, `Caracter`, `Vehiculo`, `Bestia`, `Montado`, `Aeronave` y `Fortificacion`. Ejemplos validos: `Infanteria + Caracter`, `Vehiculo + Aeronave`, `Vehiculo + Caracter`. El informe `docs/generated/40k-unit-import-report.md` debe quedar con `Unidades con keywords reales cruzadas: 400` y `fallback heuristico: 0`.
+Las etiquetas funcionales de unidad (`unit_keywords`) se cruzan con datos estructurados de BSData/wh40k-10e durante `npm run units:generate`. BSData se usa solo para tipos/keywords; los puntos y miniaturas vienen siempre de `data/11th40kPoints.txt`. El importador guarda hasta dos etiquetas reales relevantes para el rol, normalizadas al espanol: `Infanteria`, `Caracter`, `Vehiculo`, `Bestia`, `Montado`, `Aeronave` y `Fortificacion`. Ejemplos validos: `Infanteria + Caracter`, `Vehiculo + Aeronave`, `Vehiculo + Caracter`. El informe `docs/generated/40k-unit-import-report.md` debe quedar con `Hojas de unidad importadas: 333`, `Adeptus Custodes: 51`, `Astra Militarum: 0`, `Unidades con keywords reales cruzadas: 333` y `Fallback heuristico: 0`.
 
 Las unidades se pagan solo con Suministro vital, Mineral, Honor y Oro. Material Industrial queda reservado para construcción y Uridium queda reservado para movimiento/comercio, no para generar tropas.
 
@@ -1365,7 +1367,7 @@ Unidades iniciales desbloqueadas sin tecnología:
 
 - Boyz.
 - Necron Warriors.
-- Cadian Shock Troops.
+- Custodian Guard.
 - Neophyte Hybrids.
 - Intercessor Squad.
 - Poxwalkers.
@@ -1383,7 +1385,7 @@ Unidades bloqueadas por `veteranos-guerra`:
 Unidades bloqueadas por `motores-guerra`:
 
 - Deff Dread.
-- Leman Russ Battle Tank.
+- Caladius Grav-tank.
 - Achilles Ridgerunner.
 - Redemptor Dreadnought.
 - Foetid Bloat-drone.
@@ -2117,7 +2119,7 @@ campaign_units
 - name text
 - category text
 - unit_type text check in ('beast', 'vehicle', 'character', 'infantry', 'mounted')
-- unit_keywords text[] check max 2 in ('Vehiculo', 'Caracter', 'Infanteria', 'Bestia', 'Montado')
+- unit_keywords text[] check max 2 in ('Vehiculo', 'Caracter', 'Infanteria', 'Bestia', 'Montado', 'Aeronave', 'Fortificacion')
 - points integer
 - quantity integer default 1 -- miniaturas actuales
 - starting_quantity integer default 1 -- tamano completo de la unidad
@@ -2137,7 +2139,7 @@ campaign_units
 
 Cada fila representa una unidad Warhammer concreta movible en el mapa. Las unidades son indivisibles: no se separan miniaturas al mover y no se crean nuevas filas hijas en el flujo actual. La validacion de heridas es `wounds_taken <= quantity * unit_templates.wounds_per_model`.
 
-`unit_keywords` es el campo funcional para reglas nuevas. Puede tener 1 o 2 valores y siempre usa nombres en espanol sin acento: `Vehiculo`, `Caracter`, `Infanteria`, `Bestia`, `Montado`.
+`unit_keywords` es el campo funcional para reglas nuevas. Puede tener 1 o 2 valores y siempre usa nombres en espanol sin acento: `Vehiculo`, `Caracter`, `Infanteria`, `Bestia`, `Montado`, `Aeronave`, `Fortificacion`.
 
 `unit_type` queda como legacy derivado desde `unit_keywords`. Si `unit_keywords` contiene `Caracter`, `experience` se interpreta como nivel directo `1..10`, `rank` se sincroniza con el rango militar y los slots de reliquia se calculan desde ese nivel.
 
@@ -2161,7 +2163,7 @@ unit_templates
 - name text
 - category text
 - unit_type text check in ('beast', 'vehicle', 'character', 'infantry', 'mounted')
-- unit_keywords text[] check max 2 in ('Vehiculo', 'Caracter', 'Infanteria', 'Bestia', 'Montado')
+- unit_keywords text[] check max 2 in ('Vehiculo', 'Caracter', 'Infanteria', 'Bestia', 'Montado', 'Aeronave', 'Fortificacion')
 - points integer
 - default_quantity integer default 1
 - wounds_per_model integer default 1
@@ -2499,12 +2501,13 @@ Usuarios locales de prueba:
 
 ```text
 admin@rol40k.local / admin-local-123
-orcos@rol40k.local / rol40k-local-123
+legiones-daemonicas@rol40k.local / rol40k-local-123
+agentes-imperium@rol40k.local / rol40k-local-123
+cultos-genestealer@rol40k.local / rol40k-local-123
+aeldari@rol40k.local / rol40k-local-123
+space-marines@rol40k.local / rol40k-local-123
+adeptus-custodes@rol40k.local / rol40k-local-123
 necrones@rol40k.local / rol40k-local-123
-guardia-imperial@rol40k.local / rol40k-local-123
-culto-genestelar@rol40k.local / rol40k-local-123
-sombra-emperador@rol40k.local / rol40k-local-123
-guardia-muerte@rol40k.local / rol40k-local-123
 ```
 
 Las entidades principales mantienen UUID como clave primaria real y anaden `slug` unico para seeds reproducibles:

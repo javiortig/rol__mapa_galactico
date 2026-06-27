@@ -1,0 +1,2520 @@
+e (1890 puntos)
+
+Legiones Daemónicas
+Conquista (3000 puntos)
+Scintillating Legion (2 puntos de destacamento)
+Disposiciones de la fuerza: Activos prioritarios
+
+
+PERSONAJE
+
+Changecaster (60 puntos)
+  • 1 Arcane Fireball
+    1 Herald combat weapon
+
+Daemon Prince of Chaos (165 puntos)
+  • 1 Hellforged weapons
+    1 Infernal cannon
+
+Daemon Prince of Chaos with Wings (190 puntos)
+  • 1 Hellforged weapons
+    1 Infernal cannon
+
+Exalted Flamer (65 puntos)
+  • 1 Fire of Tzeentch
+    1 Flamer mouths
+
+Fateskimmer (95 puntos)
+  • 1 Arcane Fireball
+    1 Herald combat weapon
+    1 Screamer bites
+
+Fluxmaster (80 puntos)
+  • 1 Arcane Fireball
+    1 Herald combat weapon
+
+Kairos Fateweaver (295 puntos)
+  • 1 Infernal Gateway
+    1 Staff of Tomorrow
+
+Lord of Change (300 puntos)
+  • 1 Bolt of Change
+    1 Staff of Tzeentch
+
+The Changeling (105 puntos)
+  • 1 Infernal Flames
+    1 The Trickster’s Staff
+
+
+LÍNEA DE BATALLA
+
+Blue Horrors (125 puntos)
+  • 10 Blue Horror
+    • 10 Blue claws
+      10 Coruscating blue flames
+
+Pink Horrors (150 puntos)
+  • 10 Pink Horror
+    • 10 Coruscating pink flames
+      10 Pink claws
+
+
+OTRAS HOJAS DE DATOS
+
+Burning Chariot (115 puntos)
+  • 1 Fire of Tzeentch
+    1 Flamer mouths
+    1 Screamer bites
+
+Flamers (65 puntos)
+  • 1 Pyrocaster
+    • 1 Flamer mouths
+      1 Flickering flames
+  • 2 Flamer
+    • 2 Flamer mouths
+      2 Flickering flames
+
+Screamers (80 puntos)
+  • 3 Screamer
+    • 3 Lamprey bite
+
+Exportada con la versión de la app: v2.0.1 (122), versión de los datos v875
+
+.....
+
+agentes (20255 puntos)
+
+Agentes del Imperium
+Conquista (3000 puntos)
+Veiled Blade Elimination Force (3 puntos de destacamento)
+Disposiciones de la fuerza: Reconocimiento
+
+
+PERSONAJE
+
+Callidus Assassin (100 puntos)
+  • 1 Neural shredder
+    1 Phase sword and poison blades
+
+Culexus Assassin (85 puntos)
+  • 1 Animus speculum
+    1 Life-draining touch
+
+Eversor Assassin (110 puntos)
+  • 1 Executioner pistol
+    1 Power sword and neuro gauntlet
+
+Inquisitor (55 puntos)
+  • 1 Blessed Wardings
+    1 Bolt pistol
+    1 Inquisitorial melee weapon
+
+Inquisitor Coteaz (75 puntos)
+  • 1 Bolt pistol
+    1 Glovodan Psyber‐eagle
+    1 Nemesis daemon hammer
+    1 Psychic Blast
+
+Inquisitor Draxus (75 puntos)
+  • 1 Dirgesinger
+    1 Power fist
+    1 Psychic Tempest
+
+Inquisitor Greyfax (65 puntos)
+  • 1 Castigation
+    1 Condemnor stake
+    1 Master-crafted power sword
+
+Inquisitor Kroyle (100 puntos)
+  • 1 Butcher blade
+    1 Garralisk’s claws and teeth
+    1 Jindarii tox‑cycler
+    1 Stubcarbine
+
+Ministorum Priest (40 puntos)
+  • 1 Zealot’s vindictor
+
+Navigator (60 puntos)
+  • 1 Force-orb cane
+    1 Laspistol
+
+Rogue Trader Entourage (75 puntos)
+  • 1 Rogue Trader
+    • 1 Household pistol
+      1 Monomolecular cane-rapier
+  • 1 Death Cult Assassin
+    • 1 Dartmask
+      1 Death Cult power blade
+  • 1 Lectro‐Maester
+    • 1 Close combat weapon
+      1 Voltaic pistol
+  • 1 Rejuvenat Adept
+    • 1 Close combat weapon
+      1 Healing serum
+      1 Laspistol
+
+Vindicare Assassin (110 puntos)
+  • 1 Exitus pistol
+    1 Exitus rifle
+    1 Vindicare combat knife
+
+Watch Captain Artemis (65 puntos)
+  • 1 Hellfire Extremis
+    1 Master-crafted power weapon
+
+Watch Master (95 puntos)
+  • 1 Vigil spear
+
+
+LÍNEA DE BATALLA
+
+Aquila Kill Team (100 puntos)
+  • 1 Kill Team Sergeant
+    • 1 Plasma pistol
+      1 Power weapon
+  • 1 Deathwatch Veteran
+    • 1 Bolt pistol
+      1 Close combat weapon
+      1 Stalker bolt rifle
+  • 1 Deathwatch Veteran
+    • 1 Bolt pistol
+      1 Heavy thunder hammer
+  • 1 Deathwatch Veteran
+    • 1 Close combat weapon
+      1 Deathwatch marksman bolt carbine
+      1 Special-issue bolt pistol
+  • 1 Gravis Veteran
+    • 1 Bolt pistol
+      1 Close combat weapon
+      1 Infernus heavy bolter
+
+Deathwatch Kill Team (100 puntos)
+  • 1 Watch Sergeant
+    • 1 Boltgun
+      1 Power weapon
+  • 4 Deathwatch Veterans
+    • 4 Boltgun
+      4 Power weapon
+
+Imperial Navy Breachers (90 puntos)
+  • 1 Navis Sergeant-at-Arms
+    • 1 Close combat weapon
+      1 Navis shotgun
+  • 9 Navis Armsman
+    • 9 Close combat weapon
+      1 Endurant Shield
+      1 Navis heavy shotgun
+      1 Navis las-volley
+      7 Navis shotgun
+
+Vigilant Squad (85 puntos)
+  • 1 Proctor-Vigilant
+    • 1 Arbites combat shotgun
+      1 Arbites shotpistol
+      1 Close combat weapon
+  • 9 Vigilant
+    • 9 Arbites combat shotgun
+      9 Arbites shotpistol
+      9 Close combat weapon
+  • 1 Cyber-mastiff
+    • 1 Mechanical bite
+
+
+TRANSPORTES DEDICADOS
+
+Imperial Rhino (75 puntos)
+  • 1 Armoured tracks
+    1 Storm bolter
+
+Inquisitorial Chimera (70 puntos)
+  • 1 Armoured tracks
+    1 Heavy bolter
+    1 Lasgun array
+    1 Multi-laser
+
+Sisters of Battle Immolator (100 puntos)
+  • 1 Armoured tracks
+    1 Heavy bolter
+    1 Immolation flamers
+
+
+OTRAS HOJAS DE DATOS
+
+Corvus Blackstar (180 puntos)
+  • 1 Armoured hull
+    2 Blackstar rocket launcher
+    1 Twin assault cannon
+
+Exaction Squad (90 puntos)
+  • 1 Proctor-Exactant
+    • 1 Arbites combat shotgun
+      1 Arbites shotpistol
+      1 Close combat weapon
+  • 9 Exaction Vigilant
+    • 9 Arbites combat shotgun
+      9 Arbites shotpistol
+      9 Close combat weapon
+  • 1 Cyber-mastiff
+    • 1 Mechanical bite
+
+Grey Knights Terminator Squad (190 puntos)
+  • 1 Terminator Justicar
+    • 1 Nemesis force weapon
+      1 Storm bolter
+  • 4 Grey Knights Terminators
+    • 4 Nemesis force weapon
+      4 Storm bolter
+
+Inquisitorial Agents (50 puntos)
+  • 5 Inquisitorial Agent
+    • 5 Agent firearm
+      5 Agent melee weapon
+  • 1 Gun Servitor
+    • 1 Agent melee weapon
+      1 Heavy bolter
+
+Sanctifiers (100 puntos)
+  • 1 Miraculist
+    • 1 Burning hands
+      1 Holy fire
+  • 1 Salvationist
+    • 1 Close combat weapon
+      1 Salvationist Medikit
+  • 1 Death Cult Assassin
+    • 1 Death Cult blades
+  • 2 Missionary
+    • 1 Ministorum flamer
+      1 Plasma gun
+      2 Sanctifier melee weapon
+  • 4 Sanctifier
+    • 4 Ministorum hand flamer
+      4 Sanctifier melee weapon
+
+Subductor Squad (85 puntos)
+  • 1 Proctor-Subductor
+    • 1 Arbites shotpistol
+      1 Shock maul
+  • 9 Subductor
+    • 9 Arbites shotpistol
+      9 Shock maul
+  • 1 Cyber-mastiff
+    • 1 Mechanical bite
+
+Voidsmen-at-Arms (50 puntos)
+  • 1 Voidmaster
+    • 1 Artificer shotgun
+      1 Close combat weapon
+      1 Laspistol
+  • 4 Voidsman
+    • 4 Close combat weapon
+      3 Lasgun
+      4 Laspistol
+      1 Voidsman rotor cannon
+  • 1 Canid
+    • 1 Vicious bite
+
+
+UNIDADES ALIADAS
+
+Acastus Knight Asterius (785 puntos)
+  • 2 Asterius volkite culverin
+    1 Karacnos mortar battery
+    1 Titanic feet
+    2 Twin conversion beam cannon
+
+Acastus Knight Porphyrion (725 puntos)
+  • 2 Acastus autocannon
+    1 Acastus ironstorm missile pod
+    1 Titanic feet
+    2 Twin magna lascannon
+
+Armiger Helverin (140 puntos)
+  • 2 Armiger autocannon
+    1 Armoured feet
+    1 Questoris heavy stubber
+
+Armiger Moirax (150 puntos)
+  • 1 Armoured feet
+    1 Graviton pulsar
+    1 Volkite veuglaire
+
+Armiger Warglaive (140 puntos)
+  • 1 Questoris heavy stubber
+    1 Reaper chain-cleaver
+    1 Thermal spear
+
+Canis Rex (415 puntos)
+  • 1 Freedom’s Hand
+    1 Las-impulsor
+    1 Questoris multi-laser
+
+Cerastus Knight Acheron (380 puntos)
+  • 1 Acheron flame cannon
+    1 Reaper chainfist
+    1 Twin heavy bolter
+
+Cerastus Knight Atrapos (405 puntos)
+  • 1 Atrapos lascutter
+    1 Graviton singularity cannon
+
+Cerastus Knight Castigator (380 puntos)
+  • 1 Castigator bolt cannon
+    1 Tempest warblade
+
+Cerastus Knight Lancer (415 puntos)
+  • 1 Cerastus shock lance
+
+Knight Castellan (400 puntos)
+  • 1 Plasma decimator
+    2 Shieldbreaker missile launcher
+    1 Titanic feet
+    2 Twin meltagun
+    1 Twin siegebreaker cannon
+    1 Volcano lance
+
+Knight Crusader (395 puntos)
+  • 1 Avenger gatling cannon
+    1 Heavy flamer
+    1 Meltagun
+    1 Thermal cannon
+    1 Titanic feet
+
+Knight Defender (400 puntos)
+  • 1 Conversion beam obliterator
+    1 Phosphor blaster
+    1 Plasma executor
+    1 Titanic feet
+    1 Twin incendine combustor
+
+Knight Destrier (265 puntos)
+  • 1 Chastiser gatling cannon
+    1 Frag bombard
+    1 Questoris heavy stubber
+    1 Titanic feet
+
+Knight Errant (355 puntos)
+  • 1 Meltagun
+    1 Reaper chainsword
+    1 Thermal cannon
+
+Knight Gallant (355 puntos)
+  • 1 Meltagun
+    1 Reaper chainsword
+    1 Thunderstrike gauntlet
+
+Knight Paladin (375 puntos)
+  • 1 Meltagun
+    1 Questoris heavy stubber
+    1 Rapid-fire battle cannon
+    1 Reaper chainsword
+
+Knight Preceptor (365 puntos)
+  • 1 Las-impulsor
+    1 Questoris multi-laser
+    1 Reaper chainsword
+
+Knight Valiant (400 puntos)
+  • 1 Conflagration cannon
+    2 Shieldbreaker missile launcher
+    1 Thundercoil harpoon
+    1 Titanic feet
+    2 Twin meltagun
+    1 Twin siegebreaker cannon
+
+Knight Warden (375 puntos)
+  • 1 Avenger gatling cannon
+    1 Heavy flamer
+    1 Meltagun
+    1 Reaper chainsword
+
+Questoris Knight Magaera (385 puntos)
+  • 1 Lightning cannon
+    1 Phased plasma-fusil
+    1 Reaper chainsword
+
+Questoris Knight Styrix (375 puntos)
+  • 1 Graviton crusher
+    1 Reaper chainsword
+    1 Volkite chierovile
+
+Reaver Titan (2200 puntos)
+  • 1 Reaver apocalypse launcher
+    1 Reaver feet
+    1 Reaver gatling blaster
+    1 Reaver laser blaster
+
+Warbringer Nemesis Titan (2600 puntos)
+  • 2 Anvillus defence battery
+    3 Ardex-defensor mauler
+    1 Nemesis feet
+    1 Nemesis quake cannon
+    1 Reaver gatling blaster
+    1 Reaver laser blaster
+
+Warhound Titan (1100 puntos)
+  • 1 Warhound feet
+    1 Warhound plasma blastgun
+    1 Warhound vulcan mega-bolter
+
+Warlord Titan (3500 puntos)
+  • 2 Apocalypse launcher
+    2 Ardex-defensor lascannon
+    2 Ardex-defensor mauler
+    1 Arioch power claw
+    1 Macro gatling blaster
+    1 Warlord feet
+
+Exportada con la versión de la app: v2.0.1 (122), versión de los datos v875
+
+.....
+
+aa (3240 puntos)
+
+Cultos Genestealer
+Conquista (3000 puntos)
+Final Day y Héroes del alzamiento (3 puntos de destacamento)
+Disposiciones de la fuerza: Purgar al enemigo
+
+
+PERSONAJE
+
+Abominant (85 puntos)
+  • 1 Power sledgehammer
+
+Acolyte Iconward (50 puntos)
+  • 1 Autopistol
+    1 Cult claws
+
+Benefictus (75 puntos)
+  • 1 Close combat weapon
+    1 Psionic Cascade
+
+Biophagus (50 puntos)
+  • 1 Alchemicus Familiar
+    1 Autopistol
+    1 Chemical vials
+    1 Injector goad
+
+Clamavus (50 puntos)
+  • 1 Autopistol
+    1 Close combat weapon
+
+Jackal Alphus (55 puntos)
+  • 1 Autopistol
+    1 Close combat weapon
+    1 Cult sniper rifle
+
+Kelermorph (60 puntos)
+  • 1 Close combat weapon
+    1 Liberator autostubs
+
+Locus (35 puntos)
+  • 1 Locus blades
+
+Magus (50 puntos)
+  • 1 Autopistol
+    1 Force stave
+
+Nexos (60 puntos)
+  • 1 Autopistol
+    1 Close combat weapon
+
+Patriarch (80 puntos)
+  • 1 Patriarch’s claws
+
+Primus (70 puntos)
+  • 1 Cult bonesword
+    1 Scoped needle pistol
+    1 Toxin injector claw
+
+Reductus Saboteur (70 puntos)
+  • 1 Autopistol
+    1 Close combat weapon
+    1 Demolition charges
+    1 Remote explosives
+
+Sanctus (65 puntos)
+  • 1 Sanctus bio-dagger
+
+
+LÍNEA DE BATALLA
+
+Acolyte Hybrids with Autopistols (70 puntos)
+  • 1 Acolyte Leader
+    • 1 Autopistol
+      1 Cult claws and knife
+  • 4 Acolyte Hybrid
+    • 4 Autopistol
+      4 Cult claws and knife
+
+Acolyte Hybrids with Hand Flamers (75 puntos)
+  • 1 Acolyte Leader
+    • 1 Cult claws and knife
+      1 Hand flamer
+  • 4 Acolyte Hybrid
+    • 4 Cult claws and knife
+      4 Hand flamer
+
+Neophyte Hybrids (70 puntos)
+  • 1 Neophyte Leader
+    • 1 Autopistol
+      1 Close combat weapon
+      1 Hybrid firearm
+  • 9 Neophyte Hybrid
+    • 9 Autopistol
+      9 Close combat weapon
+      9 Hybrid firearm
+
+
+TRANSPORTES DEDICADOS
+
+Goliath Truck (85 puntos)
+  • 1 Armoured hull
+    1 Demolition charge cache
+    1 Heavy stubber
+    1 Twin autocannon
+
+
+OTRAS HOJAS DE DATOS
+
+Aberrants (150 puntos)
+  • 1 Aberrant Hypermorph
+    • 1 Aberrant weapons
+  • 4 Aberrant
+    • 4 Aberrant weapons
+
+Achilles Ridgerunners (105 puntos)
+  • 1 Armoured hull
+    1 Flare launcher
+    1 Heavy mining laser
+    1 Twin heavy stubber
+
+Atalan Jackals (90 puntos)
+  • 4 Atalan Jackal
+    • 4 Atalan small arms
+      4 Close combat weapon
+  • 1 Atalan Wolfquad
+    • 1 Atalan small arms
+      1 Close combat weapon
+      1 Heavy stubber
+
+Goliath Rockgrinder (120 puntos)
+  • 1 Demolition charge cache
+    1 Drilldozer blade
+    1 Heavy mining laser
+    1 Heavy stubber
+
+Hybrid Metamorphs (75 puntos)
+  • 1 Metamorph Leader
+    • 1 Autopistol
+      1 Leader’s cult weapons
+  • 4 Hybrid Metamorph
+    • 4 Autopistol
+      4 Metamorph mutations
+
+Purestrain Genestealers (80 puntos)
+  • 5 Purestrain Genestealer
+    • 5 Cult claws and talons
+
+
+UNIDADES ALIADAS
+
+Deathleaper (80 puntos)
+  • 1 Lictor claws and talons
+
+Gargoyles (80 puntos)
+  • 10 Gargoyle
+    • 10 Blinding venom
+      10 Fleshborer
+
+Hyperadapted Raveners (165 puntos)
+  • 1 Ravener Prime
+    • 1 Prime claws and talons
+  • 4 Raveners
+    • 4 Ravener heavy claws and talons
+      1 Venom bolt
+
+Lictor (60 puntos)
+  • 1 Lictor claws and talons
+
+Mawloc (135 puntos)
+  • 1 Distensible jaw
+    1 Mawloc scything talons
+
+Neurolictor (80 puntos)
+  • 1 Piercing claws and talons
+
+Parasite of Mortrex (70 puntos)
+  • 1 Barbed ovipositor
+    1 Clawed limbs
+
+Raveners (125 puntos)
+  • 5 Ravener
+    • 5 Ravener claws and talons
+
+The Red Terror (130 puntos)
+  • 1 Gaping maw
+    1 Scything talons
+
+Trygon (140 puntos)
+  • 1 Bio-electric pulse
+    1 Trygon scything talons
+
+Tyrannocyte (90 puntos)
+  • 1 Flensing whips
+    1 Tyrannocyte bio-weapons
+
+Von Ryan’s Leapers (60 puntos)
+  • 3 Von Ryan’s Leaper
+    • 3 Leaper’s talons
+
+Winged Hive Tyrant (185 puntos)
+  • 1 Monstrous bonesword and lash whip
+    1 Tyrant talons
+
+Winged Tyranid Prime (65 puntos)
+  • 1 Prime talons
+
+Exportada con la versión de la app: v2.0.1 (122), versión de los datos v875
+
+.....
+
+Aeldars (9740 puntos)
+
+Aeldari
+Conquista (3000 puntos)
+Aspect Host (3 puntos de destacamento)
+Disposiciones de la fuerza: Disrupción
+
+
+PERSONAJE
+
+Asurmen (135 puntos)
+  • 1 Bloody Twins
+    1 Sword of Asur
+
+Autarch (85 puntos)
+  • 1 Shuriken pistol
+    1 Star glaive
+
+Autarch Wayleaper (80 puntos)
+  • 1 Shuriken pistol
+    1 Star glaive
+
+Avatar of Khaine (265 puntos)
+  • 1 The Wailing Doom
+
+Baharroth (125 puntos)
+  • 1 Fury of the Tempest
+    1 Shining Blade
+
+Death Jester (80 puntos)
+  • 1 Flip Belt
+    1 Jester’s blade
+    1 Shrieker cannon
+
+Eldrad Ulthran (130 puntos)
+  • 1 Mind War
+    1 Shuriken pistol
+    1 The Staff of Ulthamar and witchblade
+
+Farseer (70 puntos)
+  • 1 Eldritch Storm
+    1 Shuriken pistol
+    1 Witchblade
+
+Farseer Skyrunner (70 puntos)
+  • 1 Eldritch Storm
+    1 Shuriken pistol
+    1 Twin shuriken catapult
+    1 Witchblade
+
+Fuegan (130 puntos)
+  • 1 Fire Axe
+    1 Searsong
+
+Jain Zar (105 puntos)
+  • 1 Blade of Destruction
+    1 Silent Death
+
+Kharseth (85 puntos)
+  • 1 Dread of the Deep Void
+    1 Waystave
+
+Lhykhis (135 puntos)
+  • 1 Brood Twain
+    1 Spider’s Fangs
+    1 Weaverender
+
+Maugan Ra (100 puntos)
+  • 1 Maugetar
+
+Prince Yriel (95 puntos)
+  • 1 Eye of Wrath
+    1 Shuriken pistol
+    1 Spear of Twilight
+
+Shadowseer (60 puntos)
+  • 1 Flip Belt
+    1 Miststave
+    1 Shuriken pistol
+
+Solitaire (115 puntos)
+  • 1 Flip Belt
+    1 Solitaire weapons
+
+Spiritseer (55 puntos)
+  • 1 Shuriken pistol
+    1 Witch staff
+
+Troupe Master (75 puntos)
+  • 1 Flip Belt
+    1 Shuriken pistol
+    1 Troupe Master’s blade
+
+Warlock (45 puntos)
+  • 1 Destructor
+    1 Shuriken pistol
+    1 Witchblade
+
+
+LÍNEA DE BATALLA
+
+Corsair Voidreavers (65 puntos)
+  • 1 Voidreaver Felarch
+    • 1 Close combat weapon
+      1 Power sword
+      1 Shuriken pistol
+  • 4 Corsair Voidreaver
+    • 4 Close combat weapon
+      4 Power sword
+      4 Shuriken pistol
+
+Guardian Defenders (90 puntos)
+  • 10 Guardian Defender
+    • 10 Close combat weapon
+      10 Shuriken catapult
+  • 1 Heavy Weapon Platform
+    • 1 Close combat weapon
+      1 Shuriken cannon
+
+Storm Guardians (110 puntos)
+  • 10 Storm Guardian
+    • 10 Close combat weapon
+      10 Shuriken pistol
+  • 1 Serpent’s Scale Platform
+    • 1 Close combat weapon
+      1 Serpent shield
+
+
+TRANSPORTES DEDICADOS
+
+Starweaver (80 puntos)
+  • 1 Close combat weapon
+    2 Shuriken cannon
+
+Wave Serpent (125 puntos)
+  • 1 Twin shuriken cannon
+    1 Twin shuriken catapult
+    1 Wraithbone hull
+
+
+OTRAS HOJAS DE DATOS
+
+Corsair Skyreavers (80 puntos)
+  • 1 Skyreaver Felarch
+    • 1 Corsair blade
+      1 Shuriken pistol
+  • 4 Skyreaver
+    • 4 Corsair blade
+      4 Shuriken pistol
+
+Corsair Voidscarred (80 puntos)
+  • 1 Voidscarred Felarch
+    • 1 Close combat weapon
+      1 Power sword
+      1 Shuriken pistol
+  • 4 Corsair Voidscarred
+    • 4 Close combat weapon
+      4 Power sword
+      4 Shuriken pistol
+
+Crimson Hunter (160 puntos)
+  • 1 Pulse laser
+    2 Starcannon
+    1 Wraithbone hull
+
+D-cannon Platform (110 puntos)
+  • 1 Close combat weapon
+    1 D-cannon
+    1 Shuriken catapult
+
+Dark Reapers (100 puntos)
+  • 1 Dark Reaper Exarch
+    • 1 Close combat weapon
+      1 Reaper launcher
+  • 4 Dark Reaper
+    • 4 Close combat weapon
+      4 Reaper launcher
+
+Dire Avengers (75 puntos)
+  • 1 Dire Avenger Exarch
+    • 1 Avenger shuriken catapult
+      1 Close combat weapon
+  • 4 Dire Avenger
+    • 4 Avenger shuriken catapult
+      4 Close combat weapon
+
+Falcon (130 puntos)
+  • 1 Pulse laser
+    1 Scatter laser
+    1 Twin shuriken catapult
+    1 Wraithbone hull
+
+Fire Dragons (120 puntos)
+  • 1 Fire Dragon Exarch
+    • 1 Close combat weapon
+      1 Exarch’s Dragon fusion gun
+  • 4 Fire Dragon
+    • 4 Close combat weapon
+      4 Dragon fusion gun
+
+Fire Prism (150 puntos)
+  • 1 Prism cannon
+    1 Twin shuriken catapult
+    1 Wraithbone hull
+
+Hemlock Wraithfighter (155 puntos)
+  • 2 Heavy D-scythe
+    1 Wraithbone hull
+
+Howling Banshees (85 puntos)
+  • 1 Howling Banshee Exarch
+    • 1 Banshee blade
+      1 Shuriken pistol
+  • 4 Howling Banshee
+    • 4 Banshee blade
+      4 Shuriken pistol
+
+Night Spinner (170 puntos)
+  • 1 Doomweaver
+    1 Twin shuriken catapult
+    1 Wraithbone hull
+
+Phantom Titan (2100 puntos)
+  • 1 D-bombard
+    1 Phantom feet
+    1 Phantom pulsar
+    1 Phantom starcannon
+    1 Voidstorm missile launcher
+
+Rangers (60 puntos)
+  • 5 Ranger
+    • 5 Close combat weapon
+      5 Long rifle
+      5 Shuriken pistol
+
+Revenant Titan (1100 puntos)
+  • 1 Cloudburst missile launcher
+    1 Revenant feet
+    1 Revenant pulsar
+    1 Sonic lance
+
+Shadow Weaver Platform (60 puntos)
+  • 1 Close combat weapon
+    1 Shadow weaver
+    1 Shuriken catapult
+
+Shining Spears (105 puntos)
+  • 1 Shining Spear Exarch
+    • 1 Laser lance
+      1 Twin shuriken catapult
+  • 2 Shining Spear
+    • 2 Laser lance
+      2 Twin shuriken catapult
+
+Shroud Runners (95 puntos)
+  • 3 Shroud Runner
+    • 3 Close combat weapon
+      3 Long rifle
+      3 Scatter laser
+      3 Shuriken pistol
+
+Skyweavers (105 puntos)
+  • 2 Skyweaver
+    • 2 Close combat weapon
+      2 Shuriken cannon
+      2 Star bolas
+
+Starfangs (70 puntos)
+  • 1 Disintegrator cannon
+    1 Starfang grenade launcher
+    1 Wraithbone hull
+
+Striking Scorpions (75 puntos)
+  • 1 Striking Scorpion Exarch
+    • 1 Scorpion chainsword
+      1 Scorpion’s claw
+      1 Shuriken pistol
+  • 4 Striking Scorpion
+    • 4 Scorpion chainsword
+      4 Shuriken pistol
+
+Swooping Hawks (100 puntos)
+  • 1 Swooping Hawk Exarch
+    • 1 Close combat weapon
+      1 Hawk’s talon
+  • 4 Swooping Hawk
+    • 4 Close combat weapon
+      4 Lasblaster
+
+Troupe (85 puntos)
+  • 1 Lead Player
+    • 1 Flip Belt
+      1 Harlequin’s blade
+      1 Shuriken pistol
+  • 4 Player
+    • 4 Flip Belt
+      4 Harlequin’s blade
+      4 Shuriken pistol
+
+Vibro Cannon Platform (60 puntos)
+  • 1 Close combat weapon
+    1 Shuriken catapult
+    1 Vibro cannon
+
+Voidweaver (115 puntos)
+  • 1 Close combat weapon
+    2 Shuriken cannon
+    1 Voidweaver haywire cannon
+
+Vyper (75 puntos)
+  • 1 Bright lance
+    1 Shuriken cannon
+    1 Wraithbone hull
+
+War Walkers (85 puntos)
+  • 2 Shuriken cannon
+    1 War Walker feet
+
+Warlock Conclave (55 puntos)
+  • 2 Warlock
+    • 2 Destructor
+      2 Shuriken pistol
+      2 Witchblade
+
+Warlock Skyrunners (45 puntos)
+  • 1 Destructor
+    1 Shuriken pistol
+    1 Twin shuriken catapult
+    1 Witchblade
+
+Warp Spiders (115 puntos)
+  • 1 Warp Spider Exarch
+    • 1 Close combat weapon
+      1 Exarch’s death spinner
+  • 4 Warp Spider
+    • 4 Close combat weapon
+      4 Death spinner
+
+Windriders (80 puntos)
+  • 3 Windrider
+    • 3 Close combat weapon
+      3 Twin shuriken catapult
+
+Wraithblades (140 puntos)
+  • 5 Wraithblade
+    • 5 Ghostswords
+
+Wraithguard (145 puntos)
+  • 5 Wraithguard
+    • 5 Close combat weapon
+      5 Wraithcannon
+
+Wraithknight (415 puntos)
+  • 1 Scattershield
+    1 Suncannon
+    1 Titanic feet
+
+Wraithknight with Ghostglaive (405 puntos)
+  • 1 Scattershield
+    1 Titanic ghostglaive
+
+Wraithlord (125 puntos)
+  • 2 Shuriken catapult
+    1 Wraithbone fists
+
+Exportada con la versión de la app: v2.0.1 (122), versión de los datos v875
+
+.....
+
+Marines todos  (10430 puntos)
+
+Space Marines
+Conquista (3000 puntos)
+Armoured Speartip (3 puntos de destacamento)
+Disposiciones de la fuerza: Ocupar y mantener
+
+
+PERSONAJE
+
+Ancient (40 puntos)
+  • 1 Bolt pistol
+    1 Bolt rifle
+    1 Close combat weapon
+
+Ancient in Terminator Armour (65 puntos)
+  • 1 Power fist
+    1 Storm bolter
+
+Apothecary (40 puntos)
+  • 1 Absolvor bolt pistol
+    1 Close combat weapon
+    1 Reductor pistol
+
+Apothecary Biologis (70 puntos)
+  • 1 Absolvor bolt pistol
+    1 Close combat weapon
+
+Bladeguard Ancient (40 puntos)
+  • 1 Close combat weapon
+    1 Heavy bolt pistol
+
+Captain (80 puntos)
+  • 1 Bolt Pistol
+    1 Close combat weapon
+    1 Master-crafted bolter
+
+Captain in Gravis Armour (80 puntos)
+  • 1 Master-crafted heavy bolt rifle
+    1 Master-crafted power weapon
+
+Captain in Phobos Armour (70 puntos)
+  • 1 Bolt Pistol
+    1 Combat knife
+    1 Instigator bolt carbine
+
+Captain in Terminator Armour (85 puntos)
+  • 1 Relic weapon
+    1 Storm bolter
+
+Captain with Jump Pack (75 puntos)
+  • 1 Astartes chainsword
+    1 Heavy bolt pistol
+
+Chaplain (60 puntos)
+  • 1 Absolvor bolt pistol
+    1 Crozius arcanum
+
+Chaplain in Terminator Armour (75 puntos)
+  • 1 Crozius arcanum
+    1 Storm bolter
+
+Chaplain on Bike (70 puntos)
+  • 1 Absolvor bolt pistol
+    1 Crozius arcanum
+    1 Twin bolt rifle
+
+Chaplain with Jump Pack (75 puntos)
+  • 1 Bolt pistol
+    1 Crozius arcanum
+
+Judiciar (55 puntos)
+  • 1 Absolvor bolt pistol
+    1 Executioner relic blade
+
+Librarian (60 puntos)
+  • 1 Bolt pistol
+    1 Force weapon
+    1 Smite
+
+Librarian in Phobos Armour (70 puntos)
+  • 1 Bolt pistol
+    1 Force weapon
+    1 Smite
+
+Librarian in Terminator Armour (75 puntos)
+  • 1 Force weapon
+    1 Smite
+
+Lieutenant (45 puntos)
+  • 1 Bolt Pistol
+    1 Close combat weapon
+    1 Master-crafted bolter
+
+Lieutenant in Phobos Armour (45 puntos)
+  • 1 Bolt Pistol
+    1 Master-crafted bolt carbine
+    1 Paired combat blades
+
+Lieutenant in Reiver Armour (45 puntos)
+  • 1 Combat knife
+    1 Master-crafted special issue bolt pistol
+
+Lieutenant with Combi-weapon (85 puntos)
+  • 1 Combi-weapon
+    1 Paired combat blades
+
+Techmarine (55 puntos)
+  • 1 Forge bolter
+    1 Grav-pistol
+    1 Omnissian power axe
+    1 Servo-arm
+
+
+LÍNEA DE BATALLA
+
+Assault Intercessor Squad (75 puntos)
+  • 1 Assault Intercessor Sergeant
+    • 1 Astartes chainsword
+      1 Heavy bolt pistol
+  • 4 Assault Intercessor
+    • 4 Astartes chainsword
+      4 Heavy bolt pistol
+
+Heavy Intercessor Squad (100 puntos)
+  • 1 Heavy Intercessor Sergeant
+    • 1 Bolt pistol
+      1 Close combat weapon
+      1 Heavy bolt rifle
+  • 4 Heavy Intercessor
+    • 4 Bolt pistol
+      4 Close combat weapon
+      4 Heavy bolt rifle
+
+Intercessor Squad (80 puntos)
+  • 1 Intercessor Sergeant
+    • 1 Bolt pistol
+      1 Bolt rifle
+      1 Close combat weapon
+  • 4 Intercessor
+    • 4 Bolt pistol
+      4 Bolt rifle
+      4 Close combat weapon
+
+Tactical Squad (140 puntos)
+  • 1 Tactical Sergeant
+    • 1 Bolt pistol
+      1 Boltgun
+      1 Close combat weapon
+  • 8 Tactical Marine
+    • 8 Bolt pistol
+      8 Boltgun
+      8 Close combat weapon
+  • 1 Tactical Marine
+    • 1 Bolt pistol
+      1 Boltgun
+      1 Close combat weapon
+
+
+TRANSPORTES DEDICADOS
+
+Drop Pod (70 puntos)
+
+Impulsor (80 puntos)
+  • 1 Armoured hull
+    2 Storm bolter
+
+Razorback (95 puntos)
+  • 1 Armoured tracks
+    1 Twin heavy bolter
+
+Rhino (75 puntos)
+  • 1 Armoured tracks
+    1 Storm bolter
+
+
+OTRAS HOJAS DE DATOS
+
+Aggressor Squad (90 puntos)
+  • 1 Aggressor Sergeant
+    • 1 Flamestorm gauntlets
+      1 Twin power fists
+  • 2 Aggressor
+    • 2 Flamestorm gauntlets
+      2 Twin power fists
+
+Assault Intercessors with Jump Packs (85 puntos)
+  • 1 Assault Intercessor Sergeant with Jump Pack
+    • 1 Astartes chainsword
+      1 Heavy bolt pistol
+  • 4 Assault Intercessors with Jump Packs
+    • 4 Astartes chainsword
+      4 Heavy bolt pistol
+
+Astraeus (525 puntos)
+  • 1 Armoured hull
+    2 Astraeus las-ripper
+    1 Ironhail heavy stubber
+    1 Storm bolter
+    1 Twin heavy bolter
+    1 Twin macro-accelerator cannon
+
+Ballistus Dreadnought (150 puntos)
+  • 1 Armoured feet
+    1 Ballistus lascannon
+    1 Ballistus missile launcher
+    1 Twin storm bolter
+
+Bladeguard Veteran Squad (80 puntos)
+  • 1 Bladeguard Veteran Sergeant
+    • 1 Heavy bolt pistol
+      1 Master-crafted power weapon
+  • 2 Bladeguard Veteran
+    • 2 Heavy bolt pistol
+      2 Master-crafted power weapon
+
+Brutalis Dreadnought (150 puntos)
+  • 1 Brutalis bolt rifles
+    1 Brutalis fists
+    1 Twin Icarus ironhail heavy stubber
+    1 Twin heavy bolter
+
+Centurion Assault Squad (150 puntos)
+  • 1 Assault Centurion Sergeant
+    • 1 Centurion bolters
+      1 Siege drills
+      1 Twin flamer
+  • 2 Assault Centurion
+    • 2 Centurion bolters
+      2 Siege drills
+      2 Twin flamer
+
+Centurion Devastator Squad (175 puntos)
+  • 1 Devastator Centurion Sergeant
+    • 1 Centurion bolters
+      1 Centurion fists
+      1 Grav-cannon
+  • 2 Devastator Centurion
+    • 2 Centurion bolters
+      2 Centurion fists
+      2 Grav-cannon
+
+Company Heroes (105 puntos)
+  • 1 Ancient
+    • 1 Bolt pistol
+      1 Bolt rifle
+      1 Close combat weapon
+  • 1 Company Champion
+    • 1 Bolt pistol
+      1 Master-crafted power weapon
+  • 2 Company Veteran
+    • 2 Bolt pistol
+      2 Close combat weapon
+      1 Master-crafted bolt rifle
+      1 Master-crafted heavy bolter
+
+Desolation Squad (180 puntos)
+  • 1 Desolation Sergeant
+    • 1 Bolt pistol
+      1 Castellan launcher
+      1 Close combat weapon
+      1 Superfrag rocket launcher
+  • 4 Desolation Marine
+    • 4 Bolt pistol
+      4 Castellan launcher
+      4 Close combat weapon
+      4 Superfrag rocket launcher
+
+Devastator Squad (120 puntos)
+  • 1 Devastator Sergeant
+    • 1 Bolt pistol
+      1 Boltgun
+      1 Close combat weapon
+  • 4 Devastator
+    • 4 Bolt pistol
+      4 Boltgun
+      4 Close combat weapon
+
+Dreadnought (135 puntos)
+  • 1 Assault cannon
+    1 Dreadnought combat weapon
+    1 Storm bolter
+
+Eliminator Squad (75 puntos)
+  • 1 Eliminator Sergeant
+    • 1 Bolt pistol
+      1 Bolt sniper rifle
+      1 Close combat weapon
+  • 2 Eliminator
+    • 2 Bolt pistol
+      2 Bolt sniper rifle
+      2 Close combat weapon
+
+Eradicator Squad (90 puntos)
+  • 1 Eradicator Sergeant
+    • 1 Bolt pistol
+      1 Close combat weapon
+      1 Melta rifle
+  • 2 Eradicator
+    • 2 Bolt pistol
+      2 Close combat weapon
+      2 Melta rifle
+
+Eradicator Squad with Heavy Bolters (70 puntos)
+  • 1 Eradicator Sergeant
+    • 1 Bolt pistol
+      1 Close-combat weapon
+      1 Heavy Bolter
+  • 2 Eradicator
+    • 2 Bolt pistol
+      2 Close-combat weapon
+      2 Heavy Bolter
+
+Firestrike Servo-turrets (75 puntos)
+  • 1 Close combat weapon
+    1 Twin Firestrike las-talon
+
+Gladiator Lancer (160 puntos)
+  • 1 Armoured hull
+    1 Lancer laser destroyer
+    2 Storm bolter
+
+Gladiator Reaper (160 puntos)
+  • 1 Armoured hull
+    2 Tempest bolter
+    1 Twin heavy onslaught gatling cannon
+
+Gladiator Valiant (150 puntos)
+  • 1 Armoured hull
+    2 Multi-melta
+    1 Twin las-talon
+
+Hammerfall Bunker (175 puntos)
+  • 1 Hammerfall heavy bolter array
+    1 Hammerfall missile launcher
+
+Hellblaster Squad (110 puntos)
+  • 1 Hellblaster Sergeant
+    • 1 Bolt pistol
+      1 Close combat weapon
+      1 Plasma incinerator
+  • 4 Hellblaster
+    • 4 Bolt pistol
+      4 Close combat weapon
+      4 Plasma incinerator
+
+Inceptor Squad (120 puntos)
+  • 1 Inceptor Sergeant
+    • 1 Assault bolters
+      1 Close combat weapon
+  • 2 Inceptor
+    • 2 Assault bolters
+      2 Close combat weapon
+
+Incursor Squad (85 puntos)
+  • 1 Incursor Sergeant
+    • 1 Bolt pistol
+      1 Occulus bolt carbine
+      1 Paired combat blades
+  • 4 Incursor
+    • 4 Bolt pistol
+      4 Occulus bolt carbine
+      4 Paired combat blades
+
+Infernus Squad (85 puntos)
+  • 1 Infernus Sergeant
+    • 1 Bolt pistol
+      1 Close combat weapon
+      1 Pyreblaster
+  • 4 Infernus Marine
+    • 4 Bolt pistol
+      4 Close combat weapon
+      4 Pyreblaster
+
+Infiltrator Squad (110 puntos)
+  • 1 Infiltrator Sergeant
+    • 1 Bolt pistol
+      1 Close combat weapon
+      1 Marksman bolt carbine
+  • 4 Infiltrator
+    • 4 Bolt pistol
+      4 Close combat weapon
+      4 Marksman bolt carbine
+
+Invader ATV (60 puntos)
+  • 1 Bolt pistol
+    1 Close combat weapon
+    1 Onslaught gatling cannon
+    1 Twin bolt rifle
+
+Invictor Tactical Warsuit (125 puntos)
+  • 1 Fragstorm grenade launcher
+    1 Heavy bolter
+    1 Incendium cannon
+    1 Invictor fist
+    1 Twin ironhail heavy stubber
+
+Land Raider (220 puntos)
+  • 1 Armoured tracks
+    2 Godhammer lascannon
+    1 Twin heavy bolter
+
+Land Raider Crusader (220 puntos)
+  • 1 Armoured tracks
+    2 Hurricane bolter
+    1 Twin assault cannon
+
+Land Raider Redeemer (250 puntos)
+  • 1 Armoured tracks
+    2 Flamestorm cannon
+    1 Twin assault cannon
+
+Land Speeder (95 puntos)
+  • 1 Close-combat weapon
+    1 Multi-melta
+    1 Onslaught gatling cannon
+    1 Stormfury missile launcher
+
+Outrider Squad (70 puntos)
+  • 1 Outrider Sergeant
+    • 1 Astartes chainsword
+      1 Heavy bolt pistol
+      1 Twin bolt rifle
+  • 2 Outrider
+    • 2 Astartes chainsword
+      2 Heavy bolt pistol
+      2 Twin bolt rifle
+
+Predator Annihilator (135 puntos)
+  • 1 Armoured tracks
+    1 Predator twin lascannon
+
+Predator Destructor (140 puntos)
+  • 1 Armoured tracks
+    1 Predator autocannon
+
+Redemptor Dreadnought (195 puntos)
+  • 1 Heavy flamer
+    1 Heavy onslaught gatling cannon
+    1 Redemptor fist
+    1 Twin fragstorm grenade launcher
+
+Reiver Squad (75 puntos)
+  • 1 Reiver Sergeant
+    • 1 Combat knife
+      1 Special issue bolt pistol
+  • 4 Reiver
+    • 4 Combat knife
+      4 Special issue bolt pistol
+
+Repulsor (170 puntos)
+  • 1 Armoured hull
+    1 Heavy onslaught gatling cannon
+    1 Hunter-slayer missile
+    1 Repulsor defensive array
+    1 Twin heavy bolter
+
+Repulsor Executioner (240 puntos)
+  • 1 Armoured hull
+    1 Heavy onslaught gatling cannon
+    1 Macro plasma incinerator
+    1 Repulsor Executioner defensive array
+    1 Twin Icarus ironhail heavy stubber
+    1 Twin heavy bolter
+
+Scout Squad (65 puntos)
+  • 1 Scout Sergeant
+    • 1 Bolt pistol
+      1 Boltgun
+      1 Close combat weapon
+  • 4 Scout
+    • 4 Bolt pistol
+      4 Boltgun
+      4 Close combat weapon
+
+Sternguard Veteran Squad (100 puntos)
+  • 1 Sternguard Veteran Sergeant
+    • 1 Close combat weapon
+      1 Sternguard bolt pistol
+      1 Sternguard bolt rifle
+  • 4 Sternguard Veteran
+    • 4 Close combat weapon
+      4 Sternguard bolt pistol
+      4 Sternguard bolt rifle
+
+Storm Speeder Hailstrike (105 puntos)
+  • 1 Close combat weapon
+    2 Fragstorm grenade launcher
+    1 Onslaught gatling cannon
+    1 Twin ironhail heavy stubber
+
+Storm Speeder Hammerstrike (130 puntos)
+  • 1 Close combat weapon
+    1 Hammerstrike missile launcher
+    2 Krakstorm grenade launcher
+    1 Melta destroyer
+
+Storm Speeder Thunderstrike (135 puntos)
+  • 1 Close combat weapon
+    1 Stormfury missiles
+    1 Thunderstrike las-talon
+    1 Twin Icarus rocket pod
+
+Stormhawk Interceptor (155 puntos)
+  • 1 Armoured hull
+    1 Las-talon
+    1 Skyhammer missile launcher
+    1 Twin assault cannon
+
+Stormraven Gunship (280 puntos)
+  • 1 Armoured hull
+    2 Stormstrike missile launcher
+    1 Twin assault cannon
+    1 Typhoon missile launcher
+
+Stormtalon Gunship (165 puntos)
+  • 1 Armoured hull
+    1 Skyhammer missile launcher
+    1 Twin assault cannon
+
+Suppressor Squad (75 puntos)
+  • 1 Suppressor Sergeant
+    • 1 Accelerator autocannon
+      1 Bolt pistol
+      1 Close combat weapon
+  • 2 Suppressor
+    • 2 Accelerator autocannon
+      2 Bolt pistol
+      2 Close combat weapon
+
+Terminator Assault Squad (180 puntos)
+  • 1 Assault Terminator Sergeant
+    • 1 Storm Shield
+      1 Thunder hammer
+  • 4 Assault Terminator
+    • 4 Storm Shield
+      4 Thunder hammer
+
+Terminator Squad (160 puntos)
+  • 1 Terminator Sergeant
+    • 1 Power fist
+      1 Storm bolter
+  • 4 Terminator
+    • 4 Power fist
+      4 Storm bolter
+
+Thunderhawk Gunship (840 puntos)
+  • 1 Armoured hull
+    2 Lascannon
+    1 Thunderhawk Cluster Bombs
+    1 Thunderhawk heavy cannon
+    4 Twin heavy bolter
+
+Vanguard Veteran Squad with Jump Packs (100 puntos)
+  • 1 Vanguard Veteran Sergeant with Jump Pack
+    • 1 Bolt pistol
+      1 Vanguard Veteran weapon
+  • 4 Vanguard Veteran with Jump Pack
+    • 4 Bolt pistol
+      4 Vanguard Veteran weapon
+
+Vindicator (185 puntos)
+  • 1 Armoured tracks
+    1 Demolisher cannon
+
+Whirlwind (175 puntos)
+  • 1 Armoured tracks
+    1 Whirlwind vengeance launcher
+
+Exportada con la versión de la app: v2.0.1 (122), versión de los datos v875
+
+.....
+
+Astra todo (27575 puntos)
+
+Astra Militarum
+Conquista (3000 puntos)
+Grizzled Company (3 puntos de destacamento)
+Disposiciones de la fuerza: Activos prioritarios
+
+
+PERSONAJE
+
+Cadian Castellan (55 puntos)
+  • 1 Chainsword
+    1 Laspistol
+
+Cadian Command Squad (65 puntos)
+  • 1 Cadian Commander
+    • 1 Chainsword
+      1 Laspistol
+  • 1 Cadian Veteran Guardsman
+    • 1 Chainsword
+      1 Laspistol
+  • 1 Cadian Veteran Guardsman
+    • 1 Close combat weapon
+      1 Lasgun
+      1 Master Vox
+  • 1 Cadian Veteran Guardsman
+    • 1 Close combat weapon
+      1 Lasgun
+      1 Medi-pack
+  • 1 Cadian Veteran Guardsman
+    • 1 Close combat weapon
+      1 Lasgun
+      1 Regimental Standard
+
+Catachan Command Squad (60 puntos)
+  • 1 Catachan Commander
+    • 1 Close combat weapon
+      1 Laspistol
+  • 4 Veteran Guardsman
+    • 4 Close combat weapon
+      4 Lasgun
+      4 Laspistol
+
+Commissar (30 puntos)
+  • 1 Bolt pistol
+    1 Chainsword
+
+Commissar Graves (125 puntos)
+  • 1 Aquiline Prow
+    1 Armoured hull
+    1 Chiron gatling cannon
+    1 Enforcer crew
+    1 Power sword and Manus Mortis
+    2 Prefectus heavy stubber
+
+Commissar Graves on Foot (65 puntos)
+  • 1 Bolt Pistol
+    1 Power sword and Manus Mortis
+
+Commissar Yarrick (130 puntos)
+  • 1 Bale Eye
+    1 Laspistol
+    1 Power klaw
+    1 Power sword
+    1 Storm bolter
+
+Gaunt’s Ghosts (95 puntos)
+  • 1 Ibram Gaunt
+    • 1 Bolt Pistol
+      1 Gaunt’s chainsword
+  • 1 Colm Corbec
+    • 1 Corbec’s hot-shot lascarbine
+      1 Straight silver knife
+  • 1 Elim Rawne
+    • 1 Rawne’s lascarbine
+      1 Straight silver knife
+  • 1 Hlaine Larkin
+    • 1 Larkin’s long-las
+      1 Straight silver knife
+  • 1 ’Try Again’ Bragg
+    • 1 Bragg’s autocannon
+      1 Straight silver knife
+  • 1 Oan Mkoll
+    • 1 Lascarbine
+      1 Mkoll’s straight silver knife
+
+Krieg Command Squad (65 puntos)
+  • 1 Lord Commissar
+    • 1 Laspistol
+      1 Power weapon
+  • 1 Veteran Guardsman
+    • 1 Chainsword
+      1 Laspistol
+  • 1 Veteran Guardsman
+    • 1 Alchemyk Counteragents
+      1 Close combat weapon
+      1 Laspistol
+      1 Servo-scribes
+  • 1 Veteran Guardsman
+    • 1 Close combat weapon
+      1 Lasgun
+      1 Master Vox
+  • 1 Veteran Guardsman
+    • 1 Close combat weapon
+      1 Lasgun
+      1 Regimental Standard
+  • 1 Veteran Guardsman
+    • 1 Boltgun
+      1 Close combat weapon
+
+Leman Russ Commander (235 puntos)
+  • 1 Armoured tracks
+    1 Lascannon
+    1 Leman Russ battle cannon
+
+Lord Marshal Dreir (75 puntos)
+  • 1 Laspistol
+    1 Sabre of Sacrifice
+    1 Savage claws
+
+Lord Solar Leontus (130 puntos)
+  • 1 Conquest
+    1 Konstantin’s hooves
+    1 Sol’s Righteous Gaze
+
+Militarum Tempestus Command Squad (85 puntos)
+  • 4 Tempestus Scion
+    • 4 Close combat weapon
+      4 Hot-shot lasgun
+  • 1 Tempestor Prime
+    • 1 Bolt pistol
+      1 Tempestus dagger
+
+Ministorum Priest (35 puntos)
+  • 1 Zealot’s vindictor
+
+Nork Deddog (60 puntos)
+  • 1 Huge knife
+    1 Ripper gun
+
+Ogryn Bodyguard (40 puntos)
+  • 1 Close combat weapon
+    1 Huge knife
+    1 Ripper gun
+
+Primaris Psyker (60 puntos)
+  • 1 Force weapon
+    1 Laspistol
+    1 Psychic Maelstrom
+
+Rogal Dorn Commander (290 puntos)
+  • 1 Armoured tracks
+    1 Castigator gatling cannon
+    1 Heavy stubber
+    1 Twin battle cannon
+
+Sly Marbo (55 puntos)
+  • 1 Envenomed blade
+    1 Ripper pistol
+
+Tech-Priest Enginseer (45 puntos)
+  • 1 Enginseer axe
+    1 Mechanicus pistol
+    1 Servo-arm
+
+Ursula Creed (85 puntos)
+  • 1 Duty and Vengeance
+    1 Power weapon
+
+
+LÍNEA DE BATALLA
+
+Cadian Shock Troops (75 puntos)
+  • 1 Shock Trooper Sergeant
+    • 1 Chainsword
+      1 Laspistol
+  • 9 Shock Trooper
+    • 9 Close combat weapon
+      9 Lasgun
+
+Catachan Jungle Fighters (75 puntos)
+  • 1 Jungle Fighter Sergeant
+    • 1 Close combat weapon
+      1 Laspistol
+  • 9 Jungle Fighter
+    • 9 Close combat weapon
+      9 Lasgun
+
+Death Korps of Krieg (75 puntos)
+  • 1 Death Korps Watchmaster
+    • 1 Chainsword
+      1 Laspistol
+  • 9 Death Korps Trooper
+    • 9 Close combat weapon
+      9 Lasgun
+
+
+TRANSPORTES DEDICADOS
+
+Centaur RSV (75 puntos)
+  • 1 Armoured hull
+    1 Pintle‑mounted heavy stubber
+
+Chimera (85 puntos)
+  • 1 Armoured tracks
+    1 Heavy bolter
+    1 Lasgun array
+    1 Multi-laser
+
+Taurox (75 puntos)
+  • 1 Armoured tracks
+    1 Twin autocannon
+
+Taurox Prime (85 puntos)
+  • 1 Armoured tracks
+    1 Taurox battle cannon
+    1 Twin Taurox hot-shot volley gun
+
+
+OTRAS HOJAS DE DATOS
+
+Aegis Defence Line (145 puntos)
+
+Armoured Sentinels (65 puntos)
+  • 1 Close combat weapon
+    1 Multi-laser
+
+Artillery Team (95 puntos)
+  • 1 Crew close combat weapons
+    1 Heavy mortar
+    1 Lasgun
+
+Attilan Rough Riders (60 puntos)
+  • 1 Rough Rider Sergeant
+    • 1 Hunting lance
+      1 Lasgun
+      1 Laspistol
+      1 Steed’s hooves
+  • 4 Rough Rider
+    • 4 Hunting lance
+      4 Lasgun
+      4 Laspistol
+      4 Steed’s hooves
+
+Avenger Strike Fighter (130 puntos)
+  • 1 Armoured hull
+    1 Avenger bolt cannon
+    1 Heavy stubber
+    2 Lascannon
+
+Baneblade (450 puntos)
+  • 1 Armoured tracks
+    1 Baneblade cannon
+    1 Coaxial autocannon
+    1 Demolisher cannon
+    1 Heavy stubber
+    2 Lascannon
+    1 Twin heavy bolter
+    2 Twin heavy flamer
+
+Banehammer (420 puntos)
+  • 1 Armoured tracks
+    2 Lascannon
+    1 Tremor cannon
+    1 Twin heavy bolter
+    2 Twin heavy flamer
+
+Banesword (450 puntos)
+  • 1 Armoured tracks
+    2 Lascannon
+    1 Quake cannon
+    1 Twin heavy bolter
+    2 Twin heavy flamer
+
+Basilisk (115 puntos)
+  • 1 Armoured tracks
+    1 Earthshaker cannon
+    1 Heavy bolter
+
+Bullgryn Squad (90 puntos)
+  • 1 Bullgryn Bone ’ead
+    • 1 Close combat weapon
+      1 Grenadier gauntlet
+      1 Slabshield
+  • 2 Bullgryn
+    • 2 Close combat weapon
+      2 Grenadier gauntlet
+      2 Slabshield
+
+Cadian Heavy Weapons Squad (65 puntos)
+  • 3 Heavy Weapon Team
+    • 3 Heavy bolter
+      3 Laspistol
+      3 Weapons team close combat weapons
+
+Cadian Recon Squad (80 puntos)
+  • 1 Recon Sergeant
+    • 1 Close combat weapon
+      1 Lasgun
+  • 9 Recon Trooper
+    • 9 Close combat weapon
+      9 Lasgun
+
+Cyclops Demolition Vehicle (40 puntos)
+
+Death Riders (60 puntos)
+  • 1 Ridemaster
+    • 1 Death Rider lascarbine
+      1 Frag lance
+      1 Power sabre
+      1 Savage claws
+  • 4 Death Rider
+    • 4 Death Rider lascarbine
+      4 Frag lance
+      4 Power sabre
+      4 Savage claws
+
+Deathstrike (125 puntos)
+  • 1 Armoured tracks
+    1 Deathstrike missile
+    1 Heavy bolter
+
+Doomhammer (415 puntos)
+  • 1 Armoured tracks
+    2 Lascannon
+    1 Magma cannon
+    1 Twin heavy bolter
+    2 Twin heavy flamer
+
+Field Ordnance Battery (90 puntos)
+  • 2 Ordnance Team
+    • 2 Battery close combat weapons
+      2 Lasgun
+      2 Laspistol
+      2 Malleus rocket launcher
+
+Hellhammer (420 puntos)
+  • 1 Armoured tracks
+    1 Coaxial autocannon
+    1 Demolisher cannon
+    1 Heavy stubber
+    1 Hellhammer cannon
+    2 Lascannon
+    1 Twin heavy bolter
+    2 Twin heavy flamer
+
+Hellhound (125 puntos)
+  • 1 Armoured tracks
+    1 Heavy flamer
+    1 Inferno cannon
+
+Hippogriff AFV (70 puntos)
+  • 1 Armoured hull
+    1 Heavy stubber
+    1 Vigilator cannon
+
+Hydra (90 puntos)
+  • 1 Armoured tracks
+    1 Heavy bolter
+    1 Hydra autocannon
+
+Kasrkin (115 puntos)
+  • 1 Kasrkin Sergeant
+    • 1 Chainsword
+      1 Hot-shot laspistol
+  • 9 Kasrkin
+    • 9 Close combat weapon
+      9 Hot-shot lasgun
+
+Krieg Combat Engineers (65 puntos)
+  • 1 Krieg Engineer Watchmaster
+    • 1 Autopistol
+      1 Trench club
+  • 4 Krieg Combat Engineer
+    • 4 Autopistol
+      4 Trench club
+
+Krieg Heavy Weapons Squad (60 puntos)
+  • 3 Heavy Weapons Gunner
+    • 3 Close combat weapon
+      3 Lascannon
+      3 Laspistol
+  • 1 Fire Coordinator
+    • 1 Close combat weapon
+      1 Laspistol
+
+Leman Russ Battle Tank (185 puntos)
+  • 1 Armoured tracks
+    1 Lascannon
+    1 Leman Russ battle cannon
+
+Leman Russ Demolisher (190 puntos)
+  • 1 Armoured tracks
+    1 Demolisher battle cannon
+    1 Lascannon
+
+Leman Russ Eradicator (170 puntos)
+  • 1 Armoured tracks
+    1 Eradicator nova cannon
+    1 Lascannon
+
+Leman Russ Executioner (170 puntos)
+  • 1 Armoured tracks
+    1 Executioner plasma cannon
+    1 Lascannon
+
+Leman Russ Exterminator (180 puntos)
+  • 1 Armoured tracks
+    1 Exterminator autocannon
+    1 Lascannon
+
+Leman Russ Punisher (150 puntos)
+  • 1 Armoured tracks
+    1 Lascannon
+    1 Punisher gatling cannon
+
+Leman Russ Vanquisher (150 puntos)
+  • 1 Armoured tracks
+    1 Lascannon
+    1 Vanquisher battle cannon
+
+Manticore (150 puntos)
+  • 1 Armoured tracks
+    1 Heavy bolter
+    1 Storm eagle rockets
+
+Ogryn Squad (60 puntos)
+  • 1 Ogryn Bone ’ead
+    • 1 Ripper gun
+  • 2 Ogryn
+    • 2 Ripper gun
+
+Ratlings (60 puntos)
+  • 5 Ratling Sniper
+    • 5 Close combat weapon
+      5 Sniper rifle
+
+Rogal Dorn Battle Tank (260 puntos)
+  • 1 Armoured tracks
+    1 Castigator gatling cannon
+    1 Heavy stubber
+    1 Twin battle cannon
+
+Scout Sentinels (55 puntos)
+  • 1 Close combat weapon
+    1 Multi-laser
+
+Shadowsword (410 puntos)
+  • 1 Armoured tracks
+    2 Lascannon
+    1 Twin heavy bolter
+    2 Twin heavy flamer
+    1 Volcano cannon
+
+Stormlord (430 puntos)
+  • 1 Armoured tracks
+    2 Heavy stubber
+    2 Lascannon
+    1 Twin heavy bolter
+    2 Twin heavy flamer
+    1 Vulcan mega-bolter
+
+Stormsword (465 puntos)
+  • 1 Armoured tracks
+    2 Lascannon
+    1 Stormsword siege cannon
+    1 Twin heavy bolter
+    2 Twin heavy flamer
+
+Tempestus Aquilons (100 puntos)
+  • 1 Tempestor Aquilon
+    • 1 Close combat weapon
+      1 Hot-shot lascarbine
+      1 Sentry flamer
+  • 8 Tempestus Aquilon
+    • 8 Close combat weapon
+      8 Hot-shot lascarbine
+  • 1 Gunfighter
+    • 1 Close combat weapon
+      1 Hot-shot lascarbine
+
+Tempestus Scions (75 puntos)
+  • 1 Tempestor
+    • 1 Chainsword
+      1 Hot-shot laspistol
+  • 4 Tempestus Scion
+    • 4 Close combat weapon
+      4 Hot-shot lasgun
+
+Valkyrie (170 puntos)
+  • 1 Armoured hull
+    1 Hellstrike missiles
+    1 Multi-laser
+
+Wyvern (95 puntos)
+  • 1 Armoured tracks
+    1 Heavy bolter
+    1 Wyvern quad stormshard mortar
+
+
+UNIDADES ALIADAS
+
+Acastus Knight Asterius (785 puntos)
+  • 2 Asterius volkite culverin
+    1 Karacnos mortar battery
+    1 Titanic feet
+    2 Twin conversion beam cannon
+
+Acastus Knight Porphyrion (725 puntos)
+  • 2 Acastus autocannon
+    1 Acastus ironstorm missile pod
+    1 Titanic feet
+    2 Twin magna lascannon
+
+Armiger Helverin (140 puntos)
+  • 2 Armiger autocannon
+    1 Armoured feet
+    1 Questoris heavy stubber
+
+Armiger Moirax (150 puntos)
+  • 1 Armoured feet
+    1 Graviton pulsar
+    1 Volkite veuglaire
+
+Armiger Warglaive (140 puntos)
+  • 1 Questoris heavy stubber
+    1 Reaper chain-cleaver
+    1 Thermal spear
+
+Canis Rex (415 puntos)
+  • 1 Freedom’s Hand
+    1 Las-impulsor
+    1 Questoris multi-laser
+
+Cerastus Knight Acheron (380 puntos)
+  • 1 Acheron flame cannon
+    1 Reaper chainfist
+    1 Twin heavy bolter
+
+Cerastus Knight Atrapos (405 puntos)
+  • 1 Atrapos lascutter
+    1 Graviton singularity cannon
+
+Cerastus Knight Castigator (380 puntos)
+  • 1 Castigator bolt cannon
+    1 Tempest warblade
+
+Cerastus Knight Lancer (415 puntos)
+  • 1 Cerastus shock lance
+
+Knight Castellan (400 puntos)
+  • 1 Plasma decimator
+    2 Shieldbreaker missile launcher
+    1 Titanic feet
+    2 Twin meltagun
+    1 Twin siegebreaker cannon
+    1 Volcano lance
+
+Knight Crusader (395 puntos)
+  • 1 Avenger gatling cannon
+    1 Heavy flamer
+    1 Meltagun
+    1 Thermal cannon
+    1 Titanic feet
+
+Knight Defender (400 puntos)
+  • 1 Conversion beam obliterator
+    1 Phosphor blaster
+    1 Plasma executor
+    1 Titanic feet
+    1 Twin incendine combustor
+
+Knight Destrier (265 puntos)
+  • 1 Chastiser gatling cannon
+    1 Frag bombard
+    1 Questoris heavy stubber
+    1 Titanic feet
+
+Knight Errant (355 puntos)
+  • 1 Meltagun
+    1 Reaper chainsword
+    1 Thermal cannon
+
+Knight Gallant (355 puntos)
+  • 1 Meltagun
+    1 Reaper chainsword
+    1 Thunderstrike gauntlet
+
+Knight Paladin (375 puntos)
+  • 1 Meltagun
+    1 Questoris heavy stubber
+    1 Rapid-fire battle cannon
+    1 Reaper chainsword
+
+Knight Preceptor (365 puntos)
+  • 1 Las-impulsor
+    1 Questoris multi-laser
+    1 Reaper chainsword
+
+Knight Valiant (400 puntos)
+  • 1 Conflagration cannon
+    2 Shieldbreaker missile launcher
+    1 Thundercoil harpoon
+    1 Titanic feet
+    2 Twin meltagun
+    1 Twin siegebreaker cannon
+
+Knight Warden (375 puntos)
+  • 1 Avenger gatling cannon
+    1 Heavy flamer
+    1 Meltagun
+    1 Reaper chainsword
+
+Questoris Knight Magaera (385 puntos)
+  • 1 Lightning cannon
+    1 Phased plasma-fusil
+    1 Reaper chainsword
+
+Questoris Knight Styrix (375 puntos)
+  • 1 Graviton crusher
+    1 Reaper chainsword
+    1 Volkite chierovile
+
+Reaver Titan (2200 puntos)
+  • 1 Reaver apocalypse launcher
+    1 Reaver feet
+    1 Reaver gatling blaster
+    1 Reaver laser blaster
+
+Warbringer Nemesis Titan (2600 puntos)
+  • 2 Anvillus defence battery
+    3 Ardex-defensor mauler
+    1 Nemesis feet
+    1 Nemesis quake cannon
+    1 Reaver gatling blaster
+    1 Reaver laser blaster
+
+Warhound Titan (1100 puntos)
+  • 1 Warhound feet
+    1 Warhound plasma blastgun
+    1 Warhound vulcan mega-bolter
+
+Warlord Titan (3500 puntos)
+  • 2 Apocalypse launcher
+    2 Ardex-defensor lascannon
+    2 Ardex-defensor mauler
+    1 Arioch power claw
+    1 Macro gatling blaster
+    1 Warlord feet
+
+Exportada con la versión de la app: v2.0.1 (122), versión de los datos v875
+
+.....
+
+Necrones all (7225 puntos)
+
+Necrones
+Conquista (3000 puntos)
+Canoptek Court (3 puntos de destacamento)
+Disposiciones de la fuerza: Ocupar y mantener
+
+
+CHARACTERS
+
+Catacomb Command Barge (120 puntos)
+  • 1 Gauss cannon
+    1 Staff of light
+
+Chronomancer (80 puntos)
+  • 1 Chronomancer’s stave
+
+C’tan Shard of the Deceiver (330 puntos)
+  • 1 Cosmic insanity
+    1 Golden fists
+
+C’tan Shard of the Nightbringer (360 puntos)
+  • 1 Gaze of death
+    1 Scythe of the Nightbringer
+
+C’tan Shard of the Void Dragon (345 puntos)
+  • 1 Canoptek tail blades
+    1 Spear of the Void Dragon
+    1 Voltaic storm
+
+Geomancer (75 puntos)
+  • 1 Tremorglaive
+
+Hexmark Destroyer (75 puntos)
+  • 1 Close combat weapon
+    1 Enmitic disintegrator pistols
+
+Illuminor Szeras (175 puntos)
+  • 1 Eldritch Lance
+    1 Impaling legs
+
+Imotekh the Stormlord (100 puntos)
+  • 1 Gauntlet of Fire
+    1 Staff of the Destroyer
+
+Lokhust Lord (70 puntos)
+  • 1 Staff of light
+
+Nekrosor Ammentar (175 puntos)
+  • 1 Blade tail and whip coils
+    1 Enmitic disintegrators
+    1 Nullstone Field Generator (Aura)
+    1 Unmaker Gauntlet
+
+Orikan the Diviner (90 puntos)
+  • 1 Staff of Tomorrow
+
+Overlord (90 puntos)
+  • 1 Overlord’s blade
+    1 Tachyon arrow
+
+Overlord with Translocation Shroud (90 puntos)
+  • 1 Overlord’s blade
+    1 Resurrection Orb
+
+Plasmancer (55 puntos)
+  • 1 Plasmic lance
+
+Psychomancer (55 puntos)
+  • 1 Abyssal lance
+
+Royal Warden (50 puntos)
+  • 1 Close combat weapon
+    1 Relic gauss blaster
+
+Skorpekh Lord (90 puntos)
+  • 1 Enmitic annihilator
+    1 Flensing claw
+    1 Hyperphase harvester
+
+Technomancer (80 puntos)
+  • 1 Staff of light
+
+The Silent King (400 puntos)
+  • 1 Szarekh
+    • 1 Sceptre of Eternal Glory
+      1 Staff of Stars
+      1 Weapons of the Final Triarch
+  • 2 Triarchal Menhir
+    • 2 Annihilator beam
+      2 Armoured bulk
+
+Transcendent C’tan (340 puntos)
+  • 1 Crackling tendrils
+    1 Seismic assault
+
+Trazyn the Infinite (65 puntos)
+  • 1 Empathic Obliterator
+
+
+LÍNEA DE BATALLA
+
+Immortals (70 puntos)
+  • 5 Immortal
+    • 5 Close combat weapon
+      5 Gauss blaster
+
+Necron Warriors (80 puntos)
+  • 10 Necron Warrior
+    • 10 Close combat weapon
+      10 Gauss flayer
+
+
+DEDICATED TRANSPORTS
+
+Ghost Ark (100 puntos)
+  • 1 Armoured bulk
+    2 Gauss flayer array
+
+
+OTHER DATASHEETS
+
+Annihilation Barge (95 puntos)
+  • 1 Armoured bulk
+    1 Gauss cannon
+    1 Twin tesla destructor
+
+Canoptek Doomstalker (140 puntos)
+  • 1 Doomsday blaster
+    1 Doomstalker limbs
+    1 Twin gauss flayer
+
+Canoptek Macrocytes (70 puntos)
+  • 5 Canoptek Macrocytes
+    • 5 Claws
+      5 Gauss scalpel
+
+Canoptek Reanimator (70 puntos)
+  • 2 Atomiser beam
+    1 Reanimator’s claws
+
+Canoptek Scarab Swarms (40 puntos)
+  • 3 Canoptek Scarab Swarm
+    • 3 Feeder mandibles
+
+Canoptek Spyders (65 puntos)
+  • 1 Automaton claws
+
+Canoptek Tomb Crawlers (50 puntos)
+  • 2 Canoptek Tomb Crawlers
+    • 2 Claws
+      2 Twin gauss reaper
+
+Canoptek Wraiths (95 puntos)
+  • 3 Canoptek Wraith
+    • 3 Vicious claws
+
+Convergence of Dominion (60 puntos)
+  • 1 Transdimensional abductor
+
+Cryptothralls (60 puntos)
+  • 2 Cryptothrall
+    • 2 Scouring eye
+      2 Scythed limbs
+
+Deathmarks (60 puntos)
+  • 5 Deathmark
+    • 5 Close combat weapon
+      5 Synaptic disintegrator
+
+Doom Scythe (200 puntos)
+  • 1 Armoured bulk
+    1 Heavy death ray
+    1 Twin tesla destructor
+
+Doomsday Ark (200 puntos)
+  • 1 Armoured bulk
+    1 Doomsday cannon
+    2 Gauss flayer array
+
+Flayed Ones (55 puntos)
+  • 5 Flayed One
+    • 5 Flayer claws
+
+Lokhust Destroyers (40 puntos)
+  • 1 Close combat weapon
+    1 Gauss cannon
+
+Lokhust Heavy Destroyers (50 puntos)
+  • 1 Close combat weapon
+    1 Gauss destructor
+
+Lychguard (80 puntos)
+  • 5 Lychguard
+    • 5 Warscythe
+
+Monolith (420 puntos)
+  • 4 Gauss flux arc
+    1 Particle whip
+    1 Portal of exile
+
+Night Scythe (125 puntos)
+  • 1 Armoured bulk
+    1 Twin tesla destructor
+
+Obelisk (280 puntos)
+  • 1 Armoured bulk
+    4 Tesla sphere
+
+Ophydian Destroyers (80 puntos)
+  • 3 Ophydian Destroyer
+    • 3 Ophydian hyperphase weapons
+
+Seraptek Heavy Construct (540 puntos)
+  • 2 Singularity generator
+    1 Titanic forelimbs
+
+Skorpekh Destroyers (85 puntos)
+  • 3 Skorpekh Destroyer
+    • 3 Skorpekh hyperphase weapons
+
+Tesseract Vault (445 puntos)
+  • 1 Antimatter Meteor
+    1 Cosmic Fire
+    1 Time’s Arrow
+  • 1 Armoured bulk
+    4 Tesla sphere
+
+Tomb Blades (70 puntos)
+  • 3 Tomb Blade
+    • 3 Close combat weapon
+      3 Twin gauss blaster
+
+Triarch Praetorians (80 puntos)
+  • 5 Triarch Praetorian
+    • 5 Rod of covenant
+
+Triarch Stalker (110 puntos)
+  • 1 Heat ray
+    1 Stalker’s forelimbs
+
+Exportada con la versión de la app: v2.0.0 (121), versión de los datos v867
+
