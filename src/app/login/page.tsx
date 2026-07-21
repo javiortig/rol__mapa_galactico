@@ -6,19 +6,52 @@ import { ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { clearSupabaseAuthStorage, getSupabaseBrowserClient, markCampaignSessionStarted } from "@/lib/supabase/client";
 
-const localUsers = [
-  "admin@rol40k.local",
-  "orcos@rol40k.local",
-  "necrones@rol40k.local",
-  "guardia-imperial@rol40k.local",
-  "culto-genestelar@rol40k.local",
-  "sombra-emperador@rol40k.local",
-  "guardia-muerte@rol40k.local"
+const campaignAccounts = [
+  {
+    label: "Administrador",
+    email: "admin@rol40k.local",
+    password: "admin-local-123"
+  },
+  {
+    label: "Adeptus Custodes",
+    email: "adeptus-custodes@rol40k.local",
+    password: "rol40k-local-123"
+  },
+  {
+    label: "Aeldari",
+    email: "aeldari@rol40k.local",
+    password: "rol40k-local-123"
+  },
+  {
+    label: "Agentes del Imperium",
+    email: "agentes-imperium@rol40k.local",
+    password: "rol40k-local-123"
+  },
+  {
+    label: "Cultos Genestealer",
+    email: "cultos-genestealer@rol40k.local",
+    password: "rol40k-local-123"
+  },
+  {
+    label: "Legiones Daemonicas",
+    email: "legiones-daemonicas@rol40k.local",
+    password: "rol40k-local-123"
+  },
+  {
+    label: "Necrones",
+    email: "necrones@rol40k.local",
+    password: "rol40k-local-123"
+  },
+  {
+    label: "Space Marines",
+    email: "space-marines@rol40k.local",
+    password: "rol40k-local-123"
+  }
 ];
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("guardia-imperial@rol40k.local");
+  const [email, setEmail] = useState("adeptus-custodes@rol40k.local");
   const [password, setPassword] = useState("rol40k-local-123");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -82,14 +115,16 @@ export default function LoginPage() {
             className="w-full rounded-md border border-cyan-200/20 bg-slate-950/70 px-3 py-2 text-sm outline-none transition focus:border-cyan-200/50"
             onChange={(event) => {
               const nextEmail = event.target.value;
+              const nextAccount = campaignAccounts.find((account) => account.email === nextEmail);
+
               setEmail(nextEmail);
-              setPassword(nextEmail === "admin@rol40k.local" ? "admin-local-123" : "rol40k-local-123");
+              setPassword(nextAccount?.password ?? "rol40k-local-123");
             }}
             value={email}
           >
-            {localUsers.map((userEmail) => (
-              <option key={userEmail} value={userEmail}>
-                {userEmail}
+            {campaignAccounts.map((account) => (
+              <option key={account.email} value={account.email}>
+                {account.label} - {account.email}
               </option>
             ))}
           </select>

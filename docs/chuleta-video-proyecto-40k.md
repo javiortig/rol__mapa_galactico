@@ -112,12 +112,13 @@ DB: postgresql://postgres:postgres@127.0.0.1:54322/postgres
 
 ```text
 admin@rol40k.local / admin-local-123
-orcos@rol40k.local / rol40k-local-123
+legiones-daemonicas@rol40k.local / rol40k-local-123
+agentes-imperium@rol40k.local / rol40k-local-123
+cultos-genestealer@rol40k.local / rol40k-local-123
+aeldari@rol40k.local / rol40k-local-123
+space-marines@rol40k.local / rol40k-local-123
+adeptus-custodes@rol40k.local / rol40k-local-123
 necrones@rol40k.local / rol40k-local-123
-guardia-imperial@rol40k.local / rol40k-local-123
-culto-genestelar@rol40k.local / rol40k-local-123
-sombra-emperador@rol40k.local / rol40k-local-123
-guardia-muerte@rol40k.local / rol40k-local-123
 ```
 
 \newpage
