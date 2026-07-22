@@ -44,8 +44,8 @@
       "nodes": [
         {
           "slug": "daemonicas-chispas-inmaterium",
-          "name": "Chispas del Inmaterium",
-          "description": "Los horrores menores brotan como fragmentos chillones de magia pura y saturan los primeros frentes. Desbloquea: Blue Horrors.",
+          "name": "Coros de Horrores",
+          "description": "Los primeros coros de Tzeentch se dividen, chillan y se recomponen en una pantalla de magia viva. Desbloquea: Blue Horrors y Pink Horrors.",
           "branchSlug": "hordas-velo",
           "tier": 1,
           "positionX": 1,
@@ -53,41 +53,23 @@
           "costTechnology": 1,
           "researchTimeSeconds": 30,
           "iconKey": "daemon_horror",
-          "effectSummary": "Desbloquea: Blue Horrors.",
+          "effectSummary": "Desbloquea: Blue Horrors, Pink Horrors.",
           "prerequisiteSlugs": [
             "fundacion-planetaria"
           ],
           "unitTemplateSlugs": [
-            "unit-legiones-daemonicas-blue-horrors"
-          ]
-        },
-        {
-          "slug": "daemonicas-mareas-rosadas",
-          "name": "Mareas Rosadas",
-          "description": "La marea inicial se condensa en coros de horrores mayores, utiles para fijar objetivos y desgastar lineas. Desbloquea: Pink Horrors.",
-          "branchSlug": "hordas-velo",
-          "tier": 2,
-          "positionX": 1,
-          "positionY": 1,
-          "costTechnology": 2,
-          "researchTimeSeconds": 30,
-          "iconKey": "daemon_horror",
-          "effectSummary": "Desbloquea: Pink Horrors.",
-          "prerequisiteSlugs": [
-            "daemonicas-chispas-inmaterium"
-          ],
-          "unitTemplateSlugs": [
+            "unit-legiones-daemonicas-blue-horrors",
             "unit-legiones-daemonicas-pink-horrors"
           ]
         },
         {
-          "slug": "daemonicas-llamas-imposibles",
-          "name": "Llamas Imposibles",
-          "description": "Las piras cambiantes se desatan como proyectiles vivos capaces de limpiar trincheras y rituales enemigos. Desbloquea: Flamers.",
+          "slug": "daemonicas-mareas-rosadas",
+          "name": "Llamas Mutables",
+          "description": "Las llamas del cambio aprenden a perseguir objetivos con voluntad propia, convirtiendo trincheras y rituales enemigos en ceniza irreal. Desbloquea: Flamers.",
           "branchSlug": "hordas-velo",
           "tier": 2,
           "positionX": 1,
-          "positionY": 3,
+          "positionY": 1,
           "costTechnology": 2,
           "researchTimeSeconds": 30,
           "iconKey": "daemon_flame",
@@ -97,6 +79,26 @@
           ],
           "unitTemplateSlugs": [
             "unit-legiones-daemonicas-flamers"
+          ]
+        },
+        {
+          "slug": "daemonicas-llamas-imposibles",
+          "name": "Incendio Exaltado",
+          "description": "Una llama con nombre propio cruza el velo y convierte la artilleria menor en una presencia de mando ardiente. Desbloquea: Exalted Flamer.",
+          "branchSlug": "hordas-velo",
+          "tier": 2,
+          "positionX": 1,
+          "positionY": 3,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "daemon_pyro",
+          "effectSummary": "Desbloquea: Exalted Flamer.",
+          "prerequisiteSlugs": [
+            "daemonicas-mareas-rosadas",
+            "daemonicas-voces-velo"
+          ],
+          "unitTemplateSlugs": [
+            "unit-legiones-daemonicas-exalted-flamer"
           ]
         },
         {
@@ -112,7 +114,7 @@
           "iconKey": "daemon_beast",
           "effectSummary": "Desbloquea: Screamers.",
           "prerequisiteSlugs": [
-            "daemonicas-mareas-rosadas",
+            "daemonicas-chispas-inmaterium",
             "criadero-guerra"
           ],
           "unitTemplateSlugs": [
@@ -132,7 +134,7 @@
           "iconKey": "daemon_chariot",
           "effectSummary": "Desbloquea: Burning Chariot.",
           "prerequisiteSlugs": [
-            "daemonicas-llamas-imposibles",
+            "daemonicas-mareas-rosadas",
             "daemonicas-carros-fuego-mutante"
           ],
           "unitTemplateSlugs": [
@@ -162,7 +164,7 @@
         {
           "slug": "daemonicas-voces-velo",
           "name": "Voces del Velo",
-          "description": "Los primeros heraldos traducen augurios imposibles en ordenes que incluso los mortales pueden temer. Desbloquea: Changecaster y Daemonic Herald [Crucible].",
+          "description": "Los heraldos sin nombre traducen augurios imposibles en ordenes que incluso los mortales pueden temer. Desbloquea: Daemonic Herald [Crucible].",
           "branchSlug": "corte-cambiante",
           "tier": 1,
           "positionX": 2,
@@ -170,33 +172,32 @@
           "costTechnology": 1,
           "researchTimeSeconds": 30,
           "iconKey": "daemon_herald",
-          "effectSummary": "Desbloquea: Changecaster, Daemonic Herald [Crucible].",
+          "effectSummary": "Desbloquea: Daemonic Herald [Crucible].",
           "prerequisiteSlugs": [
             "asamblea-planetaria"
           ],
           "unitTemplateSlugs": [
-            "unit-legiones-daemonicas-changecaster",
             "unit-legiones-daemonicas-daemonic-herald-crucible"
           ]
         },
         {
           "slug": "daemonicas-piras-cambio",
-          "name": "Piras del Cambio",
-          "description": "La corte invoca campeones ardientes capaces de convertir hechizos menores en salvas abrasadoras. Desbloquea: Exalted Flamer.",
+          "name": "Conjuradores del Cambio",
+          "description": "Los horrores reciben maestros de hechiceria menor capaces de doblar la marea y convertir caos bruto en plan. Desbloquea: Changecaster.",
           "branchSlug": "corte-cambiante",
           "tier": 2,
           "positionX": 2,
           "positionY": 1,
           "costTechnology": 2,
           "researchTimeSeconds": 30,
-          "iconKey": "daemon_pyro",
-          "effectSummary": "Desbloquea: Exalted Flamer.",
+          "iconKey": "daemon_herald",
+          "effectSummary": "Desbloquea: Changecaster.",
           "prerequisiteSlugs": [
             "daemonicas-voces-velo",
-            "daemonicas-llamas-imposibles"
+            "daemonicas-chispas-inmaterium"
           ],
           "unitTemplateSlugs": [
-            "unit-legiones-daemonicas-exalted-flamer"
+            "unit-legiones-daemonicas-changecaster"
           ]
         },
         {

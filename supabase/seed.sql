@@ -1103,6 +1103,7 @@ select public.seed_space_marines_troop_technology_tree();
 select public.seed_daemonic_legions_troop_technology_tree();
 select public.seed_adeptus_custodes_troop_technology_tree();
 select public.apply_troop_technology_cost_rebalance();
+select public.apply_daemonic_legions_horror_tree_adjustment();
 /*
 drop table if exists public._seed_necron_troop_technology_nodes;
 
