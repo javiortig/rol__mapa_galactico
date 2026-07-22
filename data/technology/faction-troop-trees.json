@@ -1,0 +1,1777 @@
+{
+  "version": 1,
+  "commonTreeKey": "common-v1",
+  "treeKeyPrefix": "troops",
+  "expectedBranchesPerFaction": 3,
+  "expectedActiveNodesPerFaction": 15,
+  "researchTimeSeconds": 30,
+  "expectedTechnologyCostPerReadyTree": 30,
+  "allowedTechnologyCosts": [
+    1,
+    2,
+    3
+  ],
+  "maxCostOnlyOnLargestBranchFinals": true,
+  "targetFactionSlugs": [
+    "legiones-daemonicas",
+    "adeptus-custodes",
+    "space-marines",
+    "cultos-genestealer",
+    "necrones"
+  ],
+  "trees": [
+    {
+      "factionSlug": "legiones-daemonicas",
+      "treeKey": "troops-legiones-daemonicas-v1",
+      "status": "ready",
+      "branches": [
+        {
+          "slug": "hordas-velo",
+          "name": "Hordas del Velo",
+          "description": "Horrores, llamas vivientes, bestias aullantes, carros imposibles y forjas de almas."
+        },
+        {
+          "slug": "corte-cambiante",
+          "name": "Corte del Cambiante",
+          "description": "Heraldos, piromantes, escribas, mascaras y aurigas que dirigen la marea disforme."
+        },
+        {
+          "slug": "tronos-disformidad",
+          "name": "Tronos de la Disformidad",
+          "description": "Principes demonio, Grandes Demonios, oraculos imposibles y Be'lakor."
+        }
+      ],
+      "nodes": [
+        {
+          "slug": "daemonicas-chispas-inmaterium",
+          "name": "Chispas del Inmaterium",
+          "description": "Los horrores menores brotan como fragmentos chillones de magia pura y saturan los primeros frentes. Desbloquea: Blue Horrors.",
+          "branchSlug": "hordas-velo",
+          "tier": 1,
+          "positionX": 1,
+          "positionY": 2,
+          "costTechnology": 1,
+          "researchTimeSeconds": 30,
+          "iconKey": "daemon_horror",
+          "effectSummary": "Desbloquea: Blue Horrors.",
+          "prerequisiteSlugs": [
+            "fundacion-planetaria"
+          ],
+          "unitTemplateSlugs": [
+            "unit-legiones-daemonicas-blue-horrors"
+          ]
+        },
+        {
+          "slug": "daemonicas-mareas-rosadas",
+          "name": "Mareas Rosadas",
+          "description": "La marea inicial se condensa en coros de horrores mayores, utiles para fijar objetivos y desgastar lineas. Desbloquea: Pink Horrors.",
+          "branchSlug": "hordas-velo",
+          "tier": 2,
+          "positionX": 1,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "daemon_horror",
+          "effectSummary": "Desbloquea: Pink Horrors.",
+          "prerequisiteSlugs": [
+            "daemonicas-chispas-inmaterium"
+          ],
+          "unitTemplateSlugs": [
+            "unit-legiones-daemonicas-pink-horrors"
+          ]
+        },
+        {
+          "slug": "daemonicas-llamas-imposibles",
+          "name": "Llamas Imposibles",
+          "description": "Las piras cambiantes se desatan como proyectiles vivos capaces de limpiar trincheras y rituales enemigos. Desbloquea: Flamers.",
+          "branchSlug": "hordas-velo",
+          "tier": 2,
+          "positionX": 1,
+          "positionY": 3,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "daemon_flame",
+          "effectSummary": "Desbloquea: Flamers.",
+          "prerequisiteSlugs": [
+            "daemonicas-chispas-inmaterium"
+          ],
+          "unitTemplateSlugs": [
+            "unit-legiones-daemonicas-flamers"
+          ]
+        },
+        {
+          "slug": "daemonicas-carros-fuego-mutante",
+          "name": "Rayas del Velo",
+          "description": "Bestias aullantes cruzan la batalla como meteoros de hambre y hechiceria. Desbloquea: Screamers.",
+          "branchSlug": "hordas-velo",
+          "tier": 3,
+          "positionX": 1,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "daemon_beast",
+          "effectSummary": "Desbloquea: Screamers.",
+          "prerequisiteSlugs": [
+            "daemonicas-mareas-rosadas",
+            "criadero-guerra"
+          ],
+          "unitTemplateSlugs": [
+            "unit-legiones-daemonicas-screamers"
+          ]
+        },
+        {
+          "slug": "daemonicas-carros-ardientes",
+          "name": "Carros Ardientes",
+          "description": "Plataformas de fuego cambiante cabalgan sobre la tormenta para abrir brechas en la linea real. Desbloquea: Burning Chariot.",
+          "branchSlug": "hordas-velo",
+          "tier": 3,
+          "positionX": 1,
+          "positionY": 3,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "daemon_chariot",
+          "effectSummary": "Desbloquea: Burning Chariot.",
+          "prerequisiteSlugs": [
+            "daemonicas-llamas-imposibles",
+            "daemonicas-carros-fuego-mutante"
+          ],
+          "unitTemplateSlugs": [
+            "unit-legiones-daemonicas-burning-chariot"
+          ]
+        },
+        {
+          "slug": "daemonicas-forja-almas-tzeentch",
+          "name": "Forja de Almas de Tzeentch",
+          "description": "La disformidad encadena maquinas infernales y las empuja al frente como artilleria blasfema. Desbloquea: Tzeentch Soul Grinder.",
+          "branchSlug": "hordas-velo",
+          "tier": 4,
+          "positionX": 1,
+          "positionY": 2,
+          "costTechnology": 3,
+          "researchTimeSeconds": 30,
+          "iconKey": "daemon_soul_grinder",
+          "effectSummary": "Desbloquea: Tzeentch Soul Grinder.",
+          "prerequisiteSlugs": [
+            "daemonicas-carros-ardientes",
+            "maquinaria-belica"
+          ],
+          "unitTemplateSlugs": [
+            "unit-legiones-daemonicas-tzeentch-soul-grinder"
+          ]
+        },
+        {
+          "slug": "daemonicas-voces-velo",
+          "name": "Voces del Velo",
+          "description": "Los primeros heraldos traducen augurios imposibles en ordenes que incluso los mortales pueden temer. Desbloquea: Changecaster y Daemonic Herald [Crucible].",
+          "branchSlug": "corte-cambiante",
+          "tier": 1,
+          "positionX": 2,
+          "positionY": 2,
+          "costTechnology": 1,
+          "researchTimeSeconds": 30,
+          "iconKey": "daemon_herald",
+          "effectSummary": "Desbloquea: Changecaster, Daemonic Herald [Crucible].",
+          "prerequisiteSlugs": [
+            "asamblea-planetaria"
+          ],
+          "unitTemplateSlugs": [
+            "unit-legiones-daemonicas-changecaster",
+            "unit-legiones-daemonicas-daemonic-herald-crucible"
+          ]
+        },
+        {
+          "slug": "daemonicas-piras-cambio",
+          "name": "Piras del Cambio",
+          "description": "La corte invoca campeones ardientes capaces de convertir hechizos menores en salvas abrasadoras. Desbloquea: Exalted Flamer.",
+          "branchSlug": "corte-cambiante",
+          "tier": 2,
+          "positionX": 2,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "daemon_pyro",
+          "effectSummary": "Desbloquea: Exalted Flamer.",
+          "prerequisiteSlugs": [
+            "daemonicas-voces-velo",
+            "daemonicas-llamas-imposibles"
+          ],
+          "unitTemplateSlugs": [
+            "unit-legiones-daemonicas-exalted-flamer"
+          ]
+        },
+        {
+          "slug": "daemonicas-discos-sortilegio",
+          "name": "Discos de Sortilegio",
+          "description": "Augures montados y senores de disco sobrevuelan el frente para torcer rutas, destinos y cargas enemigas. Desbloquea: Fluxmaster y Fateskimmer.",
+          "branchSlug": "corte-cambiante",
+          "tier": 2,
+          "positionX": 2,
+          "positionY": 3,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "daemon_disc",
+          "effectSummary": "Desbloquea: Fluxmaster, Fateskimmer.",
+          "prerequisiteSlugs": [
+            "daemonicas-voces-velo",
+            "daemonicas-carros-fuego-mutante"
+          ],
+          "unitTemplateSlugs": [
+            "unit-legiones-daemonicas-fluxmaster",
+            "unit-legiones-daemonicas-fateskimmer"
+          ]
+        },
+        {
+          "slug": "daemonicas-escribas-destino",
+          "name": "Escribas del Destino",
+          "description": "Los nombres verdaderos, rutas de invasion y fracasos inevitables quedan inscritos antes de que ocurran. Desbloquea: The Blue Scribes.",
+          "branchSlug": "corte-cambiante",
+          "tier": 3,
+          "positionX": 2,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "daemon_scribes",
+          "effectSummary": "Desbloquea: The Blue Scribes.",
+          "prerequisiteSlugs": [
+            "daemonicas-piras-cambio"
+          ],
+          "unitTemplateSlugs": [
+            "unit-legiones-daemonicas-the-blue-scribes"
+          ]
+        },
+        {
+          "slug": "daemonicas-mascaras-engano",
+          "name": "Mascaras del Engano",
+          "description": "La corte aprende a ganar guerras con apariciones, aurigas imposibles y senuelos que rompen toda certeza. Desbloquea: The Changeling y Daemonic Charioteer [Crucible].",
+          "branchSlug": "corte-cambiante",
+          "tier": 4,
+          "positionX": 2,
+          "positionY": 2,
+          "costTechnology": 3,
+          "researchTimeSeconds": 30,
+          "iconKey": "daemon_changeling",
+          "effectSummary": "Desbloquea: The Changeling, Daemonic Charioteer [Crucible].",
+          "prerequisiteSlugs": [
+            "daemonicas-escribas-destino",
+            "daemonicas-discos-sortilegio"
+          ],
+          "unitTemplateSlugs": [
+            "unit-legiones-daemonicas-the-changeling",
+            "unit-legiones-daemonicas-daemonic-charioteer-crucible"
+          ]
+        },
+        {
+          "slug": "daemonicas-ascension-demonica",
+          "name": "Ascension Demonica",
+          "description": "La carne mortal deja de importar cuando la voluntad de la disformidad moldea principes capaces de mandar legiones. Desbloquea: Daemon Prince of Chaos y Daemon Prince of Chaos with wings.",
+          "branchSlug": "tronos-disformidad",
+          "tier": 1,
+          "positionX": 3,
+          "positionY": 2,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "daemon_prince",
+          "effectSummary": "Desbloquea: Daemon Prince of Chaos, Daemon Prince of Chaos with wings.",
+          "prerequisiteSlugs": [
+            "asamblea-planetaria",
+            "criadero-guerra"
+          ],
+          "unitTemplateSlugs": [
+            "unit-legiones-daemonicas-daemon-prince-of-chaos",
+            "unit-legiones-daemonicas-daemon-prince-of-chaos-with-wings"
+          ]
+        },
+        {
+          "slug": "daemonicas-senor-cambio",
+          "name": "Senor del Cambio",
+          "description": "Un Gran Demonio de Tzeentch atraviesa el velo y convierte el frente en un tablero de paradojas. Desbloquea: Lord of Change.",
+          "branchSlug": "tronos-disformidad",
+          "tier": 3,
+          "positionX": 3,
+          "positionY": 2,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "daemon_lord_change",
+          "effectSummary": "Desbloquea: Lord of Change.",
+          "prerequisiteSlugs": [
+            "daemonicas-ascension-demonica",
+            "daemonicas-piras-cambio"
+          ],
+          "unitTemplateSlugs": [
+            "unit-legiones-daemonicas-lord-of-change"
+          ]
+        },
+        {
+          "slug": "daemonicas-kairos-teje-destinos",
+          "name": "Kairos Teje-Destinos",
+          "description": "La campana queda atrapada entre futuros contradictorios cuando Kairos abre ambos ojos al sector. Desbloquea: Kairos Fateweaver.",
+          "branchSlug": "tronos-disformidad",
+          "tier": 4,
+          "positionX": 3,
+          "positionY": 2,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "daemon_kairos",
+          "effectSummary": "Desbloquea: Kairos Fateweaver.",
+          "prerequisiteSlugs": [
+            "daemonicas-senor-cambio",
+            "daemonicas-escribas-destino"
+          ],
+          "unitTemplateSlugs": [
+            "unit-legiones-daemonicas-kairos-fateweaver"
+          ]
+        },
+        {
+          "slug": "daemonicas-primer-principe",
+          "name": "El Primer Principe",
+          "description": "Las sendas rivales de la disformidad se inclinan ante una sombra que no pertenece a ningun dios por completo. Desbloquea: Be'lakor.",
+          "branchSlug": "tronos-disformidad",
+          "tier": 5,
+          "positionX": 3,
+          "positionY": 2,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "daemon_belakor",
+          "effectSummary": "Desbloquea: Be'lakor.",
+          "prerequisiteSlugs": [
+            "daemonicas-kairos-teje-destinos",
+            "daemonicas-ascension-demonica",
+            "daemonicas-forja-almas-tzeentch"
+          ],
+          "unitTemplateSlugs": [
+            "unit-legiones-daemonicas-belakor"
+          ]
+        }
+      ]
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "treeKey": "troops-adeptus-custodes-v1",
+      "status": "ready",
+      "branches": [
+        {
+          "slug": "guardia-auramita",
+          "name": "Guardia Auramita",
+          "description": "Guardianes de linea, custodios especialistas, capitanes, exterminadores auricos y huestes de elite."
+        },
+        {
+          "slug": "camara-anathema",
+          "name": "Camara Anathema",
+          "description": "Hermanas del Silencio, mandos nulos, transporte Psykana y auxiliares juramentados."
+        },
+        {
+          "slug": "arsenal-trono",
+          "name": "Arsenal del Trono",
+          "description": "Grav-vehiculos, dreadnoughts, blindados auramita, naves, Knights aliados y Titanes."
+        }
+      ],
+      "nodes": [
+        {
+          "slug": "custodes-custodia-auramita",
+          "name": "Custodia Auramita",
+          "description": "La guardia basica del Trono forma la primera linea de defensa perfecta y ofensiva disciplinada. Desbloquea: Custodian Guard.",
+          "branchSlug": "guardia-auramita",
+          "tier": 1,
+          "positionX": 1,
+          "positionY": 2,
+          "costTechnology": 1,
+          "researchTimeSeconds": 30,
+          "iconKey": "custodes_guard",
+          "effectSummary": "Desbloquea: Custodian Guard.",
+          "prerequisiteSlugs": [
+            "fundacion-planetaria"
+          ],
+          "unitTemplateSlugs": [
+            "unit-adeptus-custodes-custodian-guard"
+          ]
+        },
+        {
+          "slug": "custodes-lanzas-especialistas",
+          "name": "Lanzas Especialistas",
+          "description": "Las formaciones de guardianes se diversifican en escoltas, fuego pesado y armas exoticas de auramita. Desbloquea: Custodian Wardens, Sagittarum Custodians y Custodian Guard with Adrasite and Pyrithite spears.",
+          "branchSlug": "guardia-auramita",
+          "tier": 2,
+          "positionX": 1,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "custodes_spear",
+          "effectSummary": "Desbloquea: Custodian Wardens, Sagittarum Custodians, Custodian Guard with Adrasite and Pyrithite spears.",
+          "prerequisiteSlugs": [
+            "custodes-custodia-auramita"
+          ],
+          "unitTemplateSlugs": [
+            "unit-adeptus-custodes-custodian-wardens",
+            "unit-adeptus-custodes-sagittarum-custodians",
+            "unit-adeptus-custodes-custodian-guard-with-adrasite-and-pyrithite-spears"
+          ]
+        },
+        {
+          "slug": "custodes-campeones-escudo",
+          "name": "Campeones del Escudo",
+          "description": "El mando individual del Adeptus Custodes despliega duelistas, capitanes y custodios de autoridad excepcional. Desbloquea: Blade Champion, Shield-Captain, Guardian of the Throne [Crucible] y Valerian.",
+          "branchSlug": "guardia-auramita",
+          "tier": 2,
+          "positionX": 1,
+          "positionY": 3,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "custodes_command",
+          "effectSummary": "Desbloquea: Blade Champion, Shield-Captain, Guardian of the Throne [Crucible], Valerian.",
+          "prerequisiteSlugs": [
+            "custodes-custodia-auramita",
+            "asamblea-planetaria"
+          ],
+          "unitTemplateSlugs": [
+            "unit-adeptus-custodes-blade-champion",
+            "unit-adeptus-custodes-shield-captain",
+            "unit-adeptus-custodes-guardian-of-the-throne-crucible",
+            "unit-adeptus-custodes-valerian"
+          ]
+        },
+        {
+          "slug": "custodes-terminadores-auricos",
+          "name": "Terminadores Auricos",
+          "description": "Las armaduras mas pesadas de la Guardia avanzan como camaras acorazadas vivas contra objetivos imposibles. Desbloquea: Allarus Custodians, Aquilon Custodians y Shield-Captain in Allarus Terminator Armour.",
+          "branchSlug": "guardia-auramita",
+          "tier": 3,
+          "positionX": 1,
+          "positionY": 2,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "custodes_terminator",
+          "effectSummary": "Desbloquea: Allarus Custodians, Aquilon Custodians, Shield-Captain in Allarus Terminator Armour.",
+          "prerequisiteSlugs": [
+            "custodes-lanzas-especialistas",
+            "custodes-campeones-escudo"
+          ],
+          "unitTemplateSlugs": [
+            "unit-adeptus-custodes-allarus-custodians",
+            "unit-adeptus-custodes-aquilon-custodians",
+            "unit-adeptus-custodes-shield-captain-in-allarus-terminator-armour"
+          ]
+        },
+        {
+          "slug": "custodes-hueste-victoria",
+          "name": "Hueste de la Victoria",
+          "description": "La elite movil y los heroes mayores del Trono transforman cualquier frente en un juramento cumplido. Desbloquea: Trajann Valoris, Venatari Custodians, Kataphraktoi Exemplar [Crucible] y Shield-Captain on Dawneagle Jetbike.",
+          "branchSlug": "guardia-auramita",
+          "tier": 4,
+          "positionX": 1,
+          "positionY": 2,
+          "costTechnology": 3,
+          "researchTimeSeconds": 30,
+          "iconKey": "custodes_victory",
+          "effectSummary": "Desbloquea: Trajann Valoris, Venatari Custodians, Kataphraktoi Exemplar [Crucible], Shield-Captain on Dawneagle Jetbike.",
+          "prerequisiteSlugs": [
+            "custodes-terminadores-auricos",
+            "maquinaria-belica"
+          ],
+          "unitTemplateSlugs": [
+            "unit-adeptus-custodes-trajann-valoris",
+            "unit-adeptus-custodes-venatari-custodians",
+            "unit-adeptus-custodes-kataphraktoi-exemplar-crucible",
+            "unit-adeptus-custodes-shield-captain-on-dawneagle-jetbike"
+          ]
+        },
+        {
+          "slug": "custodes-escuadras-nulas",
+          "name": "Escuadras Nulas",
+          "description": "Las Hermanas del Silencio sellan rutas psiquicas y cazan brujas antes de que contaminen la campana. Desbloquea: Prosecutors, Vigilators y Witchseekers.",
+          "branchSlug": "camara-anathema",
+          "tier": 1,
+          "positionX": 2,
+          "positionY": 2,
+          "costTechnology": 1,
+          "researchTimeSeconds": 30,
+          "iconKey": "custodes_null",
+          "effectSummary": "Desbloquea: Prosecutors, Vigilators, Witchseekers.",
+          "prerequisiteSlugs": [
+            "fundacion-planetaria"
+          ],
+          "unitTemplateSlugs": [
+            "unit-adeptus-custodes-prosecutors",
+            "unit-adeptus-custodes-vigilators",
+            "unit-adeptus-custodes-witchseekers"
+          ]
+        },
+        {
+          "slug": "custodes-centuras-vigilia",
+          "name": "Centuras de la Vigilia",
+          "description": "La cadena de mando Anathema despliega ejecutoras, heroes de la Vigilia y protocolos [Crucible]. Desbloquea: Knight-Centura, Aleya y Null Maiden [Crucible].",
+          "branchSlug": "camara-anathema",
+          "tier": 2,
+          "positionX": 2,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "custodes_silent_command",
+          "effectSummary": "Desbloquea: Knight-Centura, Aleya, Null Maiden [Crucible].",
+          "prerequisiteSlugs": [
+            "custodes-escuadras-nulas",
+            "asamblea-planetaria"
+          ],
+          "unitTemplateSlugs": [
+            "unit-adeptus-custodes-knight-centura",
+            "unit-adeptus-custodes-aleya",
+            "unit-adeptus-custodes-null-maiden-crucible"
+          ]
+        },
+        {
+          "slug": "custodes-rhino-psykana",
+          "name": "Rhino Psykana",
+          "description": "Transportes sellados permiten que las cazadoras nulas lleguen a santuarios, frentes y brechas psiquicas. Desbloquea: Anathema Psykana Rhino.",
+          "branchSlug": "camara-anathema",
+          "tier": 2,
+          "positionX": 2,
+          "positionY": 3,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "custodes_rhino",
+          "effectSummary": "Desbloquea: Anathema Psykana Rhino.",
+          "prerequisiteSlugs": [
+            "custodes-escuadras-nulas",
+            "maquinaria-belica"
+          ],
+          "unitTemplateSlugs": [
+            "unit-adeptus-custodes-anathema-psykana-rhino"
+          ]
+        },
+        {
+          "slug": "custodes-procesion-juramentada",
+          "name": "Procesion Juramentada",
+          "description": "Auxiliares imperiales autorizados acompanan a la Camara como voz ritual, testigo y penitencia armada. Desbloquea: Ministorum Priest.",
+          "branchSlug": "camara-anathema",
+          "tier": 3,
+          "positionX": 2,
+          "positionY": 2,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "custodes_priest",
+          "effectSummary": "Desbloquea: Ministorum Priest.",
+          "prerequisiteSlugs": [
+            "custodes-centuras-vigilia",
+            "custodes-rhino-psykana"
+          ],
+          "unitTemplateSlugs": [
+            "unit-adeptus-custodes-ministorum-priest"
+          ]
+        },
+        {
+          "slug": "custodes-grav-ligero",
+          "name": "Grav-Vehiculos Ligeros",
+          "description": "Los primeros chasis grav aseguran rutas, evacuaciones tacticas y golpes quirurgicos en la frontera. Desbloquea: Pallas Grav-attack y Coronus Grav-carrier.",
+          "branchSlug": "arsenal-trono",
+          "tier": 1,
+          "positionX": 3,
+          "positionY": 2,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "custodes_grav",
+          "effectSummary": "Desbloquea: Pallas Grav-attack, Coronus Grav-carrier.",
+          "prerequisiteSlugs": [
+            "maquinaria-belica"
+          ],
+          "unitTemplateSlugs": [
+            "unit-adeptus-custodes-pallas-grav-attack",
+            "unit-adeptus-custodes-coronus-grav-carrier"
+          ]
+        },
+        {
+          "slug": "custodes-sarcofagos-venerables",
+          "name": "Sarcofagos Venerables",
+          "description": "Los heroes caidos del Trono vuelven a caminar en chasis Contemptor para duelos, brechas y guardiania eterna. Desbloquea: Contemptor-Achillus Dreadnought, Contemptor-Galatus Dreadnought y Venerable Contemptor Dreadnought.",
+          "branchSlug": "arsenal-trono",
+          "tier": 2,
+          "positionX": 3,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "custodes_dreadnought",
+          "effectSummary": "Desbloquea: Contemptor-Achillus Dreadnought, Contemptor-Galatus Dreadnought, Venerable Contemptor Dreadnought.",
+          "prerequisiteSlugs": [
+            "custodes-grav-ligero",
+            "custodes-campeones-escudo"
+          ],
+          "unitTemplateSlugs": [
+            "unit-adeptus-custodes-contemptor-achillus-dreadnought",
+            "unit-adeptus-custodes-contemptor-galatus-dreadnought",
+            "unit-adeptus-custodes-venerable-contemptor-dreadnought"
+          ]
+        },
+        {
+          "slug": "custodes-blindados-auramita",
+          "name": "Blindados de Auramita",
+          "description": "Tanques grav, reliquias Land Raider y dreadnoughts pesados forman la respuesta dorada a una guerra total. Desbloquea: Caladius Grav-tank, Venerable Land Raider y Telemon Heavy Dreadnought.",
+          "branchSlug": "arsenal-trono",
+          "tier": 3,
+          "positionX": 3,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "custodes_tank",
+          "effectSummary": "Desbloquea: Caladius Grav-tank, Venerable Land Raider, Telemon Heavy Dreadnought.",
+          "prerequisiteSlugs": [
+            "custodes-sarcofagos-venerables"
+          ],
+          "unitTemplateSlugs": [
+            "unit-adeptus-custodes-caladius-grav-tank",
+            "unit-adeptus-custodes-venerable-land-raider",
+            "unit-adeptus-custodes-telemon-heavy-dreadnought"
+          ]
+        },
+        {
+          "slug": "custodes-naves-trono",
+          "name": "Naves del Trono",
+          "description": "Aeronaves de asalto y supremacia orbital permiten llevar la guerra del Trono a cualquier mundo rebelde. Desbloquea: Ares Gunship y Orion Assault Dropship.",
+          "branchSlug": "arsenal-trono",
+          "tier": 3,
+          "positionX": 3,
+          "positionY": 3,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "custodes_air",
+          "effectSummary": "Desbloquea: Ares Gunship, Orion Assault Dropship.",
+          "prerequisiteSlugs": [
+            "custodes-grav-ligero",
+            "maquinaria-belica"
+          ],
+          "unitTemplateSlugs": [
+            "unit-adeptus-custodes-ares-gunship",
+            "unit-adeptus-custodes-orion-assault-dropship"
+          ]
+        },
+        {
+          "slug": "custodes-casas-questoris",
+          "name": "Casas Questoris",
+          "description": "Juramentos de sangre y deuda abren el apoyo de Armigers, Barones y Knights aliados para guerras que superan una guarnicion. Desbloquea: Armiger Helverin, Armiger Warglaive, Armiger Moirax, Knight Destrier, Knight Gallant, Knight Preceptor, Knight Paladin, Knight Warden, Knight Crusader, Knight Defender, Knight Castellan, Knight Valiant, Cerastus Knight Lancer y Canis Rex.",
+          "branchSlug": "arsenal-trono",
+          "tier": 4,
+          "positionX": 3,
+          "positionY": 2,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "custodes_knight",
+          "effectSummary": "Desbloquea: Armiger Helverin, Armiger Warglaive, Armiger Moirax, Knight Destrier, Knight Gallant, Knight Preceptor, Knight Paladin, Knight Warden, Knight Crusader, Knight Defender, Knight Castellan, Knight Valiant, Cerastus Knight Lancer, Canis Rex.",
+          "prerequisiteSlugs": [
+            "custodes-blindados-auramita",
+            "custodes-naves-trono"
+          ],
+          "unitTemplateSlugs": [
+            "unit-adeptus-custodes-armiger-helverin",
+            "unit-adeptus-custodes-armiger-warglaive",
+            "unit-adeptus-custodes-armiger-moirax",
+            "unit-adeptus-custodes-knight-destrier",
+            "unit-adeptus-custodes-knight-gallant",
+            "unit-adeptus-custodes-knight-preceptor",
+            "unit-adeptus-custodes-knight-paladin",
+            "unit-adeptus-custodes-knight-warden",
+            "unit-adeptus-custodes-knight-crusader",
+            "unit-adeptus-custodes-knight-defender",
+            "unit-adeptus-custodes-knight-castellan",
+            "unit-adeptus-custodes-knight-valiant",
+            "unit-adeptus-custodes-cerastus-knight-lancer",
+            "unit-adeptus-custodes-canis-rex"
+          ]
+        },
+        {
+          "slug": "custodes-titanes-terra",
+          "name": "Titanes de Terra",
+          "description": "Los pactos mas extremos movilizan Acastus, maquinas dios y Titanes como simbolos absolutos de intervencion imperial. Desbloquea: Acastus Knight Porphyrion, Acastus Knight Asterius, Warhound Titan y Warlord Titan.",
+          "branchSlug": "arsenal-trono",
+          "tier": 5,
+          "positionX": 3,
+          "positionY": 2,
+          "costTechnology": 3,
+          "researchTimeSeconds": 30,
+          "iconKey": "custodes_titan",
+          "effectSummary": "Desbloquea: Acastus Knight Porphyrion, Acastus Knight Asterius, Warhound Titan, Warlord Titan.",
+          "prerequisiteSlugs": [
+            "custodes-casas-questoris"
+          ],
+          "unitTemplateSlugs": [
+            "unit-adeptus-custodes-acastus-knight-porphyrion",
+            "unit-adeptus-custodes-acastus-knight-asterius",
+            "unit-adeptus-custodes-warhound-titan",
+            "unit-adeptus-custodes-warlord-titan"
+          ]
+        }
+      ]
+    },
+    {
+      "factionSlug": "space-marines",
+      "treeKey": "troops-space-marines-v1",
+      "status": "ready",
+      "branches": [
+        {
+          "slug": "doctrina-capitulo",
+          "name": "Doctrina del Capitulo",
+          "description": "Escuadras de batalla, oficiales, veteranos, fuego pesado y la Primera Compania."
+        },
+        {
+          "slug": "vanguardia-asalto",
+          "name": "Vanguardia y Asalto",
+          "description": "Exploradores, Phobos, eliminacion, despliegue orbital y cazadores motorizados."
+        },
+        {
+          "slug": "arsenal-cruzada",
+          "name": "Arsenal de Cruzada",
+          "description": "Transportes, bastiones, dreadnoughts, blindados, aeronaves y reliquias acorazadas."
+        }
+      ],
+      "nodes": [
+        {
+          "slug": "marines-escuadras-batalla",
+          "name": "Escuadras de Batalla",
+          "description": "El nucleo doctrinal del capitulo despliega lineas flexibles para tomar y mantener terreno. Desbloquea: Assault Intercessor Squad, Intercessor Squad, Heavy Intercessor Squad y Tactical Squad.",
+          "branchSlug": "doctrina-capitulo",
+          "tier": 1,
+          "positionX": 1,
+          "positionY": 2,
+          "costTechnology": 1,
+          "researchTimeSeconds": 30,
+          "iconKey": "marine_battleline",
+          "effectSummary": "Desbloquea: Assault Intercessor Squad, Intercessor Squad, Heavy Intercessor Squad, Tactical Squad.",
+          "prerequisiteSlugs": [
+            "fundacion-planetaria"
+          ],
+          "unitTemplateSlugs": [
+            "unit-space-marines-assault-intercessor-squad",
+            "unit-space-marines-intercessor-squad",
+            "unit-space-marines-heavy-intercessor-squad",
+            "unit-space-marines-tactical-squad"
+          ]
+        },
+        {
+          "slug": "marines-oficiales-compania",
+          "name": "Oficiales de Compania",
+          "description": "La estructura de mando del capitulo activa capitanes, tenientes, apotecarios, capellanes y bibliotecarios de campana. Desbloquea: Captain, Lieutenant, Ancient, Apothecary, Chaplain, Librarian y Librarius Adept [Crucible].",
+          "branchSlug": "doctrina-capitulo",
+          "tier": 2,
+          "positionX": 1,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "marine_command",
+          "effectSummary": "Desbloquea: Captain, Lieutenant, Ancient, Apothecary, Chaplain, Librarian, Librarius Adept [Crucible].",
+          "prerequisiteSlugs": [
+            "marines-escuadras-batalla",
+            "asamblea-planetaria"
+          ],
+          "unitTemplateSlugs": [
+            "unit-space-marines-captain",
+            "unit-space-marines-lieutenant",
+            "unit-space-marines-ancient",
+            "unit-space-marines-apothecary",
+            "unit-space-marines-chaplain",
+            "unit-space-marines-librarian",
+            "unit-space-marines-librarius-adept-crucible"
+          ]
+        },
+        {
+          "slug": "marines-veteranos-capitulo",
+          "name": "Veteranos del Capitulo",
+          "description": "Los hermanos con honores de batalla forman la punta noble de la ofensiva y protegen el estandarte de la campana. Desbloquea: Bladeguard Veteran Squad, Sternguard Veteran Squad, Company Heroes, Bladeguard Ancient, Champion of the Chapter [Crucible] y Judiciar.",
+          "branchSlug": "doctrina-capitulo",
+          "tier": 3,
+          "positionX": 1,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "marine_veterans",
+          "effectSummary": "Desbloquea: Bladeguard Veteran Squad, Sternguard Veteran Squad, Company Heroes, Bladeguard Ancient, Champion of the Chapter [Crucible], Judiciar.",
+          "prerequisiteSlugs": [
+            "marines-oficiales-compania"
+          ],
+          "unitTemplateSlugs": [
+            "unit-space-marines-bladeguard-veteran-squad",
+            "unit-space-marines-sternguard-veteran-squad",
+            "unit-space-marines-company-heroes",
+            "unit-space-marines-bladeguard-ancient",
+            "unit-space-marines-champion-of-the-chapter-crucible",
+            "unit-space-marines-judiciar"
+          ]
+        },
+        {
+          "slug": "marines-gravis-fuego-pesado",
+          "name": "Gravis y Fuego Pesado",
+          "description": "Armaduras pesadas, armas de ruptura y doctrina de saturacion preparan al capitulo para romper posiciones fortificadas. Desbloquea: Aggressor Squad, Eradicator Squad, Infernus Squad, Hellblaster Squad, Devastator Squad, Desolation Squad, Apothecary Biologis y Captain in Gravis Armour.",
+          "branchSlug": "doctrina-capitulo",
+          "tier": 3,
+          "positionX": 1,
+          "positionY": 3,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "marine_heavy_fire",
+          "effectSummary": "Desbloquea: Aggressor Squad, Eradicator Squad, Infernus Squad, Hellblaster Squad, Devastator Squad, Desolation Squad, Apothecary Biologis, Captain in Gravis Armour.",
+          "prerequisiteSlugs": [
+            "marines-escuadras-batalla",
+            "maquinaria-belica"
+          ],
+          "unitTemplateSlugs": [
+            "unit-space-marines-aggressor-squad",
+            "unit-space-marines-eradicator-squad",
+            "unit-space-marines-infernus-squad",
+            "unit-space-marines-hellblaster-squad",
+            "unit-space-marines-devastator-squad",
+            "unit-space-marines-desolation-squad",
+            "unit-space-marines-apothecary-biologis",
+            "unit-space-marines-captain-in-gravis-armour"
+          ]
+        },
+        {
+          "slug": "marines-primera-compania",
+          "name": "Primera Compania",
+          "description": "La reserva mas sagrada del capitulo entra en guerra con exterminadores, centuriones y oficiales de armadura reliquia. Desbloquea: Terminator Squad, Terminator Assault Squad, Ancient in Terminator Armor, Chaplain in Terminator Armour, Librarian in Terminator Armour, Captain in Terminator Armour, Centurion Assault Squad y Centurion Devastator Squad.",
+          "branchSlug": "doctrina-capitulo",
+          "tier": 4,
+          "positionX": 1,
+          "positionY": 2,
+          "costTechnology": 3,
+          "researchTimeSeconds": 30,
+          "iconKey": "marine_first_company",
+          "effectSummary": "Desbloquea: Terminator Squad, Terminator Assault Squad, Ancient in Terminator Armor, Chaplain in Terminator Armour, Librarian in Terminator Armour, Captain in Terminator Armour, Centurion Assault Squad, Centurion Devastator Squad.",
+          "prerequisiteSlugs": [
+            "marines-veteranos-capitulo",
+            "marines-gravis-fuego-pesado"
+          ],
+          "unitTemplateSlugs": [
+            "unit-space-marines-terminator-squad",
+            "unit-space-marines-terminator-assault-squad",
+            "unit-space-marines-ancient-in-terminator-armor",
+            "unit-space-marines-chaplain-in-terminator-armour",
+            "unit-space-marines-librarian-in-terminator-armour",
+            "unit-space-marines-captain-in-terminator-armour",
+            "unit-space-marines-centurion-assault-squad",
+            "unit-space-marines-centurion-devastator-squad"
+          ]
+        },
+        {
+          "slug": "marines-patrullas-phobos",
+          "name": "Patrullas Phobos",
+          "description": "Exploradores y armaduras Phobos aseguran balizas, niegan infiltraciones y preparan zonas de aterrizaje. Desbloquea: Scout Squad, Incursor Squad, Infiltrator Squad, Captain in Phobos Armour, Lieutenant in Phobos Armour y Librarian in Phobos Armour.",
+          "branchSlug": "vanguardia-asalto",
+          "tier": 1,
+          "positionX": 2,
+          "positionY": 2,
+          "costTechnology": 1,
+          "researchTimeSeconds": 30,
+          "iconKey": "marine_phobos",
+          "effectSummary": "Desbloquea: Scout Squad, Incursor Squad, Infiltrator Squad, Captain in Phobos Armour, Lieutenant in Phobos Armour, Librarian in Phobos Armour.",
+          "prerequisiteSlugs": [
+            "marines-escuadras-batalla"
+          ],
+          "unitTemplateSlugs": [
+            "unit-space-marines-scout-squad",
+            "unit-space-marines-incursor-squad",
+            "unit-space-marines-infiltrator-squad",
+            "unit-space-marines-captain-in-phobos-armour",
+            "unit-space-marines-lieutenant-in-phobos-armour",
+            "unit-space-marines-librarian-in-phobos-armour"
+          ]
+        },
+        {
+          "slug": "marines-eliminacion-silenciosa",
+          "name": "Eliminacion Silenciosa",
+          "description": "Los equipos de terror y francotiradores cortan mandos enemigos antes de la llegada del grueso del capitulo. Desbloquea: Reiver Squad, Eliminator Squad, Lieutenant in Reiver Armour y Lieutenant with Combi-weapon.",
+          "branchSlug": "vanguardia-asalto",
+          "tier": 2,
+          "positionX": 2,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "marine_elimination",
+          "effectSummary": "Desbloquea: Reiver Squad, Eliminator Squad, Lieutenant in Reiver Armour, Lieutenant with Combi-weapon.",
+          "prerequisiteSlugs": [
+            "marines-patrullas-phobos"
+          ],
+          "unitTemplateSlugs": [
+            "unit-space-marines-reiver-squad",
+            "unit-space-marines-eliminator-squad",
+            "unit-space-marines-lieutenant-in-reiver-armour",
+            "unit-space-marines-lieutenant-with-combi-weapon"
+          ]
+        },
+        {
+          "slug": "marines-asalto-orbital",
+          "name": "Asalto Orbital",
+          "description": "Retrojets, reactores y escuadras de descenso convierten cualquier frente en una zona de ruptura vertical. Desbloquea: Assault Intercessors with Jump Packs, Vanguard Veteran Squad with Jump Packs, Inceptor Squad, Suppressor Squad, Captain with Jump Pack y Chaplain with Jump Pack.",
+          "branchSlug": "vanguardia-asalto",
+          "tier": 3,
+          "positionX": 2,
+          "positionY": 2,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "marine_jump",
+          "effectSummary": "Desbloquea: Assault Intercessors with Jump Packs, Vanguard Veteran Squad with Jump Packs, Inceptor Squad, Suppressor Squad, Captain with Jump Pack, Chaplain with Jump Pack.",
+          "prerequisiteSlugs": [
+            "marines-patrullas-phobos",
+            "marines-oficiales-compania"
+          ],
+          "unitTemplateSlugs": [
+            "unit-space-marines-assault-intercessors-with-jump-packs",
+            "unit-space-marines-vanguard-veteran-squad-with-jump-packs",
+            "unit-space-marines-inceptor-squad",
+            "unit-space-marines-suppressor-squad",
+            "unit-space-marines-captain-with-jump-pack",
+            "unit-space-marines-chaplain-with-jump-pack"
+          ]
+        },
+        {
+          "slug": "marines-cazadores-motorizados",
+          "name": "Cazadores Motorizados",
+          "description": "Escuadras de persecucion, motos de mando y vehiculos ligeros rodean al enemigo antes del golpe acorazado. Desbloquea: Outrider Squad, Invader ATV y Chaplain on Bike.",
+          "branchSlug": "vanguardia-asalto",
+          "tier": 4,
+          "positionX": 2,
+          "positionY": 2,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "marine_bike",
+          "effectSummary": "Desbloquea: Outrider Squad, Invader ATV, Chaplain on Bike.",
+          "prerequisiteSlugs": [
+            "marines-asalto-orbital",
+            "maquinaria-belica"
+          ],
+          "unitTemplateSlugs": [
+            "unit-space-marines-outrider-squad",
+            "unit-space-marines-invader-atv",
+            "unit-space-marines-chaplain-on-bike"
+          ]
+        },
+        {
+          "slug": "marines-despliegue-mecanizado",
+          "name": "Despliegue Mecanizado",
+          "description": "El capitulo abre corredores de despliegue con capsulas, transportes Rhino y chasis de reaccion rapida. Desbloquea: Drop Pod, Rhino, Impulsor y Razorback.",
+          "branchSlug": "arsenal-cruzada",
+          "tier": 1,
+          "positionX": 3,
+          "positionY": 2,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "marine_transport",
+          "effectSummary": "Desbloquea: Drop Pod, Rhino, Impulsor, Razorback.",
+          "prerequisiteSlugs": [
+            "marines-escuadras-batalla",
+            "maquinaria-belica"
+          ],
+          "unitTemplateSlugs": [
+            "unit-space-marines-drop-pod",
+            "unit-space-marines-rhino",
+            "unit-space-marines-impulsor",
+            "unit-space-marines-razorback"
+          ]
+        },
+        {
+          "slug": "marines-bastiones-apoyo",
+          "name": "Bastiones de Apoyo",
+          "description": "Sistemas de fuego estacionario, bunkeres orbitales, warsuits y techmarines aseguran la infraestructura de batalla. Desbloquea: Firestrike Servo-Turrets, Hammerfall Bunker, Invictor Tactical Warsuit y Techmarine.",
+          "branchSlug": "arsenal-cruzada",
+          "tier": 2,
+          "positionX": 3,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "marine_bastion",
+          "effectSummary": "Desbloquea: Firestrike Servo-Turrets, Hammerfall Bunker, Invictor Tactical Warsuit, Techmarine.",
+          "prerequisiteSlugs": [
+            "marines-despliegue-mecanizado"
+          ],
+          "unitTemplateSlugs": [
+            "unit-space-marines-firestrike-servo-turrets",
+            "unit-space-marines-hammerfall-bunker",
+            "unit-space-marines-invictor-tactical-warsuit",
+            "unit-space-marines-techmarine"
+          ]
+        },
+        {
+          "slug": "marines-alas-tormenta",
+          "name": "Alas Tormenta",
+          "description": "Speeders de reaccion rapida cazan blindados, saturan infanteria y marcan objetivos para el avance principal. Desbloquea: Storm Speeder Hailstrike, Storm Speeder Hammerstrike y Storm Speeder Thunderstrike.",
+          "branchSlug": "arsenal-cruzada",
+          "tier": 2,
+          "positionX": 3,
+          "positionY": 3,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "marine_speeder",
+          "effectSummary": "Desbloquea: Storm Speeder Hailstrike, Storm Speeder Hammerstrike, Storm Speeder Thunderstrike.",
+          "prerequisiteSlugs": [
+            "marines-despliegue-mecanizado"
+          ],
+          "unitTemplateSlugs": [
+            "unit-space-marines-storm-speeder-hailstrike",
+            "unit-space-marines-storm-speeder-hammerstrike",
+            "unit-space-marines-storm-speeder-thunderstrike"
+          ]
+        },
+        {
+          "slug": "marines-sarcofagos-guerra",
+          "name": "Sarcofagos de Guerra",
+          "description": "Hermanos venerables y chasis dreadnought convierten reliquias vivientes en martillos de avance. Desbloquea: Dreadnought, Ballistus Dreadnought, Brutalis Dreadnought, Redemptor Dreadnought y Venerable Battle-Brother [Crucible].",
+          "branchSlug": "arsenal-cruzada",
+          "tier": 3,
+          "positionX": 3,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "marine_dreadnought",
+          "effectSummary": "Desbloquea: Dreadnought, Ballistus Dreadnought, Brutalis Dreadnought, Redemptor Dreadnought, Venerable Battle-Brother [Crucible].",
+          "prerequisiteSlugs": [
+            "marines-bastiones-apoyo",
+            "marines-oficiales-compania"
+          ],
+          "unitTemplateSlugs": [
+            "unit-space-marines-dreadnought",
+            "unit-space-marines-ballistus-dreadnought",
+            "unit-space-marines-brutalis-dreadnought",
+            "unit-space-marines-redemptor-dreadnought",
+            "unit-space-marines-venerable-battle-brother-crucible"
+          ]
+        },
+        {
+          "slug": "marines-lanzas-blindadas",
+          "name": "Lanzas Blindadas",
+          "description": "Predators, Gladiators, artilleria y grav-tanques pesados forman columnas acorazadas de ruptura. Desbloquea: Predator Annihilator, Predator Destructor, Gladiator Valiant, Gladiator Lancer, Gladiator Reaper, Vindicator, Whirlwind, Repulsor y Repulsor Executioner.",
+          "branchSlug": "arsenal-cruzada",
+          "tier": 4,
+          "positionX": 3,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "marine_tank",
+          "effectSummary": "Desbloquea: Predator Annihilator, Predator Destructor, Gladiator Valiant, Gladiator Lancer, Gladiator Reaper, Vindicator, Whirlwind, Repulsor, Repulsor Executioner.",
+          "prerequisiteSlugs": [
+            "marines-sarcofagos-guerra",
+            "marines-alas-tormenta"
+          ],
+          "unitTemplateSlugs": [
+            "unit-space-marines-predator-annihilator",
+            "unit-space-marines-predator-destructor",
+            "unit-space-marines-gladiator-valiant",
+            "unit-space-marines-gladiator-lancer",
+            "unit-space-marines-gladiator-reaper",
+            "unit-space-marines-vindicator",
+            "unit-space-marines-whirlwind",
+            "unit-space-marines-repulsor",
+            "unit-space-marines-repulsor-executioner"
+          ]
+        },
+        {
+          "slug": "marines-reliquias-cruzada",
+          "name": "Reliquias de Cruzada",
+          "description": "Las arcas mas antiguas, gunships de supremacia aerea y superpesados del capitulo entran en guerra total. Desbloquea: Land Raider, Land Raider Crusader, Land Raider Redeemer, Stormraven Gunship, Stormhawk Interceptor, Stormtalon Gunship, Astraeus y Thunderhawk Gunship.",
+          "branchSlug": "arsenal-cruzada",
+          "tier": 5,
+          "positionX": 3,
+          "positionY": 2,
+          "costTechnology": 3,
+          "researchTimeSeconds": 30,
+          "iconKey": "marine_relic_armor",
+          "effectSummary": "Desbloquea: Land Raider, Land Raider Crusader, Land Raider Redeemer, Stormraven Gunship, Stormhawk Interceptor, Stormtalon Gunship, Astraeus, Thunderhawk Gunship.",
+          "prerequisiteSlugs": [
+            "marines-lanzas-blindadas",
+            "marines-primera-compania"
+          ],
+          "unitTemplateSlugs": [
+            "unit-space-marines-land-raider",
+            "unit-space-marines-land-raider-crusader",
+            "unit-space-marines-land-raider-redeemer",
+            "unit-space-marines-stormraven-gunship",
+            "unit-space-marines-stormhawk-interceptor",
+            "unit-space-marines-stormtalon-gunship",
+            "unit-space-marines-astraeus",
+            "unit-space-marines-thunderhawk-gunship"
+          ]
+        }
+      ]
+    },
+    {
+      "factionSlug": "cultos-genestealer",
+      "treeKey": "troops-cultos-genestealer-v1",
+      "status": "ready",
+      "branches": [
+        {
+          "slug": "red-insurreccion",
+          "name": "Red de Insurreccion",
+          "description": "Cohortes mineras, iconos de revuelta, convoyes industriales y mando abierto del Dia de la Ascension."
+        },
+        {
+          "slug": "sombras-culto",
+          "name": "Sombras del Culto",
+          "description": "Voces, asesinos, saboteadores, guerrillas y profetas que preparan el alzamiento desde dentro."
+        },
+        {
+          "slug": "ascension-patriarca",
+          "name": "Ascension del Patriarca",
+          "description": "Mutaciones, pureza genestealer, aberraciones y la autoridad biologica del Patriarca."
+        }
+      ],
+      "nodes": [
+        {
+          "slug": "culto-celulas-mineras",
+          "name": "Celulas Mineras",
+          "description": "Las primeras celulas obreras toman armas ocultas y convierten manufactorums en cuarteles secretos. Desbloquea: Neophyte Hybrids.",
+          "branchSlug": "red-insurreccion",
+          "tier": 1,
+          "positionX": 1,
+          "positionY": 2,
+          "costTechnology": 1,
+          "researchTimeSeconds": 30,
+          "iconKey": "cult_cell",
+          "effectSummary": "Desbloquea: Neophyte Hybrids.",
+          "prerequisiteSlugs": [
+            "fundacion-planetaria"
+          ],
+          "unitTemplateSlugs": [
+            "unit-cultos-genestealer-neophyte-hybrids"
+          ]
+        },
+        {
+          "slug": "culto-iconos-alzamiento",
+          "name": "Iconos del Alzamiento",
+          "description": "Los acolitos salen de los santuarios industriales con iconos y armas rituales para dirigir masas insurgentes. Desbloquea: Acolyte Hybrids with Autopistols y Acolyte Iconward.",
+          "branchSlug": "red-insurreccion",
+          "tier": 2,
+          "positionX": 1,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "cult_icon",
+          "effectSummary": "Desbloquea: Acolyte Hybrids with Autopistols, Acolyte Iconward.",
+          "prerequisiteSlugs": [
+            "culto-celulas-mineras"
+          ],
+          "unitTemplateSlugs": [
+            "unit-cultos-genestealer-acolyte-hybrids-with-autopistols",
+            "unit-cultos-genestealer-acolyte-iconward"
+          ]
+        },
+        {
+          "slug": "culto-purga-prometio",
+          "name": "Purga de Prometio",
+          "description": "Las cuadrillas de tunel aprenden a limpiar bunkeres y corredores con fuego industrial. Desbloquea: Acolyte Hybrids with Hand Flamers.",
+          "branchSlug": "red-insurreccion",
+          "tier": 2,
+          "positionX": 1,
+          "positionY": 3,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "cult_flame",
+          "effectSummary": "Desbloquea: Acolyte Hybrids with Hand Flamers.",
+          "prerequisiteSlugs": [
+            "culto-celulas-mineras"
+          ],
+          "unitTemplateSlugs": [
+            "unit-cultos-genestealer-acolyte-hybrids-with-hand-flamers"
+          ]
+        },
+        {
+          "slug": "culto-convoy-subterraneo",
+          "name": "Convoy Subterraneo",
+          "description": "Rutas mineras, talleres ocultos y conductores juramentados convierten vehiculos civiles en columnas de guerra. Desbloquea: Goliath Truck y Achilles Ridgerunners.",
+          "branchSlug": "red-insurreccion",
+          "tier": 3,
+          "positionX": 1,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "cult_convoy",
+          "effectSummary": "Desbloquea: Goliath Truck, Achilles Ridgerunners.",
+          "prerequisiteSlugs": [
+            "culto-iconos-alzamiento",
+            "maquinaria-belica"
+          ],
+          "unitTemplateSlugs": [
+            "unit-cultos-genestealer-goliath-truck",
+            "unit-cultos-genestealer-achilles-ridgerunners"
+          ]
+        },
+        {
+          "slug": "culto-muelas-industriales",
+          "name": "Muelas Industriales",
+          "description": "Las maquinas de extraccion pesada se blindan, se arman y se lanzan contra fortalezas de superficie. Desbloquea: Goliath Rockgrinder.",
+          "branchSlug": "red-insurreccion",
+          "tier": 4,
+          "positionX": 1,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "cult_rockgrinder",
+          "effectSummary": "Desbloquea: Goliath Rockgrinder.",
+          "prerequisiteSlugs": [
+            "culto-convoy-subterraneo"
+          ],
+          "unitTemplateSlugs": [
+            "unit-cultos-genestealer-goliath-rockgrinder"
+          ]
+        },
+        {
+          "slug": "culto-mando-insurreccional",
+          "name": "Mando Insurreccional",
+          "description": "El culto coordina celulas abiertas, reservas dormidas y golpes sincronizados de conquista planetaria. Desbloquea: Primus, Nexos y Cult Insurrectionist [Crucible].",
+          "branchSlug": "red-insurreccion",
+          "tier": 4,
+          "positionX": 1,
+          "positionY": 3,
+          "costTechnology": 3,
+          "researchTimeSeconds": 30,
+          "iconKey": "cult_command",
+          "effectSummary": "Desbloquea: Primus, Nexos, Cult Insurrectionist [Crucible].",
+          "prerequisiteSlugs": [
+            "culto-iconos-alzamiento",
+            "culto-vox-cuarta-generacion",
+            "asamblea-planetaria"
+          ],
+          "unitTemplateSlugs": [
+            "unit-cultos-genestealer-primus",
+            "unit-cultos-genestealer-nexos",
+            "unit-cultos-genestealer-cult-insurrectionist-crucible"
+          ]
+        },
+        {
+          "slug": "culto-vox-cuarta-generacion",
+          "name": "Vox de Cuarta Generacion",
+          "description": "Predicadores, psiquicos y transmisores clandestinos convierten rumores de colmena en mandato sagrado. Desbloquea: Clamavus, Magus.",
+          "branchSlug": "sombras-culto",
+          "tier": 1,
+          "positionX": 2,
+          "positionY": 2,
+          "costTechnology": 1,
+          "researchTimeSeconds": 30,
+          "iconKey": "cult_vox",
+          "effectSummary": "Desbloquea: Clamavus, Magus.",
+          "prerequisiteSlugs": [
+            "asamblea-planetaria"
+          ],
+          "unitTemplateSlugs": [
+            "unit-cultos-genestealer-clamavus",
+            "unit-cultos-genestealer-magus"
+          ]
+        },
+        {
+          "slug": "culto-cuchillos-bajo-ciudad",
+          "name": "Cuchillos Bajo la Ciudad",
+          "description": "Custodios personales y asesinos de culto eliminan objetivos clave antes de que la revuelta sea visible. Desbloquea: Locus y Sanctus.",
+          "branchSlug": "sombras-culto",
+          "tier": 2,
+          "positionX": 2,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "cult_blade",
+          "effectSummary": "Desbloquea: Locus, Sanctus.",
+          "prerequisiteSlugs": [
+            "culto-vox-cuarta-generacion"
+          ],
+          "unitTemplateSlugs": [
+            "unit-cultos-genestealer-locus",
+            "unit-cultos-genestealer-sanctus"
+          ]
+        },
+        {
+          "slug": "culto-mito-pistolero",
+          "name": "Mito Pistolero",
+          "description": "Heroes callejeros y especialistas en demoliciones vuelven cada callejon una trampa propagandistica. Desbloquea: Kelermorph y Reductus Saboteur.",
+          "branchSlug": "sombras-culto",
+          "tier": 2,
+          "positionX": 2,
+          "positionY": 3,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "cult_guns",
+          "effectSummary": "Desbloquea: Kelermorph, Reductus Saboteur.",
+          "prerequisiteSlugs": [
+            "culto-vox-cuarta-generacion"
+          ],
+          "unitTemplateSlugs": [
+            "unit-cultos-genestealer-kelermorph",
+            "unit-cultos-genestealer-reductus-saboteur"
+          ]
+        },
+        {
+          "slug": "culto-guerrilla-crucible",
+          "name": "Guerrilla Crucible",
+          "description": "Escuadras de reconocimiento, motos de tunel y celulas [Crucible] golpean flancos y rutas de retirada. Desbloquea: Atalan Jackals, Jackal Alphus y Cult Guerrilla [Crucible].",
+          "branchSlug": "sombras-culto",
+          "tier": 3,
+          "positionX": 2,
+          "positionY": 2,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "cult_guerrilla",
+          "effectSummary": "Desbloquea: Atalan Jackals, Jackal Alphus, Cult Guerrilla [Crucible].",
+          "prerequisiteSlugs": [
+            "culto-mito-pistolero",
+            "culto-convoy-subterraneo"
+          ],
+          "unitTemplateSlugs": [
+            "unit-cultos-genestealer-atalan-jackals",
+            "unit-cultos-genestealer-jackal-alphus",
+            "unit-cultos-genestealer-cult-guerrilla-crucible"
+          ]
+        },
+        {
+          "slug": "culto-profetas-dia-ascension",
+          "name": "Profetas del Dia de la Ascension",
+          "description": "Voces bendecidas y mentes sinapticas anuncian el momento exacto en que la ciudad debe caer. Desbloquea: Benefictus y Voice of the Patriarch [Crucible].",
+          "branchSlug": "sombras-culto",
+          "tier": 4,
+          "positionX": 2,
+          "positionY": 2,
+          "costTechnology": 3,
+          "researchTimeSeconds": 30,
+          "iconKey": "cult_prophet",
+          "effectSummary": "Desbloquea: Benefictus, Voice of the Patriarch [Crucible].",
+          "prerequisiteSlugs": [
+            "culto-guerrilla-crucible",
+            "culto-mando-insurreccional"
+          ],
+          "unitTemplateSlugs": [
+            "unit-cultos-genestealer-benefictus",
+            "unit-cultos-genestealer-voice-of-the-patriarch-crucible"
+          ]
+        },
+        {
+          "slug": "culto-savia-mutagena",
+          "name": "Savia Mutagena",
+          "description": "Cirujanos de culto y mutantes de primera linea aceleran la transformacion de la progenie hibrida. Desbloquea: Biophagus y Hybrid Metamorphs.",
+          "branchSlug": "ascension-patriarca",
+          "tier": 1,
+          "positionX": 3,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "cult_mutation",
+          "effectSummary": "Desbloquea: Biophagus, Hybrid Metamorphs.",
+          "prerequisiteSlugs": [
+            "criadero-guerra"
+          ],
+          "unitTemplateSlugs": [
+            "unit-cultos-genestealer-biophagus",
+            "unit-cultos-genestealer-hybrid-metamorphs"
+          ]
+        },
+        {
+          "slug": "culto-pureza-genetica",
+          "name": "Pureza Genetica",
+          "description": "Los descendientes mas puros del beso genestealer salen de madrigueras selladas para romper lineas enemigas. Desbloquea: Purestrain Genestealers.",
+          "branchSlug": "ascension-patriarca",
+          "tier": 2,
+          "positionX": 3,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "cult_genestealer",
+          "effectSummary": "Desbloquea: Purestrain Genestealers.",
+          "prerequisiteSlugs": [
+            "culto-savia-mutagena"
+          ],
+          "unitTemplateSlugs": [
+            "unit-cultos-genestealer-purestrain-genestealers"
+          ]
+        },
+        {
+          "slug": "culto-musculo-aberrante",
+          "name": "Musculo Aberrante",
+          "description": "La fuerza mutante del culto se convierte en ariete vivo protegido por amos deformes. Desbloquea: Aberrants y Abominant.",
+          "branchSlug": "ascension-patriarca",
+          "tier": 2,
+          "positionX": 3,
+          "positionY": 3,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "cult_aberrant",
+          "effectSummary": "Desbloquea: Aberrants, Abominant.",
+          "prerequisiteSlugs": [
+            "culto-savia-mutagena",
+            "culto-iconos-alzamiento"
+          ],
+          "unitTemplateSlugs": [
+            "unit-cultos-genestealer-aberrants",
+            "unit-cultos-genestealer-abominant"
+          ]
+        },
+        {
+          "slug": "culto-trono-patriarca",
+          "name": "Trono del Patriarca",
+          "description": "La progenie, los profetas y los aberrantes reconocen una unica voluntad sinaptica al final del alzamiento. Desbloquea: Patriarch.",
+          "branchSlug": "ascension-patriarca",
+          "tier": 3,
+          "positionX": 3,
+          "positionY": 2,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "cult_patriarch",
+          "effectSummary": "Desbloquea: Patriarch.",
+          "prerequisiteSlugs": [
+            "culto-pureza-genetica",
+            "culto-musculo-aberrante",
+            "culto-profetas-dia-ascension"
+          ],
+          "unitTemplateSlugs": [
+            "unit-cultos-genestealer-patriarch"
+          ]
+        }
+      ]
+    },
+    {
+      "factionSlug": "necrones",
+      "treeKey": "troops-necrones-v1",
+      "status": "ready",
+      "branches": [
+        {
+          "slug": "falange-dinastica",
+          "name": "Falange Dinastica",
+          "description": "Protocolos de linea, guardianes nobles y cultos destructores que forman el avance territorial necron."
+        },
+        {
+          "slug": "corte-criptecnica",
+          "name": "Corte Criptecnica",
+          "description": "Crypteks, nobles, personajes legendarios y fragmentos cosmicos al servicio de la dinastia."
+        },
+        {
+          "slug": "constructos-eternos",
+          "name": "Constructos Eternos",
+          "description": "Enjambres canoptek, arcas, aeronaves y megaestructuras de necrodermis reactivada."
+        }
+      ],
+      "nodes": [
+        {
+          "slug": "necrones-protocolos-reanimacion",
+          "name": "Protocolos de Reanimacion",
+          "description": "Las cohortes basicas despiertan en masa y sostienen la primera linea de conquista. Desbloquea: Immortals y Necron Warriors.",
+          "branchSlug": "falange-dinastica",
+          "tier": 1,
+          "positionX": 1,
+          "positionY": 2,
+          "costTechnology": 1,
+          "researchTimeSeconds": 30,
+          "iconKey": "necron_phalanx",
+          "effectSummary": "Desbloquea: Immortals, Necron Warriors.",
+          "prerequisiteSlugs": [
+            "fundacion-planetaria"
+          ],
+          "unitTemplateSlugs": [
+            "unit-necrones-immortals",
+            "unit-necrones-necron-warriors"
+          ]
+        },
+        {
+          "slug": "necrones-camaras-acecho",
+          "name": "Camaras de Acecho",
+          "description": "Las criptas laterales despiertan cazadores, guardianes de camara y horrores de emboscada. Desbloquea: Cryptothralls, Deathmarks y Flayed Ones.",
+          "branchSlug": "falange-dinastica",
+          "tier": 2,
+          "positionX": 1,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "necron_ambush",
+          "effectSummary": "Desbloquea: Cryptothralls, Deathmarks, Flayed Ones.",
+          "prerequisiteSlugs": [
+            "necrones-protocolos-reanimacion"
+          ],
+          "unitTemplateSlugs": [
+            "unit-necrones-cryptothralls",
+            "unit-necrones-deathmarks",
+            "unit-necrones-flayed-ones"
+          ]
+        },
+        {
+          "slug": "necrones-guardia-triarca",
+          "name": "Guardia del Triarca",
+          "description": "Las castas juramentadas recuperan su funcion como escoltas y ejecutores de la voluntad triarcal. Desbloquea: Lychguard y Triarch Praetorians.",
+          "branchSlug": "falange-dinastica",
+          "tier": 2,
+          "positionX": 1,
+          "positionY": 3,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "necron_guard",
+          "effectSummary": "Desbloquea: Lychguard, Triarch Praetorians.",
+          "prerequisiteSlugs": [
+            "necrones-protocolos-reanimacion"
+          ],
+          "unitTemplateSlugs": [
+            "unit-necrones-lychguard",
+            "unit-necrones-triarch-praetorians"
+          ]
+        },
+        {
+          "slug": "necrones-cultos-destructores",
+          "name": "Cultos Destructores",
+          "description": "Las subrutinas de aniquilacion liberan cazadores montados, asesinos hiperfase y plataformas de exterminio. Desbloquea: Lokhust Destroyers, Lokhust Heavy Destroyers, Ophydian Destroyers, Skorpekh Destroyers y Tomb Blades.",
+          "branchSlug": "falange-dinastica",
+          "tier": 3,
+          "positionX": 1,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "necron_destroyer",
+          "effectSummary": "Desbloquea: Lokhust Destroyers, Lokhust Heavy Destroyers, Ophydian Destroyers, Skorpekh Destroyers, Tomb Blades.",
+          "prerequisiteSlugs": [
+            "necrones-camaras-acecho",
+            "maquinaria-belica"
+          ],
+          "unitTemplateSlugs": [
+            "unit-necrones-lokhust-destroyers",
+            "unit-necrones-lokhust-heavy-destroyers",
+            "unit-necrones-ophydian-destroyers",
+            "unit-necrones-skorpekh-destroyers",
+            "unit-necrones-tomb-blades"
+          ]
+        },
+        {
+          "slug": "necrones-nobleza-dinastica",
+          "name": "Mandos de la Linea",
+          "description": "Los primeros nobles recuperan autoridad sobre cohortes, guardianes y objetivos de conquista. Desbloquea: Royal Warden, Overlord y Overlord with Translocation Shroud.",
+          "branchSlug": "falange-dinastica",
+          "tier": 3,
+          "positionX": 1,
+          "positionY": 3,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "necron_nobility",
+          "effectSummary": "Desbloquea: Royal Warden, Overlord, Overlord with Translocation Shroud.",
+          "prerequisiteSlugs": [
+            "necrones-guardia-triarca",
+            "asamblea-planetaria"
+          ],
+          "unitTemplateSlugs": [
+            "unit-necrones-royal-warden",
+            "unit-necrones-overlord",
+            "unit-necrones-overlord-with-translocation-shroud"
+          ]
+        },
+        {
+          "slug": "necrones-nobles-exterminio",
+          "name": "Nobles de Exterminio",
+          "description": "Los senores ligados a cultos destructores y plataformas de mando toman el control del contraataque. Desbloquea: Skorpekh Lord, Lokhust Lord, Catacomb Command Barge y Triarchal Overseer [Crucible].",
+          "branchSlug": "falange-dinastica",
+          "tier": 4,
+          "positionX": 1,
+          "positionY": 2,
+          "costTechnology": 3,
+          "researchTimeSeconds": 30,
+          "iconKey": "necron_lord",
+          "effectSummary": "Desbloquea: Skorpekh Lord, Lokhust Lord, Catacomb Command Barge, Triarchal Overseer [Crucible].",
+          "prerequisiteSlugs": [
+            "necrones-cultos-destructores",
+            "necrones-nobleza-dinastica"
+          ],
+          "unitTemplateSlugs": [
+            "unit-necrones-skorpekh-lord",
+            "unit-necrones-lokhust-lord",
+            "unit-necrones-catacomb-command-barge",
+            "unit-necrones-triarchal-overseer-crucible"
+          ]
+        },
+        {
+          "slug": "necrones-concilio-cryptek",
+          "name": "Concilio Cryptek",
+          "description": "Los tecnosabios de la tumba reactivan chronometria, geomancia, tecnologia viva y energia plasmica. Desbloquea: Plasmancer, Psychomancer, Chronomancer, Geomancer y Technomancer.",
+          "branchSlug": "corte-criptecnica",
+          "tier": 1,
+          "positionX": 2,
+          "positionY": 2,
+          "costTechnology": 1,
+          "researchTimeSeconds": 30,
+          "iconKey": "necron_cryptek",
+          "effectSummary": "Desbloquea: Plasmancer, Psychomancer, Chronomancer, Geomancer, Technomancer.",
+          "prerequisiteSlugs": [
+            "asamblea-planetaria"
+          ],
+          "unitTemplateSlugs": [
+            "unit-necrones-plasmancer",
+            "unit-necrones-psychomancer",
+            "unit-necrones-chronomancer",
+            "unit-necrones-geomancer",
+            "unit-necrones-technomancer"
+          ]
+        },
+        {
+          "slug": "necrones-oraculos-eternidad",
+          "name": "Oraculos de Eternidad",
+          "description": "Profetas, coleccionistas imposibles y pistoleros dimensionales alteran el destino de la cruzada. Desbloquea: Trazyn the Infinite, Orikan the Diviner y Hexmark Destroyer.",
+          "branchSlug": "corte-criptecnica",
+          "tier": 2,
+          "positionX": 2,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "necron_oracle",
+          "effectSummary": "Desbloquea: Trazyn the Infinite, Orikan the Diviner, Hexmark Destroyer.",
+          "prerequisiteSlugs": [
+            "necrones-concilio-cryptek"
+          ],
+          "unitTemplateSlugs": [
+            "unit-necrones-trazyn-the-infinite",
+            "unit-necrones-orikan-the-diviner",
+            "unit-necrones-hexmark-destroyer"
+          ]
+        },
+        {
+          "slug": "necrones-senores-tormenta",
+          "name": "Dinastas Legendarios",
+          "description": "La corte despierta a sus figuras mas temidas y a protocolos [Crucible] de mando superior. Desbloquea: Imotekh the Stormlord, Illuminor Szeras, Nekrosor Ammentar, Dynastic Conqueror [Crucible] y Hyperscientist [Crucible].",
+          "branchSlug": "corte-criptecnica",
+          "tier": 2,
+          "positionX": 2,
+          "positionY": 3,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "necron_lord",
+          "effectSummary": "Desbloquea: Imotekh the Stormlord, Illuminor Szeras, Nekrosor Ammentar, Dynastic Conqueror [Crucible], Hyperscientist [Crucible].",
+          "prerequisiteSlugs": [
+            "necrones-concilio-cryptek",
+            "necrones-nobleza-dinastica"
+          ],
+          "unitTemplateSlugs": [
+            "unit-necrones-imotekh-the-stormlord",
+            "unit-necrones-illuminor-szeras",
+            "unit-necrones-nekrosor-ammentar",
+            "unit-necrones-dynastic-conqueror-crucible",
+            "unit-necrones-hyperscientist-crucible"
+          ]
+        },
+        {
+          "slug": "necrones-dioses-fragmentados",
+          "name": "Dioses Fragmentados",
+          "description": "La dinastia rompe sellos imposibles y despliega entidades de final de campana. Desbloquea: C'tan Shard of the Deceiver, Transcendent C'tan, C'tan Shard of the Void Dragon, C'tan Shard of the Nightbringer y The Silent King.",
+          "branchSlug": "corte-criptecnica",
+          "tier": 3,
+          "positionX": 2,
+          "positionY": 2,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "necron_ctan",
+          "effectSummary": "Desbloquea: C'tan Shard of the Deceiver, Transcendent C'tan, C'tan Shard of the Void Dragon, C'tan Shard of the Nightbringer, The Silent King.",
+          "prerequisiteSlugs": [
+            "necrones-oraculos-eternidad",
+            "necrones-senores-tormenta",
+            "necrones-nobles-exterminio"
+          ],
+          "unitTemplateSlugs": [
+            "unit-necrones-ctan-shard-of-the-deceiver",
+            "unit-necrones-transcendent-ctan",
+            "unit-necrones-ctan-shard-of-the-void-dragon",
+            "unit-necrones-ctan-shard-of-the-nightbringer",
+            "unit-necrones-the-silent-king"
+          ]
+        },
+        {
+          "slug": "necrones-enjambres-canoptek",
+          "name": "Enjambres Canoptek",
+          "description": "La maquinaria de mantenimiento despierta en masas menores para limpiar, devorar y cartografiar mundos tumba. Desbloquea: Canoptek Scarab Swarms, Canoptek Tomb Crawlers y Canoptek Macrocytes.",
+          "branchSlug": "constructos-eternos",
+          "tier": 1,
+          "positionX": 3,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "necron_canoptek",
+          "effectSummary": "Desbloquea: Canoptek Scarab Swarms, Canoptek Tomb Crawlers, Canoptek Macrocytes.",
+          "prerequisiteSlugs": [
+            "criadero-guerra",
+            "maquinaria-belica"
+          ],
+          "unitTemplateSlugs": [
+            "unit-necrones-canoptek-scarab-swarms",
+            "unit-necrones-canoptek-tomb-crawlers",
+            "unit-necrones-canoptek-macrocytes"
+          ]
+        },
+        {
+          "slug": "necrones-matrices-reparacion",
+          "name": "Matrices de Reparacion",
+          "description": "Constructos canoptek avanzados mantienen la ofensiva, reparan necrodermis y cazan intrusos. Desbloquea: Canoptek Reanimator, Canoptek Spyders, Canoptek Wraiths y Canoptek Doomstalker.",
+          "branchSlug": "constructos-eternos",
+          "tier": 2,
+          "positionX": 3,
+          "positionY": 1,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "necron_repair",
+          "effectSummary": "Desbloquea: Canoptek Reanimator, Canoptek Spyders, Canoptek Wraiths, Canoptek Doomstalker.",
+          "prerequisiteSlugs": [
+            "necrones-enjambres-canoptek"
+          ],
+          "unitTemplateSlugs": [
+            "unit-necrones-canoptek-reanimator",
+            "unit-necrones-canoptek-spyders",
+            "unit-necrones-canoptek-wraiths",
+            "unit-necrones-canoptek-doomstalker"
+          ]
+        },
+        {
+          "slug": "necrones-arcas-tumba",
+          "name": "Arcas de la Tumba",
+          "description": "Las criptas activan transportes, plataformas de supresion y nodos de dominio territorial. Desbloquea: Ghost Ark, Annihilation Barge, Triarch Stalker y Convergence of Dominion.",
+          "branchSlug": "constructos-eternos",
+          "tier": 1,
+          "positionX": 3,
+          "positionY": 3,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "necron_ark",
+          "effectSummary": "Desbloquea: Ghost Ark, Annihilation Barge, Triarch Stalker, Convergence of Dominion.",
+          "prerequisiteSlugs": [
+            "maquinaria-belica",
+            "necrones-protocolos-reanimacion"
+          ],
+          "unitTemplateSlugs": [
+            "unit-necrones-ghost-ark",
+            "unit-necrones-annihilation-barge",
+            "unit-necrones-triarch-stalker",
+            "unit-necrones-convergence-of-dominion"
+          ]
+        },
+        {
+          "slug": "necrones-guadanas-noche",
+          "name": "Guadanas de la Noche",
+          "description": "Aeronaves y arcas de exterminio abren corredores de terror sobre el frente central. Desbloquea: Night Scythe, Doom Scythe, Doomsday Ark y Obelisk.",
+          "branchSlug": "constructos-eternos",
+          "tier": 2,
+          "positionX": 3,
+          "positionY": 3,
+          "costTechnology": 2,
+          "researchTimeSeconds": 30,
+          "iconKey": "necron_air",
+          "effectSummary": "Desbloquea: Night Scythe, Doom Scythe, Doomsday Ark, Obelisk.",
+          "prerequisiteSlugs": [
+            "necrones-arcas-tumba"
+          ],
+          "unitTemplateSlugs": [
+            "unit-necrones-night-scythe",
+            "unit-necrones-doom-scythe",
+            "unit-necrones-doomsday-ark",
+            "unit-necrones-obelisk"
+          ]
+        },
+        {
+          "slug": "necrones-megaestructuras-vivientes",
+          "name": "Megaestructuras Vivientes",
+          "description": "La necrodermis titanica vuelve a caminar mediante portales, bovedas y constructos pesados de final de campana. Desbloquea: Monolith, Tesseract Vault y Seraptek Heavy Construct.",
+          "branchSlug": "constructos-eternos",
+          "tier": 3,
+          "positionX": 3,
+          "positionY": 2,
+          "costTechnology": 3,
+          "researchTimeSeconds": 30,
+          "iconKey": "necron_monolith",
+          "effectSummary": "Desbloquea: Monolith, Tesseract Vault, Seraptek Heavy Construct.",
+          "prerequisiteSlugs": [
+            "necrones-matrices-reparacion",
+            "necrones-guadanas-noche"
+          ],
+          "unitTemplateSlugs": [
+            "unit-necrones-monolith",
+            "unit-necrones-tesseract-vault",
+            "unit-necrones-seraptek-heavy-construct"
+          ]
+        }
+      ]
+    }
+  ]
+}

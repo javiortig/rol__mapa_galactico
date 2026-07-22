@@ -4,6 +4,7 @@ import {
   generated40kInitialUnits,
   generated40kUnitTemplates
 } from "@/mocks/generated/40k-unit-templates";
+import troopTreeConfigJson from "../../data/technology/faction-troop-trees.json";
 
 const emptyResources: ResourceBundle = {
   supply: 0,
@@ -1611,7 +1612,87 @@ const unitTemplateBase: MockUnitTemplate[] = [
   }
 ];
 
-const unitTemplates: CampaignSnapshot["unitTemplates"] = generated40kUnitTemplates;
+type TroopTreeConfigNode = {
+  slug: string;
+  name: string;
+  description: string;
+  branchSlug: string;
+  tier: number;
+  positionX: number;
+  positionY: number;
+  costTechnology: number;
+  researchTimeSeconds: number;
+  iconKey: string;
+  effectSummary: string;
+  prerequisiteSlugs?: string[];
+  unitTemplateSlugs?: string[];
+};
+
+type TroopTreeConfigTree = {
+  factionSlug: string;
+  treeKey: string;
+  status: "draft" | "ready";
+  branches: Array<{ slug: string; name: string }>;
+  nodes: TroopTreeConfigNode[];
+};
+
+const troopTreeConfig = troopTreeConfigJson as { trees: TroopTreeConfigTree[] };
+const readyTroopTrees = troopTreeConfig.trees.filter((tree) => tree.status === "ready");
+const troopTechnologyNodes: CampaignSnapshot["technologyNodes"] = readyTroopTrees.flatMap((tree) =>
+  tree.nodes.map((node) => {
+    const branch = tree.branches.find((candidate) => candidate.slug === node.branchSlug);
+
+    return makeTechnologyNode({
+      id: node.slug,
+      slug: node.slug,
+      treeKey: tree.treeKey,
+      name: node.name,
+      description: node.description,
+      branch: branch?.name ?? node.branchSlug,
+      tier: node.tier,
+      positionX: node.positionX,
+      positionY: node.positionY,
+      costTechnology: node.costTechnology,
+      researchTimeSeconds: node.researchTimeSeconds,
+      iconKey: node.iconKey,
+      effectSummary: node.effectSummary,
+      isStarter: false
+    });
+  })
+);
+const troopTechnologyPrerequisites: CampaignSnapshot["technologyPrerequisites"] = readyTroopTrees.flatMap((tree) =>
+  tree.nodes.flatMap((node) =>
+    (node.prerequisiteSlugs ?? []).map((requiredNodeId, index) => ({
+      technologyNodeId: node.slug,
+      requiredNodeId,
+      prerequisiteGroup: index + 1
+    }))
+  )
+);
+const troopTechnologyEffects: CampaignSnapshot["technologyEffects"] = readyTroopTrees.flatMap((tree) =>
+  tree.nodes.map((node) => ({
+    id: `effect-${node.slug}-units`,
+    technologyNodeId: node.slug,
+    effectType: "unlock_unit_template",
+    payload: { unitTemplateSlugs: node.unitTemplateSlugs ?? [] }
+  }))
+);
+const troopTechnologyByUnitSlug = new Map(
+  readyTroopTrees.flatMap((tree) =>
+    tree.nodes.flatMap((node) => (node.unitTemplateSlugs ?? []).map((unitSlug) => [unitSlug, node.slug] as const))
+  )
+);
+const unitTemplates: CampaignSnapshot["unitTemplates"] = generated40kUnitTemplates.map((template) => {
+  const requiredTechnologyNodeId = troopTechnologyByUnitSlug.get(template.id);
+
+  return requiredTechnologyNodeId
+    ? {
+        ...template,
+        isAvailable: true,
+        requiredTechnologyNodeId
+      }
+    : template;
+});
 
 void baseUnits;
 void characterUnits;
@@ -1697,14 +1778,15 @@ const technologyNodes: CampaignSnapshot["technologyNodes"] = [
   makeTechnologyNode({ id: "doctrina-clandestina", slug: "doctrina-clandestina", name: "Doctrina Clandestina", description: "Protocolos de infiltracion sostenida para operaciones encubiertas.", branch: "Inteligencia", tier: 3, positionX: 8, positionY: 82, costTechnology: 1, researchTimeSeconds: 30, iconKey: "cloak", effectSummary: "Proximamente: mejora de produccion de espionaje.", isStarter: false, implementationStatus: "planned" }),
   makeTechnologyNode({ id: "doble-agente", slug: "doble-agente", name: "Doble Agente", description: "Contramedidas para detectar redes enemigas y operaciones infiltradas.", branch: "Inteligencia", tier: 3, positionX: 18, positionY: 86, costTechnology: 1, researchTimeSeconds: 30, iconKey: "agent", effectSummary: "Proximamente: probabilidad de detectar espionaje enemigo.", isStarter: false, implementationStatus: "planned" }),
   makeTechnologyNode({ id: "tecnologia-sar", slug: "tecnologia-sar", name: "Tecnologia SAR", description: "Lectura de largo alcance para reconocimiento y triangulacion avanzada.", branch: "Inteligencia", tier: 3, positionX: 28, positionY: 82, costTechnology: 1, researchTimeSeconds: 30, iconKey: "radar", effectSummary: "Proximamente: duplicara alcance de Antenas de Reconocimiento.", isStarter: false, implementationStatus: "planned" }),
-  makeTechnologyNode({ id: "entrenamiento-linea", slug: "entrenamiento-linea", name: "Entrenamiento de linea", description: "Organizacion minima para tropas basicas.", branch: "Mando militar", tier: 0, positionX: 22, positionY: 32, costTechnology: 0, researchTimeSeconds: 30, iconKey: "infantry", effectSummary: "Unidades basicas desbloqueadas.", isStarter: true }),
-  makeTechnologyNode({ id: "logistica-frente", slug: "logistica-frente", name: "Logistica de frente", description: "Convoyes y reservas para mantener infanteria en movimiento.", branch: "Mando militar", tier: 1, positionX: 10, positionY: 22, costTechnology: 4, researchTimeSeconds: 30, iconKey: "supply", effectSummary: "-10% Suministro al reclutar Infanteria.", isStarter: false }),
-  makeTechnologyNode({ id: "cadenas-mando", slug: "cadenas-mando", name: "Cadenas de mando", description: "Vox y oficiales de enlace reducen demoras de despliegue.", branch: "Mando militar", tier: 1, positionX: 25, positionY: 18, costTechnology: 4, researchTimeSeconds: 30, iconKey: "command", effectSummary: "-10% tiempo al reclutar Infanteria.", isStarter: false }),
-  makeTechnologyNode({ id: "veteranos-guerra", slug: "veteranos-guerra", name: "Veteranos de guerra", description: "Cuadros veteranos, elites y tropas endurecidas.", branch: "Infanteria y elite", tier: 1, positionX: 30, positionY: 42, costTechnology: 4, researchTimeSeconds: 30, iconKey: "elite", effectSummary: "Desbloquea unidades elite actuales.", isStarter: false }),
-  makeTechnologyNode({ id: "especializacion-elite", slug: "especializacion-elite", name: "Especializacion de elite", description: "Equipo y entrenamiento para unidades de alto valor.", branch: "Infanteria y elite", tier: 2, positionX: 18, positionY: 48, costTechnology: 8, researchTimeSeconds: 30, iconKey: "elite", effectSummary: "-10% Mineral al reclutar Elite.", isStarter: false }),
-  makeTechnologyNode({ id: "motores-guerra", slug: "motores-guerra", name: "Motores de guerra", description: "Habilita blindados, dreadnoughts y maquinas de guerra.", branch: "Blindados y maquinas", tier: 2, positionX: 42, positionY: 15, costTechnology: 8, researchTimeSeconds: 30, iconKey: "vehicle", effectSummary: "Desbloquea vehiculos actuales.", isStarter: false }),
-  makeTechnologyNode({ id: "blindaje-reforzado", slug: "blindaje-reforzado", name: "Blindaje reforzado", description: "Estandariza placas, chasis y blindajes de campana.", branch: "Blindados y maquinas", tier: 3, positionX: 55, positionY: 16, costTechnology: 12, researchTimeSeconds: 30, iconKey: "vehicle", effectSummary: "-10% Mineral al reclutar Vehiculos.", isStarter: false }),
-  makeTechnologyNode({ id: "matrices-eficiencia", slug: "matrices-eficiencia", name: "Matrices de eficiencia", description: "Optimizacion transversal de costes militares.", branch: "Arqueotecnologia", tier: 3, positionX: 36, positionY: 62, costTechnology: 12, researchTimeSeconds: 30, iconKey: "matrix", effectSummary: "-5% coste general de reclutamiento.", isStarter: false })
+  ...troopTechnologyNodes,
+  makeTechnologyNode({ id: "entrenamiento-linea", slug: "entrenamiento-linea", name: "Entrenamiento de linea", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Mando militar", tier: 0, positionX: 22, positionY: 32, costTechnology: 0, researchTimeSeconds: 30, iconKey: "infantry", effectSummary: "Obsoleto.", isStarter: true, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "logistica-frente", slug: "logistica-frente", name: "Logistica de frente", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Mando militar", tier: 1, positionX: 10, positionY: 22, costTechnology: 4, researchTimeSeconds: 30, iconKey: "supply", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "cadenas-mando", slug: "cadenas-mando", name: "Cadenas de mando", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Mando militar", tier: 1, positionX: 25, positionY: 18, costTechnology: 4, researchTimeSeconds: 30, iconKey: "command", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "veteranos-guerra", slug: "veteranos-guerra", name: "Veteranos de guerra", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Infanteria y elite", tier: 1, positionX: 30, positionY: 42, costTechnology: 4, researchTimeSeconds: 30, iconKey: "elite", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "especializacion-elite", slug: "especializacion-elite", name: "Especializacion de elite", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Infanteria y elite", tier: 2, positionX: 18, positionY: 48, costTechnology: 8, researchTimeSeconds: 30, iconKey: "elite", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "motores-guerra", slug: "motores-guerra", name: "Motores de guerra", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Blindados y maquinas", tier: 2, positionX: 42, positionY: 15, costTechnology: 8, researchTimeSeconds: 30, iconKey: "vehicle", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "blindaje-reforzado", slug: "blindaje-reforzado", name: "Blindaje reforzado", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Blindados y maquinas", tier: 3, positionX: 55, positionY: 16, costTechnology: 12, researchTimeSeconds: 30, iconKey: "vehicle", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "matrices-eficiencia", slug: "matrices-eficiencia", name: "Matrices de eficiencia", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Arqueotecnologia", tier: 3, positionX: 36, positionY: 62, costTechnology: 12, researchTimeSeconds: 30, iconKey: "matrix", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" })
 ];
 
 const prerequisiteRows = [
@@ -1737,29 +1819,25 @@ const prerequisiteRows = [
   ["matrices-eficiencia", "procesado-metalurgico", 1]
 ] as const;
 
-const technologyPrerequisites: CampaignSnapshot["technologyPrerequisites"] = prerequisiteRows.map(
-  ([technologyNodeId, requiredNodeId, prerequisiteGroup]) => ({ technologyNodeId, requiredNodeId, prerequisiteGroup })
-);
+const technologyPrerequisites: CampaignSnapshot["technologyPrerequisites"] = [
+  ...prerequisiteRows.map(
+    ([technologyNodeId, requiredNodeId, prerequisiteGroup]): CampaignSnapshot["technologyPrerequisites"][number] => ({
+      technologyNodeId,
+      requiredNodeId,
+      prerequisiteGroup
+    })
+  ),
+  ...troopTechnologyPrerequisites
+];
 
 const factionTechnologies: CampaignSnapshot["factionTechnologies"] = factions.flatMap((faction) => [
   { factionId: faction.id, technologyNodeId: "fundacion-planetaria", status: "unlocked", unlockedAt: new Date(now).toISOString() },
-  { factionId: faction.id, technologyNodeId: "entrenamiento-linea", status: "unlocked", unlockedAt: new Date(now).toISOString() },
   { factionId: faction.id, technologyNodeId: "maquinaria-belica", status: "available" },
   { factionId: faction.id, technologyNodeId: "criadero-guerra", status: "available" },
-  { factionId: faction.id, technologyNodeId: "procesado-metalurgico", status: "available" },
-  { factionId: faction.id, technologyNodeId: "logistica-frente", status: "available" },
-  { factionId: faction.id, technologyNodeId: "cadenas-mando", status: "available" },
-  { factionId: faction.id, technologyNodeId: "veteranos-guerra", status: "available" }
+  { factionId: faction.id, technologyNodeId: "procesado-metalurgico", status: "available" }
 ]);
 
 const technologyEffects: CampaignSnapshot["technologyEffects"] = [
-  { id: "effect-logistica-frente", technologyNodeId: "logistica-frente", effectType: "recruitment_cost_discount", payload: { category: "Infanteria", resource: "supply", percent: 10 } },
-  { id: "effect-cadenas-mando", technologyNodeId: "cadenas-mando", effectType: "recruitment_time_discount", payload: { category: "Infanteria", percent: 10 } },
-  { id: "effect-veteranos-guerra", technologyNodeId: "veteranos-guerra", effectType: "unlock_unit_template", payload: { unitTemplateSlugs: ["unit-aeldari-meganobz", "unit-necrones-immortals", "unit-necrones-skorpekh", "unit-guardia-kasrkin", "unit-culto-acolytes", "unit-sombra-terminators", "unit-muerte-plague-marines"] } },
-  { id: "effect-especializacion-elite", technologyNodeId: "especializacion-elite", effectType: "recruitment_cost_discount", payload: { category: "Elite", resource: "minerals", percent: 10 } },
-  { id: "effect-motores-guerra", technologyNodeId: "motores-guerra", effectType: "unlock_unit_template", payload: { unitTemplateSlugs: ["unit-aeldari-deff-dread", "unit-guardia-leman-russ", "unit-culto-ridgerunner", "unit-sombra-redemptor", "unit-muerte-bloat-drone"] } },
-  { id: "effect-blindaje-reforzado", technologyNodeId: "blindaje-reforzado", effectType: "recruitment_cost_discount", payload: { category: "Vehiculo", resource: "minerals", percent: 10 } },
-  { id: "effect-matrices-eficiencia", technologyNodeId: "matrices-eficiencia", effectType: "recruitment_cost_discount", payload: { category: "all", resource: "all", percent: 5 } },
   { id: "effect-fundacion-buildings", technologyNodeId: "fundacion-planetaria", effectType: "unlock_building_template", payload: { buildingTemplateSlugs: ["barracon-infanteria", "granja-biologica"] } },
   { id: "effect-maquinaria-building", technologyNodeId: "maquinaria-belica", effectType: "unlock_building_template", payload: { buildingTemplateSlugs: ["taller-guerra"] } },
   { id: "effect-criadero-building", technologyNodeId: "criadero-guerra", effectType: "unlock_building_template", payload: { buildingTemplateSlugs: ["nido-bestias"] } },
@@ -1775,7 +1853,7 @@ const technologyEffects: CampaignSnapshot["technologyEffects"] = [
   { id: "effect-tratos-merchant", technologyNodeId: "tratos-preferentes", effectType: "merchant_rate_modifier", payload: { buyMultiplier: 1.5, sellMultiplier: 0.75 } },
   { id: "effect-mercado-stellar", technologyNodeId: "mercado-galactico", effectType: "unlock_stellar_trade", payload: {} },
   { id: "effect-aranceles-fee", technologyNodeId: "aranceles-privilegiados", effectType: "stellar_trade_fee_discount", payload: { percent: 10, minimumGold: 1 } }
-];
+].concat(troopTechnologyEffects);
 
 const buildingTemplates: CampaignSnapshot["buildingTemplates"] = [
   makeBuildingTemplate({ id: "barracon-infanteria", name: "Barracon de Infanteria", category: "Reclutamiento", description: "Centro de instruccion para tropas de linea y cuadros veteranos.", buildingKind: "recruitment", supplyCost: 12, mineralsCost: 8, industrialMaterialCost: 4, constructionTimeSeconds: 240, allowedUnitCategories: ["Infanteria", "Elite"], requiredTechnologyNodeId: "fundacion-planetaria", iconKey: "infantry_barracks" }),

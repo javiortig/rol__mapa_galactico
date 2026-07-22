@@ -39,6 +39,11 @@ import { Panel } from "@/components/ui/panel";
 import { ResourceAmount } from "@/components/ui/resource-icon";
 import { canUseTechnologyRpc, startTechnologyResearch } from "@/features/technology/api/technology-api";
 import {
+  getTechnologyInspectionFaction,
+  getVisibleTechnologyTreeKeys,
+  isTechnologyNodeVisibleForTreeKeys
+} from "@/features/technology/lib/faction-troop-trees";
+import {
   getActiveTechnologyResearch,
   getFactionTechnology,
   getTechnologyStatus,
@@ -80,6 +85,8 @@ const boardWidth = 1540;
 const boardHeight = 980;
 const corePoint = { x: boardWidth / 2, y: boardHeight / 2 };
 const coreSize = 150;
+const dynamicBranchPalette = ["#67e8f9", "#facc15", "#fb7185", "#fb923c", "#c084fc", "#94a3b8", "#34d399", "#f472b6"];
+const dynamicBranchAngles = [-16, -64, -112, 32, 80, 128, 176, -160];
 
 const branchOrder = [
   "Progreso",
@@ -87,7 +94,16 @@ const branchOrder = [
   "Infanteria y elite",
   "Blindados y maquinas",
   "Arqueotecnologia",
-  "Inteligencia"
+  "Inteligencia",
+  "Hordas del Velo",
+  "Corte del Cambiante",
+  "Tronos de la Disformidad",
+  "Guardia Auramita",
+  "Camara Anathema",
+  "Arsenal del Trono",
+  "Doctrina del Capitulo",
+  "Vanguardia y Asalto",
+  "Arsenal de Cruzada"
 ];
 
 const branchConfigs: Record<string, BranchConfig> = {
@@ -138,6 +154,126 @@ const branchConfigs: Record<string, BranchConfig> = {
     mutedColor: "rgba(148,163,184,0.12)",
     startRadius: 190,
     tierGap: 86
+  },
+  "Hordas del Velo": {
+    angle: -38,
+    color: "#fb7185",
+    label: "Hordas",
+    mutedColor: "rgba(251,113,133,0.13)",
+    startRadius: 224,
+    tierGap: 98
+  },
+  "Corte del Cambiante": {
+    angle: 38,
+    color: "#c084fc",
+    label: "Corte",
+    mutedColor: "rgba(192,132,252,0.13)",
+    startRadius: 226,
+    tierGap: 98
+  },
+  "Tronos de la Disformidad": {
+    angle: 142,
+    color: "#ef4444",
+    label: "Tronos",
+    mutedColor: "rgba(239,68,68,0.13)",
+    startRadius: 226,
+    tierGap: 98
+  },
+  "Guardia Auramita": {
+    angle: -38,
+    color: "#facc15",
+    label: "Guardia",
+    mutedColor: "rgba(250,204,21,0.13)",
+    startRadius: 224,
+    tierGap: 98
+  },
+  "Camara Anathema": {
+    angle: 38,
+    color: "#e5e7eb",
+    label: "Anathema",
+    mutedColor: "rgba(229,231,235,0.12)",
+    startRadius: 226,
+    tierGap: 98
+  },
+  "Arsenal del Trono": {
+    angle: 142,
+    color: "#fb923c",
+    label: "Arsenal",
+    mutedColor: "rgba(251,146,60,0.13)",
+    startRadius: 226,
+    tierGap: 98
+  },
+  "Falange Dinastica": {
+    angle: -38,
+    color: "#34d399",
+    label: "Falange",
+    mutedColor: "rgba(52,211,153,0.13)",
+    startRadius: 224,
+    tierGap: 98
+  },
+  "Corte Criptecnica": {
+    angle: 38,
+    color: "#a7f3d0",
+    label: "Corte",
+    mutedColor: "rgba(167,243,208,0.12)",
+    startRadius: 226,
+    tierGap: 98
+  },
+  "Constructos Eternos": {
+    angle: 142,
+    color: "#67e8f9",
+    label: "Constructos",
+    mutedColor: "rgba(103,232,249,0.12)",
+    startRadius: 226,
+    tierGap: 98
+  },
+  "Red de Insurreccion": {
+    angle: -38,
+    color: "#c084fc",
+    label: "Red",
+    mutedColor: "rgba(192,132,252,0.13)",
+    startRadius: 224,
+    tierGap: 98
+  },
+  "Sombras del Culto": {
+    angle: 38,
+    color: "#f472b6",
+    label: "Sombras",
+    mutedColor: "rgba(244,114,182,0.13)",
+    startRadius: 226,
+    tierGap: 98
+  },
+  "Ascension del Patriarca": {
+    angle: 142,
+    color: "#fb7185",
+    label: "Ascension",
+    mutedColor: "rgba(251,113,133,0.13)",
+    startRadius: 226,
+    tierGap: 98
+  },
+  "Doctrina del Capitulo": {
+    angle: -38,
+    color: "#60a5fa",
+    label: "Doctrina",
+    mutedColor: "rgba(96,165,250,0.13)",
+    startRadius: 224,
+    tierGap: 98
+  },
+  "Vanguardia y Asalto": {
+    angle: 38,
+    color: "#facc15",
+    label: "Vanguardia",
+    mutedColor: "rgba(250,204,21,0.13)",
+    startRadius: 226,
+    tierGap: 98
+  },
+  "Arsenal de Cruzada": {
+    angle: 142,
+    color: "#fb923c",
+    label: "Arsenal",
+    mutedColor: "rgba(251,146,60,0.13)",
+    startRadius: 226,
+    tierGap: 98
   }
 };
 
@@ -155,12 +291,21 @@ export function TechnologyTreeModal({
   const isTechnologyDesktop = useMediaQuery("(min-width: 1024px)");
   const isMobile = !isTechnologyDesktop;
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const currentFaction = snapshot.factions.find((faction) => faction.id === snapshot.currentUser.factionId) ?? null;
-  const currentResources = snapshot.resources.find((item) => item.factionId === snapshot.currentUser.factionId);
-  const activeResearch = getActiveTechnologyResearch(snapshot);
+  const [selectedAdminFactionId, setSelectedAdminFactionId] = useState<string | null>(null);
+  const inspectionFaction = getTechnologyInspectionFaction(snapshot, selectedAdminFactionId);
+  const inspectionFactionId = inspectionFaction?.id ?? null;
+  const visibleTreeKeys = useMemo(
+    () => getVisibleTechnologyTreeKeys({ factions: snapshot.factions, inspectedFactionId: inspectionFactionId }),
+    [inspectionFactionId, snapshot.factions]
+  );
+  const currentResources = snapshot.resources.find((item) => item.factionId === inspectionFactionId);
+  const activeResearch = getActiveTechnologyResearch(snapshot, inspectionFactionId);
   const visibleTechnologyNodes = useMemo(
-    () => snapshot.technologyNodes.filter(isTechnologyNodeVisible),
-    [snapshot.technologyNodes]
+    () =>
+      snapshot.technologyNodes.filter(
+        (node) => isTechnologyNodeVisible(node) && isTechnologyNodeVisibleForTreeKeys(node, visibleTreeKeys)
+      ),
+    [snapshot.technologyNodes, visibleTreeKeys]
   );
   const layout = useMemo(
     () => buildRadialConstellationLayout(visibleTechnologyNodes, snapshot.technologyPrerequisites),
@@ -171,8 +316,8 @@ export function TechnologyTreeModal({
     [visibleTechnologyNodes]
   );
   const statusByNodeId = useMemo(
-    () => new Map(visibleTechnologyNodes.map((node) => [node.id, getTechnologyStatus(snapshot, node)])),
-    [snapshot, visibleTechnologyNodes]
+    () => new Map(visibleTechnologyNodes.map((node) => [node.id, getTechnologyStatus(snapshot, node, inspectionFactionId)])),
+    [inspectionFactionId, snapshot, visibleTechnologyNodes]
   );
   const selectedNode = selectedNodeId ? nodeById.get(selectedNodeId) ?? null : null;
   const rpcReady = canUseTechnologyRpc();
@@ -214,13 +359,30 @@ export function TechnologyTreeModal({
     <div className="pointer-events-auto fixed inset-0 z-50 grid place-items-center bg-black/76 p-0 backdrop-blur-sm md:p-3">
       <Panel className="flex h-[var(--app-height)] w-full max-w-none flex-col overflow-hidden rounded-none border-cyan-200/16 shadow-[0_0_48px_rgba(8,145,178,0.14)] md:h-[96vh] md:w-[98vw] md:rounded-lg">
         <header className="flex items-center justify-between gap-4 border-b border-cyan-200/12 bg-slate-950/78 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] md:px-5 md:py-4">
-          <div>
+          <div className="min-w-0">
             <div className="text-xs uppercase tracking-[0.24em] text-cyan-200/70">Arbol tecnologico</div>
             <h2 className="mt-1 text-xl font-semibold text-cyan-50 md:text-2xl">
-              {currentFaction?.name ?? "Campana"}
+              {inspectionFaction?.name ?? "Campana"}
             </h2>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            {snapshot.currentUser.role === "admin" ? (
+              <select
+                aria-label="Inspeccionar faccion"
+                className="max-w-[9rem] rounded-md border border-cyan-200/15 bg-slate-950/70 px-2 py-2 text-xs text-cyan-50 outline-none transition focus:border-cyan-200/50 md:max-w-[13rem] md:px-3 md:text-sm"
+                onChange={(event) => {
+                  setSelectedAdminFactionId(event.target.value);
+                  setSelectedNodeId(null);
+                }}
+                value={inspectionFactionId ?? ""}
+              >
+                {snapshot.factions.map((faction) => (
+                  <option key={faction.id} value={faction.id}>
+                    {faction.name}
+                  </option>
+                ))}
+              </select>
+            ) : null}
             <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 px-3 py-2">
               <ResourceAmount resource="technology" value={currentResources?.technology ?? 0} />
             </div>
@@ -232,7 +394,7 @@ export function TechnologyTreeModal({
 
         <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] overflow-hidden xl:grid-cols-[minmax(0,1fr)_420px] xl:grid-rows-none">
           <RadialTechnologyBoard
-            factionColor={currentFaction?.color ?? "#67e8f9"}
+            factionColor={inspectionFaction?.color ?? "#67e8f9"}
             layout={layout}
             nodes={visibleTechnologyNodes}
             onSelectNode={handleSelectNode}
@@ -244,8 +406,10 @@ export function TechnologyTreeModal({
           {!isMobile || selectedNode ? (
             <TechnologyDetailsPanel
               activeResearch={activeResearch}
+              canResearchFromThisSession={snapshot.currentUser.role !== "admin"}
               currentTechnology={currentResources?.technology ?? 0}
               error={mutation.error?.message}
+              inspectionFactionId={inspectionFactionId}
               node={selectedNode}
               onCloseNode={isMobile ? () => setSelectedNodeId(null) : undefined}
               onResearch={(node) => mutation.mutate(node.id)}
@@ -282,7 +446,7 @@ const RadialTechnologyBoard = memo(function RadialTechnologyBoard({
       className="min-h-0 overflow-auto overscroll-contain bg-[radial-gradient(circle_at_50%_50%,rgba(34,211,238,0.11),transparent_19rem),radial-gradient(circle_at_20%_72%,rgba(192,132,252,0.06),transparent_16rem),linear-gradient(180deg,rgba(2,6,23,0.99),rgba(8,13,31,0.99))] [-webkit-overflow-scrolling:touch] [touch-action:pan-x_pan-y]"
       ref={viewportRef}
     >
-      <div className="relative h-[860px] w-[1240px]">
+      <div className="relative h-[980px] w-[1540px]">
         <ConstellationBackdrop />
         <BranchRays rays={layout.rays} />
         <TechnologyConnections layout={layout} statusByNodeId={statusByNodeId} />
@@ -292,6 +456,7 @@ const RadialTechnologyBoard = memo(function RadialTechnologyBoard({
         <FactionCoreOrb factionColor={factionColor} />
         {nodes.map((node) => (
           <TechnologyOrb
+            branchConfig={layout.branchConfigs.get(node.branch) ?? getBranchConfig(node.branch)}
             key={node.id}
             node={node}
             onSelectNode={onSelectNode}
@@ -322,7 +487,7 @@ const TechnologyConnections = memo(function TechnologyConnections({
       {layout.connections.map((connection) => {
         const status = statusByNodeId.get(connection.to.id) ?? "locked";
         const inactive = status === "locked" || status === "planned";
-        const style = getBranchConfig(connection.to.branch);
+        const style = layout.branchConfigs.get(connection.to.branch) ?? getBranchConfig(connection.to.branch);
 
         return (
           <path
@@ -344,17 +509,19 @@ const TechnologyConnections = memo(function TechnologyConnections({
 const TechnologyOrb = memo(function TechnologyOrb({
   node,
   point,
+  branchConfig,
   status,
   selected,
   onSelectNode
 }: {
   node: TechnologyNode;
   point: TechnologyPoint | { x: number; y: number };
+  branchConfig: BranchConfig;
   status: DerivedTechnologyStatus;
   selected: boolean;
   onSelectNode: (nodeId: string) => void;
 }) {
-  const style = getBranchConfig(node.branch);
+  const style = branchConfig;
   const locked = status === "locked";
   const planned = status === "planned";
   const researching = status === "researching";
@@ -500,8 +667,10 @@ function TechnologyDetailsPanel({
   snapshot,
   node,
   activeResearch,
+  inspectionFactionId,
   currentTechnology,
   rpcReady,
+  canResearchFromThisSession,
   pending,
   error,
   onCloseNode,
@@ -510,8 +679,10 @@ function TechnologyDetailsPanel({
   snapshot: CampaignSnapshot;
   node: TechnologyNode | null;
   activeResearch: ReturnType<typeof getActiveTechnologyResearch>;
+  inspectionFactionId: string | null;
   currentTechnology: number;
   rpcReady: boolean;
+  canResearchFromThisSession: boolean;
   pending: boolean;
   error?: string;
   onCloseNode?: () => void;
@@ -530,11 +701,12 @@ function TechnologyDetailsPanel({
     );
   }
 
-  const status = getTechnologyStatus(snapshot, node);
-  const progress = getFactionTechnology(snapshot, node.id);
+  const status = getTechnologyStatus(snapshot, node, inspectionFactionId);
+  const progress = getFactionTechnology(snapshot, node.id, inspectionFactionId);
   const style = getBranchConfig(node.branch);
   const prerequisiteGroups = getPrerequisiteGroups(snapshot, node.id);
   const canResearch =
+    canResearchFromThisSession &&
     status === "available" &&
     !activeResearch &&
     currentTechnology >= node.costTechnology &&
@@ -625,8 +797,8 @@ function TechnologyDetailsPanel({
                   {group.nodes.map((prerequisite) => (
                     <div className="flex items-center justify-between gap-3 text-sm" key={prerequisite.id}>
                       <span className="text-slate-200">{prerequisite.name}</span>
-                      <Badge tone={getTechnologyStatus(snapshot, prerequisite) === "unlocked" ? "cyan" : "slate"}>
-                        {getStatusLabel(getTechnologyStatus(snapshot, prerequisite))}
+                      <Badge tone={getTechnologyStatus(snapshot, prerequisite, inspectionFactionId) === "unlocked" ? "cyan" : "slate"}>
+                        {getStatusLabel(getTechnologyStatus(snapshot, prerequisite, inspectionFactionId))}
                       </Badge>
                     </div>
                   ))}
@@ -649,6 +821,12 @@ function TechnologyDetailsPanel({
 
       {error ? <p className="mb-3 text-sm text-rose-200">{error}</p> : null}
 
+      {!canResearchFromThisSession ? (
+        <div className="mb-3 rounded-md border border-cyan-300/20 bg-cyan-300/10 p-3 text-sm text-cyan-100">
+          Vista de administrador: inspecciona progreso y requisitos sin iniciar investigaciones.
+        </div>
+      ) : null}
+
       <Button className="sticky bottom-0 w-full" disabled={!canResearch} onClick={() => onResearch(node)}>
         <Sparkles size={16} />
         {status === "planned" ? "Proximamente" : pending ? "Iniciando..." : "Investigar"}
@@ -660,6 +838,7 @@ function TechnologyDetailsPanel({
 function buildRadialConstellationLayout(nodes: TechnologyNode[], prerequisites: TechnologyPrerequisite[]) {
   const points = new Map<string, TechnologyPoint>();
   const nodesByBranch = new Map<string, TechnologyNode[]>();
+  const branchConfigsByBranch = new Map<string, BranchConfig>();
 
   for (const node of nodes) {
     const branchNodes = nodesByBranch.get(node.branch) ?? [];
@@ -675,7 +854,9 @@ function buildRadialConstellationLayout(nodes: TechnologyNode[], prerequisites: 
   });
 
   const rays = sortedBranches.map((branch) => {
-    const config = getBranchConfig(branch);
+    const fallbackIndex = sortedBranches.filter((candidate) => !branchConfigs[candidate]).indexOf(branch);
+    const config = getBranchConfig(branch, fallbackIndex);
+    branchConfigsByBranch.set(branch, config);
     const angle = toRadians(config.angle);
     const direction = { x: Math.cos(angle), y: Math.sin(angle) };
     const perpendicular = { x: -direction.y, y: direction.x };
@@ -739,7 +920,7 @@ function buildRadialConstellationLayout(nodes: TechnologyNode[], prerequisites: 
     })
     .filter(Boolean) as Array<{ from: TechnologyPoint; to: TechnologyPoint }>;
 
-  return { connections, points, rays };
+  return { branchConfigs: branchConfigsByBranch, connections, points, rays };
 }
 
 function sortTechnologyNodes(left: TechnologyNode, right: TechnologyNode) {
@@ -769,15 +950,32 @@ function getConnectionPath(from: TechnologyPoint, to: TechnologyPoint) {
   return `M ${from.x} ${from.y} Q ${midX + normal.x * bend} ${midY + normal.y * bend} ${to.x} ${to.y}`;
 }
 
-function getBranchConfig(branch: string) {
+function getBranchConfig(branch: string, fallbackIndex = 0): BranchConfig {
+  if (branchConfigs[branch]) {
+    return branchConfigs[branch];
+  }
+
+  const index = Math.abs(fallbackIndex >= 0 ? fallbackIndex : hashString(branch)) % dynamicBranchAngles.length;
+  const color = dynamicBranchPalette[index % dynamicBranchPalette.length];
+
   return branchConfigs[branch] ?? {
-    angle: 0,
-    color: "#67e8f9",
-    label: branch.slice(0, 10),
-    mutedColor: "rgba(103,232,249,0.14)",
-    startRadius: 140,
-    tierGap: 74
+    angle: dynamicBranchAngles[index],
+    color,
+    label: branch.slice(0, 12),
+    mutedColor: hexToRgba(color, 0.14),
+    startRadius: 204,
+    tierGap: 92
   };
+}
+
+function hashString(value: string) {
+  let hash = 0;
+
+  for (const character of value) {
+    hash = (hash * 31 + character.charCodeAt(0)) | 0;
+  }
+
+  return hash;
 }
 
 function TechnologyGlyph({
@@ -840,10 +1038,85 @@ function getTechnologyIcon(node: TechnologyNode): LucideIcon {
     honor: Landmark,
     infantry: Users,
     intelligence: Eye,
+    daemon_beast: Swords,
+    daemon_belakor: Crown,
+    daemon_changeling: Eye,
+    daemon_chariot: Truck,
+    daemon_disc: Radar,
+    daemon_flame: Sparkles,
+    daemon_herald: RadioTower,
+    daemon_horror: Sparkles,
+    daemon_kairos: BrainCog,
+    daemon_lord_change: Gem,
+    daemon_prince: Crown,
+    daemon_pyro: Swords,
+    daemon_scribes: BrainCog,
+    daemon_soul_grinder: Cog,
+    daemon_wings: Sparkles,
+    custodes_air: Radar,
+    custodes_command: Crown,
+    custodes_dreadnought: Cog,
+    custodes_grav: Truck,
+    custodes_guard: Shield,
+    custodes_knight: Crown,
+    custodes_null: Eye,
+    custodes_priest: Landmark,
+    custodes_rhino: Truck,
+    custodes_silent_command: RadioTower,
+    custodes_spear: Swords,
+    custodes_tank: Hammer,
+    custodes_terminator: Shield,
+    custodes_titan: Landmark,
+    custodes_victory: Medal,
     market: Store,
     matrix: BrainCog,
     merchant: Store,
+    marine_bastion: Landmark,
+    marine_battleline: Users,
+    marine_bike: Truck,
+    marine_command: Crown,
+    marine_dreadnought: Cog,
+    marine_elimination: Eye,
+    marine_first_company: Shield,
+    marine_heavy_fire: Hammer,
+    marine_jump: Sparkles,
+    marine_phobos: Eye,
+    marine_relic_armor: Crown,
+    marine_speeder: Radar,
+    marine_tank: Hammer,
+    marine_transport: Truck,
+    marine_veterans: Medal,
     mine: Pickaxe,
+    cult_aberrant: Shield,
+    cult_blade: Eye,
+    cult_cell: Users,
+    cult_command: Crown,
+    cult_convoy: Truck,
+    cult_flame: Swords,
+    cult_genestealer: Swords,
+    cult_guns: Swords,
+    cult_guerrilla: Radar,
+    cult_icon: RadioTower,
+    cult_mutation: Sparkles,
+    cult_patriarch: Crown,
+    cult_prophet: BrainCog,
+    cult_rockgrinder: Hammer,
+    cult_vox: RadioTower,
+    necron_air: Radar,
+    necron_ambush: Eye,
+    necron_ark: Truck,
+    necron_canoptek: Cog,
+    necron_crucible: Sparkles,
+    necron_cryptek: BrainCog,
+    necron_ctan: Gem,
+    necron_destroyer: Swords,
+    necron_guard: Shield,
+    necron_lord: Crown,
+    necron_monolith: Landmark,
+    necron_nobility: Crown,
+    necron_oracle: Eye,
+    necron_phalanx: Users,
+    necron_repair: Hammer,
     radar: Radar,
     supply: Package,
     tariff: BadgePercent,

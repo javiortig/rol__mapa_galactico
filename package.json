@@ -15,7 +15,8 @@
     "db:push:prod": "supabase db push --include-seed",
     "db:sync-env": "node scripts/sync-local-env.mjs",
     "db:seed:users": "node scripts/seed-local-users.mjs",
-    "units:generate": "node scripts/generate-40k-unit-catalog.mjs"
+    "units:generate": "node scripts/generate-40k-unit-catalog.mjs",
+    "tech:validate-troops": "node scripts/validate-troop-tech-trees.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "latest",

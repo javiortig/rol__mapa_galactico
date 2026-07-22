@@ -96,6 +96,12 @@ Para regenerar el catalogo final de unidades desde `data/11th40kPoints.txt`:
 npm run units:generate
 ```
 
+Para validar la estructura declarativa de futuros arboles de tropas por faccion:
+
+```bash
+npm run tech:validate-troops
+```
+
 Usuarios locales:
 
 ```text
@@ -147,5 +153,12 @@ En movil la experiencia es mapa primero:
 - Para mover tropas: seleccionar sistema, pulsar `Mover tropas`, elegir miniaturas y despues `Trazar ruta en el mapa`.
 - En modo ruta se toca el destino para ruta optima, o sistemas conectados si se usa ruta manual, y se confirma desde la barra inferior.
 - Reclutamiento, reportes, movimiento y tecnologia usan paneles con scroll tactil real compatible con iPhone Safari y Android Chrome.
+- El arbol tecnologico muestra siempre `common-v1` y, cuando exista, solo el arbol de tropas de la faccion activa con convencion `troops-{faction_slug}-v1`; admin puede inspeccionar una faccion desde un selector.
 - El arbol tecnologico usa una constelacion radial simple: nucleo central de faccion, circulos pequenos con iconos Lucide, ramas desde el centro y scroll nativo sin zoom ni pan custom.
+- Cada arbol militar `ready` cuesta exactamente 30 Componentes tecnologicos en total. Sus nodos solo pueden costar 1, 2 o 3; el coste 3 se reserva al nodo final de las dos ramas mas grandes de esa faccion.
+- `troops-necrones-v1` ya esta implementado como primer arbol militar completo: 3 ramas asimetricas, 15 nodos de 30s, bifurcaciones/convergencias y las 55 plantillas Necron asignadas exactamente una vez. Cada nodo lista en su descripcion las unidades exactas que desbloquea.
+- `troops-cultos-genestealer-v1` tambien esta implementado: 3 ramas asimetricas, 15 nodos de 30s, bifurcaciones/convergencias y las 27 plantillas del Culto asignadas exactamente una vez. Cada nodo lista en su descripcion las unidades exactas que desbloquea.
+- `troops-space-marines-v1` tambien esta implementado: 3 ramas asimetricas, 15 nodos de 30s, bifurcaciones/convergencias y las 85 plantillas de Space Marines asignadas exactamente una vez. Cada nodo lista en su descripcion las unidades exactas que desbloquea.
+- `troops-legiones-daemonicas-v1` tambien esta implementado: 3 ramas asimetricas, 15 nodos de 30s, bifurcaciones/convergencias y las 19 plantillas de Legiones Daemonicas asignadas exactamente una vez. Cada nodo lista en su descripcion las unidades exactas que desbloquea.
+- `troops-adeptus-custodes-v1` tambien esta implementado: 3 ramas asimetricas, 15 nodos de 30s, bifurcaciones/convergencias y las 51 plantillas de Adeptus Custodes asignadas exactamente una vez. Cada nodo lista en su descripcion las unidades exactas que desbloquea.
 - Antes de desplegar cambios de UI movil hay que probar al menos iPhone Safari y Android Chrome, verificando que todos los paneles scrollean hasta el final y que los botones no quedan bajo la barra del navegador.

@@ -160,6 +160,7 @@ Estado jugable actual:
 - Facciones jugables finales importadas desde `data/11th40kPoints.txt`: Legiones Daemonicas, Agentes del Imperium, Cultos Genestealer, Aeldari, Space Marines, Adeptus Custodes y Necrones.
 - `Astra Militarum` ya no es faccion jugable; `Adeptus Custodes` ocupa su hueco de campana en `kharon-prime`.
 - El catalogo final de unidades se genera con `npm run units:generate`; importa 333 hojas de unidad reales de 11a edicion y valida que cada bloque coincide con `NUMBER OF UNITS`.
+- Los arboles de tropas por faccion se definen de forma declarativa en `data/technology/faction-troop-trees.json` y se validan con `npm run tech:validate-troops`.
 - Produccion diaria por tick temporal configurable, calculada desde edificios activos.
 - Movimiento, reclutamiento e investigacion funcionan por timestamps y resolvers backend/lazy processing.
 - Unidades jugables son `campaign_units`, no ejercitos abstractos.
@@ -170,10 +171,12 @@ Estado jugable actual:
 - Construccion planetaria con slots por sistema: 6 en capitales y 3 en el resto.
 - Reclutamiento desde edificios militares activos, no desde un boton global de capital.
 - Reclutamiento usa `unit_templates`, costes, tiempos, cola, edificios compatibles y validacion tecnologica.
-- Las unidades importadas quedan inicialmente bloqueadas (`is_available = false`) hasta que los arboles tecnologicos por faccion las desbloqueen.
+- Las unidades importadas quedan inicialmente bloqueadas (`is_available = false`) hasta que los arboles tecnologicos por faccion las asignen a nodos concretos.
 - Reabastecimiento completo de unidades danadas desde edificios militares compatibles a mitad del coste completo de la unidad.
 - Cancelar reclutamiento, reabastecimiento o movimiento devuelve el 50% de los recursos gastados, redondeando hacia arriba.
-- Arbol tecnologico comun `common-v1` con progreso independiente por faccion. Incluye rama `Progreso` funcional, rama `Inteligencia` visible pero bloqueada como contenido futuro, y una rama militar temporal para desbloqueos de unidades.
+- Arbol tecnologico comun `common-v1` con progreso independiente por faccion. Incluye rama `Progreso` funcional, rama `Inteligencia` visible pero bloqueada como contenido futuro y tecnologias comunes.
+- Los arboles militares especificos usan la convencion `troops-{faction_slug}-v1`. Cada jugador solo ve/investiga `common-v1` y el arbol militar de su faccion; admin puede inspeccionar facciones desde el selector del arbol.
+- Las primeras facciones objetivo para arboles de tropas son Legiones Daemonicas, Adeptus Custodes, Space Marines, Cultos Genestealer y Necrones; Aeldari y Agentes del Imperium quedan pendientes.
 - Oro es un recurso principal visible en la barra superior y se usa sobre todo para comercio.
 - Material Industrial es un recurso visible y comerciable usado principalmente para construccion.
 - Componentes tecnologicos son un recurso especial del arbol tecnologico; no aparecen en la barra superior y no se producen en planetas ni por edificios de produccion.
@@ -219,6 +222,7 @@ Archivos clave actuales:
 Comprobaciones obligatorias antes de entregar cambios:
 
 ```bash
+npm run tech:validate-troops
 npm run typecheck
 npm run lint
 npm run build
@@ -1335,7 +1339,7 @@ Curación v1:
 
 El reclutamiento está conectado al árbol tecnológico.
 
-V1 usa un árbol común `common-v1` para todas las facciones, pero cada facción tiene progreso independiente.
+V1 usa un arbol comun `common-v1` para todas las facciones y arboles militares especificos por faccion con convencion `troops-{faction_slug}-v1`. Cada faccion tiene progreso independiente.
 
 Estados de una tecnología:
 
@@ -1350,7 +1354,10 @@ Reglas:
 
 - Solo puede haber una investigación activa por facción.
 - Cada tecnología puede tener coste en Componentes tecnológicos.
-- Cada tecnología puede tener tiempo de investigación en minutos para test local.
+- Cada tecnologia de test dura 30 segundos salvo que se documente lo contrario.
+- Cada arbol militar especifico `ready` cuesta exactamente 30 Componentes tecnologicos en total.
+- Los nodos de arboles militares solo pueden costar 1, 2 o 3 Componentes tecnologicos.
+- El coste 3 se reserva exclusivamente para el nodo final de las dos ramas mas grandes de cada faccion.
 - Los requisitos se definen como prerequisitos entre nodos.
 - Al completarse una investigación, el nodo pasa a `unlocked`.
 - `resolve_technology_research()` completa investigaciones vencidas.
@@ -1358,45 +1365,48 @@ Reglas:
 
 Efectos v1:
 
-- `unlock_unit`: una tecnología permite reclutar plantillas de unidad asociadas.
+- `unlock_unit_template`: una tecnologia permite reclutar plantillas de unidad asociadas mediante `unit_templates.required_technology_node_id`.
 - `unlock_building_template`: permite construir plantillas de edificio asociadas si la faccion tiene la tecnologia desbloqueada.
 - `recruitment_cost_discount`: reduce costes de reclutamiento por recurso y categoría.
 - `recruitment_time_discount`: reduce tiempo de reclutamiento por categoría.
 
-Unidades iniciales desbloqueadas sin tecnología:
+Unidades finales:
 
-- Boyz.
-- Necron Warriors.
-- Custodian Guard.
-- Neophyte Hybrids.
-- Intercessor Squad.
-- Poxwalkers.
-
-Unidades bloqueadas por `veteranos-guerra`:
-
-- Meganobz.
-- Immortals.
-- Skorpekh Destroyers.
-- Kasrkin.
-- Acolyte Hybrids.
-- Terminator Squad.
-- Plague Marines.
-
-Unidades bloqueadas por `motores-guerra`:
-
-- Deff Dread.
-- Caladius Grav-tank.
-- Achilles Ridgerunner.
-- Redemptor Dreadnought.
-- Foetid Bloat-drone.
-
-Ramas del árbol común v1:
-
-- Mando y doctrina.
-- Infantería y élite.
-- Blindados y máquinas.
-- Infraestructura.
-- Arqueotecnología.
+- El catalogo final viene de `data/11th40kPoints.txt`.
+- Las unidades finales permanecen bloqueadas hasta asignarse a nodos de `troops-{faction_slug}-v1`.
+- El validador `npm run tech:validate-troops` comprueba que, cuando un arbol pase a `ready`, tenga 3 ramas, 15 nodos y todas sus unidades asignadas exactamente una vez.
+- Estado actual de arboles de tropas: `troops-necrones-v1` es el primer arbol militar `ready`.
+- El arbol Necron tiene 3 ramas: `Falange Dinastica`, `Corte Criptecnica` y `Constructos Eternos`.
+- El arbol Necron es asimetrico: 6 nodos en Falange, 4 en Corte y 5 en Constructos.
+- El arbol Necron no es una cadena lineal: tiene bifurcaciones y convergencias mediante prerequisitos multiples.
+- El arbol Necron tiene 15 nodos activos, todos de 30 segundos, y cubre las 55 plantillas Necron importadas exactamente una vez.
+- Cada nodo Necron desbloquea al menos una unidad que el jugador Necron ha declarado poseer fisicamente.
+- La descripcion de cada nodo Necron debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
+- `troops-cultos-genestealer-v1` tambien esta `ready`.
+- El arbol del Culto Genestelar tiene 3 ramas: `Red de Insurreccion`, `Sombras del Culto` y `Ascension del Patriarca`.
+- El arbol del Culto Genestelar es asimetrico: 6 nodos en Red, 5 en Sombras y 4 en Ascension.
+- El arbol del Culto Genestelar tiene bifurcaciones entre masas, convoyes, guerrilla, profetas y mutacion, con convergencia final en `Trono del Patriarca`.
+- El arbol del Culto Genestelar tiene 15 nodos activos, todos de 30 segundos, y cubre las 27 plantillas del Culto importadas exactamente una vez.
+- La descripcion de cada nodo del Culto Genestelar debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
+- `troops-space-marines-v1` tambien esta `ready`.
+- El arbol de Space Marines tiene 3 ramas: `Doctrina del Capitulo`, `Vanguardia y Asalto` y `Arsenal de Cruzada`.
+- El arbol de Space Marines es asimetrico: 5 nodos en Doctrina, 4 en Vanguardia y 6 en Arsenal.
+- El arbol de Space Marines tiene bifurcaciones entre escuadras de batalla, oficiales, despliegue Phobos, asalto orbital, transportes, dreadnoughts y blindados pesados, con convergencia final en `Reliquias de Cruzada`.
+- El arbol de Space Marines tiene 15 nodos activos, todos de 30 segundos, y cubre las 85 plantillas de Space Marines importadas exactamente una vez.
+- La descripcion de cada nodo de Space Marines debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
+- `troops-legiones-daemonicas-v1` tambien esta `ready`.
+- El arbol de Legiones Daemonicas tiene 3 ramas: `Hordas del Velo`, `Corte del Cambiante` y `Tronos de la Disformidad`.
+- El arbol de Legiones Daemonicas es asimetrico: 6 nodos en Hordas, 5 en Corte y 4 en Tronos.
+- El arbol de Legiones Daemonicas tiene bifurcaciones entre horrores, llamas, carros, heraldos, escribas, principes demonio y grandes entidades de la Disformidad, con convergencia final en `El Primer Principe`.
+- El arbol de Legiones Daemonicas tiene 15 nodos activos, todos de 30 segundos, y cubre las 19 plantillas de Legiones Daemonicas importadas exactamente una vez.
+- La descripcion de cada nodo de Legiones Daemonicas debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
+- `troops-adeptus-custodes-v1` tambien esta `ready`.
+- El arbol de Adeptus Custodes tiene 3 ramas: `Guardia Auramita`, `Camara Anathema` y `Arsenal del Trono`.
+- El arbol de Adeptus Custodes es asimetrico: 5 nodos en Guardia, 4 en Camara y 6 en Arsenal.
+- El arbol de Adeptus Custodes tiene bifurcaciones entre custodios de linea, campeones, exterminadores auricos, Hermanas del Silencio, grav-vehiculos, dreadnoughts, naves, Knights aliados y Titanes, con cierre de poder en `Titanes de Terra`.
+- El arbol de Adeptus Custodes tiene 15 nodos activos, todos de 30 segundos, y cubre las 51 plantillas de Adeptus Custodes importadas exactamente una vez.
+- La descripcion de cada nodo de Adeptus Custodes debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
+- Las cinco facciones objetivo iniciales ya estan `ready`. Aeldari y Agentes del Imperium siguen pendientes para una fase posterior.
 
 La pantalla de tecnología debe sentirse como interfaz de videojuego:
 
@@ -1411,10 +1421,13 @@ La pantalla de tecnología debe sentirse como interfaz de videojuego:
 - Panel lateral con descripción, coste, tiempo, requisitos y efectos.
 - Botón `Tecnología` en el dock de mando.
 
-Regla vigente del arbol comun:
+Regla vigente de arboles tecnologicos:
 
 - La descripcion anterior de ramas antiguas queda obsoleta donde choque con esta lista.
-- `common-v1` tiene rama `Progreso` funcional, rama `Inteligencia` visible pero bloqueada como `planned`, y rama militar temporal.
+- `common-v1` tiene rama `Progreso` funcional, rama `Inteligencia` visible pero bloqueada como `planned`, y tecnologias comunes de soporte.
+- Los arboles militares especificos usan `troops-{faction_slug}-v1`; un jugador solo puede ver e investigar su propio arbol militar.
+- Admin puede inspeccionar el arbol de una faccion desde el selector de la pantalla de tecnologia, pero no inicia investigaciones desde esa vista.
+- `start_technology_research()` rechaza por backend cualquier tecnologia cuyo `tree_key` no sea `common-v1` ni `troops-{slug-de-la-faccion-del-jugador}-v1`.
 - Todas las investigaciones de test duran 30 segundos.
 - `technology_nodes.implementation_status` puede ser `active`, `planned` o `deprecated`.
 - `technology_prerequisites.prerequisite_group` permite requisitos `OR`: todos los grupos deben cumplirse, pero dentro de un mismo grupo basta una tecnologia desbloqueada.

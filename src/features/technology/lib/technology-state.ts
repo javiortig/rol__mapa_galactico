@@ -4,13 +4,17 @@ export type DerivedTechnologyStatus = "locked" | "planned" | "available" | "rese
 
 const resources: ResourceKey[] = ["supply", "minerals", "honor", "gold", "industrialMaterial", "uridium", "technology"];
 
-export function getFactionTechnology(snapshot: CampaignSnapshot, technologyNodeId: string) {
+export function getFactionTechnology(snapshot: CampaignSnapshot, technologyNodeId: string, factionId = snapshot.currentUser.factionId) {
   return snapshot.factionTechnologies.find(
-    (item) => item.factionId === snapshot.currentUser.factionId && item.technologyNodeId === technologyNodeId
+    (item) => item.factionId === factionId && item.technologyNodeId === technologyNodeId
   );
 }
 
-export function getTechnologyStatus(snapshot: CampaignSnapshot, node: TechnologyNode): DerivedTechnologyStatus {
+export function getTechnologyStatus(
+  snapshot: CampaignSnapshot,
+  node: TechnologyNode,
+  factionId = snapshot.currentUser.factionId
+): DerivedTechnologyStatus {
   if (node.implementationStatus === "planned") {
     return "planned";
   }
@@ -19,13 +23,13 @@ export function getTechnologyStatus(snapshot: CampaignSnapshot, node: Technology
     return "locked";
   }
 
-  const progress = getFactionTechnology(snapshot, node.id);
+  const progress = getFactionTechnology(snapshot, node.id, factionId);
 
   if (progress?.status) {
     return progress.status;
   }
 
-  return areTechnologyPrerequisitesUnlocked(snapshot, node.id) ? "available" : "locked";
+  return areTechnologyPrerequisitesUnlocked(snapshot, node.id, factionId) ? "available" : "locked";
 }
 
 export function isTechnologyUnlocked(snapshot: CampaignSnapshot, technologyNodeId?: string | null) {
@@ -56,9 +60,9 @@ export function getRequiredTechnologyName(snapshot: CampaignSnapshot, technology
   return snapshot.technologyNodes.find((node) => node.id === technologyNodeId)?.name ?? "Tecnologia requerida";
 }
 
-export function getActiveTechnologyResearch(snapshot: CampaignSnapshot) {
+export function getActiveTechnologyResearch(snapshot: CampaignSnapshot, factionId = snapshot.currentUser.factionId) {
   return snapshot.factionTechnologies.find(
-    (item) => item.factionId === snapshot.currentUser.factionId && item.status === "researching"
+    (item) => item.factionId === factionId && item.status === "researching"
   );
 }
 
@@ -167,7 +171,11 @@ export function getVisibleRecruitmentCostResources(snapshot: CampaignSnapshot, t
   );
 }
 
-function areTechnologyPrerequisitesUnlocked(snapshot: CampaignSnapshot, technologyNodeId: string) {
+function areTechnologyPrerequisitesUnlocked(
+  snapshot: CampaignSnapshot,
+  technologyNodeId: string,
+  factionId = snapshot.currentUser.factionId
+) {
   const prerequisites = snapshot.technologyPrerequisites.filter((item) => item.technologyNodeId === technologyNodeId);
 
   if (prerequisites.length === 0) {
@@ -183,7 +191,7 @@ function areTechnologyPrerequisitesUnlocked(snapshot: CampaignSnapshot, technolo
   }
 
   return [...groups.values()].every((group) =>
-    group.some((prerequisite) => isTechnologyUnlocked(snapshot, prerequisite.requiredNodeId))
+    group.some((prerequisite) => getFactionTechnology(snapshot, prerequisite.requiredNodeId, factionId)?.status === "unlocked")
   );
 }
 

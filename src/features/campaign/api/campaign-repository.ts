@@ -314,6 +314,7 @@ function groupBy<T>(items: T[], getKey: (item: T) => string | null | undefined) 
 function mapFaction(row: Record<string, unknown>): Faction {
   return {
     id: row.id as string,
+    slug: (row.slug as string | null) ?? null,
     name: row.name as string,
     color: row.color as string,
     emblemUrl: (row.emblem_url as string | null) ?? null,

@@ -57,6 +57,7 @@ export type RelicRarity = "common" | "rare" | "epic" | "legendary";
 
 export interface Faction {
   id: string;
+  slug?: string | null;
   name: string;
   color: string;
   emblemUrl?: string | null;
