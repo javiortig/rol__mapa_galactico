@@ -128,6 +128,10 @@ export interface CampaignUnit {
   rank?: string | null;
   enhancementText?: string | null;
   notes?: string | null;
+  selectedModelOptionId?: string | null;
+  selectedWargearPoints?: number;
+  selectedWargearOptions?: RecruitmentWargearSelection[];
+  pointCostBreakdown?: Record<string, unknown>;
 }
 
 export interface UnitMovementSelection {
@@ -170,6 +174,48 @@ export interface RecruitmentQueueItem {
   startedAt: string;
   finishesAt: string;
   status: RecruitmentStatus;
+  selectedModelCount?: number | null;
+  selectedPoints?: number | null;
+  selectedModelOptionId?: string | null;
+  selectedWargearPoints?: number;
+  selectedWargearOptions?: RecruitmentWargearSelection[];
+  pointCostBreakdown?: Record<string, unknown>;
+}
+
+export interface UnitTemplateModelOption {
+  id: string;
+  unitTemplateId: string;
+  slug: string;
+  label: string;
+  models: number;
+  minModels: number;
+  maxModels: number;
+  points: number;
+  copyFrom: number;
+  copyTo?: number | null;
+  source: string;
+  pointsChangeDirection?: "up" | "down" | null;
+  pointsChangeAmount?: number | null;
+}
+
+export interface UnitTemplateWargearOption {
+  id: string;
+  unitTemplateId: string;
+  slug: string;
+  name: string;
+  points: number;
+  pricing: string;
+  source: string;
+  pointsChangeDirection?: "up" | "down" | null;
+  pointsChangeAmount?: number | null;
+}
+
+export interface RecruitmentWargearSelection {
+  slug: string;
+  name?: string;
+  points?: number;
+  quantity: number;
+  totalPoints?: number;
 }
 
 export interface UnitTemplate {
@@ -197,6 +243,8 @@ export interface UnitTemplate {
   sourceSection?: string | null;
   sourceFactionName?: string | null;
   isAlliedUnit?: boolean;
+  modelOptions?: UnitTemplateModelOption[];
+  wargearOptions?: UnitTemplateWargearOption[];
 }
 
 export interface TradeOffer {

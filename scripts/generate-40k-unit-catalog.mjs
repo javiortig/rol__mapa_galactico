@@ -300,7 +300,7 @@ function parseCatalog(text, keywordSource) {
         points,
         defaultQuantity,
         woundsPerModel: inferWoundsPerModel(name, unitKeywords),
-        recruitmentBuildingType: recruitmentBuildingType(unitKeywords),
+        recruitmentBuildingType: recruitmentBuildingType(name, unitKeywords),
         ...costs,
         notes: `${isAlliedUnit ? "Unidad aliada" : "Unidad"} importada desde data/11th40kPoints.txt (${sourceSection}).`,
         isAvailable: false
@@ -685,7 +685,8 @@ function legacyUnitType(unitKeywords) {
   return "infantry";
 }
 
-function recruitmentBuildingType(unitKeywords) {
+function recruitmentBuildingType(name, unitKeywords) {
+  if (name.includes("[Crucible]")) return "camara-leyendas";
   if (unitKeywords.includes("Caracter")) return "cuartel-mando";
   if (unitKeywords.includes("Vehiculo") || unitKeywords.includes("Aeronave") || unitKeywords.includes("Fortificacion")) return "taller-guerra";
   if (unitKeywords.includes("Bestia")) return "nido-bestias";
@@ -716,7 +717,7 @@ function slugify(value) {
 function buildUnitTemplateSql(units) {
   const values = units
     .map((unit) => {
-      return `    (${sql(unit.slug)}, ${sql(unit.factionSlug)}, ${sql(unit.name)}, ${sql(unit.category)}, ${sql(unit.unitType)}, ${sqlArray(unit.unitKeywords)}, ${unit.points}, ${unit.defaultQuantity}, ${unit.woundsPerModel}, ${unit.supplyCost}, ${unit.mineralsCost}, 0, ${unit.honorCost}, ${unit.goldCost}, 0, 0, 0, 30, ${sql(unit.recruitmentBuildingType)}, ${sql(unit.notes)}, false, null, ${sql(unit.sourceSection)}, ${sql(unit.sourceFactionName)}, ${unit.isAlliedUnit})`;
+      return `    (${sql(unit.slug)}, ${sql(unit.factionSlug)}, ${sql(unit.name)}, ${sql(unit.category)}, ${sql(unit.unitType)}, ${sqlArray(unit.unitKeywords)}, ${unit.points}, ${unit.defaultQuantity}, ${unit.woundsPerModel}, ${unit.supplyCost}, ${unit.mineralsCost}, 0, ${unit.honorCost}, ${unit.goldCost}, 0, 0, 0, 3, ${sql(unit.recruitmentBuildingType)}, ${sql(unit.notes)}, false, null, ${sql(unit.sourceSection)}, ${sql(unit.sourceFactionName)}, ${unit.isAlliedUnit})`;
     })
     .join(",\n");
 
@@ -802,7 +803,7 @@ set faction_id = excluded.faction_id, unit_template_id = excluded.unit_template_
 
 function buildMovementSql() {
   const orders = MOVEMENT_ORDERS.map(([slug, factionSlug, , from, to]) =>
-    `  (public.seed_uuid('movement_order', ${sql(slug)}), public.seed_uuid('faction', ${sql(factionSlug)}), public.seed_uuid('system', ${sql(from)}), public.seed_uuid('system', ${sql(to)}), 1, now() - interval '10 seconds', now() + interval '30 seconds', 'moving', array[public.seed_uuid('system', ${sql(from)}), public.seed_uuid('system', ${sql(to)})]::uuid[], 1, 30)`
+    `  (public.seed_uuid('movement_order', ${sql(slug)}), public.seed_uuid('faction', ${sql(factionSlug)}), public.seed_uuid('system', ${sql(from)}), public.seed_uuid('system', ${sql(to)}), 1, now() - interval '1 second', now() + interval '3 seconds', 'moving', array[public.seed_uuid('system', ${sql(from)}), public.seed_uuid('system', ${sql(to)})]::uuid[], 1, 3)`
   ).join(",\n");
 
   const orderUnits = MOVEMENT_ORDERS.map(([slug, , unitSlug]) =>
@@ -837,8 +838,11 @@ function updateSeed(units) {
     ? seed.indexOf("insert into public.movement_orders (", relicStart)
     : movementMarkerStart;
   const tradeStart = seed.indexOf("insert into public.trade_offers (", movementStart);
+  const unitsMarkerEnd = seed.indexOf("-- END GENERATED 40K UNIT CATALOG", unitsStart);
+  const postUnitHooksStart = unitsMarkerEnd === -1 ? -1 : seed.indexOf("\n", unitsMarkerEnd);
+  const postUnitHooks = postUnitHooksStart === -1 ? "" : seed.slice(postUnitHooksStart + 1, relicStart);
 
-  if (unitsStart === -1 || relicStart === -1 || movementStart === -1 || tradeStart === -1) {
+  if (unitsStart === -1 || relicStart === -1 || movementStart === -1 || tradeStart === -1 || unitsMarkerEnd === -1) {
     throw new Error("No se encontraron los bloques esperados en supabase/seed.sql.");
   }
 
@@ -858,7 +862,7 @@ function updateSeed(units) {
     ""
   ].join("\n");
 
-  const withUnits = `${seed.slice(0, unitsStart)}${unitsBlock}${seed.slice(relicStart, movementStart)}${movementBlock}${seed.slice(tradeStart)}`;
+  const withUnits = `${seed.slice(0, unitsStart)}${unitsBlock}${postUnitHooks}${seed.slice(relicStart, movementStart)}${movementBlock}${seed.slice(tradeStart)}`;
   writeFileSync(SEED_PATH, withUnits);
 }
 
@@ -887,7 +891,7 @@ function buildMockFile(units) {
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 30,
+    recruitmentTimeSeconds: 3,
     recruitmentBuildingType: unit.recruitmentBuildingType,
     notes: unit.notes,
     isAvailable: false,

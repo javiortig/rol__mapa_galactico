@@ -39,6 +39,37 @@ export async function recruitUnitAtBuilding(systemBuildingId: string, unitTempla
   return data as string;
 }
 
+export async function recruitUnitVariantAtBuilding({
+  systemBuildingId,
+  unitTemplateId,
+  modelCount,
+  wargearSelections
+}: {
+  systemBuildingId: string;
+  unitTemplateId: string;
+  modelCount: number;
+  wargearSelections: { slug: string; quantity: number }[];
+}) {
+  const supabase = getSupabaseBrowserClient();
+
+  if (!supabase) {
+    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+  }
+
+  const { data, error } = await supabase.rpc("recruit_unit_variant_at_building", {
+    system_building_id: systemBuildingId,
+    unit_template_id: unitTemplateId,
+    model_count: modelCount,
+    wargear_selections: wargearSelections
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as string;
+}
+
 export async function resupplyUnitAtBuilding(systemBuildingId: string, campaignUnitId: string) {
   const supabase = getSupabaseBrowserClient();
 

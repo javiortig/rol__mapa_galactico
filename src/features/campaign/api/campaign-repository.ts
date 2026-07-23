@@ -26,6 +26,8 @@ import type {
   UnitRecoveryQueueItem,
   UnitCategory,
   UnitKeyword,
+  UnitTemplateModelOption,
+  UnitTemplateWargearOption,
   UnitType,
   UnitMovementSelection,
   UnitTemplate
@@ -110,6 +112,8 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       movementsResult,
       movementUnitsResult,
       unitTemplatesResult,
+      unitTemplateModelOptionsResult,
+      unitTemplateWargearOptionsResult,
       recruitmentQueueResult,
       technologyNodesResult,
       technologyPrerequisitesResult,
@@ -138,6 +142,8 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       supabase.from("movement_orders").select("*").order("arrival_at"),
       supabase.from("movement_order_units").select("*"),
       supabase.from("unit_templates").select("*").order("name"),
+      supabase.from("unit_template_model_options").select("*").order("min_models").order("copy_from"),
+      supabase.from("unit_template_wargear_options").select("*").order("name"),
       supabase.from("recruitment_queue").select("*, unit_templates(name)").order("finishes_at"),
       supabase.from("technology_nodes").select("*").order("position_y").order("position_x"),
       supabase.from("technology_prerequisites").select("*"),
@@ -194,6 +200,14 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       getRows(movementUnitsResult, "movement_order_units").map(mapMovementUnit),
       (item) => item.movementOrderId
     );
+    const modelOptionsByTemplate = groupBy(
+      getRows(unitTemplateModelOptionsResult, "unit_template_model_options").map(mapUnitTemplateModelOption),
+      (item) => item.unitTemplateId
+    );
+    const wargearOptionsByTemplate = groupBy(
+      getRows(unitTemplateWargearOptionsResult, "unit_template_wargear_options").map(mapUnitTemplateWargearOption),
+      (item) => item.unitTemplateId
+    );
 
     return {
       currentUser: {
@@ -220,7 +234,13 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       movements: getRows(movementsResult, "movement_orders").map((row) =>
         mapMovement(row, unitIdsByMovement.get(row.id as string))
       ),
-      unitTemplates: getRows(unitTemplatesResult, "unit_templates").map(mapUnitTemplate),
+      unitTemplates: getRows(unitTemplatesResult, "unit_templates").map((row) =>
+        mapUnitTemplate(
+          row,
+          modelOptionsByTemplate.get(row.id as string) ?? [],
+          wargearOptionsByTemplate.get(row.id as string) ?? []
+        )
+      ),
       recruitmentQueue: getRows(recruitmentQueueResult, "recruitment_queue").map(mapRecruitmentQueueItem),
       technologyNodes: getRows(technologyNodesResult, "technology_nodes").map(mapTechnologyNode),
       technologyPrerequisites: getRows(technologyPrerequisitesResult, "technology_prerequisites").map(mapTechnologyPrerequisite),
@@ -432,7 +452,11 @@ function mapCampaignUnit(row: Record<string, unknown>): CampaignUnit {
     unitTemplateId: (row.unit_template_id as string | null) ?? null,
     rank: (row.rank as string | null) ?? null,
     enhancementText: (row.enhancement_text as string | null) ?? null,
-    notes: (row.notes as string | null) ?? null
+    notes: (row.notes as string | null) ?? null,
+    selectedModelOptionId: (row.selected_model_option_id as string | null) ?? null,
+    selectedWargearPoints: Number(row.selected_wargear_points ?? 0),
+    selectedWargearOptions: mapWargearSelections(row.selected_wargear_options),
+    pointCostBreakdown: mapObject(row.point_cost_breakdown)
   };
 }
 
@@ -465,7 +489,11 @@ function mapMovement(row: Record<string, unknown>, movementUnits: UnitMovementSe
   };
 }
 
-function mapUnitTemplate(row: Record<string, unknown>): UnitTemplate {
+function mapUnitTemplate(
+  row: Record<string, unknown>,
+  modelOptions: UnitTemplateModelOption[] = [],
+  wargearOptions: UnitTemplateWargearOption[] = []
+): UnitTemplate {
   return {
     id: row.id as string,
     factionId: row.faction_id as string,
@@ -490,7 +518,53 @@ function mapUnitTemplate(row: Record<string, unknown>): UnitTemplate {
     requiredTechnologyNodeId: (row.required_technology_node_id as string | null) ?? null,
     sourceSection: (row.source_section as string | null) ?? null,
     sourceFactionName: (row.source_faction_name as string | null) ?? null,
-    isAlliedUnit: Boolean(row.is_allied_unit)
+    isAlliedUnit: Boolean(row.is_allied_unit),
+    modelOptions,
+    wargearOptions
+  };
+}
+
+function mapUnitTemplateModelOption(row: Record<string, unknown>): UnitTemplateModelOption {
+  return {
+    id: row.id as string,
+    unitTemplateId: row.unit_template_id as string,
+    slug: row.slug as string,
+    label: row.label as string,
+    models: Number(row.models ?? 1),
+    minModels: Number(row.min_models ?? row.models ?? 1),
+    maxModels: Number(row.max_models ?? row.models ?? 1),
+    points: Number(row.points ?? 0),
+    copyFrom: Number(row.copy_from ?? 1),
+    copyTo: (row.copy_to as number | null | undefined) ?? null,
+    source: (row.source as string | null) ?? "mfm",
+    pointsChangeDirection:
+      row.points_change_direction === "up" || row.points_change_direction === "down"
+        ? row.points_change_direction
+        : null,
+    pointsChangeAmount:
+      row.points_change_amount === null || row.points_change_amount === undefined
+        ? null
+        : Number(row.points_change_amount)
+  };
+}
+
+function mapUnitTemplateWargearOption(row: Record<string, unknown>): UnitTemplateWargearOption {
+  return {
+    id: row.id as string,
+    unitTemplateId: row.unit_template_id as string,
+    slug: row.slug as string,
+    name: row.name as string,
+    points: Number(row.points ?? 0),
+    pricing: (row.pricing as string | null) ?? "per_option",
+    source: (row.source as string | null) ?? "mfm",
+    pointsChangeDirection:
+      row.points_change_direction === "up" || row.points_change_direction === "down"
+        ? row.points_change_direction
+        : null,
+    pointsChangeAmount:
+      row.points_change_amount === null || row.points_change_amount === undefined
+        ? null
+        : Number(row.points_change_amount)
   };
 }
 
@@ -643,7 +717,13 @@ function mapRecruitmentQueueItem(row: Record<string, unknown>): RecruitmentQueue
     technologyCost: Number(row.technology_cost ?? 0),
     startedAt: row.started_at as string,
     finishesAt: row.finishes_at as string,
-    status: row.status as RecruitmentQueueItem["status"]
+    status: row.status as RecruitmentQueueItem["status"],
+    selectedModelCount: (row.selected_model_count as number | null | undefined) ?? null,
+    selectedPoints: (row.selected_points as number | null | undefined) ?? null,
+    selectedModelOptionId: (row.selected_model_option_id as string | null) ?? null,
+    selectedWargearPoints: Number(row.selected_wargear_points ?? 0),
+    selectedWargearOptions: mapWargearSelections(row.selected_wargear_options),
+    pointCostBreakdown: mapObject(row.point_cost_breakdown)
   };
 }
 
@@ -850,6 +930,25 @@ function mapObject(value: unknown): Record<string, unknown> {
   }
 
   return value as Record<string, unknown>;
+}
+
+function mapWargearSelections(value: unknown) {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((item) => (item && typeof item === "object" ? (item as Record<string, unknown>) : null))
+    .filter((item): item is Record<string, unknown> => Boolean(item))
+    .map((item) => ({
+      slug: String(item.slug ?? ""),
+      name: typeof item.name === "string" ? item.name : undefined,
+      points: item.points === null || item.points === undefined ? undefined : Number(item.points),
+      quantity: Math.max(1, Number(item.quantity ?? 1)),
+      totalPoints:
+        item.totalPoints === null || item.totalPoints === undefined ? undefined : Number(item.totalPoints)
+    }))
+    .filter((item) => item.slug.length > 0);
 }
 
 function mapMission(row: Record<string, unknown>): Mission {

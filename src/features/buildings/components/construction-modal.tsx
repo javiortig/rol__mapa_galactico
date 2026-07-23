@@ -255,7 +255,7 @@ function getBuildBlockReason(
       : null;
 
     if (requiredTechnology?.implementationStatus === "planned") {
-      return "Espionaje proximamente";
+      return "Proximamente";
     }
 
     return `Requiere ${getRequiredTechnologyName(snapshot, template.requiredTechnologyNodeId)}`;

@@ -160,6 +160,7 @@ Estado jugable actual:
 - Facciones jugables finales importadas desde `data/11th40kPoints.txt`: Legiones Daemonicas, Agentes del Imperium, Cultos Genestealer, Aeldari, Space Marines, Adeptus Custodes y Necrones.
 - `Astra Militarum` ya no es faccion jugable; `Adeptus Custodes` ocupa su hueco de campana en `kharon-prime`.
 - El catalogo final de unidades se genera con `npm run units:generate`; importa 333 hojas de unidad reales de 11a edicion y valida que cada bloque coincide con `NUMBER OF UNITS`.
+- Los costes variables oficiales MFM de 11a edicion se generan con `npm run units:generate-options` desde `https://mfm.warhammer-community.com/en/` y se guardan en `data/11th-unit-cost-options.json`. Este archivo anade tamanos legales, recargos por copia y extras pagados sin modificar `data/11th40kPoints.txt`.
 - Los arboles de tropas por faccion se definen de forma declarativa en `data/technology/faction-troop-trees.json` y se validan con `npm run tech:validate-troops`.
 - Produccion diaria por tick temporal configurable, calculada desde edificios activos.
 - Movimiento, reclutamiento e investigacion funcionan por timestamps y resolvers backend/lazy processing.
@@ -915,6 +916,7 @@ Catálogo inicial:
 | Cuartel de Mando | Reclutamiento | Recluta Personajes. |
 | Taller de Guerra | Reclutamiento | Recluta Vehículos. |
 | Nido de Bestias | Reclutamiento | Recluta Monstruos. |
+| Cámara de Leyendas | Reclutamiento | Recluta unidades `[Crucible]`. Su tecnología existe tras Asamblea Planetaria, pero está bloqueada por ahora. |
 | Cámara de Comercio | Comercio | Abre Mercader y Comercio estelar. |
 | Nexo de Inteligencia | Inteligencia | Placeholder de espionaje futuro. |
 | Antenas de Reconocimiento | Inteligencia | Placeholder de información/espionaje futuro. |
@@ -955,7 +957,7 @@ El coste se paga con Uridium.
 
 Por ahora no hay riesgos aleatorios en rutas. Algunas rutas simplemente pueden costar mas.
 
-Para test local, la duracion inicial recomendada es `2 minutos por arista`.
+Para test local, la duracion inicial es `3 segundos por arista`.
 
 ### 8.2 Coste de movimiento
 
@@ -1070,7 +1072,7 @@ Origen: Kharon Prime
 Destino: Helios Drift
 Ruta: Kharon Prime -> Helios Drift
 Coste: 1 Uridium
-Llegada: 2 minutos
+Llegada: 3 segundos
 
 Al llegar:
 - Si es propio: quedará estacionado.
@@ -1189,14 +1191,14 @@ Los jugadores pueden gastar recursos para crear tropas desde edificios militares
 
 El reclutamiento tarda tiempo real, estilo Grepolis.
 
-Para test local, los tiempos iniciales son de minutos, no horas.
+Para test local, los tiempos de investigacion, construccion, reclutamiento y reabastecimiento son de 3 segundos.
 
 Al completarse, las tropas aparecen en el sistema donde está el edificio que inició el reclutamiento.
 
-El flujo legacy `recruit_unit(unit_template_id, quantity)` queda bloqueado con error claro. El flujo principal es:
+Los flujos legacy `recruit_unit(unit_template_id, quantity)` y `recruit_unit_at_building(system_building_id, unit_template_id, quantity)` quedan solo como compatibilidad. El flujo principal autoritativo es:
 
 ```text
-recruit_unit_at_building(system_building_id, unit_template_id, quantity)
+recruit_unit_variant_at_building(system_building_id, unit_template_id, model_count, wargear_selections)
 ```
 
 ### 9.2 Menú de reclutamiento
@@ -1213,7 +1215,10 @@ El panel del edificio militar muestra:
 
 - Recursos actuales.
 - Lista de unidades disponibles para ese edificio.
+- Selector de tamano legal de unidad si MFM define varias opciones.
+- Selector de extras de equipo pagados si MFM define wargear con coste.
 - Coste.
+- Puntos finales de la variante elegida.
 - Tiempo de producción.
 - Requisitos tecnológicos.
 - Botón de reclutar.
@@ -1228,6 +1233,7 @@ Edificios de reclutamiento v1:
 | Cuartel de Mando | Personajes. |
 | Taller de Guerra | Vehículos. |
 | Nido de Bestias | Monstruos. |
+| Cámara de Leyendas | Unidades `[Crucible]`. Bloqueada por tecnología en v1. |
 
 ### 9.3 Datos de una unidad reclutable
 
@@ -1236,6 +1242,9 @@ Cada unidad debe tener:
 - Nombre.
 - Facción a la que pertenece.
 - Puntos.
+- Miniaturas por defecto del TXT base.
+- Opciones legales MFM de miniaturas en `unit_template_model_options`.
+- Opciones pagadas MFM de equipo en `unit_template_wargear_options`.
 - Coste en Suministro vital.
 - Coste en Mineral.
 - Coste en Honor.
@@ -1245,6 +1254,7 @@ Cada unidad debe tener:
 - Tiempo de producción.
 - Requisitos opcionales.
 - Edificio/categoría de reclutamiento compatible.
+- `recruitment_building_type` opcional para forzar un edificio concreto aunque la categoría general coincida. Las unidades `[Crucible]` usan `camara-leyendas`.
 - `unit_keywords` funcionales, maximo 2 por unidad:
   - `Infanteria`
   - `Caracter`
@@ -1269,6 +1279,8 @@ Las etiquetas funcionales de unidad (`unit_keywords`) se cruzan con datos estruc
 
 Las unidades se pagan solo con Suministro vital, Mineral, Honor y Oro. Material Industrial queda reservado para construcción y Uridium queda reservado para movimiento/comercio, no para generar tropas.
 
+`data/11th40kPoints.txt` es la lista base aportada por el jugador y no se sobrescribe. `data/11th-unit-cost-options.json` es la capa adicional oficial MFM: registra tamanos legales, recargos por copia y extras pagados, por ejemplo `Twin Arachnus Heavy Blaze Cannon +15 pts`. El frontend muestra estas opciones al reclutar y el backend recalcula puntos y recursos en `recruit_unit_variant_at_building(...)`.
+
 ### 9.4 Al reclutar
 
 El backend valida:
@@ -1278,8 +1290,10 @@ El backend valida:
 - Unidad disponible para esa facción.
 - Edificio activo.
 - Sistema controlado por la facción.
-- Categoría compatible con el edificio.
+- Categoría compatible con el edificio o `recruitment_building_type` concreto si la plantilla lo define.
 - Requisitos tecnológicos cumplidos.
+- Tamano de unidad permitido por MFM si existe `unit_template_model_options`.
+- Opciones de equipo permitidas por MFM si existe `unit_template_wargear_options`.
 - No se exceden reglas de campaña si existen.
 - Coste correcto.
 
@@ -1289,6 +1303,11 @@ Si todo es válido:
 - Crea fila en `recruitment_queue`.
 - Guarda `system_building_id`.
 - Guarda `origin_system_id`.
+- Guarda `selected_model_count`.
+- Guarda `selected_points`.
+- Guarda `selected_model_option_id` si aplica.
+- Guarda `selected_wargear_options` y `selected_wargear_points` si aplica.
+- Guarda `point_cost_breakdown` con puntos base, extras y copia usada.
 - Guarda `started_at`.
 - Guarda `finishes_at`.
 - Estado `queued`.
@@ -1299,7 +1318,8 @@ Cuando `now() >= finishes_at`:
 
 - Backend marca la cola como `completed`.
 - Crea una fila nueva en `campaign_units` en el sistema del edificio.
-- La fila se crea con `quantity = unit_templates.default_quantity` y `starting_quantity = unit_templates.default_quantity`.
+- La fila se crea con `quantity = selected_model_count` y `starting_quantity = selected_model_count`; si no hay variante registrada, usa `unit_templates.default_quantity`.
+- La unidad guarda `points = selected_points` y conserva las opciones de equipo elegidas para auditoria y reabastecimiento futuro.
 - La unidad queda `ready` y disponible para movimiento.
 - Frontend actualiza por Realtime o refetch.
 
@@ -1354,7 +1374,7 @@ Reglas:
 
 - Solo puede haber una investigación activa por facción.
 - Cada tecnología puede tener coste en Componentes tecnológicos.
-- Cada tecnologia de test dura 30 segundos salvo que se documente lo contrario.
+- Cada tecnologia de test dura 3 segundos salvo que se documente lo contrario.
 - Cada arbol militar especifico `ready` cuesta exactamente 30 Componentes tecnologicos en total.
 - Los nodos de arboles militares solo pueden costar 1, 2 o 3 Componentes tecnologicos.
 - El coste 3 se reserva exclusivamente para el nodo final de las dos ramas mas grandes de cada faccion.
@@ -1379,32 +1399,32 @@ Unidades finales:
 - El arbol Necron tiene 3 ramas: `Falange Dinastica`, `Corte Criptecnica` y `Constructos Eternos`.
 - El arbol Necron es asimetrico: 6 nodos en Falange, 4 en Corte y 5 en Constructos.
 - El arbol Necron no es una cadena lineal: tiene bifurcaciones y convergencias mediante prerequisitos multiples.
-- El arbol Necron tiene 15 nodos activos, todos de 30 segundos, y cubre las 55 plantillas Necron importadas exactamente una vez.
+- El arbol Necron tiene 15 nodos activos, todos de 3 segundos, y cubre las 55 plantillas Necron importadas exactamente una vez.
 - Cada nodo Necron desbloquea al menos una unidad que el jugador Necron ha declarado poseer fisicamente.
 - La descripcion de cada nodo Necron debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - `troops-cultos-genestealer-v1` tambien esta `ready`.
 - El arbol del Culto Genestelar tiene 3 ramas: `Red de Insurreccion`, `Sombras del Culto` y `Ascension del Patriarca`.
 - El arbol del Culto Genestelar es asimetrico: 6 nodos en Red, 5 en Sombras y 4 en Ascension.
 - El arbol del Culto Genestelar tiene bifurcaciones entre masas, convoyes, guerrilla, profetas y mutacion, con convergencia final en `Trono del Patriarca`.
-- El arbol del Culto Genestelar tiene 15 nodos activos, todos de 30 segundos, y cubre las 27 plantillas del Culto importadas exactamente una vez.
+- El arbol del Culto Genestelar tiene 15 nodos activos, todos de 3 segundos, y cubre las 27 plantillas del Culto importadas exactamente una vez.
 - La descripcion de cada nodo del Culto Genestelar debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - `troops-space-marines-v1` tambien esta `ready`.
 - El arbol de Space Marines tiene 3 ramas: `Doctrina del Capitulo`, `Vanguardia y Asalto` y `Arsenal de Cruzada`.
 - El arbol de Space Marines es asimetrico: 5 nodos en Doctrina, 4 en Vanguardia y 6 en Arsenal.
 - El arbol de Space Marines tiene bifurcaciones entre escuadras de batalla, oficiales, despliegue Phobos, asalto orbital, transportes, dreadnoughts y blindados pesados, con convergencia final en `Reliquias de Cruzada`.
-- El arbol de Space Marines tiene 15 nodos activos, todos de 30 segundos, y cubre las 85 plantillas de Space Marines importadas exactamente una vez.
+- El arbol de Space Marines tiene 15 nodos activos, todos de 3 segundos, y cubre las 85 plantillas de Space Marines importadas exactamente una vez.
 - La descripcion de cada nodo de Space Marines debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - `troops-legiones-daemonicas-v1` tambien esta `ready`.
 - El arbol de Legiones Daemonicas tiene 3 ramas: `Hordas del Velo`, `Corte del Cambiante` y `Tronos de la Disformidad`.
 - El arbol de Legiones Daemonicas es asimetrico: 6 nodos en Hordas, 5 en Corte y 4 en Tronos.
 - El arbol de Legiones Daemonicas tiene bifurcaciones entre horrores, llamas, carros, heraldos, escribas, principes demonio y grandes entidades de la Disformidad, con convergencia final en `El Primer Principe`.
-- El arbol de Legiones Daemonicas tiene 15 nodos activos, todos de 30 segundos, y cubre las 19 plantillas de Legiones Daemonicas importadas exactamente una vez.
+- El arbol de Legiones Daemonicas tiene 15 nodos activos, todos de 3 segundos, y cubre las 19 plantillas de Legiones Daemonicas importadas exactamente una vez.
 - La descripcion de cada nodo de Legiones Daemonicas debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - `troops-adeptus-custodes-v1` tambien esta `ready`.
 - El arbol de Adeptus Custodes tiene 3 ramas: `Guardia Auramita`, `Camara Anathema` y `Arsenal del Trono`.
 - El arbol de Adeptus Custodes es asimetrico: 5 nodos en Guardia, 4 en Camara y 6 en Arsenal.
 - El arbol de Adeptus Custodes tiene bifurcaciones entre custodios de linea, campeones, exterminadores auricos, Hermanas del Silencio, grav-vehiculos, dreadnoughts, naves, Knights aliados y Titanes, con cierre de poder en `Titanes de Terra`.
-- El arbol de Adeptus Custodes tiene 15 nodos activos, todos de 30 segundos, y cubre las 51 plantillas de Adeptus Custodes importadas exactamente una vez.
+- El arbol de Adeptus Custodes tiene 15 nodos activos, todos de 3 segundos, y cubre las 51 plantillas de Adeptus Custodes importadas exactamente una vez.
 - La descripcion de cada nodo de Adeptus Custodes debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - Las cinco facciones objetivo iniciales ya estan `ready`. Aeldari y Agentes del Imperium siguen pendientes para una fase posterior.
 
@@ -1428,7 +1448,7 @@ Regla vigente de arboles tecnologicos:
 - Los arboles militares especificos usan `troops-{faction_slug}-v1`; un jugador solo puede ver e investigar su propio arbol militar.
 - Admin puede inspeccionar el arbol de una faccion desde el selector de la pantalla de tecnologia, pero no inicia investigaciones desde esa vista.
 - `start_technology_research()` rechaza por backend cualquier tecnologia cuyo `tree_key` no sea `common-v1` ni `troops-{slug-de-la-faccion-del-jugador}-v1`.
-- Todas las investigaciones de test duran 30 segundos.
+- Todas las investigaciones de test duran 3 segundos.
 - `technology_nodes.implementation_status` puede ser `active`, `planned` o `deprecated`.
 - `technology_prerequisites.prerequisite_group` permite requisitos `OR`: todos los grupos deben cumplirse, pero dentro de un mismo grupo basta una tecnologia desbloqueada.
 - `Asamblea Planetaria` requiere `Maquinaria Belica` o `Criadero de Guerra`.
@@ -1437,6 +1457,7 @@ Regla vigente de arboles tecnologicos:
 - `maquinaria-belica` desbloquea Taller de Guerra.
 - `criadero-guerra` desbloquea Nido de Bestias.
 - `asamblea-planetaria` desbloquea Cuartel de Mando.
+- `camara-leyendas` depende de Asamblea Planetaria y desbloqueara Cámara de Leyendas para unidades `[Crucible]`, pero su `implementation_status` es `planned`, asi que no puede investigarse ni construirse por ahora.
 - `procesado-metalurgico` desbloquea Planta de Fundicion.
 - `cristalizacion-combustible-cuantico` desbloquea Refineria de Iridium.
 - `extraccion-subterranea` desbloquea Complejo Minero.
@@ -1488,7 +1509,7 @@ Reglas:
 
 - Requiere tecnologia `monumentos-gloria`.
 - Coste v1: 8 Suministro, 8 Mineral, 2 Honor, 1 Oro y 5 Material Industrial.
-- Tiempo de construccion de test: 30 segundos.
+- Tiempo de construccion de test: 3 segundos.
 - Cada capital empieza con un Santuario activo para probar la feature.
 - Al abrirlo muestra reliquias guardadas en ese sistema, Caracteres propios presentes y reliquias equipadas.
 
@@ -2114,7 +2135,7 @@ La cadencia global de producción se puede guardar en una tabla de configuració
 campaign_settings
 - id text primary key default 'default'
 - resource_tick_interval_hours integer default 24
-- movement_edge_duration_seconds integer default 120
+- movement_edge_duration_seconds integer default 3
 - conflict_block_duration_minutes integer default 20160 -- 14 dias
 - last_resource_tick_at timestamptz nullable
 - next_resource_tick_at timestamptz nullable

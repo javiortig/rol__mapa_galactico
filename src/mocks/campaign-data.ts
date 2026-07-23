@@ -4,6 +4,7 @@ import {
   generated40kInitialUnits,
   generated40kUnitTemplates
 } from "@/mocks/generated/40k-unit-templates";
+import mfmCostOptions from "../../data/11th-unit-cost-options.json";
 import troopTreeConfigJson from "../../data/technology/faction-troop-trees.json";
 
 const emptyResources: ResourceBundle = {
@@ -1215,7 +1216,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 120,
+    recruitmentTimeSeconds: 3,
     notes: "Masa brutal de combate cercano.",
     isAvailable: true
   },
@@ -1232,7 +1233,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 240,
+    recruitmentTimeSeconds: 3,
     notes: "Noblez armados con servoarmaduras improvisadas.",
     isAvailable: true
   },
@@ -1249,7 +1250,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 360,
+    recruitmentTimeSeconds: 3,
     notes: "Maquina andante de metal, humo y mala intencion.",
     isAvailable: true
   },
@@ -1266,7 +1267,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 120,
+    recruitmentTimeSeconds: 3,
     notes: "Linea inmortal reanimada desde las criptas.",
     isAvailable: true
   },
@@ -1283,7 +1284,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 240,
+    recruitmentTimeSeconds: 3,
     notes: "Guerreros superiores con protocolos de elite.",
     isAvailable: true
   },
@@ -1300,7 +1301,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 360,
+    recruitmentTimeSeconds: 3,
     notes: "Asesinos de fase con cuerpos disenados para la destruccion.",
     isAvailable: true
   },
@@ -1317,7 +1318,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 120,
+    recruitmentTimeSeconds: 3,
     notes: "Infanteria disciplinada lista para sostener la linea.",
     isAvailable: true
   },
@@ -1334,7 +1335,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 240,
+    recruitmentTimeSeconds: 3,
     notes: "Veteranos de asalto con equipo especializado.",
     isAvailable: true
   },
@@ -1351,7 +1352,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 420,
+    recruitmentTimeSeconds: 3,
     notes: "Blindado pesado de batalla para romper frentes.",
     isAvailable: true
   },
@@ -1368,7 +1369,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 120,
+    recruitmentTimeSeconds: 3,
     notes: "Celulas insurgentes armadas desde las profundidades.",
     isAvailable: true
   },
@@ -1385,7 +1386,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 240,
+    recruitmentTimeSeconds: 3,
     notes: "Fanaticos hibridos preparados para ataques decisivos.",
     isAvailable: true
   },
@@ -1402,7 +1403,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 360,
+    recruitmentTimeSeconds: 3,
     notes: "Vehiculo de incursion y reconocimiento rapido.",
     isAvailable: true
   },
@@ -1419,7 +1420,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 180,
+    recruitmentTimeSeconds: 3,
     notes: "Astartes de linea con doctrina flexible.",
     isAvailable: true
   },
@@ -1436,7 +1437,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 360,
+    recruitmentTimeSeconds: 3,
     notes: "Veteranos con armadura tactica dreadnought.",
     isAvailable: true
   },
@@ -1453,7 +1454,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 480,
+    recruitmentTimeSeconds: 3,
     notes: "Dreadnought pesado para rupturas de linea.",
     isAvailable: true
   },
@@ -1470,7 +1471,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 120,
+    recruitmentTimeSeconds: 3,
     notes: "Multitud infectada que avanza sin miedo.",
     isAvailable: true
   },
@@ -1487,7 +1488,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 240,
+    recruitmentTimeSeconds: 3,
     notes: "Marines de plaga resistentes y metodicos.",
     isAvailable: true
   },
@@ -1504,7 +1505,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 420,
+    recruitmentTimeSeconds: 3,
     notes: "Dron demoniaco de apoyo y hostigamiento.",
     isAvailable: true
   },
@@ -1521,7 +1522,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 2,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 30,
+    recruitmentTimeSeconds: 3,
     notes: "Jefe de guerra preparado para portar trofeos sagrados.",
     isAvailable: true
   },
@@ -1538,7 +1539,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 2,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 30,
+    recruitmentTimeSeconds: 3,
     notes: "Noble inmortal con protocolos de mando dinastico.",
     isAvailable: true
   },
@@ -1555,7 +1556,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 1,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 30,
+    recruitmentTimeSeconds: 3,
     notes: "Oficial veterano de campana y enlace de mando.",
     isAvailable: true
   },
@@ -1572,7 +1573,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 1,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 30,
+    recruitmentTimeSeconds: 3,
     notes: "Lider de celula capaz de guiar la insurreccion.",
     isAvailable: true
   },
@@ -1589,7 +1590,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 2,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 30,
+    recruitmentTimeSeconds: 3,
     notes: "Capitan de la Sombra del Emperador.",
     isAvailable: true
   },
@@ -1606,7 +1607,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     industrialMaterialCost: 2,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 30,
+    recruitmentTimeSeconds: 3,
     notes: "Campeon corrupto de resistencia sobrenatural.",
     isAvailable: true
   }
@@ -1682,16 +1683,63 @@ const troopTechnologyByUnitSlug = new Map(
     tree.nodes.flatMap((node) => (node.unitTemplateSlugs ?? []).map((unitSlug) => [unitSlug, node.slug] as const))
   )
 );
+type MfmCostOptionsUnit = (typeof mfmCostOptions.units)[number];
+type MfmChange = { direction?: unknown; amount?: unknown } | null | undefined;
+
+const mfmOptionsByTemplateId = new Map<string, MfmCostOptionsUnit>(
+  mfmCostOptions.units.map((unit) => [`unit-${unit.factionSlug}-${unit.unitSlug}`, unit])
+);
+
+function getMfmChangeDirection(change: MfmChange): "up" | "down" | null {
+  return change?.direction === "up" || change?.direction === "down" ? change.direction : null;
+}
+
+function getMfmChangeAmount(change: MfmChange) {
+  return typeof change?.amount === "number" ? change.amount : null;
+}
+
 const unitTemplates: CampaignSnapshot["unitTemplates"] = generated40kUnitTemplates.map((template) => {
   const requiredTechnologyNodeId = troopTechnologyByUnitSlug.get(template.id);
+  const mfmOptions = mfmOptionsByTemplateId.get(template.id);
+  const withMfmOptions = {
+    ...template,
+    modelOptions:
+      mfmOptions?.modelOptions.map((option, index) => ({
+        id: `${template.id}-model-option-${index}`,
+        unitTemplateId: template.id,
+        slug: `${option.minModels}-${option.maxModels}-${option.copyRange.from}-${option.copyRange.to ?? "plus"}`,
+        label: option.label,
+        models: option.models,
+        minModels: option.minModels,
+        maxModels: option.maxModels,
+        points: option.points,
+        copyFrom: option.copyRange.from,
+        copyTo: option.copyRange.to,
+        source: option.source,
+        pointsChangeDirection: getMfmChangeDirection((option as { change?: MfmChange }).change),
+        pointsChangeAmount: getMfmChangeAmount((option as { change?: MfmChange }).change)
+      })) ?? [],
+    wargearOptions:
+      mfmOptions?.wargearOptions.map((option) => ({
+        id: `${template.id}-wargear-${option.slug}`,
+        unitTemplateId: template.id,
+        slug: option.slug,
+        name: option.name,
+        points: option.points,
+        pricing: option.pricing,
+        source: option.source,
+        pointsChangeDirection: getMfmChangeDirection((option as { change?: MfmChange }).change),
+        pointsChangeAmount: getMfmChangeAmount((option as { change?: MfmChange }).change)
+      })) ?? []
+  };
 
   return requiredTechnologyNodeId
     ? {
-        ...template,
+        ...withMfmOptions,
         isAvailable: true,
         requiredTechnologyNodeId
       }
-    : template;
+    : withMfmOptions;
 });
 
 void baseUnits;
@@ -1759,34 +1807,35 @@ const missions: CampaignSnapshot["missions"] = [
 ];
 
 const technologyNodes: CampaignSnapshot["technologyNodes"] = [
-  makeTechnologyNode({ id: "fundacion-planetaria", slug: "fundacion-planetaria", name: "Fundacion Planetaria", description: "Protocolos basicos para levantar la primera infraestructura estable de campana.", branch: "Progreso", tier: 0, positionX: 46, positionY: 48, costTechnology: 0, researchTimeSeconds: 30, iconKey: "foundation", effectSummary: "Permite construir Barracones de Infanteria y Granjas Biologicas.", isStarter: true }),
-  makeTechnologyNode({ id: "maquinaria-belica", slug: "maquinaria-belica", name: "Maquinaria Belica", description: "Talleres, elevadores y servosistemas para fabricar y mantener vehiculos.", branch: "Progreso", tier: 1, positionX: 36, positionY: 34, costTechnology: 1, researchTimeSeconds: 30, iconKey: "war_machine", effectSummary: "Permite construir Talleres de Guerra.", isStarter: false }),
-  makeTechnologyNode({ id: "criadero-guerra", slug: "criadero-guerra", name: "Criadero de Guerra", description: "Jaulas, ritos de control y habitats adaptados para criaturas de guerra.", branch: "Progreso", tier: 1, positionX: 54, positionY: 34, costTechnology: 1, researchTimeSeconds: 30, iconKey: "beast", effectSummary: "Permite construir Nidos de Bestias.", isStarter: false }),
-  makeTechnologyNode({ id: "asamblea-planetaria", slug: "asamblea-planetaria", name: "Asamblea Planetaria", description: "Estructura de mando local capaz de sostener oficiales, personajes y estados mayores.", branch: "Progreso", tier: 2, positionX: 45, positionY: 22, costTechnology: 2, researchTimeSeconds: 30, iconKey: "command", effectSummary: "Permite construir Cuarteles de Mando.", isStarter: false }),
-  makeTechnologyNode({ id: "procesado-metalurgico", slug: "procesado-metalurgico", name: "Procesado Metalurgico", description: "Cadenas industriales para convertir mineral bruto en materiales de construccion.", branch: "Progreso", tier: 1, positionX: 63, positionY: 50, costTechnology: 0, researchTimeSeconds: 30, iconKey: "factory", effectSummary: "Permite construir Plantas de Fundicion.", isStarter: false }),
-  makeTechnologyNode({ id: "cristalizacion-combustible-cuantico", slug: "cristalizacion-combustible-cuantico", name: "Cristalizacion de Combustible Cuantico", description: "Tecnicas de estabilizacion para refinar Iridium util en rutas de salto.", branch: "Progreso", tier: 2, positionX: 73, positionY: 39, costTechnology: 0, researchTimeSeconds: 30, iconKey: "uridium", effectSummary: "Permite construir Refinerias de Iridium.", isStarter: false }),
-  makeTechnologyNode({ id: "extraccion-subterranea", slug: "extraccion-subterranea", name: "Extraccion Subterranea", description: "Sondeos profundos y maquinaria pesada para explotar vetas minerales.", branch: "Progreso", tier: 2, positionX: 73, positionY: 55, costTechnology: 1, researchTimeSeconds: 30, iconKey: "mine", effectSummary: "Permite construir Complejos Mineros.", isStarter: false }),
-  makeTechnologyNode({ id: "monumentos-gloria", slug: "monumentos-gloria", name: "Monumentos a la Gloria", description: "Arquitectura ceremonial para convertir victorias y lealtad en Honor.", branch: "Progreso", tier: 2, positionX: 73, positionY: 71, costTechnology: 1, researchTimeSeconds: 30, iconKey: "honor", effectSummary: "Permite construir Monumentos.", isStarter: false }),
-  makeTechnologyNode({ id: "fiebre-oro", slug: "fiebre-oro", name: "La Fiebre del Oro", description: "Prospeccion avanzada para localizar y explotar yacimientos preciosos.", branch: "Progreso", tier: 3, positionX: 86, positionY: 55, costTechnology: 1, researchTimeSeconds: 30, iconKey: "gold", effectSummary: "Permite construir Minas de Oro.", isStarter: false }),
-  makeTechnologyNode({ id: "pactos-mercantiles", slug: "pactos-mercantiles", name: "Pactos Mercantiles", description: "Acuerdos y garantias para atraer camaras de comercio al frente.", branch: "Progreso", tier: 4, positionX: 91, positionY: 40, costTechnology: 1, researchTimeSeconds: 30, iconKey: "commerce", effectSummary: "Permite construir Camaras de Comercio.", isStarter: false }),
-  makeTechnologyNode({ id: "contactos-economicos", slug: "contactos-economicos", name: "Contactos Economicos", description: "Red de intermediarios y agentes comerciales con acceso al mercader.", branch: "Progreso", tier: 5, positionX: 96, positionY: 30, costTechnology: 1, researchTimeSeconds: 30, iconKey: "merchant", effectSummary: "Permite comerciar con el Mercader.", isStarter: false }),
-  makeTechnologyNode({ id: "tratos-preferentes", slug: "tratos-preferentes", name: "Tratos Preferentes", description: "Credenciales, favores y rutas protegidas que reducen las tasas del mercader.", branch: "Progreso", tier: 6, positionX: 96, positionY: 18, costTechnology: 2, researchTimeSeconds: 30, iconKey: "trade_discount", effectSummary: "Mejora precios del Mercader: compra a 1.5x y venta a 0.75x del valor.", isStarter: false }),
-  makeTechnologyNode({ id: "mercado-galactico", slug: "mercado-galactico", name: "Mercado Galactico", description: "Acceso a tablones de oferta y rutas de intercambio entre jugadores.", branch: "Progreso", tier: 5, positionX: 96, positionY: 52, costTechnology: 1, researchTimeSeconds: 30, iconKey: "market", effectSummary: "Permite usar el Comercio Estelar.", isStarter: false }),
-  makeTechnologyNode({ id: "aranceles-privilegiados", slug: "aranceles-privilegiados", name: "Aranceles Privilegiados", description: "Tratados fiscales que reducen la comision del comercio estelar.", branch: "Progreso", tier: 6, positionX: 96, positionY: 64, costTechnology: 2, researchTimeSeconds: 30, iconKey: "tariff", effectSummary: "Reduce tu comision de Comercio Estelar al 10%, minimo 1 oro.", isStarter: false }),
-  makeTechnologyNode({ id: "oficina-inteligencia", slug: "oficina-inteligencia", name: "Oficina de Inteligencia", description: "Primer nucleo burocratico para futuras operaciones de espionaje.", branch: "Inteligencia", tier: 1, positionX: 18, positionY: 58, costTechnology: 0, researchTimeSeconds: 30, iconKey: "intelligence", effectSummary: "Proximamente: desbloqueara Nexos de Inteligencia.", isStarter: false, implementationStatus: "planned" }),
-  makeTechnologyNode({ id: "celulas-informacion", slug: "celulas-informacion", name: "Celulas de Informacion", description: "Redes discretas de observadores, informadores y escuchas.", branch: "Inteligencia", tier: 2, positionX: 14, positionY: 70, costTechnology: 2, researchTimeSeconds: 30, iconKey: "cells", effectSummary: "Proximamente: produccion de espionaje y Antenas de Reconocimiento.", isStarter: false, implementationStatus: "planned" }),
-  makeTechnologyNode({ id: "doctrina-clandestina", slug: "doctrina-clandestina", name: "Doctrina Clandestina", description: "Protocolos de infiltracion sostenida para operaciones encubiertas.", branch: "Inteligencia", tier: 3, positionX: 8, positionY: 82, costTechnology: 1, researchTimeSeconds: 30, iconKey: "cloak", effectSummary: "Proximamente: mejora de produccion de espionaje.", isStarter: false, implementationStatus: "planned" }),
-  makeTechnologyNode({ id: "doble-agente", slug: "doble-agente", name: "Doble Agente", description: "Contramedidas para detectar redes enemigas y operaciones infiltradas.", branch: "Inteligencia", tier: 3, positionX: 18, positionY: 86, costTechnology: 1, researchTimeSeconds: 30, iconKey: "agent", effectSummary: "Proximamente: probabilidad de detectar espionaje enemigo.", isStarter: false, implementationStatus: "planned" }),
-  makeTechnologyNode({ id: "tecnologia-sar", slug: "tecnologia-sar", name: "Tecnologia SAR", description: "Lectura de largo alcance para reconocimiento y triangulacion avanzada.", branch: "Inteligencia", tier: 3, positionX: 28, positionY: 82, costTechnology: 1, researchTimeSeconds: 30, iconKey: "radar", effectSummary: "Proximamente: duplicara alcance de Antenas de Reconocimiento.", isStarter: false, implementationStatus: "planned" }),
+  makeTechnologyNode({ id: "fundacion-planetaria", slug: "fundacion-planetaria", name: "Fundacion Planetaria", description: "Protocolos basicos para levantar la primera infraestructura estable de campana.", branch: "Progreso", tier: 0, positionX: 46, positionY: 48, costTechnology: 0, researchTimeSeconds: 3, iconKey: "foundation", effectSummary: "Permite construir Barracones de Infanteria y Granjas Biologicas.", isStarter: true }),
+  makeTechnologyNode({ id: "maquinaria-belica", slug: "maquinaria-belica", name: "Maquinaria Belica", description: "Talleres, elevadores y servosistemas para fabricar y mantener vehiculos.", branch: "Progreso", tier: 1, positionX: 36, positionY: 34, costTechnology: 1, researchTimeSeconds: 3, iconKey: "war_machine", effectSummary: "Permite construir Talleres de Guerra.", isStarter: false }),
+  makeTechnologyNode({ id: "criadero-guerra", slug: "criadero-guerra", name: "Criadero de Guerra", description: "Jaulas, ritos de control y habitats adaptados para criaturas de guerra.", branch: "Progreso", tier: 1, positionX: 54, positionY: 34, costTechnology: 1, researchTimeSeconds: 3, iconKey: "beast", effectSummary: "Permite construir Nidos de Bestias.", isStarter: false }),
+  makeTechnologyNode({ id: "asamblea-planetaria", slug: "asamblea-planetaria", name: "Asamblea Planetaria", description: "Estructura de mando local capaz de sostener oficiales, personajes y estados mayores.", branch: "Progreso", tier: 2, positionX: 45, positionY: 22, costTechnology: 2, researchTimeSeconds: 3, iconKey: "command", effectSummary: "Permite construir Cuarteles de Mando.", isStarter: false }),
+  makeTechnologyNode({ id: "camara-leyendas-tech", slug: "camara-leyendas", name: "Camara de Leyendas", description: "Archivo sellado de gestas imposibles y protocolos excepcionales para reclutar unidades [Crucible]. Bloqueada por ahora.", branch: "Progreso", tier: 3, positionX: 55, positionY: 22, costTechnology: 2, researchTimeSeconds: 3, iconKey: "legend_chamber", effectSummary: "Permitira construir Camaras de Leyendas para reclutar unidades [Crucible].", isStarter: false, implementationStatus: "planned" }),
+  makeTechnologyNode({ id: "procesado-metalurgico", slug: "procesado-metalurgico", name: "Procesado Metalurgico", description: "Cadenas industriales para convertir mineral bruto en materiales de construccion.", branch: "Progreso", tier: 1, positionX: 63, positionY: 50, costTechnology: 0, researchTimeSeconds: 3, iconKey: "factory", effectSummary: "Permite construir Plantas de Fundicion.", isStarter: false }),
+  makeTechnologyNode({ id: "cristalizacion-combustible-cuantico", slug: "cristalizacion-combustible-cuantico", name: "Cristalizacion de Combustible Cuantico", description: "Tecnicas de estabilizacion para refinar Iridium util en rutas de salto.", branch: "Progreso", tier: 2, positionX: 73, positionY: 39, costTechnology: 0, researchTimeSeconds: 3, iconKey: "uridium", effectSummary: "Permite construir Refinerias de Iridium.", isStarter: false }),
+  makeTechnologyNode({ id: "extraccion-subterranea", slug: "extraccion-subterranea", name: "Extraccion Subterranea", description: "Sondeos profundos y maquinaria pesada para explotar vetas minerales.", branch: "Progreso", tier: 2, positionX: 73, positionY: 55, costTechnology: 1, researchTimeSeconds: 3, iconKey: "mine", effectSummary: "Permite construir Complejos Mineros.", isStarter: false }),
+  makeTechnologyNode({ id: "monumentos-gloria", slug: "monumentos-gloria", name: "Monumentos a la Gloria", description: "Arquitectura ceremonial para convertir victorias y lealtad en Honor.", branch: "Progreso", tier: 2, positionX: 73, positionY: 71, costTechnology: 1, researchTimeSeconds: 3, iconKey: "honor", effectSummary: "Permite construir Monumentos.", isStarter: false }),
+  makeTechnologyNode({ id: "fiebre-oro", slug: "fiebre-oro", name: "La Fiebre del Oro", description: "Prospeccion avanzada para localizar y explotar yacimientos preciosos.", branch: "Progreso", tier: 3, positionX: 86, positionY: 55, costTechnology: 1, researchTimeSeconds: 3, iconKey: "gold", effectSummary: "Permite construir Minas de Oro.", isStarter: false }),
+  makeTechnologyNode({ id: "pactos-mercantiles", slug: "pactos-mercantiles", name: "Pactos Mercantiles", description: "Acuerdos y garantias para atraer camaras de comercio al frente.", branch: "Progreso", tier: 4, positionX: 91, positionY: 40, costTechnology: 1, researchTimeSeconds: 3, iconKey: "commerce", effectSummary: "Permite construir Camaras de Comercio.", isStarter: false }),
+  makeTechnologyNode({ id: "contactos-economicos", slug: "contactos-economicos", name: "Contactos Economicos", description: "Red de intermediarios y agentes comerciales con acceso al mercader.", branch: "Progreso", tier: 5, positionX: 96, positionY: 30, costTechnology: 1, researchTimeSeconds: 3, iconKey: "merchant", effectSummary: "Permite comerciar con el Mercader.", isStarter: false }),
+  makeTechnologyNode({ id: "tratos-preferentes", slug: "tratos-preferentes", name: "Tratos Preferentes", description: "Credenciales, favores y rutas protegidas que reducen las tasas del mercader.", branch: "Progreso", tier: 6, positionX: 96, positionY: 18, costTechnology: 2, researchTimeSeconds: 3, iconKey: "trade_discount", effectSummary: "Mejora precios del Mercader: compra a 1.5x y venta a 0.75x del valor.", isStarter: false }),
+  makeTechnologyNode({ id: "mercado-galactico", slug: "mercado-galactico", name: "Mercado Galactico", description: "Acceso a tablones de oferta y rutas de intercambio entre jugadores.", branch: "Progreso", tier: 5, positionX: 96, positionY: 52, costTechnology: 1, researchTimeSeconds: 3, iconKey: "market", effectSummary: "Permite usar el Comercio Estelar.", isStarter: false }),
+  makeTechnologyNode({ id: "aranceles-privilegiados", slug: "aranceles-privilegiados", name: "Aranceles Privilegiados", description: "Tratados fiscales que reducen la comision del comercio estelar.", branch: "Progreso", tier: 6, positionX: 96, positionY: 64, costTechnology: 2, researchTimeSeconds: 3, iconKey: "tariff", effectSummary: "Reduce tu comision de Comercio Estelar al 10%, minimo 1 oro.", isStarter: false }),
+  makeTechnologyNode({ id: "oficina-inteligencia", slug: "oficina-inteligencia", name: "Oficina de Inteligencia", description: "Primer nucleo burocratico para futuras operaciones de espionaje.", branch: "Inteligencia", tier: 1, positionX: 18, positionY: 58, costTechnology: 0, researchTimeSeconds: 3, iconKey: "intelligence", effectSummary: "Proximamente: desbloqueara Nexos de Inteligencia.", isStarter: false, implementationStatus: "planned" }),
+  makeTechnologyNode({ id: "celulas-informacion", slug: "celulas-informacion", name: "Celulas de Informacion", description: "Redes discretas de observadores, informadores y escuchas.", branch: "Inteligencia", tier: 2, positionX: 14, positionY: 70, costTechnology: 2, researchTimeSeconds: 3, iconKey: "cells", effectSummary: "Proximamente: produccion de espionaje y Antenas de Reconocimiento.", isStarter: false, implementationStatus: "planned" }),
+  makeTechnologyNode({ id: "doctrina-clandestina", slug: "doctrina-clandestina", name: "Doctrina Clandestina", description: "Protocolos de infiltracion sostenida para operaciones encubiertas.", branch: "Inteligencia", tier: 3, positionX: 8, positionY: 82, costTechnology: 1, researchTimeSeconds: 3, iconKey: "cloak", effectSummary: "Proximamente: mejora de produccion de espionaje.", isStarter: false, implementationStatus: "planned" }),
+  makeTechnologyNode({ id: "doble-agente", slug: "doble-agente", name: "Doble Agente", description: "Contramedidas para detectar redes enemigas y operaciones infiltradas.", branch: "Inteligencia", tier: 3, positionX: 18, positionY: 86, costTechnology: 1, researchTimeSeconds: 3, iconKey: "agent", effectSummary: "Proximamente: probabilidad de detectar espionaje enemigo.", isStarter: false, implementationStatus: "planned" }),
+  makeTechnologyNode({ id: "tecnologia-sar", slug: "tecnologia-sar", name: "Tecnologia SAR", description: "Lectura de largo alcance para reconocimiento y triangulacion avanzada.", branch: "Inteligencia", tier: 3, positionX: 28, positionY: 82, costTechnology: 1, researchTimeSeconds: 3, iconKey: "radar", effectSummary: "Proximamente: duplicara alcance de Antenas de Reconocimiento.", isStarter: false, implementationStatus: "planned" }),
   ...troopTechnologyNodes,
-  makeTechnologyNode({ id: "entrenamiento-linea", slug: "entrenamiento-linea", name: "Entrenamiento de linea", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Mando militar", tier: 0, positionX: 22, positionY: 32, costTechnology: 0, researchTimeSeconds: 30, iconKey: "infantry", effectSummary: "Obsoleto.", isStarter: true, implementationStatus: "deprecated" }),
-  makeTechnologyNode({ id: "logistica-frente", slug: "logistica-frente", name: "Logistica de frente", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Mando militar", tier: 1, positionX: 10, positionY: 22, costTechnology: 4, researchTimeSeconds: 30, iconKey: "supply", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
-  makeTechnologyNode({ id: "cadenas-mando", slug: "cadenas-mando", name: "Cadenas de mando", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Mando militar", tier: 1, positionX: 25, positionY: 18, costTechnology: 4, researchTimeSeconds: 30, iconKey: "command", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
-  makeTechnologyNode({ id: "veteranos-guerra", slug: "veteranos-guerra", name: "Veteranos de guerra", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Infanteria y elite", tier: 1, positionX: 30, positionY: 42, costTechnology: 4, researchTimeSeconds: 30, iconKey: "elite", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
-  makeTechnologyNode({ id: "especializacion-elite", slug: "especializacion-elite", name: "Especializacion de elite", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Infanteria y elite", tier: 2, positionX: 18, positionY: 48, costTechnology: 8, researchTimeSeconds: 30, iconKey: "elite", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
-  makeTechnologyNode({ id: "motores-guerra", slug: "motores-guerra", name: "Motores de guerra", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Blindados y maquinas", tier: 2, positionX: 42, positionY: 15, costTechnology: 8, researchTimeSeconds: 30, iconKey: "vehicle", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
-  makeTechnologyNode({ id: "blindaje-reforzado", slug: "blindaje-reforzado", name: "Blindaje reforzado", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Blindados y maquinas", tier: 3, positionX: 55, positionY: 16, costTechnology: 12, researchTimeSeconds: 30, iconKey: "vehicle", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
-  makeTechnologyNode({ id: "matrices-eficiencia", slug: "matrices-eficiencia", name: "Matrices de eficiencia", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Arqueotecnologia", tier: 3, positionX: 36, positionY: 62, costTechnology: 12, researchTimeSeconds: 30, iconKey: "matrix", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" })
+  makeTechnologyNode({ id: "entrenamiento-linea", slug: "entrenamiento-linea", name: "Entrenamiento de linea", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Mando militar", tier: 0, positionX: 22, positionY: 32, costTechnology: 0, researchTimeSeconds: 3, iconKey: "infantry", effectSummary: "Obsoleto.", isStarter: true, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "logistica-frente", slug: "logistica-frente", name: "Logistica de frente", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Mando militar", tier: 1, positionX: 10, positionY: 22, costTechnology: 4, researchTimeSeconds: 3, iconKey: "supply", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "cadenas-mando", slug: "cadenas-mando", name: "Cadenas de mando", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Mando militar", tier: 1, positionX: 25, positionY: 18, costTechnology: 4, researchTimeSeconds: 3, iconKey: "command", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "veteranos-guerra", slug: "veteranos-guerra", name: "Veteranos de guerra", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Infanteria y elite", tier: 1, positionX: 30, positionY: 42, costTechnology: 4, researchTimeSeconds: 3, iconKey: "elite", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "especializacion-elite", slug: "especializacion-elite", name: "Especializacion de elite", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Infanteria y elite", tier: 2, positionX: 18, positionY: 48, costTechnology: 8, researchTimeSeconds: 3, iconKey: "elite", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "motores-guerra", slug: "motores-guerra", name: "Motores de guerra", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Blindados y maquinas", tier: 2, positionX: 42, positionY: 15, costTechnology: 8, researchTimeSeconds: 3, iconKey: "vehicle", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "blindaje-reforzado", slug: "blindaje-reforzado", name: "Blindaje reforzado", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Blindados y maquinas", tier: 3, positionX: 55, positionY: 16, costTechnology: 12, researchTimeSeconds: 3, iconKey: "vehicle", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "matrices-eficiencia", slug: "matrices-eficiencia", name: "Matrices de eficiencia", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Arqueotecnologia", tier: 3, positionX: 36, positionY: 62, costTechnology: 12, researchTimeSeconds: 3, iconKey: "matrix", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" })
 ];
 
 const prerequisiteRows = [
@@ -1794,6 +1843,7 @@ const prerequisiteRows = [
   ["criadero-guerra", "fundacion-planetaria", 1],
   ["asamblea-planetaria", "maquinaria-belica", 1],
   ["asamblea-planetaria", "criadero-guerra", 1],
+  ["camara-leyendas-tech", "asamblea-planetaria", 1],
   ["procesado-metalurgico", "fundacion-planetaria", 1],
   ["cristalizacion-combustible-cuantico", "procesado-metalurgico", 1],
   ["extraccion-subterranea", "procesado-metalurgico", 1],
@@ -1842,6 +1892,7 @@ const technologyEffects: CampaignSnapshot["technologyEffects"] = [
   { id: "effect-maquinaria-building", technologyNodeId: "maquinaria-belica", effectType: "unlock_building_template", payload: { buildingTemplateSlugs: ["taller-guerra"] } },
   { id: "effect-criadero-building", technologyNodeId: "criadero-guerra", effectType: "unlock_building_template", payload: { buildingTemplateSlugs: ["nido-bestias"] } },
   { id: "effect-asamblea-building", technologyNodeId: "asamblea-planetaria", effectType: "unlock_building_template", payload: { buildingTemplateSlugs: ["cuartel-mando"] } },
+  { id: "effect-camara-leyendas-building", technologyNodeId: "camara-leyendas-tech", effectType: "unlock_building_template", payload: { buildingTemplateSlugs: ["camara-leyendas"] } },
   { id: "effect-procesado-building", technologyNodeId: "procesado-metalurgico", effectType: "unlock_building_template", payload: { buildingTemplateSlugs: ["planta-fundicion"] } },
   { id: "effect-cristalizacion-building", technologyNodeId: "cristalizacion-combustible-cuantico", effectType: "unlock_building_template", payload: { buildingTemplateSlugs: ["refineria-iridium"] } },
   { id: "effect-extraccion-building", technologyNodeId: "extraccion-subterranea", effectType: "unlock_building_template", payload: { buildingTemplateSlugs: ["complejo-minero"] } },
@@ -1856,20 +1907,21 @@ const technologyEffects: CampaignSnapshot["technologyEffects"] = [
 ].concat(troopTechnologyEffects);
 
 const buildingTemplates: CampaignSnapshot["buildingTemplates"] = [
-  makeBuildingTemplate({ id: "barracon-infanteria", name: "Barracon de Infanteria", category: "Reclutamiento", description: "Centro de instruccion para tropas de linea y cuadros veteranos.", buildingKind: "recruitment", supplyCost: 12, mineralsCost: 8, industrialMaterialCost: 4, constructionTimeSeconds: 240, allowedUnitCategories: ["Infanteria", "Elite"], requiredTechnologyNodeId: "fundacion-planetaria", iconKey: "infantry_barracks" }),
-  makeBuildingTemplate({ id: "cuartel-mando", name: "Cuartel de Mando", category: "Reclutamiento", description: "Instalacion de oficiales, heroes y personajes de mando.", buildingKind: "recruitment", supplyCost: 10, mineralsCost: 10, honorCost: 1, industrialMaterialCost: 6, constructionTimeSeconds: 300, allowedUnitCategories: ["Personaje"], requiredTechnologyNodeId: "asamblea-planetaria", iconKey: "command_quarters" }),
-  makeBuildingTemplate({ id: "taller-guerra", name: "Taller de Guerra", category: "Reclutamiento", description: "Bahias de reparacion y ensamblaje de vehiculos.", buildingKind: "recruitment", supplyCost: 6, mineralsCost: 16, industrialMaterialCost: 8, constructionTimeSeconds: 300, allowedUnitCategories: ["Vehiculo"], requiredTechnologyNodeId: "maquinaria-belica", iconKey: "war_workshop" }),
-  makeBuildingTemplate({ id: "nido-bestias", name: "Nido de Bestias", category: "Reclutamiento", description: "Jaulas y rituales de control para monstruos de guerra.", buildingKind: "recruitment", supplyCost: 14, mineralsCost: 8, honorCost: 1, industrialMaterialCost: 6, constructionTimeSeconds: 300, allowedUnitCategories: ["Monstruo"], requiredTechnologyNodeId: "criadero-guerra", iconKey: "beast_lair" }),
-  makeBuildingTemplate({ id: "camara-comercio", name: "Camara de Comercio", category: "Comercio", description: "Mercado orbital y punto de contacto con rutas mercantes.", buildingKind: "commerce", supplyCost: 8, mineralsCost: 8, goldCost: 1, industrialMaterialCost: 4, constructionTimeSeconds: 240, requiredTechnologyNodeId: "pactos-mercantiles", iconKey: "commerce" }),
-  makeBuildingTemplate({ id: "nexo-inteligencia", name: "Nexo de Inteligencia", category: "Inteligencia", description: "Centro de analisis para operaciones de espionaje futuras.", buildingKind: "intelligence", supplyCost: 6, mineralsCost: 12, honorCost: 1, industrialMaterialCost: 6, constructionTimeSeconds: 300, requiredTechnologyNodeId: "oficina-inteligencia", iconKey: "intelligence" }),
-  makeBuildingTemplate({ id: "antenas-reconocimiento", name: "Antenas de Reconocimiento", category: "Inteligencia", description: "Matrices de escucha y auspex de largo alcance.", buildingKind: "intelligence", supplyCost: 4, mineralsCost: 8, industrialMaterialCost: 5, uridiumCost: 2, constructionTimeSeconds: 240, requiredTechnologyNodeId: "celulas-informacion", iconKey: "recon" }),
-  makeBuildingTemplate({ id: "granja-biologica", name: "Granja Biologica", category: "Produccion", description: "Complejos de biomasa y cultivos adaptados al frente.", buildingKind: "production", supplyCost: 4, mineralsCost: 4, industrialMaterialCost: 3, constructionTimeSeconds: 180, producedResourceKey: "supply", producedAmount: 10, requiredTechnologyNodeId: "fundacion-planetaria", iconKey: "biofarm" }),
-  makeBuildingTemplate({ id: "complejo-minero", name: "Complejo Minero", category: "Produccion", description: "Pozos, excavadoras y refinerias de mineral bruto.", buildingKind: "production", supplyCost: 4, mineralsCost: 6, industrialMaterialCost: 4, constructionTimeSeconds: 180, producedResourceKey: "minerals", producedAmount: 6, requiredTechnologyNodeId: "extraccion-subterranea", iconKey: "mine" }),
-  makeBuildingTemplate({ id: "refineria-iridium", name: "Refineria de Iridium", category: "Produccion", description: "Planta especializada para estabilizar cristales de salto.", buildingKind: "production", supplyCost: 4, mineralsCost: 8, industrialMaterialCost: 5, constructionTimeSeconds: 240, producedResourceKey: "uridium", producedAmount: 4, requiredTechnologyNodeId: "cristalizacion-combustible-cuantico", iconKey: "iridium_refinery" }),
-  makeBuildingTemplate({ id: "mina-oro", name: "Mina de Oro", category: "Produccion", description: "Extraccion de metales preciosos para rutas comerciales.", buildingKind: "production", supplyCost: 4, mineralsCost: 8, industrialMaterialCost: 5, constructionTimeSeconds: 240, producedResourceKey: "gold", producedAmount: 3, requiredTechnologyNodeId: "fiebre-oro", iconKey: "gold_mine" }),
-  makeBuildingTemplate({ id: "planta-fundicion", name: "Planta de Fundicion", category: "Produccion", description: "Produce Material Industrial para nuevas construcciones.", buildingKind: "production", supplyCost: 4, mineralsCost: 10, industrialMaterialCost: 3, constructionTimeSeconds: 240, producedResourceKey: "industrialMaterial", producedAmount: 5, requiredTechnologyNodeId: "procesado-metalurgico", iconKey: "foundry" }),
-  makeBuildingTemplate({ id: "monumento", name: "Monumento", category: "Produccion", description: "Estructura ceremonial que transforma gloria local en Honor.", buildingKind: "production", supplyCost: 8, mineralsCost: 8, goldCost: 1, industrialMaterialCost: 5, constructionTimeSeconds: 300, producedResourceKey: "honor", producedAmount: 2, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "monument" }),
-  makeBuildingTemplate({ id: "santuario-reliquias", name: "Santuario de Reliquias", category: "Reliquias", description: "Camara sellada donde se custodian reliquias narrativas y se equipan a Caracteres veteranos.", buildingKind: "relic", supplyCost: 8, mineralsCost: 8, honorCost: 2, goldCost: 1, industrialMaterialCost: 5, constructionTimeSeconds: 30, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "relic_sanctuary" })
+  makeBuildingTemplate({ id: "barracon-infanteria", name: "Barracon de Infanteria", category: "Reclutamiento", description: "Centro de instruccion para tropas de linea y cuadros veteranos.", buildingKind: "recruitment", supplyCost: 12, mineralsCost: 8, industrialMaterialCost: 4, constructionTimeSeconds: 3, allowedUnitCategories: ["Infanteria", "Elite"], requiredTechnologyNodeId: "fundacion-planetaria", iconKey: "infantry_barracks" }),
+  makeBuildingTemplate({ id: "cuartel-mando", name: "Cuartel de Mando", category: "Reclutamiento", description: "Instalacion de oficiales, heroes y personajes de mando.", buildingKind: "recruitment", supplyCost: 10, mineralsCost: 10, honorCost: 1, industrialMaterialCost: 6, constructionTimeSeconds: 3, allowedUnitCategories: ["Personaje"], requiredTechnologyNodeId: "asamblea-planetaria", iconKey: "command_quarters" }),
+  makeBuildingTemplate({ id: "camara-leyendas", name: "Camara de Leyendas", category: "Reclutamiento", description: "Camara sellada para reclutar unidades [Crucible] cuando su tecnologia deje de estar bloqueada.", buildingKind: "recruitment", supplyCost: 12, mineralsCost: 12, honorCost: 3, goldCost: 2, industrialMaterialCost: 8, constructionTimeSeconds: 3, allowedUnitCategories: ["Personaje", "Linea de batalla", "Transporte", "Otras hojas de datos", "Aliada", "Infanteria", "Elite", "Vehiculo", "Monstruo", "Hoja de datos", "Otro", "Superpesado"], requiredTechnologyNodeId: "camara-leyendas-tech", iconKey: "legend_chamber" }),
+  makeBuildingTemplate({ id: "taller-guerra", name: "Taller de Guerra", category: "Reclutamiento", description: "Bahias de reparacion y ensamblaje de vehiculos.", buildingKind: "recruitment", supplyCost: 6, mineralsCost: 16, industrialMaterialCost: 8, constructionTimeSeconds: 3, allowedUnitCategories: ["Vehiculo"], requiredTechnologyNodeId: "maquinaria-belica", iconKey: "war_workshop" }),
+  makeBuildingTemplate({ id: "nido-bestias", name: "Nido de Bestias", category: "Reclutamiento", description: "Jaulas y rituales de control para monstruos de guerra.", buildingKind: "recruitment", supplyCost: 14, mineralsCost: 8, honorCost: 1, industrialMaterialCost: 6, constructionTimeSeconds: 3, allowedUnitCategories: ["Monstruo"], requiredTechnologyNodeId: "criadero-guerra", iconKey: "beast_lair" }),
+  makeBuildingTemplate({ id: "camara-comercio", name: "Camara de Comercio", category: "Comercio", description: "Mercado orbital y punto de contacto con rutas mercantes.", buildingKind: "commerce", supplyCost: 8, mineralsCost: 8, goldCost: 1, industrialMaterialCost: 4, constructionTimeSeconds: 3, requiredTechnologyNodeId: "pactos-mercantiles", iconKey: "commerce" }),
+  makeBuildingTemplate({ id: "nexo-inteligencia", name: "Nexo de Inteligencia", category: "Inteligencia", description: "Centro de analisis para operaciones de espionaje futuras.", buildingKind: "intelligence", supplyCost: 6, mineralsCost: 12, honorCost: 1, industrialMaterialCost: 6, constructionTimeSeconds: 3, requiredTechnologyNodeId: "oficina-inteligencia", iconKey: "intelligence" }),
+  makeBuildingTemplate({ id: "antenas-reconocimiento", name: "Antenas de Reconocimiento", category: "Inteligencia", description: "Matrices de escucha y auspex de largo alcance.", buildingKind: "intelligence", supplyCost: 4, mineralsCost: 8, industrialMaterialCost: 5, uridiumCost: 2, constructionTimeSeconds: 3, requiredTechnologyNodeId: "celulas-informacion", iconKey: "recon" }),
+  makeBuildingTemplate({ id: "granja-biologica", name: "Granja Biologica", category: "Produccion", description: "Complejos de biomasa y cultivos adaptados al frente.", buildingKind: "production", supplyCost: 4, mineralsCost: 4, industrialMaterialCost: 3, constructionTimeSeconds: 3, producedResourceKey: "supply", producedAmount: 10, requiredTechnologyNodeId: "fundacion-planetaria", iconKey: "biofarm" }),
+  makeBuildingTemplate({ id: "complejo-minero", name: "Complejo Minero", category: "Produccion", description: "Pozos, excavadoras y refinerias de mineral bruto.", buildingKind: "production", supplyCost: 4, mineralsCost: 6, industrialMaterialCost: 4, constructionTimeSeconds: 3, producedResourceKey: "minerals", producedAmount: 6, requiredTechnologyNodeId: "extraccion-subterranea", iconKey: "mine" }),
+  makeBuildingTemplate({ id: "refineria-iridium", name: "Refineria de Iridium", category: "Produccion", description: "Planta especializada para estabilizar cristales de salto.", buildingKind: "production", supplyCost: 4, mineralsCost: 8, industrialMaterialCost: 5, constructionTimeSeconds: 3, producedResourceKey: "uridium", producedAmount: 4, requiredTechnologyNodeId: "cristalizacion-combustible-cuantico", iconKey: "iridium_refinery" }),
+  makeBuildingTemplate({ id: "mina-oro", name: "Mina de Oro", category: "Produccion", description: "Extraccion de metales preciosos para rutas comerciales.", buildingKind: "production", supplyCost: 4, mineralsCost: 8, industrialMaterialCost: 5, constructionTimeSeconds: 3, producedResourceKey: "gold", producedAmount: 3, requiredTechnologyNodeId: "fiebre-oro", iconKey: "gold_mine" }),
+  makeBuildingTemplate({ id: "planta-fundicion", name: "Planta de Fundicion", category: "Produccion", description: "Produce Material Industrial para nuevas construcciones.", buildingKind: "production", supplyCost: 4, mineralsCost: 10, industrialMaterialCost: 3, constructionTimeSeconds: 3, producedResourceKey: "industrialMaterial", producedAmount: 5, requiredTechnologyNodeId: "procesado-metalurgico", iconKey: "foundry" }),
+  makeBuildingTemplate({ id: "monumento", name: "Monumento", category: "Produccion", description: "Estructura ceremonial que transforma gloria local en Honor.", buildingKind: "production", supplyCost: 8, mineralsCost: 8, goldCost: 1, industrialMaterialCost: 5, constructionTimeSeconds: 3, producedResourceKey: "honor", producedAmount: 2, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "monument" }),
+  makeBuildingTemplate({ id: "santuario-reliquias", name: "Santuario de Reliquias", category: "Reliquias", description: "Camara sellada donde se custodian reliquias narrativas y se equipan a Caracteres veteranos.", buildingKind: "relic", supplyCost: 8, mineralsCost: 8, honorCost: 2, goldCost: 1, industrialMaterialCost: 5, constructionTimeSeconds: 3, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "relic_sanctuary" })
 ];
 
 type ProductionResourceKey = Exclude<CampaignSnapshot["systemResourceCapabilities"][number]["resourceKey"], "technology">;
@@ -2229,7 +2281,7 @@ function makeBuildingTemplate(
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    constructionTimeSeconds: 0,
+    constructionTimeSeconds: 3,
     producedResourceKey: null,
     producedAmount: 0,
     allowedUnitCategories: [],

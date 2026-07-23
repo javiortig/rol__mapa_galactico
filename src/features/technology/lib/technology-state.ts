@@ -84,6 +84,24 @@ export function getRecruitmentCost(snapshot: CampaignSnapshot, template: UnitTem
   return cost;
 }
 
+export function getRecruitmentVariantCost(snapshot: CampaignSnapshot, template: UnitTemplate, points: number, resource: ResourceKey) {
+  let cost = getBaseRecruitmentVariantCost(template, points, resource);
+
+  for (const effect of getUnlockedEffects(snapshot, "recruitment_cost_discount")) {
+    if (!matchesCategory(effect.payload.category, template.category)) {
+      continue;
+    }
+
+    if (!matchesResource(effect.payload.resource, resource)) {
+      continue;
+    }
+
+    cost = applyDiscount(cost, toPercent(effect.payload.percent));
+  }
+
+  return cost;
+}
+
 export function getRecruitmentDuration(snapshot: CampaignSnapshot, template: UnitTemplate, quantity: number) {
   let duration = template.recruitmentTimeSeconds * quantity;
 
@@ -147,6 +165,30 @@ export function getBaseRecruitmentCost(template: UnitTemplate, resource: Resourc
   return costs[resource];
 }
 
+export function getBaseRecruitmentVariantCost(template: UnitTemplate, points: number, resource: ResourceKey) {
+  const costs = computeRecruitmentCostsForPoints(template, points);
+  return costs[resource];
+}
+
+export function computeRecruitmentCostsForPoints(template: UnitTemplate, points: number) {
+  const safePoints = Math.max(0, Math.trunc(points));
+  const profile = getCostProfile(template);
+  const minerals = Math.floor((safePoints * profile.minerals) / 2);
+  const honor = Math.floor((safePoints * profile.honor) / 5);
+  const gold = Math.floor((safePoints * profile.gold) / 5);
+  const supply = safePoints - minerals * 2 - honor * 5 - gold * 5;
+
+  return {
+    supply,
+    minerals,
+    honor,
+    gold,
+    industrialMaterial: 0,
+    uridium: 0,
+    technology: 0
+  } satisfies Record<ResourceKey, number>;
+}
+
 export function getBaseBuildingCost(template: BuildingTemplate, resource: ResourceKey) {
   const costs: Record<ResourceKey, number> = {
     supply: template.supplyCost,
@@ -168,6 +210,14 @@ export function getVisibleBuildingCostResources(template: BuildingTemplate) {
 export function getVisibleRecruitmentCostResources(snapshot: CampaignSnapshot, template: UnitTemplate) {
   return resources.filter(
     (resource) => getBaseRecruitmentCost(template, resource) > 0 || getRecruitmentCost(snapshot, template, resource) > 0
+  );
+}
+
+export function getVisibleRecruitmentVariantCostResources(snapshot: CampaignSnapshot, template: UnitTemplate, points: number) {
+  return resources.filter(
+    (resource) =>
+      getBaseRecruitmentVariantCost(template, points, resource) > 0 ||
+      getRecruitmentVariantCost(snapshot, template, points, resource) > 0
   );
 }
 
@@ -228,4 +278,36 @@ function applyDiscount(cost: number, percent: number) {
   }
 
   return Math.max(1, Math.floor((cost * (100 - percent)) / 100));
+}
+
+function getCostProfile(template: UnitTemplate) {
+  if (template.unitKeywords.includes("Caracter") && template.unitKeywords.includes("Vehiculo")) {
+    return { minerals: 0.45, honor: 0.3, gold: 0.1 };
+  }
+
+  if (template.unitKeywords.includes("Caracter")) {
+    return { minerals: 0.25, honor: 0.35, gold: 0.15 };
+  }
+
+  if (
+    template.unitKeywords.includes("Vehiculo") ||
+    template.unitKeywords.includes("Aeronave") ||
+    template.unitKeywords.includes("Fortificacion")
+  ) {
+    return { minerals: 0.7, honor: 0.1, gold: template.category === "Aliada" ? 0.1 : 0.05 };
+  }
+
+  if (template.unitKeywords.includes("Bestia")) {
+    return { minerals: 0.15, honor: 0.3, gold: template.category === "Aliada" ? 0.05 : 0 };
+  }
+
+  if (template.unitKeywords.includes("Montado")) {
+    return { minerals: 0.45, honor: 0.1, gold: template.category === "Aliada" ? 0.05 : 0 };
+  }
+
+  if (template.category === "Aliada") {
+    return { minerals: 0.25, honor: 0.15, gold: 0.1 };
+  }
+
+  return { minerals: 0.2, honor: 0.05, gold: 0 };
 }

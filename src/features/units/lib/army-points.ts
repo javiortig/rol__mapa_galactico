@@ -19,6 +19,6 @@ export function getQueuedRecruitmentPoints(snapshot: CampaignSnapshot, factionId
     .filter((item) => item.factionId === factionId && item.status === "queued")
     .reduce((total, item) => {
       const template = snapshot.unitTemplates.find((unitTemplate) => unitTemplate.id === item.unitTemplateId);
-      return total + (template?.points ?? 0) * item.quantity;
+      return total + (item.selectedPoints ?? template?.points ?? 0) * item.quantity;
     }, 0);
 }

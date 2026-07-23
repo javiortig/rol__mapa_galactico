@@ -11,16 +11,17 @@ import {
   canUseRecruitmentRpc,
   cancelRecruitmentQueue,
   cancelUnitRecoveryQueue,
-  recruitUnitAtBuilding,
+  recruitUnitVariantAtBuilding,
   resupplyUnitAtBuilding
 } from "@/features/recruitment/api/recruitment-api";
 import { canUseRelicRpc, equipRelicToCharacter, unequipRelicFromCharacter } from "@/features/relics/api/relic-api";
 import {
-  getBaseRecruitmentCost,
-  getRecruitmentCost,
+  getBaseRecruitmentVariantCost,
+  computeRecruitmentCostsForPoints,
   getRecruitmentDuration,
+  getRecruitmentVariantCost,
   getRequiredTechnologyName,
-  getVisibleRecruitmentCostResources,
+  getVisibleRecruitmentVariantCostResources,
   isUnitTemplateUnlocked
 } from "@/features/technology/lib/technology-state";
 import { getFactionArmyPoints } from "@/features/units/lib/army-points";
@@ -28,12 +29,15 @@ import { getCharacterLevel, getCharacterRank, getCharacterRelicSlots, isCharacte
 import { formatCountdown } from "@/lib/time";
 import type {
   BuildingTemplate,
+  CampaignUnit,
   CampaignRelic,
   CampaignSnapshot,
   FactionResources,
   RecruitmentQueueItem,
+  RecruitmentWargearSelection,
   ResourceKey,
   SystemBuilding,
+  UnitTemplateModelOption,
   UnitRecoveryQueueItem,
   UnitTemplate
 } from "@/domain/campaign";
@@ -176,7 +180,8 @@ function RecruitTab({
 }) {
   const queryClient = useQueryClient();
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
-  const [quantity, setQuantity] = useState(1);
+  const [selectedModelCounts, setSelectedModelCounts] = useState<Record<string, number>>({});
+  const [selectedWargearQuantities, setSelectedWargearQuantities] = useState<Record<string, Record<string, number>>>({});
   const resources = getCurrentResources(snapshot);
   const rpcReady = canUseRecruitmentRpc();
   const templates = useMemo(
@@ -185,17 +190,33 @@ function RecruitTab({
         (unitTemplate) =>
           unitTemplate.factionId === snapshot.currentUser.factionId &&
           unitTemplate.isAvailable &&
-          template.allowedUnitCategories.includes(unitTemplate.category)
+          canUseTemplateAtBuilding(unitTemplate, template.slug, template.allowedUnitCategories)
       ),
-    [snapshot.currentUser.factionId, snapshot.unitTemplates, template.allowedUnitCategories]
+    [snapshot.currentUser.factionId, snapshot.unitTemplates, template.allowedUnitCategories, template.slug]
   );
   const selectedTemplate = templates.find((item) => item.id === selectedTemplateId) ?? templates[0] ?? null;
+  const selectedCopyIndex = selectedTemplate ? getRecruitmentCopyIndex(snapshot, selectedTemplate) : 1;
+  const selectedModelChoices = selectedTemplate ? getModelChoices(selectedTemplate, selectedCopyIndex) : [];
+  const selectedModelCount = selectedTemplate
+    ? selectedModelCounts[selectedTemplate.id] ?? selectedModelChoices[0]?.models ?? selectedTemplate.defaultQuantity
+    : 0;
+  const selectedWargearForTemplate = selectedTemplate ? selectedWargearQuantities[selectedTemplate.id] ?? {} : {};
+  const selectedModelOption = selectedTemplate
+    ? getModelOptionForCopy(selectedTemplate, selectedModelCount, selectedCopyIndex)
+    : null;
+  const selectedWargearPoints = selectedTemplate
+    ? getWargearPoints(selectedTemplate, selectedWargearForTemplate, selectedModelCount)
+    : 0;
+  const selectedPoints = selectedTemplate
+    ? getVariantPoints(selectedTemplate, selectedModelCount, selectedCopyIndex, selectedWargearForTemplate)
+    : 0;
   const selectedUnlocked = selectedTemplate ? isUnitTemplateUnlocked(snapshot, selectedTemplate) : false;
-  const selectedResources = selectedTemplate ? getVisibleRecruitmentCostResources(snapshot, selectedTemplate) : [];
-  const hasResources = selectedTemplate && resources ? canAffordRecruitment(snapshot, resources, selectedTemplate, quantity) : false;
+  const selectedResources = selectedTemplate
+    ? getVisibleRecruitmentVariantCostResources(snapshot, selectedTemplate, selectedPoints)
+    : [];
+  const hasResources = selectedTemplate && resources ? canAffordRecruitmentVariant(snapshot, resources, selectedTemplate, selectedPoints) : false;
   const activeQueue = getActiveBuildingQueue(snapshot, building.id);
   const currentArmyPoints = getFactionArmyPoints(snapshot, snapshot.currentUser.factionId);
-  const selectedPoints = selectedTemplate ? selectedTemplate.points * quantity : 0;
   const exceedsArmyLimit = currentArmyPoints + selectedPoints > snapshot.maxArmyPoints;
   const mutation = useMutation({
     mutationFn: () => {
@@ -203,13 +224,33 @@ function RecruitTab({
         throw new Error("Selecciona una unidad.");
       }
 
-      return recruitUnitAtBuilding(building.id, selectedTemplate.id, quantity);
+      return recruitUnitVariantAtBuilding({
+        systemBuildingId: building.id,
+        unitTemplateId: selectedTemplate.id,
+        modelCount: selectedModelCount,
+        wargearSelections: getWargearSelectionsForRpc(selectedTemplate, selectedWargearForTemplate, selectedModelCount)
+      });
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
       onClose();
     }
   });
+  const updateWargearQuantity = (slug: string, value: number) => {
+    if (!selectedTemplate) {
+      return;
+    }
+
+    const nextValue = Math.max(0, Math.min(selectedModelCount, Math.trunc(value)));
+
+    setSelectedWargearQuantities((current) => ({
+      ...current,
+      [selectedTemplate.id]: {
+        ...(current[selectedTemplate.id] ?? {}),
+        [slug]: nextValue
+      }
+    }));
+  };
 
   return (
     <div className="mobile-scroll flex-1 lg:grid lg:grid-cols-[1fr_320px] lg:overflow-hidden">
@@ -219,8 +260,12 @@ function RecruitTab({
             templates.map((unitTemplate) => {
               const selected = unitTemplate.id === selectedTemplate?.id;
               const unlocked = isUnitTemplateUnlocked(snapshot, unitTemplate);
-              const affordable = resources ? canAffordRecruitment(snapshot, resources, unitTemplate, quantity) : false;
-              const costResources = getVisibleRecruitmentCostResources(snapshot, unitTemplate);
+              const previewCopyIndex = getRecruitmentCopyIndex(snapshot, unitTemplate);
+              const previewChoice = getModelChoices(unitTemplate, previewCopyIndex)[0];
+              const previewPoints = previewChoice?.points ?? unitTemplate.points;
+              const affordable = resources ? canAffordRecruitmentVariant(snapshot, resources, unitTemplate, previewPoints) : false;
+              const costResources = getVisibleRecruitmentVariantCostResources(snapshot, unitTemplate, previewPoints);
+              const hasVariants = (unitTemplate.modelOptions?.length ?? 0) > 1 || (unitTemplate.wargearOptions?.length ?? 0) > 0;
 
               return (
                 <button
@@ -239,11 +284,11 @@ function RecruitTab({
                     <div>
                       <div className="font-semibold text-cyan-50">{unitTemplate.name}</div>
                       <div className="mt-1 text-xs text-slate-400">
-                        {unitTemplate.points} pts · {unitTemplate.defaultQuantity} miniaturas
+                        Desde {previewPoints} pts · {previewChoice?.models ?? unitTemplate.defaultQuantity} miniaturas
                       </div>
                     </div>
                     <Badge tone={!unlocked ? "violet" : affordable ? "cyan" : "rose"}>
-                      {!unlocked ? "Tecnologia" : unitTemplate.category}
+                      {!unlocked ? "Tecnologia" : hasVariants ? "Opciones" : unitTemplate.category}
                     </Badge>
                   </div>
 
@@ -252,8 +297,8 @@ function RecruitTab({
                       <CostPill
                         key={resource}
                         resource={resource}
-                        baseValue={getBaseRecruitmentCost(unitTemplate, resource)}
-                        value={getRecruitmentCost(snapshot, unitTemplate, resource)}
+                        baseValue={getBaseRecruitmentVariantCost(unitTemplate, previewPoints, resource)}
+                        value={getRecruitmentVariantCost(snapshot, unitTemplate, previewPoints, resource)}
                       />
                     ))}
                   </div>
@@ -274,18 +319,81 @@ function RecruitTab({
             <div>
               <h3 className="text-xl font-semibold text-cyan-50">{selectedTemplate.name}</h3>
               <p className="mt-1 text-sm text-slate-400">
-                {selectedTemplate.category} · {selectedTemplate.points * quantity} pts ·{" "}
-                {selectedTemplate.defaultQuantity * quantity} miniaturas
+                {selectedTemplate.category} · {selectedPoints} pts · {selectedModelCount} miniaturas
               </p>
               <p className="mt-1 text-xs text-slate-500">
-                Tiempo: {formatDuration(getRecruitmentDuration(snapshot, selectedTemplate, quantity))}
+                Tiempo: {formatDuration(getRecruitmentDuration(snapshot, selectedTemplate, 1))}
               </p>
               <p className="mt-2 text-xs text-slate-400">
                 Ejercito: {currentArmyPoints + selectedPoints}/{snapshot.maxArmyPoints} pts
               </p>
+              {selectedModelOption?.copyFrom && selectedModelOption.copyFrom > 1 ? (
+                <p className="mt-1 text-xs text-amber-100">
+                  MFM aplica precio de {formatCopyRange(selectedModelOption)} para esta copia.
+                </p>
+              ) : null}
             </div>
 
-            <QuantityPicker disabled={mutation.isPending} max={1} min={1} onChange={setQuantity} value={quantity} />
+            {selectedModelChoices.length > 1 ? (
+              <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 p-3">
+                <div className="mb-2 text-xs uppercase tracking-[0.18em] text-slate-400">Tamano de unidad</div>
+                <div className="grid grid-cols-2 gap-2">
+                  {selectedModelChoices.map((choice) => (
+                    <button
+                      className={`rounded-md border px-3 py-2 text-left text-sm transition ${
+                        selectedModelCount === choice.models
+                          ? "border-cyan-200/55 bg-cyan-300/12 text-cyan-50"
+                          : "border-cyan-200/15 bg-slate-950/35 text-slate-300 hover:border-cyan-200/35"
+                      }`}
+                      disabled={mutation.isPending}
+                      key={choice.slug}
+                      onClick={() =>
+                        setSelectedModelCounts((current) => ({
+                          ...current,
+                          [selectedTemplate.id]: choice.models
+                        }))
+                      }
+                      type="button"
+                    >
+                      <span className="block font-medium">{choice.models} miniaturas</span>
+                      <span className="text-xs text-slate-400">{choice.points} pts</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {(selectedTemplate.wargearOptions?.length ?? 0) > 0 ? (
+              <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 p-3">
+                <div className="mb-2 text-xs uppercase tracking-[0.18em] text-slate-400">Extras de equipo</div>
+                <div className="space-y-2">
+                  {selectedTemplate.wargearOptions?.map((option) => {
+                    const value = Math.min(selectedWargearForTemplate[option.slug] ?? 0, selectedModelCount);
+
+                    return (
+                      <div
+                        className="flex items-center justify-between gap-3 rounded-md border border-cyan-200/10 bg-slate-950/35 p-2"
+                        key={option.slug}
+                      >
+                        <div className="min-w-0">
+                          <div className="truncate text-sm font-medium text-slate-100">{option.name}</div>
+                          <div className="text-xs text-slate-400">+{option.points} pts por opcion</div>
+                        </div>
+                        <MiniStepper
+                          disabled={mutation.isPending}
+                          max={selectedModelCount}
+                          onChange={(nextValue) => updateWargearQuantity(option.slug, nextValue)}
+                          value={value}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+                {selectedWargearPoints > 0 ? (
+                  <p className="mt-2 text-xs text-amber-100">Extras seleccionados: +{selectedWargearPoints} pts.</p>
+                ) : null}
+              </div>
+            ) : null}
 
             {!selectedUnlocked ? (
               <div className="rounded-md border border-violet-300/25 bg-violet-400/10 p-3 text-sm text-violet-100">
@@ -306,7 +414,7 @@ function RecruitTab({
             ) : null}
 
             <CostSummary
-              getValue={(resource) => getRecruitmentCost(snapshot, selectedTemplate, resource) * quantity}
+              getValue={(resource) => getRecruitmentVariantCost(snapshot, selectedTemplate, selectedPoints, resource)}
               resources={resources}
               visibleResources={selectedResources}
             />
@@ -346,18 +454,25 @@ function HealTab({
   const rpcReady = canUseRecruitmentRpc();
   const activeQueue = getActiveBuildingQueue(snapshot, building.id);
   const woundedUnits = snapshot.units.filter(
-    (unit) =>
-      unit.factionId === snapshot.currentUser.factionId &&
-      unit.currentSystemId === building.systemId &&
-      unit.status === "ready" &&
-      (unit.quantity < unit.startingQuantity || unit.woundsTaken > 0) &&
-      template.allowedUnitCategories.includes(unit.category)
+    (unit) => {
+      const unitTemplate = snapshot.unitTemplates.find((candidate) => candidate.id === unit.unitTemplateId);
+
+      return (
+        unit.factionId === snapshot.currentUser.factionId &&
+        unit.currentSystemId === building.systemId &&
+        unit.status === "ready" &&
+        (unit.quantity < unit.startingQuantity || unit.woundsTaken > 0) &&
+        (unitTemplate
+          ? canUseTemplateAtBuilding(unitTemplate, template.slug, template.allowedUnitCategories)
+          : template.allowedUnitCategories.includes(unit.category))
+      );
+    }
   );
   const selectedUnit = woundedUnits.find((unit) => unit.id === selectedUnitId) ?? woundedUnits[0] ?? null;
   const selectedTemplate = selectedUnit
     ? snapshot.unitTemplates.find((unitTemplate) => unitTemplate.id === selectedUnit.unitTemplateId) ?? null
     : null;
-  const recoveryCosts = selectedTemplate ? getResupplyCosts(selectedTemplate) : {};
+  const recoveryCosts = selectedTemplate && selectedUnit ? getResupplyCosts(selectedTemplate, selectedUnit) : {};
   const visibleResources = Object.entries(recoveryCosts)
     .filter(([, value]) => value > 0)
     .map(([resource]) => resource as ResourceKey);
@@ -486,7 +601,7 @@ function QueueTab({ snapshot, building }: { snapshot: CampaignSnapshot; building
           items={recruitmentQueue.map((item) => ({
             id: item.id,
             title: item.unitName,
-            detail: `x${item.quantity}`,
+            detail: getRecruitmentQueueDetail(snapshot, item),
             finishesAt: item.finishesAt,
             refund: getQueueRefund(item)
           }))}
@@ -829,30 +944,25 @@ function PlaceholderBuildingView({ template }: { template: BuildingTemplate }) {
   );
 }
 
-function QuantityPicker({
+function MiniStepper({
   value,
-  min,
   max,
   disabled,
   onChange
 }: {
   value: number;
-  min: number;
   max: number;
   disabled: boolean;
   onChange: (value: number) => void;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-md border border-cyan-200/15 bg-slate-950/45 p-2">
-      <Button disabled={disabled || value <= min} onClick={() => onChange(value - 1)} size="icon" variant="ghost">
-        <Minus size={16} />
+    <div className="flex shrink-0 items-center gap-1 rounded border border-cyan-200/15 bg-slate-950/45 p-1">
+      <Button disabled={disabled || value <= 0} onClick={() => onChange(value - 1)} size="icon" variant="ghost">
+        <Minus size={14} />
       </Button>
-      <div className="text-center">
-        <div className="text-xs text-slate-400">Cantidad</div>
-        <div className="text-lg font-semibold text-cyan-50">{value}</div>
-      </div>
+      <div className="min-w-7 text-center text-sm font-semibold text-cyan-50">{value}</div>
       <Button disabled={disabled || value >= max} onClick={() => onChange(value + 1)} size="icon" variant="ghost">
-        <Plus size={16} />
+        <Plus size={14} />
       </Button>
     </div>
   );
@@ -931,28 +1041,150 @@ function getCurrentResources(snapshot: CampaignSnapshot) {
   return snapshot.resources.find((item) => item.factionId === snapshot.currentUser.factionId);
 }
 
-function canAffordRecruitment(
+function canAffordRecruitmentVariant(
   snapshot: CampaignSnapshot,
   resources: FactionResources,
   template: UnitTemplate,
-  quantity: number
+  points: number
 ) {
-  return getVisibleRecruitmentCostResources(snapshot, template).every((resource) =>
-    resources[resource] >= getRecruitmentCost(snapshot, template, resource) * quantity
+  return getVisibleRecruitmentVariantCostResources(snapshot, template, points).every((resource) =>
+    resources[resource] >= getRecruitmentVariantCost(snapshot, template, points, resource)
   );
 }
 
-function getResupplyCosts(template: UnitTemplate): Partial<Record<ResourceKey, number>> {
+function getRecruitmentCopyIndex(snapshot: CampaignSnapshot, template: UnitTemplate) {
+  const livingCopies = snapshot.units.filter(
+    (unit) =>
+      unit.factionId === template.factionId &&
+      unit.unitTemplateId === template.id &&
+      unit.status !== "destroyed" &&
+      unit.quantity > 0
+  ).length;
+  const queuedCopies = snapshot.recruitmentQueue
+    .filter((item) => item.factionId === template.factionId && item.unitTemplateId === template.id && item.status === "queued")
+    .reduce((total, item) => total + Math.max(1, item.quantity), 0);
+
+  return livingCopies + queuedCopies + 1;
+}
+
+function getModelChoices(template: UnitTemplate, copyIndex: number) {
+  const modelOptions = template.modelOptions ?? [];
+
+  if (modelOptions.length === 0) {
+    return [
+      {
+        slug: `${template.id}-default`,
+        models: template.defaultQuantity,
+        points: template.points,
+        option: null
+      }
+    ];
+  }
+
+  const modelCounts = Array.from(new Set(modelOptions.map((option) => option.models))).sort((left, right) => left - right);
+
+  return modelCounts
+    .map((models) => {
+      const option =
+        getModelOptionForCopy(template, models, copyIndex) ??
+        [...modelOptions]
+          .filter((candidate) => candidate.minModels <= models && candidate.maxModels >= models)
+          .sort((left, right) => left.copyFrom - right.copyFrom || left.points - right.points)[0] ??
+        null;
+
+      return {
+        slug: `${template.id}-${models}-${option?.copyFrom ?? 1}-${option?.copyTo ?? "plus"}`,
+        models,
+        points: option?.points ?? template.points,
+        option
+      };
+    })
+    .sort((left, right) => left.models - right.models);
+}
+
+function getModelOptionForCopy(template: UnitTemplate, modelCount: number, copyIndex: number): UnitTemplateModelOption | null {
+  return (
+    [...(template.modelOptions ?? [])]
+      .filter(
+        (option) =>
+          option.minModels <= modelCount &&
+          option.maxModels >= modelCount &&
+          option.copyFrom <= copyIndex &&
+          (option.copyTo === null || option.copyTo === undefined || copyIndex <= option.copyTo)
+      )
+      .sort((left, right) => right.copyFrom - left.copyFrom || left.maxModels - right.maxModels || right.minModels - left.minModels)[0] ??
+    null
+  );
+}
+
+function getVariantPoints(
+  template: UnitTemplate,
+  modelCount: number,
+  copyIndex: number,
+  wargearQuantities: Record<string, number>
+) {
+  const modelOption = getModelOptionForCopy(template, modelCount, copyIndex);
+  const basePoints = modelOption?.points ?? template.points;
+
+  return basePoints + getWargearPoints(template, wargearQuantities, modelCount);
+}
+
+function getWargearPoints(template: UnitTemplate, wargearQuantities: Record<string, number>, modelCount: number) {
+  return (template.wargearOptions ?? []).reduce((total, option) => {
+    const quantity = getBoundedWargearQuantity(wargearQuantities, option.slug, modelCount);
+    return total + option.points * quantity;
+  }, 0);
+}
+
+function getWargearSelectionsForRpc(
+  template: UnitTemplate,
+  wargearQuantities: Record<string, number>,
+  modelCount: number
+): Array<Pick<RecruitmentWargearSelection, "slug" | "quantity">> {
+  return (template.wargearOptions ?? [])
+    .map((option) => ({
+      slug: option.slug,
+      quantity: getBoundedWargearQuantity(wargearQuantities, option.slug, modelCount)
+    }))
+    .filter((selection) => selection.quantity > 0);
+}
+
+function getBoundedWargearQuantity(wargearQuantities: Record<string, number>, slug: string, modelCount: number) {
+  return Math.max(0, Math.min(Math.max(1, modelCount), Math.trunc(wargearQuantities[slug] ?? 0)));
+}
+
+function formatCopyRange(option: UnitTemplateModelOption) {
+  if (option.copyTo === null || option.copyTo === undefined) {
+    return `${option.copyFrom}+ copia`;
+  }
+
+  if (option.copyFrom === option.copyTo) {
+    return `${option.copyFrom}. copia`;
+  }
+
+  return `${option.copyFrom}-${option.copyTo} copia`;
+}
+
+function canUseTemplateAtBuilding(unitTemplate: UnitTemplate, buildingSlug: string, allowedUnitCategories: string[]) {
+  if (unitTemplate.recruitmentBuildingType) {
+    return unitTemplate.recruitmentBuildingType === buildingSlug;
+  }
+
+  return allowedUnitCategories.includes(unitTemplate.category);
+}
+
+function getResupplyCosts(template: UnitTemplate, unit: CampaignUnit): Partial<Record<ResourceKey, number>> {
   const halfCost = (value: number) => (value > 0 ? Math.ceil(value / 2) : 0);
+  const costs = computeRecruitmentCostsForPoints(template, unit.points);
 
   return {
-    supply: halfCost(template.supplyCost),
-    minerals: halfCost(template.mineralsCost),
-    honor: halfCost(template.honorCost),
-    gold: halfCost(template.goldCost),
-    industrialMaterial: halfCost(template.industrialMaterialCost),
-    uridium: halfCost(template.uridiumCost),
-    technology: halfCost(template.technologyCost)
+    supply: halfCost(costs.supply),
+    minerals: halfCost(costs.minerals),
+    honor: halfCost(costs.honor),
+    gold: halfCost(costs.gold),
+    industrialMaterial: 0,
+    uridium: 0,
+    technology: 0
   };
 }
 
@@ -962,6 +1194,19 @@ function getActiveBuildingQueue(snapshot: CampaignSnapshot, buildingId: string) 
     snapshot.unitRecoveryQueue.find((item) => item.systemBuildingId === buildingId && item.status === "queued") ??
     null
   );
+}
+
+function getRecruitmentQueueDetail(snapshot: CampaignSnapshot, item: RecruitmentQueueItem) {
+  const template = snapshot.unitTemplates.find((candidate) => candidate.id === item.unitTemplateId);
+  const modelCount = item.selectedModelCount ?? template?.defaultQuantity ?? item.quantity;
+  const points = item.selectedPoints ?? template?.points ?? 0;
+  const wargear = item.selectedWargearOptions ?? [];
+  const wargearText =
+    wargear.length > 0
+      ? ` · ${wargear.map((option) => `${option.quantity}x ${option.name ?? option.slug}`).join(", ")}`
+      : "";
+
+  return `${modelCount} miniaturas · ${points} pts${wargearText}`;
 }
 
 function getQueueRefund(
@@ -990,6 +1235,10 @@ function getQueueRefund(
 }
 
 function formatDuration(seconds: number) {
+  if (seconds < 60) {
+    return `${Math.max(1, seconds)}s`;
+  }
+
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
 
