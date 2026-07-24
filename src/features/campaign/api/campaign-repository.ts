@@ -191,7 +191,6 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
     const systemResourceCapabilities = getRows(systemResourceCapabilitiesResult, "system_resource_capabilities").map(
       mapSystemResourceCapability
     );
-    const capacityBySystem = groupBySystemCapacity(systemResourceCapabilities);
     const specialObjectsBySystem = groupBy(
       getRows(specialObjectsResult, "system_special_objects").map(mapSpecialObject),
       (item) => item.systemId
@@ -224,7 +223,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       systems: getRows(systemsResult, "systems").map((row) =>
         mapSystem(
           row,
-          capacityBySystem.get(row.id as string) ?? productionBySystem.get(row.id as string),
+          productionBySystem.get(row.id as string),
           specialObjectsBySystem.get(row.id as string)
         )
       ),
@@ -394,15 +393,6 @@ function mapResourceProduction(row: Record<string, unknown>): ResourceBundle {
     uridium: Number(row.uridium_per_tick ?? 0),
     technology: Number(row.technology_per_tick ?? 0)
   };
-}
-
-function groupBySystemCapacity(capabilities: SystemResourceCapability[]) {
-  return capabilities.reduce((systems, capability) => {
-    const bundle = systems.get(capability.systemId) ?? { ...emptyResources };
-    bundle[capability.resourceKey] = Math.max(0, capability.productionAmount);
-    systems.set(capability.systemId, bundle);
-    return systems;
-  }, new Map<string, ResourceBundle>());
 }
 
 function mapFactionResources(row: Record<string, unknown>): FactionResources {

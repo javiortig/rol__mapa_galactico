@@ -24,3 +24,5 @@ docs/*
 !docs/chuleta-video-proyecto-40k.md
 !docs/generated/
 !docs/generated/11th-unit-cost-options-report.md
+
+.vercel

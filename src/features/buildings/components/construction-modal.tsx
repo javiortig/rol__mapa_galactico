@@ -97,6 +97,7 @@ export function ConstructionModal({
               {availableBuildingTemplates.map((template) => {
                 const selected = template.id === selectedTemplate?.id;
                 const reason = getBuildBlockReason(snapshot, system, template, resources);
+                const effectiveProduction = getEffectiveProductionAmount(snapshot, system.id, template);
 
                 return (
                   <button
@@ -120,6 +121,13 @@ export function ConstructionModal({
                     </div>
 
                     <p className="mb-3 line-clamp-2 text-xs leading-5 text-slate-300">{template.description}</p>
+
+                    {template.producedResourceKey ? (
+                      <div className="mb-3 rounded border border-cyan-200/10 bg-cyan-400/5 px-2 py-1.5 text-xs text-cyan-50">
+                        Produccion en este sistema:{" "}
+                        <ResourceAmount resource={template.producedResourceKey} value={effectiveProduction} />
+                      </div>
+                    ) : null}
 
                     <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
                       {getVisibleBuildingCostResources(template).map((resource) => (
@@ -171,7 +179,10 @@ export function ConstructionModal({
                 {selectedTemplate.producedResourceKey ? (
                   <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-sm text-slate-200">
                     Produccion diaria:{" "}
-                    <ResourceAmount resource={selectedTemplate.producedResourceKey} value={selectedTemplate.producedAmount} />
+                    <ResourceAmount
+                      resource={selectedTemplate.producedResourceKey}
+                      value={getEffectiveProductionAmount(snapshot, system.id, selectedTemplate)}
+                    />
                   </div>
                 ) : null}
 
@@ -312,6 +323,18 @@ function getKindTone(template: BuildingTemplate): "cyan" | "rose" | "amber" | "s
   }
 
   return "rose";
+}
+
+function getEffectiveProductionAmount(snapshot: CampaignSnapshot, systemId: string, template: BuildingTemplate) {
+  if (!template.producedResourceKey) {
+    return 0;
+  }
+
+  return (
+    snapshot.systemResourceCapabilities.find(
+      (capability) => capability.systemId === systemId && capability.resourceKey === template.producedResourceKey
+    )?.productionAmount ?? 0
+  );
 }
 
 function formatMinutes(seconds: number) {

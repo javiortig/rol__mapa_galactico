@@ -95,7 +95,7 @@ export function BuildingActionModal({
             onTabChange={setTab}
           />
         ) : template.buildingKind === "production" ? (
-          <ProductionBuildingView template={template} />
+          <ProductionBuildingView building={building} snapshot={snapshot} template={template} />
         ) : template.buildingKind === "relic" ? (
           <RelicSanctuaryView building={building} snapshot={snapshot} />
         ) : (
@@ -908,7 +908,17 @@ function RelicCard({
   );
 }
 
-function ProductionBuildingView({ template }: { template: BuildingTemplate }) {
+function ProductionBuildingView({
+  snapshot,
+  building,
+  template
+}: {
+  snapshot: CampaignSnapshot;
+  building: SystemBuilding;
+  template: BuildingTemplate;
+}) {
+  const effectiveProduction = getEffectiveProductionAmount(snapshot, building.systemId, template);
+
   return (
     <div className="grid flex-1 place-items-center p-6 text-center">
       <div>
@@ -918,13 +928,28 @@ function ProductionBuildingView({ template }: { template: BuildingTemplate }) {
         <h3 className="text-xl font-semibold text-cyan-50">Produccion activa</h3>
         {template.producedResourceKey ? (
           <p className="mt-2 text-sm text-slate-300">
-            Genera <ResourceAmount resource={template.producedResourceKey} value={template.producedAmount} /> al dia.
+            Extrae <ResourceAmount resource={template.producedResourceKey} value={effectiveProduction} /> al dia en este sistema.
           </p>
         ) : (
           <p className="mt-2 text-sm text-slate-300">Este edificio no tiene produccion configurada.</p>
         )}
+        <p className="mt-2 max-w-md text-xs leading-5 text-slate-500">
+          La produccion depende de la capacidad natural del planeta para ese recurso, no de un valor fijo del edificio.
+        </p>
       </div>
     </div>
+  );
+}
+
+function getEffectiveProductionAmount(snapshot: CampaignSnapshot, systemId: string, template: BuildingTemplate) {
+  if (!template.producedResourceKey) {
+    return 0;
+  }
+
+  return (
+    snapshot.systemResourceCapabilities.find(
+      (capability) => capability.systemId === systemId && capability.resourceKey === template.producedResourceKey
+    )?.productionAmount ?? 0
   );
 }
 

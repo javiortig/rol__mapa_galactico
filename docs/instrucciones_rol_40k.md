@@ -563,6 +563,8 @@ La producción diaria real ya no sale de producción planetaria manual. Sale de 
 
 En base de datos, `system_production` queda como proyección visible/derivada de edificios activos, no como fuente de verdad manual. El resolver `refresh_system_production_from_buildings()` reconstruye esos valores desde `system_buildings`.
 
+Regla funcional actual: cada edificio de producción produce exactamente la capacidad que tiene el sistema para ese recurso en `system_resource_capabilities`. Ejemplo: si `Kharon Prime` tiene capacidad `industrial_material = 20`, una `Planta de Fundición` activa en Kharon Prime produce `+20 Material Industrial` por tick diario. El campo `building_templates.produced_amount` queda como legado/metadata y no debe usarse para calcular producción real.
+
 Los Componentes tecnológicos no se producen en planetas, sistemas ni edificios de producción.
 
 La producción diaria total de una facción es la suma de los edificios de producción activos en sistemas que controla. La cadencia de usuario para la v1 es diaria:
@@ -905,6 +907,7 @@ Reglas v1:
 - Solo se permite un edificio de cada tipo por sistema.
 - Las capitales pueden construir cualquier edificio si la tecnología está desbloqueada y hay slot.
 - En sistemas no capitales, los edificios de producción solo pueden construirse si `system_resource_capabilities` permite ese recurso.
+- Construir edificios solo cuesta `Material Industrial`; no consume Suministro, Mineral, Honor, Oro, Uridium ni Componentes tecnológicos.
 - Los edificios pertenecen al sistema. Si cambia el controlador, el nuevo controlador puede usar los edificios activos.
 - No hay demolición, mejoras ni destrucción de edificios en v1 salvo edición admin/base de datos.
 
@@ -1689,7 +1692,7 @@ Honor: 8
 Producción diaria: +2
 
 Material Industrial: 90
-Produccion diaria: +5
+Produccion diaria: segun capacidad planetaria explotada por edificios activos
 
 Uridium: 14
 Producción diaria: +4
@@ -2292,12 +2295,12 @@ building_templates
 - minerals_cost integer
 - honor_cost integer
 - gold_cost integer
-- industrial_material_cost integer
+- industrial_material_cost integer -- unico coste funcional de construccion
 - uridium_cost integer
 - technology_cost integer
 - construction_time_seconds integer
 - produced_resource_key text nullable
-- produced_amount integer
+- produced_amount integer -- legado/metadata; la produccion real usa system_resource_capabilities
 - allowed_unit_categories text[]
 - required_technology_node_id uuid nullable references technology_nodes(id)
 - icon_key text nullable

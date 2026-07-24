@@ -909,7 +909,7 @@ function SystemPanel({
           ) : null}
 
           <section>
-            <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Capacidad base diaria</h2>
+            <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Produccion activa diaria</h2>
             <div className="grid grid-cols-2 gap-2">
               {planetProductionResources.map((key) => (
                 <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={key}>
@@ -921,7 +921,7 @@ function SystemPanel({
                 </div>
               ))}
             </div>
-            <p className="mt-2 text-xs text-slate-400">Los edificios extraen esta capacidad. Sin edificio activo, la extracción efectiva es 0.</p>
+            <p className="mt-2 text-xs text-slate-400">Cada edificio de produccion activo extrae exactamente la capacidad natural del planeta para su recurso.</p>
           </section>
 
           <section>
