@@ -938,7 +938,7 @@ function drawMovements(
   const systemById = new Map(systems.map((system) => [system.id, system]));
   const now = Date.now();
 
-  for (const movement of movements.filter((item) => item.status === "moving")) {
+  for (const movement of movements.filter((item) => item.status === "moving" || item.status === "pending_approval")) {
     const pathSystemIds =
       movement.pathSystemIds.length > 1 ? movement.pathSystemIds : [movement.fromSystemId, movement.toSystemId];
     const pathSystems = pathSystemIds
@@ -950,9 +950,10 @@ function drawMovements(
     }
 
     const movementColor = toPixiColor(factionColorById.get(movement.factionId) ?? "#fef08a");
-    const started = new Date(movement.startedAt).getTime();
-    const arrival = new Date(movement.arrivalAt).getTime();
-    const progress = clamp((now - started) / Math.max(arrival - started, 1), 0, 1);
+    const started = new Date(movement.departureAt ?? movement.startedAt).getTime();
+    const arrival = movement.arrivalAt ? new Date(movement.arrivalAt).getTime() : started;
+    const progress =
+      movement.status === "pending_approval" ? 0 : clamp((now - started) / Math.max(arrival - started, 1), 0, 1);
     const point = pointOnPath(pathSystems, progress);
     const trailStart = pointOnPath(pathSystems, Math.max(progress - 0.08, 0));
 

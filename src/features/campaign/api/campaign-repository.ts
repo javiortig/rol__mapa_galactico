@@ -1,6 +1,10 @@
 import type {
   BattleReport,
+  BattleOperation,
+  BattleOperationMember,
+  BattleUnitCommitment,
   BuildingTemplate,
+  BattleLimitSummary,
   CampaignRelic,
   CampaignUnit,
   CampaignSnapshot,
@@ -9,6 +13,7 @@ import type {
   FactionTechnology,
   FactionResources,
   Mission,
+  MovementPassageRequest,
   MovementOrder,
   RecruitmentQueueItem,
   ResourceBundle,
@@ -111,6 +116,10 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       unitsResult,
       movementsResult,
       movementUnitsResult,
+      passageRequestsResult,
+      battleOperationsResult,
+      battleOperationMembersResult,
+      battleUnitCommitmentsResult,
       unitTemplatesResult,
       unitTemplateModelOptionsResult,
       unitTemplateWargearOptionsResult,
@@ -141,6 +150,10 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       supabase.from("campaign_units").select("*").order("name"),
       supabase.from("movement_orders").select("*").order("arrival_at"),
       supabase.from("movement_order_units").select("*"),
+      supabase.from("movement_passage_requests").select("*").order("created_at", { ascending: false }),
+      supabase.from("battle_operations").select("*").order("created_at", { ascending: false }),
+      supabase.from("battle_operation_members").select("*").order("created_at"),
+      supabase.from("battle_unit_commitments").select("*").order("joined_at"),
       supabase.from("unit_templates").select("*").order("name"),
       supabase.from("unit_template_model_options").select("*").order("min_models").order("copy_from"),
       supabase.from("unit_template_wargear_options").select("*").order("name"),
@@ -207,6 +220,19 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       getRows(unitTemplateWargearOptionsResult, "unit_template_wargear_options").map(mapUnitTemplateWargearOption),
       (item) => item.unitTemplateId
     );
+    let battleLimits: BattleLimitSummary | null = null;
+
+    if (currentFactionId) {
+      const battleLimitsResult = await supabase.rpc("get_battle_limit_summary", {
+        target_faction_id: currentFactionId
+      });
+
+      if (battleLimitsResult.error) {
+        throw battleLimitsResult.error;
+      }
+
+      battleLimits = mapBattleLimitSummary(battleLimitsResult.data);
+    }
 
     return {
       currentUser: {
@@ -216,6 +242,8 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
         factionId: currentFactionId
       },
       resourceTickIntervalHours: settingsResult.data?.resource_tick_interval_hours ?? 24,
+      movementEdgeDurationSeconds: Number(settingsResult.data?.movement_edge_duration_seconds ?? 259200),
+      attackDurationSeconds: Number(settingsResult.data?.attack_duration_seconds ?? 518400),
       nextResourceTickAt: settingsResult.data?.next_resource_tick_at ?? new Date().toISOString(),
       resourceCaps: mapResourceCaps(settingsResult.data ?? {}),
       maxArmyPoints: Number(settingsResult.data?.max_army_points ?? 1000),
@@ -233,6 +261,11 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       movements: getRows(movementsResult, "movement_orders").map((row) =>
         mapMovement(row, unitIdsByMovement.get(row.id as string))
       ),
+      passageRequests: getRows(passageRequestsResult, "movement_passage_requests").map(mapPassageRequest),
+      battleLimits,
+      battleOperations: getRows(battleOperationsResult, "battle_operations").map(mapBattleOperation),
+      battleOperationMembers: getRows(battleOperationMembersResult, "battle_operation_members").map(mapBattleOperationMember),
+      battleUnitCommitments: getRows(battleUnitCommitmentsResult, "battle_unit_commitments").map(mapBattleUnitCommitment),
       unitTemplates: getRows(unitTemplatesResult, "unit_templates").map((row) =>
         mapUnitTemplate(
           row,
@@ -464,8 +497,12 @@ function mapMovement(row: Record<string, unknown>, movementUnits: UnitMovementSe
     unitIds: movementUnits.map((item) => item.unitId),
     unitSelections: movementUnits,
     factionId: row.faction_id as string,
+    defenderFactionId: (row.defender_faction_id as string | null) ?? null,
     fromSystemId: row.from_system_id as string,
     toSystemId: row.to_system_id as string,
+    movementType: row.movement_type === "attack" ? "attack" : "move",
+    movementPurpose: (row.movement_purpose as MovementOrder["movementPurpose"]) ?? "normal",
+    battleOperationId: (row.battle_operation_id as string | null) ?? null,
     pathSystemIds: Array.isArray(row.path_system_ids)
       ? (row.path_system_ids as string[])
       : [row.from_system_id as string, row.to_system_id as string],
@@ -473,9 +510,105 @@ function mapMovement(row: Record<string, unknown>, movementUnits: UnitMovementSe
     segmentCount: Number(row.segment_count ?? 1),
     durationSeconds: Number(row.duration_seconds ?? 0),
     startedAt: row.started_at as string,
-    arrivalAt: row.arrival_at as string,
+    departureAt: (row.departure_at as string | null) ?? null,
+    arrivalAt: (row.arrival_at as string | null) ?? null,
     status: row.status as MovementOrder["status"],
-    cancelledAt: (row.cancelled_at as string | null) ?? null
+    cancelledAt: (row.cancelled_at as string | null) ?? null,
+    cancellationReason: (row.cancellation_reason as string | null) ?? null,
+    resolvedAt: (row.resolved_at as string | null) ?? null
+  };
+}
+
+function mapPassageRequest(row: Record<string, unknown>): MovementPassageRequest {
+  return {
+    id: row.id as string,
+    movementOrderId: row.movement_order_id as string,
+    responderFactionId: row.responder_faction_id as string,
+    traversedSystemIds: Array.isArray(row.traversed_system_ids) ? (row.traversed_system_ids as string[]) : [],
+    status: row.status as MovementPassageRequest["status"],
+    responseReason: (row.response_reason as string | null) ?? null,
+    respondedByUserId: (row.responded_by_user_id as string | null) ?? null,
+    respondedAt: (row.responded_at as string | null) ?? null,
+    createdAt: row.created_at as string
+  };
+}
+
+function mapBattleLimitSummary(value: unknown): BattleLimitSummary {
+  const raw = value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : {};
+
+  return {
+    factionId: (raw.faction_id as string | null) ?? null,
+    monthStart: (raw.month_start as string | null) ?? new Date().toISOString(),
+    monthEnd: (raw.month_end as string | null) ?? new Date().toISOString(),
+    startedAttacks: Number(raw.started_attacks ?? 0),
+    receivedAttacks: Number(raw.received_attacks ?? 0),
+    totalParticipations: Number(raw.total_participations ?? 0),
+    activeBattles: Number(raw.active_battles ?? 0),
+    maxStartedAttacks: Number(raw.max_started_attacks ?? 2),
+    maxReceivedAttacks: Number(raw.max_received_attacks ?? 2),
+    maxTotalParticipations: Number(raw.max_total_participations ?? 3),
+    maxActiveBattles: Number(raw.max_active_battles ?? 3)
+  };
+}
+
+function mapBattleOperation(row: Record<string, unknown>): BattleOperation {
+  return {
+    id: row.id as string,
+    mode: row.mode as BattleOperation["mode"],
+    status: row.status as BattleOperation["status"],
+    leaderFactionId: row.leader_faction_id as string,
+    defenderFactionId: row.defender_faction_id as string,
+    originSystemId: row.origin_system_id as string,
+    targetSystemId: row.target_system_id as string,
+    attackMovementOrderId: (row.attack_movement_order_id as string | null) ?? null,
+    conflictId: (row.conflict_id as string | null) ?? null,
+    attackArrivalAt: (row.attack_arrival_at as string | null) ?? null,
+    rosterLockedAt: (row.roster_locked_at as string | null) ?? null,
+    launchedAt: (row.launched_at as string | null) ?? null,
+    resolvedAt: (row.resolved_at as string | null) ?? null,
+    cancelledAt: (row.cancelled_at as string | null) ?? null,
+    cancellationReason: (row.cancellation_reason as string | null) ?? null,
+    createdAt: row.created_at as string
+  };
+}
+
+function mapBattleOperationMember(row: Record<string, unknown>): BattleOperationMember {
+  return {
+    id: row.id as string,
+    operationId: row.operation_id as string,
+    factionId: row.faction_id as string,
+    side: row.side as BattleOperationMember["side"],
+    role: row.role as BattleOperationMember["role"],
+    invitationStatus: row.invitation_status as BattleOperationMember["invitationStatus"],
+    invitedByFactionId: (row.invited_by_faction_id as string | null) ?? null,
+    invitedAt: row.invited_at as string,
+    respondedAt: (row.responded_at as string | null) ?? null
+  };
+}
+
+function mapBattleUnitCommitment(row: Record<string, unknown>): BattleUnitCommitment {
+  return {
+    id: row.id as string,
+    operationId: row.operation_id as string,
+    unitId: row.unit_id as string,
+    factionId: row.faction_id as string,
+    side: row.side as BattleUnitCommitment["side"],
+    role: row.role as BattleUnitCommitment["role"],
+    homeSystemId: row.home_system_id as string,
+    stagingSystemId: row.staging_system_id as string,
+    outboundMovementOrderId: (row.outbound_movement_order_id as string | null) ?? null,
+    returnMovementOrderId: (row.return_movement_order_id as string | null) ?? null,
+    outboundPathSystemIds: Array.isArray(row.outbound_path_system_ids)
+      ? (row.outbound_path_system_ids as string[])
+      : [],
+    returnPathSystemIds: Array.isArray(row.return_path_system_ids)
+      ? (row.return_path_system_ids as string[])
+      : [],
+    quantityAtCommitment: Number(row.quantity_at_commitment ?? 0),
+    pointsAtCommitment: Number(row.points_at_commitment ?? 0),
+    status: row.status as BattleUnitCommitment["status"],
+    joinedAt: row.joined_at as string,
+    returnedAt: (row.returned_at as string | null) ?? null
   };
 }
 
@@ -764,6 +897,7 @@ function mapCampaignRelic(row: Record<string, unknown>): CampaignRelic {
 function mapConflict(row: Record<string, unknown>): Conflict {
   return {
     id: row.id as string,
+    battleOperationId: (row.battle_operation_id as string | null) ?? null,
     systemId: row.system_id as string,
     attackerFactionId: row.attacker_faction_id as string,
     defenderFactionId: (row.defender_faction_id as string | null) ?? null,

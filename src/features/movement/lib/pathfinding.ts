@@ -1,6 +1,6 @@
 import type { StarSystem, SystemEdge } from "@/domain/campaign";
 
-export const MOVEMENT_EDGE_DURATION_SECONDS = 120;
+export const MOVEMENT_EDGE_DURATION_SECONDS = 259200;
 
 export type RoutePlan = {
   pathSystemIds: string[];
@@ -71,7 +71,7 @@ export function findCheapestRoute({
     for (const next of adjacency.get(currentId) ?? []) {
       const nextSystem = systemById.get(next.systemId);
 
-      if (!nextSystem || (next.systemId !== originSystemId && isSystemBlockedForMovement(nextSystem))) {
+      if (!nextSystem) {
         continue;
       }
 
@@ -148,7 +148,7 @@ export function canAppendManualStep(
   const system = systems.find((item) => item.id === targetSystemId);
   const lastSystemId = pathSystemIds[pathSystemIds.length - 1];
 
-  if (!system || !lastSystemId || isSystemBlockedForMovement(system)) {
+  if (!system || !lastSystemId) {
     return false;
   }
 
@@ -180,6 +180,14 @@ export function formatTravelDuration(seconds: number) {
 
   if (minutes < 60) {
     return `${minutes}m`;
+  }
+
+  const days = Math.floor(minutes / 1440);
+  const remainingAfterDays = minutes % 1440;
+  const remainingHours = Math.floor(remainingAfterDays / 60);
+
+  if (days > 0) {
+    return remainingHours > 0 ? `${days}d ${remainingHours}h` : `${days}d`;
   }
 
   const hours = Math.floor(minutes / 60);

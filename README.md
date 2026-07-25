@@ -149,6 +149,26 @@ La produccion de recursos funciona con tick diario de backend, no por turno estr
 
 Antes de desplegar frontend que lea estos campos, aplica migraciones Supabase incluida `0009_buildings_honor_industrial_material.sql` y despues actualiza/ejecuta `supabase/production-cron.sql`.
 
+## Movimientos, permisos y ataques
+
+- `movement_orders` es la entidad unica para desplazamientos y ataques. `movement_type = 'move'` representa movimiento logistico; `movement_type = 'attack'` representa ataque militar.
+- `Mover` solo puede terminar en sistema propio o neutral. Si la ruta cruza sistemas controlados por rivales, queda en `pending_approval` y crea una fila en `movement_passage_requests` por faccion propietaria atravesada.
+- Las unidades seleccionadas quedan con estado `moving` mientras el movimiento esta viajando o pendiente de permiso, por lo que no pueden reutilizarse en otra accion.
+- Los permisos de paso se responden desde `Reportes`. Una aceptacion inicia el movimiento solo cuando todas las facciones afectadas han aceptado; un rechazo cancela el movimiento y devuelve unidades y Uridium.
+- `Atacar` solo permite origen propio, destino enemigo y adyacencia directa. El ataque viaja exactamente 6 dias calculados en Supabase y al llegar crea un conflicto pendiente sin resolver combate automaticamente.
+- Los limites de batalla se validan en servidor: maximo 3 participaciones mensuales, maximo 2 ataques iniciados, maximo 2 ataques recibidos y maximo 3 batallas activas simultaneas.
+- `resolve_movement_orders()` sigue siendo el resolver temporal central. Es idempotente para ataques porque vincula el conflicto generado con `movement_order_id`.
+
+### Coaliciones y apoyos
+
+- `battle_operations` representa el ciclo completo: reunion, ataque en camino, plantel cerrado, resolucion y cancelacion.
+- Un ataque de coalicion reserva las unidades del comandante, invita facciones y recibe sus tropas en el sistema de origen. Solo puede lanzarse cuando todas las tropas comprometidas han llegado.
+- El defensor puede invitar apoyos mientras el ataque esta en camino. Supabase calcula la ruta y rechaza cualquier fuerza cuya llegada supere `attack_arrival_at`.
+- Al llegar el ataque se congela el plantel. El sistema queda en guerra y ningun movimiento posterior puede terminar alli, aunque una ruta normal si puede atravesarlo como sistema intermedio.
+- Las unidades de apoyo conservan su planeta de origen. Tras resolver la batalla, los supervivientes regresan mediante una orden `battle_return`; si el origen ya no pertenece a su faccion quedan en `return_pending`.
+- Las reglas finales son 3 dias por arista y 6 dias para un ataque adyacente. El seed local usa 2 minutos por arista y 6 minutos por ataque para permitir pruebas manuales.
+- Prueba integral local: `npm run db:test:coalitions` despues de `npm run db:reset` y `npm run db:seed:users`.
+
 ## Uso movil v1
 
 En movil la experiencia es mapa primero:

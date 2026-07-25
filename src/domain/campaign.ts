@@ -6,7 +6,31 @@ export type UnitStatus = "ready" | "moving" | "in_war" | "destroyed" | "retreat_
 
 export type RecruitmentStatus = "queued" | "completed" | "cancelled";
 
-export type MovementStatus = "moving" | "arrived" | "cancelled";
+export type MovementStatus = "pending_approval" | "moving" | "arrived" | "in_battle" | "resolved" | "cancelled";
+
+export type MovementType = "move" | "attack";
+
+export type MovementPurpose = "normal" | "attack" | "coalition_staging" | "defense_support" | "battle_return";
+
+export type PassageRequestStatus = "pending" | "accepted" | "rejected";
+
+export type BattleOperationMode = "solo" | "coalition";
+
+export type BattleOperationStatus = "assembling" | "moving" | "in_battle" | "resolved" | "cancelled";
+
+export type BattleSide = "attacker" | "defender";
+
+export type BattleInvitationStatus = "invited" | "accepted" | "rejected" | "closed";
+
+export type BattleCommitmentStatus =
+  | "staged"
+  | "en_route"
+  | "in_battle"
+  | "returning"
+  | "returned"
+  | "destroyed"
+  | "cancelled"
+  | "return_pending";
 
 export type TechnologyStatus = "available" | "researching" | "unlocked";
 
@@ -144,16 +168,100 @@ export interface MovementOrder {
   unitIds: string[];
   unitSelections: UnitMovementSelection[];
   factionId: string;
+  defenderFactionId?: string | null;
   fromSystemId: string;
   toSystemId: string;
+  movementType: MovementType;
+  movementPurpose: MovementPurpose;
+  battleOperationId?: string | null;
   pathSystemIds: string[];
   uridiumCost: number;
   segmentCount: number;
   durationSeconds: number;
   startedAt: string;
-  arrivalAt: string;
+  departureAt?: string | null;
+  arrivalAt?: string | null;
   status: MovementStatus;
   cancelledAt?: string | null;
+  cancellationReason?: string | null;
+  resolvedAt?: string | null;
+}
+
+export interface MovementPassageRequest {
+  id: string;
+  movementOrderId: string;
+  responderFactionId: string;
+  traversedSystemIds: string[];
+  status: PassageRequestStatus;
+  responseReason?: string | null;
+  respondedByUserId?: string | null;
+  respondedAt?: string | null;
+  createdAt: string;
+}
+
+export interface BattleLimitSummary {
+  factionId: string | null;
+  monthStart: string;
+  monthEnd: string;
+  startedAttacks: number;
+  receivedAttacks: number;
+  totalParticipations: number;
+  activeBattles: number;
+  maxStartedAttacks: number;
+  maxReceivedAttacks: number;
+  maxTotalParticipations: number;
+  maxActiveBattles: number;
+}
+
+export interface BattleOperation {
+  id: string;
+  mode: BattleOperationMode;
+  status: BattleOperationStatus;
+  leaderFactionId: string;
+  defenderFactionId: string;
+  originSystemId: string;
+  targetSystemId: string;
+  attackMovementOrderId?: string | null;
+  conflictId?: string | null;
+  attackArrivalAt?: string | null;
+  rosterLockedAt?: string | null;
+  launchedAt?: string | null;
+  resolvedAt?: string | null;
+  cancelledAt?: string | null;
+  cancellationReason?: string | null;
+  createdAt: string;
+}
+
+export interface BattleOperationMember {
+  id: string;
+  operationId: string;
+  factionId: string;
+  side: BattleSide;
+  role: "commander" | "supporter";
+  invitationStatus: BattleInvitationStatus;
+  invitedByFactionId?: string | null;
+  invitedAt: string;
+  respondedAt?: string | null;
+}
+
+export interface BattleUnitCommitment {
+  id: string;
+  operationId: string;
+  unitId: string;
+  factionId: string;
+  side: BattleSide;
+  role: "leader" | "supporter";
+  homeSystemId: string;
+  stagingSystemId: string;
+  outboundMovementOrderId?: string | null;
+  returnMovementOrderId?: string | null;
+  outboundPathSystemIds: string[];
+  returnPathSystemIds: string[];
+  quantityAtCommitment: number;
+  pointsAtCommitment: number;
+  status: BattleCommitmentStatus;
+  joinedAt: string;
+  returnedAt?: string | null;
 }
 
 export interface RecruitmentQueueItem {
@@ -380,6 +488,7 @@ export interface CampaignRelic {
 
 export interface Conflict {
   id: string;
+  battleOperationId?: string | null;
   systemId: string;
   attackerFactionId: string;
   defenderFactionId?: string | null;
@@ -421,6 +530,8 @@ export interface CampaignSnapshot {
     factionId: string | null;
   };
   resourceTickIntervalHours: number;
+  movementEdgeDurationSeconds: number;
+  attackDurationSeconds: number;
   nextResourceTickAt: string;
   resourceCaps: ResourceBundle;
   maxArmyPoints: number;
@@ -430,6 +541,11 @@ export interface CampaignSnapshot {
   resources: FactionResources[];
   units: CampaignUnit[];
   movements: MovementOrder[];
+  passageRequests: MovementPassageRequest[];
+  battleLimits: BattleLimitSummary | null;
+  battleOperations: BattleOperation[];
+  battleOperationMembers: BattleOperationMember[];
+  battleUnitCommitments: BattleUnitCommitment[];
   unitTemplates: UnitTemplate[];
   recruitmentQueue: RecruitmentQueueItem[];
   technologyNodes: TechnologyNode[];
