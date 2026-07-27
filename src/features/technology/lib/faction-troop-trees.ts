@@ -54,16 +54,17 @@ export function getTechnologyInspectionFaction(snapshot: CampaignSnapshot, selec
     return snapshot.factions.find((faction) => faction.id === snapshot.currentUser.factionId) ?? null;
   }
 
-  const selectedFaction = snapshot.factions.find((faction) => faction.id === selectedFactionId);
+  const selectableFactions = snapshot.factions.filter((faction) => !faction.isNarrative);
+  const selectedFaction = selectableFactions.find((faction) => faction.id === selectedFactionId);
 
   if (selectedFaction) {
     return selectedFaction;
   }
 
   return (
-    snapshot.factions.find((faction) => Boolean(getTroopTreeKeyForFactionSlug(faction.id))) ??
-    snapshot.factions.find((faction) => Boolean(getTroopTreeKeyForFactionSlug(faction.slug))) ??
-    snapshot.factions[0] ??
+    selectableFactions.find((faction) => Boolean(getTroopTreeKeyForFactionSlug(faction.id))) ??
+    selectableFactions.find((faction) => Boolean(getTroopTreeKeyForFactionSlug(faction.slug))) ??
+    selectableFactions[0] ??
     null
   );
 }

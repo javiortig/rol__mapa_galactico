@@ -2,16 +2,38 @@
 
 import { useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Ban, Building2, CheckCircle2, Factory, Save, ShieldAlert, ShieldPlus, SlidersHorizontal, Users } from "lucide-react";
+import {
+  Ban,
+  Bug,
+  Building2,
+  CheckCircle2,
+  Eye,
+  EyeOff,
+  Factory,
+  MapPin,
+  Save,
+  Send,
+  ShieldAlert,
+  ShieldPlus,
+  Skull,
+  SlidersHorizontal,
+  Trash2,
+  Users
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
 import { ResourceIcon, resourceLabels } from "@/components/ui/resource-icon";
+import { formatCountdown } from "@/lib/time";
 import {
   adminConstructBuilding,
+  adminCreateNarrativeAttack,
+  adminCreateNarrativeMission,
   adminCreateUnit,
+  adminRemoveTemporaryMission,
   adminSetCampaignLimits,
   adminSetFactionResources,
+  adminSetNarrativeControl,
   adminSetSystemBlock,
   adminSetSystemResourceCapabilities,
   adminUpdateCampaignUnit,
@@ -19,7 +41,7 @@ import {
   canUseAdminRpc
 } from "@/features/admin/api/admin-api";
 import { getFactionArmyPoints } from "@/features/units/lib/army-points";
-import type { CampaignSnapshot, CampaignUnit, ResourceBundle, SystemBuilding } from "@/domain/campaign";
+import type { CampaignSnapshot, CampaignUnit, NarrativeMissionEnemyUnit, ResourceBundle, SystemBuilding } from "@/domain/campaign";
 
 const factionResourceKeys = ["supply", "minerals", "honor", "gold", "industrialMaterial", "uridium", "technology"] as const;
 const systemCapabilityKeys = ["supply", "minerals", "honor", "gold", "industrialMaterial", "uridium"] as const;
@@ -52,7 +74,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
   const queryClient = useQueryClient();
   const rpcReady = canUseAdminRpc();
 
-  const [unitFactionId, setUnitFactionId] = useState(snapshot.factions[0]?.id ?? "");
+  const [unitFactionId, setUnitFactionId] = useState(snapshot.factions.find((faction) => !faction.isNarrative)?.id ?? "");
   const [unitSystemId, setUnitSystemId] = useState(snapshot.systems[0]?.id ?? "");
   const [unitTemplateId, setUnitTemplateId] = useState("");
   const [unitQuantity, setUnitQuantity] = useState(1);
@@ -61,7 +83,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
   const [buildingSystemId, setBuildingSystemId] = useState(snapshot.systems.find((system) => system.systemKind !== "gaseous")?.id ?? "");
   const [buildingTemplateId, setBuildingTemplateId] = useState(snapshot.buildingTemplates[0]?.id ?? "");
 
-  const [resourceFactionId, setResourceFactionId] = useState(snapshot.factions[0]?.id ?? "");
+  const [resourceFactionId, setResourceFactionId] = useState(snapshot.factions.find((faction) => !faction.isNarrative)?.id ?? "");
   const [resourceDraftByFactionId, setResourceDraftByFactionId] = useState<Record<string, EditableFactionResources>>({});
 
   const [capabilitySystemId, setCapabilitySystemId] = useState(snapshot.systems[0]?.id ?? "");
@@ -70,10 +92,55 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
   const [maxArmyPointsDraft, setMaxArmyPointsDraft] = useState(snapshot.maxArmyPoints);
   const [blockSystemId, setBlockSystemId] = useState(snapshot.systems[0]?.id ?? "");
   const [blockDays, setBlockDays] = useState(14);
+  const [narrativeSystemId, setNarrativeSystemId] = useState(
+    snapshot.systems.find((system) => system.systemKind !== "gaseous" && !system.isCapital)?.id ?? ""
+  );
+  const [narrativeFactionId, setNarrativeFactionId] = useState(
+    snapshot.factions.find((faction) => faction.isNarrative)?.id ?? ""
+  );
+  const [narrativeDescription, setNarrativeDescription] = useState(
+    "Una amenaza xenos emerge en el sistema. Preparad una defensa narrativa."
+  );
+  const [narrativeArrivalDays, setNarrativeArrivalDays] = useState(1);
+  const [narrativeMode, setNarrativeMode] = useState<"attack" | "control">("attack");
+  const [missionAnchorSystemId, setMissionAnchorSystemId] = useState(
+    snapshot.systems.find((system) => system.systemKind !== "gaseous" && !system.isTemporaryMission)?.id ?? ""
+  );
+  const [missionFactionId, setMissionFactionId] = useState(snapshot.factions.find((faction) => faction.isNarrative)?.id ?? "");
+  const [missionName, setMissionName] = useState("Deriva de guerra");
+  const [missionDescription, setMissionDescription] = useState(
+    "Una fuerza narrativa ha aparecido en los limites del sistema. El objetivo exige una respuesta inmediata."
+  );
+  const [missionEnemyUnitsVisible, setMissionEnemyUnitsVisible] = useState(true);
+  const [missionEnemyUnitsText, setMissionEnemyUnitsText] = useState(
+    "20 Termagantes - biomasa ligera visible\n1 Carnifex - monstruo pesado detectado"
+  );
+  const [missionDurationDays, setMissionDurationDays] = useState(7);
+  const [missionExpiresAfterBattle, setMissionExpiresAfterBattle] = useState(true);
   const [editUnitSystemId, setEditUnitSystemId] = useState(snapshot.systems[0]?.id ?? "");
   const [unitDrafts, setUnitDrafts] = useState<Record<string, UnitEditDraft>>({});
   const [editBuildingSystemId, setEditBuildingSystemId] = useState(snapshot.systems[0]?.id ?? "");
   const [buildingDrafts, setBuildingDrafts] = useState<Record<string, BuildingEditDraft>>({});
+
+  const playableFactions = useMemo(
+    () => snapshot.factions.filter((faction) => !faction.isNarrative),
+    [snapshot.factions]
+  );
+  const narrativeFactions = useMemo(
+    () => snapshot.factions.filter((faction) => faction.isNarrative),
+    [snapshot.factions]
+  );
+  const narrativeTargetSystems = useMemo(
+    () =>
+      snapshot.systems.filter(
+        (system) => system.systemKind !== "gaseous" && !system.isTemporaryMission && !system.isCapital
+      ),
+    [snapshot.systems]
+  );
+  const effectiveNarrativeFactionId =
+    narrativeFactions.find((faction) => faction.id === narrativeFactionId)?.id ?? narrativeFactions[0]?.id ?? "";
+  const effectiveNarrativeSystemId =
+    narrativeTargetSystems.find((system) => system.id === narrativeSystemId)?.id ?? narrativeTargetSystems[0]?.id ?? "";
 
   const templatesForFaction = useMemo(
     () => snapshot.unitTemplates.filter((template) => template.factionId === unitFactionId && template.isAvailable),
@@ -91,6 +158,33 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
     capabilityDraftBySystemId[capabilitySystemId] ??
     toEditableSystemCapabilities(selectedCapabilitySystem ?? undefined, snapshot.systemResourceCapabilities);
   const selectedBlockSystem = snapshot.systems.find((system) => system.id === blockSystemId) ?? null;
+  const selectedNarrativeSystem = snapshot.systems.find((system) => system.id === effectiveNarrativeSystemId) ?? null;
+  const selectedNarrativeFaction = snapshot.factions.find((faction) => faction.id === effectiveNarrativeFactionId) ?? null;
+  const selectedNarrativeConflict = snapshot.conflicts.find(
+    (conflict) => conflict.systemId === effectiveNarrativeSystemId && conflict.status === "pending"
+  );
+  const selectedNarrativeIncomingAttack = snapshot.narrativeAttacks.find(
+    (attack) => attack.systemId === effectiveNarrativeSystemId && attack.status === "incoming"
+  );
+  const missionAnchorSystems = narrativeTargetSystems;
+  const effectiveMissionFactionId =
+    narrativeFactions.find((faction) => faction.id === missionFactionId)?.id ?? narrativeFactions[0]?.id ?? "";
+  const effectiveMissionAnchorSystemId =
+    missionAnchorSystems.find((system) => system.id === missionAnchorSystemId)?.id ?? missionAnchorSystems[0]?.id ?? "";
+  const selectedMissionFaction = snapshot.factions.find((faction) => faction.id === effectiveMissionFactionId) ?? null;
+  const selectedMissionAnchorSystem =
+    snapshot.systems.find((system) => system.id === effectiveMissionAnchorSystemId) ?? null;
+  const parsedMissionEnemyUnits = useMemo(
+    () => parseNarrativeEnemyUnits(missionEnemyUnitsText),
+    [missionEnemyUnitsText]
+  );
+  const activeTemporaryMissions = useMemo(
+    () =>
+      snapshot.systems
+        .filter((system) => system.isTemporaryMission && (system.temporaryMissionStatus ?? "active") === "active")
+        .sort((left, right) => left.name.localeCompare(right.name)),
+    [snapshot.systems]
+  );
   const unitsInEditSystem = useMemo(
     () =>
       snapshot.units
@@ -202,6 +296,55 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
       adminSetSystemBlock({
         systemId: blockSystemId,
         blockedUntil
+      }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
+  });
+
+  const createNarrativeAttackMutation = useMutation({
+    mutationFn: () =>
+      adminCreateNarrativeAttack({
+        systemId: effectiveNarrativeSystemId,
+        narrativeFactionId: effectiveNarrativeFactionId,
+        description: narrativeDescription.trim(),
+        arrivalAt: new Date(Date.now() + Math.max(1, narrativeArrivalDays) * 24 * 60 * 60 * 1000).toISOString()
+      }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
+  });
+
+  const createNarrativeMissionMutation = useMutation({
+    mutationFn: () =>
+      adminCreateNarrativeMission({
+        anchorSystemId: effectiveMissionAnchorSystemId,
+        narrativeFactionId: effectiveMissionFactionId,
+        name: missionName.trim(),
+        description: missionDescription.trim(),
+        enemyUnitsVisible: missionEnemyUnitsVisible,
+        enemyUnits: parsedMissionEnemyUnits,
+        durationDays: Math.max(1, missionDurationDays),
+        expiresAfterBattle: missionExpiresAfterBattle
+      }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
+  });
+
+  const removeTemporaryMissionMutation = useMutation({
+    mutationFn: adminRemoveTemporaryMission,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
+  });
+
+  const setNarrativeControlMutation = useMutation({
+    mutationFn: () =>
+      adminSetNarrativeControl({
+        systemId: effectiveNarrativeSystemId,
+        narrativeFactionId: effectiveNarrativeFactionId,
+        description: narrativeDescription.trim() || undefined
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
@@ -321,7 +464,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
             </div>
             <div className="grid gap-3">
               <select className="rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm" onChange={(event) => handleUnitFactionChange(event.target.value)} value={unitFactionId}>
-                {snapshot.factions.map((faction) => (
+                {playableFactions.map((faction) => (
                   <option key={faction.id} value={faction.id}>
                     {faction.name}
                   </option>
@@ -372,6 +515,323 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                 {createUnitMutation.isPending ? "Creando..." : "Crear unidad"}
               </Button>
               {createUnitMutation.error ? <p className="text-sm text-rose-200">{createUnitMutation.error.message}</p> : null}
+            </div>
+          </Panel>
+
+          <Panel className="p-4 md:p-5">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="grid size-8 place-items-center rounded-md border border-lime-200/20 bg-lime-300/10 text-lime-100">
+                {selectedNarrativeFaction?.slug === "tiranidos" ? <Bug size={16} /> : <Skull size={16} />}
+              </span>
+              <div>
+                <h2 className="text-base font-semibold text-cyan-50">Incursion narrativa</h2>
+                <p className="text-xs text-slate-400">Orcos y Tiranidos controlados por admin.</p>
+              </div>
+            </div>
+            <div className="grid gap-3">
+              <div className="grid gap-2 sm:grid-cols-2">
+                <select
+                  className="rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm"
+                  disabled={narrativeFactions.length === 0}
+                  onChange={(event) => setNarrativeFactionId(event.target.value)}
+                  value={effectiveNarrativeFactionId}
+                >
+                  {narrativeFactions.map((faction) => (
+                    <option key={faction.id} value={faction.id}>
+                      {faction.name}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  className="rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm"
+                  disabled={narrativeTargetSystems.length === 0}
+                  onChange={(event) => setNarrativeSystemId(event.target.value)}
+                  value={effectiveNarrativeSystemId}
+                >
+                  {narrativeTargetSystems.map((system) => (
+                    <option key={system.id} value={system.id}>
+                      {system.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Button
+                  onClick={() => setNarrativeMode("attack")}
+                  size="sm"
+                  variant={narrativeMode === "attack" ? "primary" : "ghost"}
+                >
+                  <ShieldAlert size={15} />
+                  Ataque pendiente
+                </Button>
+                <Button
+                  onClick={() => setNarrativeMode("control")}
+                  size="sm"
+                  variant={narrativeMode === "control" ? "primary" : "ghost"}
+                >
+                  <Skull size={15} />
+                  Control inmediato
+                </Button>
+              </div>
+
+              <textarea
+                className="min-h-28 resize-y rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm text-cyan-50 outline-none transition placeholder:text-slate-600 focus:border-cyan-200/45"
+                onChange={(event) => setNarrativeDescription(event.target.value)}
+                placeholder="Ej: Una horda de infanteria tiranida acecha el sistema, preparad los lanzallamas."
+                value={narrativeDescription}
+              />
+
+              {narrativeMode === "attack" ? (
+                <label className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-2">
+                  <div className="mb-1 text-[11px] text-slate-400">Dias hasta que llega el ataque</div>
+                  <input
+                    className="w-full rounded-md border border-cyan-200/15 bg-slate-950/50 px-2 py-1.5 text-sm text-cyan-50"
+                    min={1}
+                    onChange={(event) => setNarrativeArrivalDays(Math.max(1, toInt(event.target.value, 1)))}
+                    type="number"
+                    value={narrativeArrivalDays}
+                  />
+                </label>
+              ) : null}
+
+              <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-xs text-slate-300">
+                <div className="font-semibold text-cyan-50">{selectedNarrativeSystem?.name ?? "Sistema"}</div>
+                {selectedNarrativeConflict ? (
+                  <p className="mt-1 text-amber-100">Ya existe un conflicto pendiente en este sistema.</p>
+                ) : selectedNarrativeIncomingAttack ? (
+                  <p className="mt-1 text-amber-100">
+                    Ya hay una amenaza entrante. Llega en {formatCountdown(selectedNarrativeIncomingAttack.arrivalAt)}.
+                  </p>
+                ) : (
+                  <p className="mt-1">
+                    {narrativeMode === "attack"
+                      ? "Programara una amenaza entrante. Solo creara conflicto y bloqueo cuando llegue."
+                      : "Entregara el control del sistema a la amenaza narrativa y cancelara conflictos pendientes del sistema."}
+                  </p>
+                )}
+              </div>
+
+              <Button
+                disabled={
+                  !rpcReady ||
+                  !effectiveNarrativeFactionId ||
+                  !effectiveNarrativeSystemId ||
+                  narrativeDescription.trim().length < 8 ||
+                  createNarrativeAttackMutation.isPending ||
+                  setNarrativeControlMutation.isPending ||
+                  (narrativeMode === "attack" && Boolean(selectedNarrativeConflict || selectedNarrativeIncomingAttack))
+                }
+                onClick={() => {
+                  if (narrativeMode === "attack") {
+                    createNarrativeAttackMutation.mutate();
+                    return;
+                  }
+
+                  setNarrativeControlMutation.mutate();
+                }}
+                variant={narrativeMode === "attack" ? "danger" : "primary"}
+              >
+                {selectedNarrativeFaction?.slug === "tiranidos" ? <Bug size={16} /> : <Skull size={16} />}
+                {createNarrativeAttackMutation.isPending || setNarrativeControlMutation.isPending
+                  ? "Aplicando..."
+                  : narrativeMode === "attack"
+                    ? "Programar incursion"
+                    : "Tomar control"}
+              </Button>
+
+              {createNarrativeAttackMutation.error ? (
+                <p className="text-sm text-rose-200">{createNarrativeAttackMutation.error.message}</p>
+              ) : null}
+              {setNarrativeControlMutation.error ? (
+                <p className="text-sm text-rose-200">{setNarrativeControlMutation.error.message}</p>
+              ) : null}
+            </div>
+          </Panel>
+
+          <Panel className="p-4 md:p-5">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="grid size-8 place-items-center rounded-md border border-violet-200/20 bg-violet-300/10 text-violet-100">
+                <MapPin size={16} />
+              </span>
+              <div>
+                <h2 className="text-base font-semibold text-cyan-50">Crear mision temporal</h2>
+                <p className="text-xs text-slate-400">Objetivo narrativo conectado a un sistema del mapa.</p>
+              </div>
+            </div>
+            <div className="grid gap-3">
+              <div className="grid gap-2 sm:grid-cols-2">
+                <select
+                  className="rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm"
+                  disabled={narrativeFactions.length === 0}
+                  onChange={(event) => setMissionFactionId(event.target.value)}
+                  value={effectiveMissionFactionId}
+                >
+                  {narrativeFactions.map((faction) => (
+                    <option key={faction.id} value={faction.id}>
+                      {faction.name}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  className="rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm"
+                  disabled={missionAnchorSystems.length === 0}
+                  onChange={(event) => setMissionAnchorSystemId(event.target.value)}
+                  value={effectiveMissionAnchorSystemId}
+                >
+                  {missionAnchorSystems.map((system) => (
+                    <option key={system.id} value={system.id}>
+                      Anclar en {system.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <input
+                className="rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm text-cyan-50 outline-none transition placeholder:text-slate-600 focus:border-cyan-200/45"
+                onChange={(event) => setMissionName(event.target.value)}
+                placeholder="Nombre del sistema temporal"
+                value={missionName}
+              />
+
+              <textarea
+                className="min-h-24 resize-y rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm text-cyan-50 outline-none transition placeholder:text-slate-600 focus:border-cyan-200/45"
+                onChange={(event) => setMissionDescription(event.target.value)}
+                placeholder="Descripcion narrativa de la mision."
+                value={missionDescription}
+              />
+
+              <label className="flex items-center justify-between gap-3 rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-sm text-slate-200">
+                <span className="inline-flex items-center gap-2">
+                  {missionEnemyUnitsVisible ? <Eye size={15} /> : <EyeOff size={15} />}
+                  Tropas enemigas visibles
+                </span>
+                <input
+                  checked={missionEnemyUnitsVisible}
+                  onChange={(event) => setMissionEnemyUnitsVisible(event.target.checked)}
+                  type="checkbox"
+                />
+              </label>
+
+              <div className="grid gap-2 sm:grid-cols-2">
+                <label className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-2">
+                  <div className="mb-1 text-[11px] text-slate-400">Dias de vida de la mision</div>
+                  <input
+                    className="w-full rounded-md border border-cyan-200/15 bg-slate-950/50 px-2 py-1.5 text-sm text-cyan-50"
+                    min={1}
+                    onChange={(event) => setMissionDurationDays(Math.max(1, toInt(event.target.value, 7)))}
+                    type="number"
+                    value={missionDurationDays}
+                  />
+                </label>
+
+                <label className="flex items-center justify-between gap-3 rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-sm text-slate-200">
+                  <span>Cerrar al resolver batalla</span>
+                  <input
+                    checked={missionExpiresAfterBattle}
+                    onChange={(event) => setMissionExpiresAfterBattle(event.target.checked)}
+                    type="checkbox"
+                  />
+                </label>
+              </div>
+
+              <textarea
+                className="min-h-28 resize-y rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm text-cyan-50 outline-none transition placeholder:text-slate-600 focus:border-cyan-200/45"
+                onChange={(event) => setMissionEnemyUnitsText(event.target.value)}
+                placeholder="Una tropa por linea. Ej: 20 Hormagantes - oleada rapida"
+                value={missionEnemyUnitsText}
+              />
+
+              <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-xs text-slate-300">
+                <div className="font-semibold text-cyan-50">{missionName.trim() || "Mision temporal"}</div>
+                <p className="mt-1">
+                  Aparecera cerca de {selectedMissionAnchorSystem?.name ?? "un sistema"} y sera controlada por{" "}
+                  {selectedMissionFaction?.name ?? "una amenaza narrativa"}.
+                </p>
+                <p className="mt-1 text-slate-400">
+                  Tropas manuales registradas: {parsedMissionEnemyUnits.length}. No se crean unidades reales de base de datos.
+                </p>
+                <p className="mt-1 text-slate-400">
+                  Expira en {missionDurationDays} dias
+                  {missionExpiresAfterBattle ? " o tras resolver la batalla, lo que ocurra antes." : "."}
+                </p>
+              </div>
+
+              <Button
+                disabled={
+                  !rpcReady ||
+                  !effectiveMissionFactionId ||
+                  !effectiveMissionAnchorSystemId ||
+                  missionName.trim().length < 3 ||
+                  missionDescription.trim().length < 8 ||
+                  createNarrativeMissionMutation.isPending
+                }
+                onClick={() => createNarrativeMissionMutation.mutate()}
+              >
+                <Send size={16} />
+                {createNarrativeMissionMutation.isPending ? "Creando..." : "Crear mision"}
+              </Button>
+
+              {createNarrativeMissionMutation.error ? (
+                <p className="text-sm text-rose-200">{createNarrativeMissionMutation.error.message}</p>
+              ) : null}
+
+              <div className="rounded-md border border-cyan-200/15 bg-slate-950/25 p-3">
+                <div className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Misiones temporales activas</div>
+                <div className="grid gap-2">
+                  {activeTemporaryMissions.length > 0 ? (
+                    activeTemporaryMissions.map((missionSystem) => {
+                      const threatFaction = snapshot.factions.find(
+                        (faction) => faction.id === missionSystem.missionThreatFactionId
+                      );
+
+                      return (
+                        <div
+                          className="rounded-md border border-violet-200/15 bg-slate-950/35 p-3"
+                          key={missionSystem.id}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <div className="text-sm font-semibold text-cyan-50">{missionSystem.name}</div>
+                              <div className="mt-1 text-xs text-slate-400">
+                                {threatFaction?.name ?? "Amenaza narrativa"}
+                                {missionSystem.missionExpiresAt
+                                  ? ` - expira en ${formatCountdown(missionSystem.missionExpiresAt)}`
+                                  : ""}
+                              </div>
+                              <div className="mt-1 text-xs text-slate-500">
+                                {missionSystem.missionExpiresAfterBattle
+                                  ? "Se cerrara al resolver batalla."
+                                  : "No se cierra automaticamente tras batalla."}
+                              </div>
+                            </div>
+                            <Button
+                              disabled={removeTemporaryMissionMutation.isPending}
+                              onClick={() => {
+                                if (window.confirm(`Eliminar la mision temporal ${missionSystem.name}?`)) {
+                                  removeTemporaryMissionMutation.mutate(missionSystem.id);
+                                }
+                              }}
+                              size="sm"
+                              variant="danger"
+                            >
+                              <Trash2 size={15} />
+                              Eliminar
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <p className="text-sm text-slate-500">No hay misiones temporales activas.</p>
+                  )}
+                </div>
+                {removeTemporaryMissionMutation.error ? (
+                  <p className="mt-2 text-sm text-rose-200">{removeTemporaryMissionMutation.error.message}</p>
+                ) : null}
+              </div>
             </div>
           </Panel>
 
@@ -738,7 +1198,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
             <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3">
               <h3 className="mb-3 text-sm font-semibold text-cyan-50">Puntos usados por faccion</h3>
               <div className="space-y-2">
-                {snapshot.factions.map((faction) => (
+                {playableFactions.map((faction) => (
                   <div className="flex items-center justify-between gap-3 text-sm" key={faction.id}>
                     <span className="inline-flex min-w-0 items-center gap-2 text-slate-300">
                       <span className="size-2 shrink-0 rounded-full" style={{ backgroundColor: faction.color }} />
@@ -765,7 +1225,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
 
             <div className="grid gap-3">
               <select className="rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm" onChange={(event) => setResourceFactionId(event.target.value)} value={resourceFactionId}>
-                {snapshot.factions.map((faction) => (
+                {playableFactions.map((faction) => (
                   <option key={faction.id} value={faction.id}>
                     {faction.name}
                   </option>
@@ -909,6 +1369,35 @@ function toEditableSystemCapabilities(
       systemCapabilities.find((capability) => capability.resourceKey === "industrialMaterial")?.productionAmount ?? 0,
     uridium: systemCapabilities.find((capability) => capability.resourceKey === "uridium")?.productionAmount ?? 0
   };
+}
+
+function parseNarrativeEnemyUnits(value: string): NarrativeMissionEnemyUnit[] {
+  return value
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line, index) => {
+      const separatorMatch = line.match(/\s[-:]\s/);
+
+      if (!separatorMatch || separatorMatch.index === undefined) {
+        return {
+          id: `manual-${index + 1}`,
+          name: line,
+          details: null
+        };
+      }
+
+      const separatorIndex = separatorMatch.index;
+      const separatorLength = separatorMatch[0].length;
+      const name = line.slice(0, separatorIndex).trim();
+      const details = line.slice(separatorIndex + separatorLength).trim();
+
+      return {
+        id: `manual-${index + 1}`,
+        name: name || line,
+        details: details || null
+      };
+    });
 }
 
 function toInt(value: string, fallback: number) {

@@ -1,5 +1,5 @@
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
-import type { BuildingStatus, ResourceBundle, UnitStatus } from "@/domain/campaign";
+import type { BuildingStatus, NarrativeMissionEnemyUnit, ResourceBundle, UnitStatus } from "@/domain/campaign";
 
 type EditableFactionResources = Pick<
   ResourceBundle,
@@ -136,6 +136,92 @@ export async function adminSetSystemBlock(input: { systemId: string; blockedUnti
   if (error) {
     throw new Error(error.message);
   }
+}
+
+export async function adminCreateNarrativeAttack(input: {
+  systemId: string;
+  narrativeFactionId: string;
+  description: string;
+  arrivalAt: string;
+}) {
+  const supabase = getAdminClient();
+
+  const { data, error } = await supabase.rpc("admin_create_narrative_attack", {
+    target_system_id: input.systemId,
+    narrative_faction_id: input.narrativeFactionId,
+    attack_description: input.description,
+    arrival_at: input.arrivalAt
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as string;
+}
+
+export async function adminCreateNarrativeMission(input: {
+  anchorSystemId: string;
+  narrativeFactionId: string;
+  name: string;
+  description: string;
+  enemyUnitsVisible: boolean;
+  enemyUnits: NarrativeMissionEnemyUnit[];
+  durationDays: number;
+  expiresAfterBattle: boolean;
+}) {
+  const supabase = getAdminClient();
+
+  const { data, error } = await supabase.rpc("admin_create_narrative_mission", {
+    anchor_system_id: input.anchorSystemId,
+    narrative_faction_id: input.narrativeFactionId,
+    mission_name: input.name,
+    mission_description: input.description,
+    enemy_units_visible: input.enemyUnitsVisible,
+    enemy_units: input.enemyUnits,
+    duration_days: input.durationDays,
+    expires_after_battle: input.expiresAfterBattle
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as string;
+}
+
+export async function adminRemoveTemporaryMission(systemId: string) {
+  const supabase = getAdminClient();
+
+  const { data, error } = await supabase.rpc("admin_remove_temporary_mission", {
+    target_system_id: systemId
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as string;
+}
+
+export async function adminSetNarrativeControl(input: {
+  systemId: string;
+  narrativeFactionId: string;
+  description?: string;
+}) {
+  const supabase = getAdminClient();
+
+  const { data, error } = await supabase.rpc("admin_set_narrative_control", {
+    target_system_id: input.systemId,
+    narrative_faction_id: input.narrativeFactionId,
+    control_description: input.description ?? null
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as string;
 }
 
 export async function adminUpdateCampaignUnit(input: {

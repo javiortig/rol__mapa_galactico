@@ -36,7 +36,7 @@ export function findCheapestRoute({
   const systemById = new Map(systems.map((system) => [system.id, system]));
   const target = systemById.get(targetSystemId);
 
-  if (!target || isSystemBlockedForMovement(target)) {
+  if (!target || target.isTemporaryMission || isSystemBlockedForMovement(target)) {
     return null;
   }
 
@@ -72,6 +72,10 @@ export function findCheapestRoute({
       const nextSystem = systemById.get(next.systemId);
 
       if (!nextSystem) {
+        continue;
+      }
+
+      if (nextSystem.isTemporaryMission && next.systemId !== targetSystemId) {
         continue;
       }
 
@@ -149,6 +153,10 @@ export function canAppendManualStep(
   const lastSystemId = pathSystemIds[pathSystemIds.length - 1];
 
   if (!system || !lastSystemId) {
+    return false;
+  }
+
+  if (system.isTemporaryMission) {
     return false;
   }
 

@@ -16,6 +16,7 @@ Interfaz web privada para gestionar una campana narrativa de Warhammer 40K con m
 - App principal en `/`.
 - Login local con Supabase Auth en `/login`.
 - Admin placeholder en `/admin`.
+- Facciones narrativas de admin: `Orcos` y `Tiranidos`, sin capital, usuario, recursos ni tropas iniciales.
 - Datos mock en `src/mocks/campaign-data.ts` como fallback si Supabase no esta configurado.
 - Tipos de dominio en `src/domain/campaign.ts`.
 - Contrato Supabase en `supabase/migrations`.
@@ -113,13 +114,13 @@ Usuarios locales:
 ```text
 admin@rol40k.local / admin-local-123
 legiones-daemonicas@rol40k.local / rol40k-local-123
-agentes-imperium@rol40k.local / rol40k-local-123
 cultos-genestealer@rol40k.local / rol40k-local-123
-aeldari@rol40k.local / rol40k-local-123
 space-marines@rol40k.local / rol40k-local-123
 adeptus-custodes@rol40k.local / rol40k-local-123
 necrones@rol40k.local / rol40k-local-123
 ```
+
+Orcos y Tiranidos existen como facciones narrativas controladas desde admin, sin usuario de login propio.
 
 La produccion de recursos funciona con tick diario de backend, no por turno estrategico.
 
@@ -156,8 +157,13 @@ Antes de desplegar frontend que lea estos campos, aplica migraciones Supabase in
 - Las unidades seleccionadas quedan con estado `moving` mientras el movimiento esta viajando o pendiente de permiso, por lo que no pueden reutilizarse en otra accion.
 - Los permisos de paso se responden desde `Reportes`. Una aceptacion inicia el movimiento solo cuando todas las facciones afectadas han aceptado; un rechazo cancela el movimiento y devuelve unidades y Uridium.
 - `Atacar` solo permite origen propio, destino enemigo y adyacencia directa. El ataque viaja exactamente 6 dias calculados en Supabase y al llegar crea un conflicto pendiente sin resolver combate automaticamente.
+- Las capitales no son objetivos atacables. La UI las oculta como destino y Supabase rechaza ataques normales, coaliciones, conflictos pendientes y amenazas narrativas contra capitales.
 - Los limites de batalla se validan en servidor: maximo 3 participaciones mensuales, maximo 2 ataques iniciados, maximo 2 ataques recibidos y maximo 3 batallas activas simultaneas.
 - `resolve_movement_orders()` sigue siendo el resolver temporal central. Es idempotente para ataques porque vincula el conflicto generado con `movement_order_id`.
+- Las incursiones narrativas de `Orcos` y `Tiranidos` se programan desde `/admin`: el admin elige sistema, descripcion publica y dias hasta llegada. Hasta que llega se muestra como amenaza entrante; al resolver, crea conflicto pendiente y bloquea el sistema como guerra.
+- El admin puede crear misiones temporales controladas por `Orcos` o `Tiranidos`: aparecen como sistemas especiales conectados a un sistema normal, se colocan automaticamente en una zona libre del grafo para evitar colisiones visuales, pueden ser atacadas individualmente o en coalicion, no sirven como rutas logisticas normales y pueden mostrar u ocultar una lista manual de tropas enemigas.
+- Al crear una mision temporal, el admin elige cuantos dias existe y si desaparece automaticamente al resolverse la batalla. El admin tambien puede eliminarla manualmente desde `/admin`.
+- Cuando una mision temporal desaparece por expiracion, resolucion o eliminacion, las tropas de jugadores presentes o en camino se evacuan al sistema propio mas cercano que no este en batalla ni bajo ataque entrante; si no hay destino seguro quedan en `retreat_pending` para resolucion admin.
 
 ### Coaliciones y apoyos
 

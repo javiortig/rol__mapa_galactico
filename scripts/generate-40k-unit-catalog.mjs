@@ -100,7 +100,7 @@ const LEGACY_FACTION_DEFS = [
     sourceName: "Xenos - Genestealer Cults",
     slug: "cultos-genestealer",
     name: "Cultos Genestealer",
-    color: "#c084fc",
+    color: "#ec4899",
     capitalSystemId: "blackglass"
   },
   {
@@ -168,7 +168,7 @@ const FACTION_DEFS = [
     sourceName: "Imperium - Adeptus Astartes - Space Marines",
     slug: "space-marines",
     name: "Space Marines",
-    color: "#facc15",
+    color: "#3b82f6",
     capitalSystemId: "sa-cea-gate"
   },
   {
@@ -192,10 +192,6 @@ const INITIAL_UNITS = [
   ["custodes-arx-caladius", "adeptus-custodes", "Caladius Grav-tank", "arx-solum", "moving", 1, null, 0],
   ["custodes-shield-captain", "adeptus-custodes", "Shield-Captain", "kharon-prime", "ready", 3, null, 0],
   ["custodes-azur-guard", "adeptus-custodes", "Custodian Guard", "azur-trench", "in_war", 1, null, 0],
-  ["aeldari-cinder-guardians", "aeldari", "Guardian Defenders", "cinder-maw", "ready", 1, null, 0],
-  ["aeldari-rust-dire-avengers", "aeldari", "Dire Avengers", "rustmaw-run", "moving", 1, null, 0],
-  ["aeldari-farseer", "aeldari", "Farseer", "cinder-maw", "ready", 3, null, 0],
-  ["aeldari-azur-guardians", "aeldari", "Guardian Defenders", "azur-trench", "in_war", 1, null, 0],
   ["space-gate-intercessors", "space-marines", "Intercessor Squad", "sa-cea-gate", "ready", 1, null, 0],
   ["space-narthex-rhino", "space-marines", "Rhino", "narthex", "moving", 1, null, 0],
   ["space-captain", "space-marines", "Captain", "sa-cea-gate", "ready", 3, null, 0],
@@ -211,20 +207,15 @@ const INITIAL_UNITS = [
   ["daemon-mordax-horrors", "legiones-daemonicas", "Pink Horrors", "mordax", "ready", 1, null, 0],
   ["daemon-plaguefall-screamers", "legiones-daemonicas", "Screamers", "plaguefall-bastion", "moving", 1, null, 0],
   ["daemon-lord-change", "legiones-daemonicas", "Lord of Change", "mordax", "ready", 3, null, 0],
-  ["daemon-ossuary-horrors", "legiones-daemonicas", "Blue Horrors", "ossuary-reach", "in_war", 1, null, 0],
-  ["agents-argent-breachers", "agentes-imperium", "Imperial Navy Breachers", "argent-rift", "ready", 1, null, 0],
-  ["agents-orison-deathwatch", "agentes-imperium", "Deathwatch Kill Team", "orison", "moving", 1, null, 0],
-  ["agents-inquisitor", "agentes-imperium", "Inquisitor", "argent-rift", "ready", 3, null, 0]
+  ["daemon-ossuary-horrors", "legiones-daemonicas", "Blue Horrors", "ossuary-reach", "in_war", 1, null, 0]
 ];
 
 const MOVEMENT_ORDERS = [
   ["move-custodes-helios", "adeptus-custodes", "custodes-arx-caladius", "arx-solum", "helios-drift"],
-  ["move-aeldari-eclipse", "aeldari", "aeldari-rust-dire-avengers", "rustmaw-run", "eclipse-forge"],
   ["move-space-lyra", "space-marines", "space-narthex-rhino", "narthex", "lyra-terminus"],
   ["move-cult-red-sabbath", "cultos-genestealer", "cult-mirror-ridgerunner", "mirrorcoil", "red-sabbath"],
   ["move-necron-novem", "necrones", "necron-ghost-wraiths", "ghostlight", "novem"],
-  ["move-daemon-drusus", "legiones-daemonicas", "daemon-plaguefall-screamers", "plaguefall-bastion", "drusus"],
-  ["move-agents-vesper", "agentes-imperium", "agents-orison-deathwatch", "orison", "vesper-halo"]
+  ["move-daemon-drusus", "legiones-daemonicas", "daemon-plaguefall-screamers", "plaguefall-bastion", "drusus"]
 ];
 
 function main() {

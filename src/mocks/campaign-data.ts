@@ -26,7 +26,55 @@ const dailyProduction = (resources: Partial<ResourceBundle>): ResourceBundle => 
   ...resources
 });
 
-const factions: CampaignSnapshot["factions"] = generated40kFactions;
+const activePlayableFactionSlugs = [
+  "legiones-daemonicas",
+  "cultos-genestealer",
+  "space-marines",
+  "adeptus-custodes",
+  "necrones"
+] as const;
+
+const activeFactionSlugs = new Set<string>([...activePlayableFactionSlugs, "orcos", "tiranidos"]);
+
+const factionColorOverrides: Record<string, string> = {
+  "legiones-daemonicas": "#ef4444",
+  "cultos-genestealer": "#ec4899",
+  "space-marines": "#3b82f6",
+  "adeptus-custodes": "#d4af37",
+  necrones: "#2dd4bf",
+  orcos: "#84cc16",
+  tiranidos: "#8b5cf6"
+};
+
+function isActiveFactionId(factionId: string | null | undefined) {
+  return typeof factionId === "string" && activeFactionSlugs.has(factionId);
+}
+
+const factions: CampaignSnapshot["factions"] = [
+  ...generated40kFactions
+    .filter((faction) => activePlayableFactionSlugs.includes(faction.id as (typeof activePlayableFactionSlugs)[number]))
+    .map((faction) => ({
+      ...faction,
+      color: factionColorOverrides[faction.id] ?? faction.color,
+      isNarrative: false
+    })),
+  {
+    id: "orcos",
+    slug: "orcos",
+    name: "Orcos",
+    color: factionColorOverrides.orcos,
+    capitalSystemId: null,
+    isNarrative: true
+  },
+  {
+    id: "tiranidos",
+    slug: "tiranidos",
+    name: "Tiranidos",
+    color: factionColorOverrides.tiranidos,
+    capitalSystemId: null,
+    isNarrative: true
+  }
+];
 
 type BaseSystem = Omit<CampaignSnapshot["systems"][number], "systemKind" | "isConquerable" | "allowsSharedOccupation">;
 
@@ -248,11 +296,11 @@ const baseSystems: BaseSystem[] = [
     y: 430,
     size: 1.15,
     starClass: "orange",
-    type: "Capital volcanica",
-    status: "controlled",
-    controllerFactionId: "aeldari",
-    isCapital: true,
-    publicDescription: "Forjas geotermicas y tormentas de ceniza.",
+    type: "Forja volcanica neutral",
+    status: "neutral",
+    controllerFactionId: null,
+    isCapital: false,
+    publicDescription: "Forjas geotermicas sin dueno estable, acechadas por chatarra orka y tormentas de ceniza.",
     production: dailyProduction({ supply: 4, minerals: 7, uridium: 1 })
   },
   {
@@ -263,8 +311,8 @@ const baseSystems: BaseSystem[] = [
     size: 0.86,
     starClass: "red",
     type: "Forja abandonada",
-    status: "controlled",
-    controllerFactionId: "aeldari",
+    status: "neutral",
+    controllerFactionId: null,
     isCapital: false,
     publicDescription: "Estructuras de manufactura latentes convertidas en talleres orkos.",
     production: dailyProduction({ supply: 1, minerals: 6, uridium: 1 })
@@ -277,8 +325,8 @@ const baseSystems: BaseSystem[] = [
     size: 0.82,
     starClass: "orange",
     type: "Corredor chatarrero",
-    status: "controlled",
-    controllerFactionId: "aeldari",
+    status: "neutral",
+    controllerFactionId: null,
     isCapital: false,
     publicDescription: "Ruta de pecios saqueados que apunta hacia el centro.",
     production: dailyProduction({ supply: 3, minerals: 5, uridium: 2 })
@@ -294,7 +342,7 @@ const baseSystems: BaseSystem[] = [
     status: "war",
     blockedUntil: inDays(14),
     isCapital: false,
-    publicDescription: "Corredor azul con pozos de gravedad inestables. Orcos e Imperiales han chocado aqui.",
+    publicDescription: "Corredor azul con pozos de gravedad inestables. Una horda orka amenaza las rutas de avance custodes.",
     production: dailyProduction({ uridium: 5 })
   },
   {
@@ -323,7 +371,7 @@ const baseSystems: BaseSystem[] = [
     status: "war",
     blockedUntil: inDays(14),
     isCapital: false,
-    publicDescription: "Santuario velado donde la Sombra del Emperador combate una revuelta genestelar.",
+    publicDescription: "Santuario velado donde los Space Marines combaten una revuelta genestelar.",
     production: dailyProduction({ supply: 2, honor: 2, uridium: 2 }),
     specialObjects: [{ id: "obj-saint-veil", name: "Reliquia velada", type: "relic", isPublic: true }]
   },
@@ -451,14 +499,9 @@ const gaseousSystemIds = new Set(["nexus-aster", "ashen-road"]);
 
 const systems: CampaignSnapshot["systems"] = baseSystems.map((system) => {
   const isGaseous = gaseousSystemIds.has(system.id);
-  const isAgentsSystem = system.id === "argent-rift" || system.id === "orison" || system.id === "vesper-halo";
 
   return {
     ...system,
-    status: isAgentsSystem ? "controlled" : system.status,
-    controllerFactionId: isAgentsSystem ? "agentes-imperium" : system.controllerFactionId,
-    isCapital: system.id === "argent-rift" ? true : system.isCapital,
-    buildingSlots: system.id === "argent-rift" ? 6 : system.buildingSlots,
     systemKind: isGaseous ? "gaseous" : "standard",
     isConquerable: !isGaseous,
     allowsSharedOccupation: isGaseous
@@ -517,17 +560,6 @@ const resources: CampaignSnapshot["resources"] = [
     gold: 34,
     industrialMaterial: 90,
     uridium: 24,
-    technology: 16,
-    updatedAt: new Date(now).toISOString()
-  },
-  {
-    factionId: "aeldari",
-    supply: 190,
-    minerals: 135,
-    honor: 7,
-    gold: 26,
-    industrialMaterial: 90,
-    uridium: 20,
     technology: 16,
     updatedAt: new Date(now).toISOString()
   },
@@ -1105,7 +1137,7 @@ const characterUnits: CampaignSnapshot["units"] = [
   makeMockCharacterUnit("character-muerte-lord-contagion", "legiones-daemonicas", "Lord Morbus Vane", "unit-muerte-lord-contagion", "mordax", 100)
 ];
 
-const units: CampaignSnapshot["units"] = generated40kInitialUnits;
+const units: CampaignSnapshot["units"] = generated40kInitialUnits.filter((unit) => isActiveFactionId(unit.factionId));
 
 const movements: CampaignSnapshot["movements"] = [
   {
@@ -1118,24 +1150,6 @@ const movements: CampaignSnapshot["movements"] = [
     movementType: "move",
     movementPurpose: "normal",
     pathSystemIds: ["arx-solum", "helios-drift"],
-    uridiumCost: 1,
-    segmentCount: 1,
-    durationSeconds: 120,
-    startedAt: inMinutes(-0.5),
-    departureAt: inMinutes(-0.5),
-    arrivalAt: inMinutes(1.5),
-    status: "moving"
-  },
-  {
-    id: "move-ork-eclipse",
-    unitIds: ["ork-eclipse-boyz"],
-    unitSelections: [{ unitId: "ork-eclipse-boyz", quantity: 3 }],
-    factionId: "aeldari",
-    fromSystemId: "cinder-maw",
-    toSystemId: "eclipse-forge",
-    movementType: "move",
-    movementPurpose: "normal",
-    pathSystemIds: ["cinder-maw", "eclipse-forge"],
     uridiumCost: 1,
     segmentCount: 1,
     durationSeconds: 120,
@@ -1716,7 +1730,7 @@ function getMfmChangeAmount(change: MfmChange) {
   return typeof change?.amount === "number" ? change.amount : null;
 }
 
-const unitTemplates: CampaignSnapshot["unitTemplates"] = generated40kUnitTemplates.map((template) => {
+const unitTemplates: CampaignSnapshot["unitTemplates"] = generated40kUnitTemplates.filter((template) => isActiveFactionId(template.factionId)).map((template) => {
   const requiredTechnologyNodeId = troopTechnologyByUnitSlug.get(template.id);
   const mfmOptions = mfmOptionsByTemplateId.get(template.id);
   const withMfmOptions = {
@@ -1768,11 +1782,11 @@ const conflicts: CampaignSnapshot["conflicts"] = [
   {
     id: "conflict-azur-trench",
     systemId: "azur-trench",
-    attackerFactionId: "aeldari",
+    attackerFactionId: "orcos",
     defenderFactionId: "adeptus-custodes",
     status: "pending",
     blockedUntil: inDays(14),
-    notes: "Aeldari y Adeptus Custodes han colisionado en la ruta central de la Zanja Azul. Pendiente de batalla fisica."
+    notes: "Una horda orka amenaza el corredor de la Zanja Azul frente a las lineas de Kharon. Pendiente de batalla fisica."
   },
   {
     id: "conflict-ossuary-reach",
@@ -1962,8 +1976,6 @@ const systemBuildings: CampaignSnapshot["systemBuildings"] = systems.flatMap(get
 const unitRecoveryQueue: CampaignSnapshot["unitRecoveryQueue"] = [];
 
 const relics: CampaignSnapshot["relics"] = [
-  makeMockRelic("relic-aeldari-krozius-chatarra", "aeldari", "cinder-maw", "Krozius de Chatarra Sagrada", "Trofeo brutal cubierto de sellos arrancados a enemigos imperiales.", "Reliquia narrativa: simboliza autoridad brutal y victorias de abordaje.", "hammer", "rare"),
-  makeMockRelic("relic-aeldari-diente-gorko", "aeldari", "cinder-maw", "Diente de Gorko", "Colmillo enorme engarzado en hierro candente.", "Reliquia narrativa: inspira cargas temerarias y duelos de jefes.", "tooth", "common"),
   makeMockRelic("relic-necrones-orbe-hekatep", "necrones", "thokt-vault", "Orbe de Hekatep", "Esfera de mando que pulsa con codigo dinastico verde.", "Reliquia narrativa: ancla protocolos de reanimacion y autoridad de tumba.", "orb", "rare"),
   makeMockRelic("relic-necrones-cetro-fase", "necrones", "thokt-vault", "Cetro de Fase", "Baston de nobleza con filo que vibra entre realidades.", "Reliquia narrativa: marca derecho de conquista sobre mundos dormidos.", "scepter", "common"),
   makeMockRelic("relic-custodes-aquila-aurica", "adeptus-custodes", "kharon-prime", "Aquila Aurica", "Fragmento dorado de una camara de juramento sellada.", "Reliquia narrativa: representa vigilancia, pureza y autoridad del Trono.", "aquila", "rare"),
@@ -1994,18 +2006,6 @@ const tradeOffers: CampaignSnapshot["tradeOffers"] = [
     status: "open",
     isReserved: true,
     createdAt: inMinutes(-8)
-  },
-  {
-    id: "trade-aeldari-buy-supply",
-    creatorFactionId: "aeldari",
-    offerType: "buy",
-    resourceKey: "supply",
-    resourceAmount: 20,
-    goldAmount: 5,
-    feeGold: 2,
-    status: "open",
-    isReserved: true,
-    createdAt: inMinutes(-4)
   }
 ];
 
@@ -2067,6 +2067,7 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
   tradeOffers,
   conflicts,
   battleReports: [],
+  narrativeAttacks: [],
   missions
 };
 

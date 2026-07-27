@@ -10,6 +10,8 @@ where jobname in (
   'rol40k-resolve-resource-ticks',
   'rol40k-resolve-building-construction',
   'rol40k-resolve-movement-orders',
+  'rol40k-resolve-narrative-attacks',
+  'rol40k-resolve-temporary-missions',
   'rol40k-resolve-recruitment-queue',
   'rol40k-resolve-unit-recovery-queue',
   'rol40k-resolve-technology-research'
@@ -31,6 +33,18 @@ select cron.schedule(
   'rol40k-resolve-movement-orders',
   '* * * * *',
   $$select public.resolve_movement_orders();$$
+);
+
+select cron.schedule(
+  'rol40k-resolve-narrative-attacks',
+  '* * * * *',
+  $$select public.resolve_narrative_attacks();$$
+);
+
+select cron.schedule(
+  'rol40k-resolve-temporary-missions',
+  '* * * * *',
+  $$select public.resolve_temporary_missions();$$
 );
 
 select cron.schedule(

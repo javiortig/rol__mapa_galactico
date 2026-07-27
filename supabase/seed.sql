@@ -17,11 +17,16 @@ end;
 $$;
 
 delete from public.battle_reports;
+delete from public.narrative_attacks;
 delete from public.missions;
+delete from public.battle_unit_commitments;
+delete from public.battle_operation_members;
+delete from public.battle_operations;
 delete from public.system_special_objects;
 delete from public.relics;
 delete from public.unit_recovery_queue;
 delete from public.recruitment_queue;
+delete from public.movement_passage_requests;
 delete from public.movement_order_units;
 delete from public.movement_orders;
 delete from public.trade_offers;
@@ -33,6 +38,8 @@ delete from public.system_resource_capabilities;
 delete from public.system_production;
 delete from public.system_edges;
 delete from public.faction_resources;
+delete from public.unit_template_wargear_options;
+delete from public.unit_template_model_options;
 delete from public.unit_templates;
 delete from public.faction_technologies;
 delete from public.technology_effects;
@@ -43,17 +50,21 @@ update public.factions set capital_system_id = null;
 delete from public.systems;
 delete from public.factions;
 
-insert into public.factions (id, slug, name, color)
+insert into public.factions (id, slug, name, color, capital_system_id, is_narrative)
 values
-  (public.seed_uuid('faction', 'legiones-daemonicas'), 'legiones-daemonicas', 'Legiones Daemonicas', '#ef4444'),
-  (public.seed_uuid('faction', 'agentes-imperium'), 'agentes-imperium', 'Agentes del Imperium', '#f59e0b'),
-  (public.seed_uuid('faction', 'cultos-genestealer'), 'cultos-genestealer', 'Cultos Genestealer', '#c084fc'),
-  (public.seed_uuid('faction', 'aeldari'), 'aeldari', 'Aeldari', '#fb7185'),
-  (public.seed_uuid('faction', 'space-marines'), 'space-marines', 'Space Marines', '#facc15'),
-  (public.seed_uuid('faction', 'adeptus-custodes'), 'adeptus-custodes', 'Adeptus Custodes', '#d4af37'),
-  (public.seed_uuid('faction', 'necrones'), 'necrones', 'Necrones', '#2dd4bf')
+  (public.seed_uuid('faction', 'legiones-daemonicas'), 'legiones-daemonicas', 'Legiones Daemonicas', '#ef4444', null, false),
+  (public.seed_uuid('faction', 'cultos-genestealer'), 'cultos-genestealer', 'Cultos Genestealer', '#ec4899', null, false),
+  (public.seed_uuid('faction', 'space-marines'), 'space-marines', 'Space Marines', '#3b82f6', null, false),
+  (public.seed_uuid('faction', 'adeptus-custodes'), 'adeptus-custodes', 'Adeptus Custodes', '#d4af37', null, false),
+  (public.seed_uuid('faction', 'necrones'), 'necrones', 'Necrones', '#2dd4bf', null, false),
+  (public.seed_uuid('faction', 'orcos'), 'orcos', 'Orcos', '#84cc16', null, true),
+  (public.seed_uuid('faction', 'tiranidos'), 'tiranidos', 'Tiranidos', '#8b5cf6', null, true)
 on conflict (slug) do update
-set name = excluded.name, color = excluded.color;
+set
+  name = excluded.name,
+  color = excluded.color,
+  capital_system_id = excluded.capital_system_id,
+  is_narrative = excluded.is_narrative;
 
 insert into public.systems (
   id, slug, name, x, y, size, star_class, type, status, controller_faction_id, blocked_until, public_description, is_capital
@@ -74,10 +85,10 @@ values
   (public.seed_uuid('system', 'mordax'), 'mordax', 'Mordax', 150, 780, 1.18, 'red', 'Capital corrupta', 'controlled', public.seed_uuid('faction', 'legiones-daemonicas'), null, 'Mundo industrial desgarrado por senales disformes.', true),
   (public.seed_uuid('system', 'drusus'), 'drusus', 'Drusus', 260, 700, 0.86, 'orange', 'Bastion menor', 'controlled', public.seed_uuid('faction', 'legiones-daemonicas'), null, 'Fortaleza tomada tras una campana sangrienta.', false),
   (public.seed_uuid('system', 'plaguefall-bastion'), 'plaguefall-bastion', 'Plaguefall Bastion', 360, 640, 0.82, 'green', 'Bastion infectado', 'controlled', public.seed_uuid('faction', 'legiones-daemonicas'), null, 'Plataformas de asedio cubiertas por esporas y ceniza.', false),
-  (public.seed_uuid('system', 'cinder-maw'), 'cinder-maw', 'Cinder Maw', 80, 430, 1.15, 'orange', 'Capital volcanica', 'controlled', public.seed_uuid('faction', 'aeldari'), null, 'Forjas geotermicas y tormentas de ceniza.', true),
-  (public.seed_uuid('system', 'eclipse-forge'), 'eclipse-forge', 'Eclipse Forge', 185, 485, 0.86, 'red', 'Forja abandonada', 'controlled', public.seed_uuid('faction', 'aeldari'), null, 'Estructuras de manufactura latentes convertidas en talleres orkos.', false),
-  (public.seed_uuid('system', 'rustmaw-run'), 'rustmaw-run', 'Rustmaw Run', 285, 430, 0.82, 'orange', 'Corredor chatarrero', 'controlled', public.seed_uuid('faction', 'aeldari'), null, 'Ruta de pecios saqueados que apunta hacia el centro.', false),
-  (public.seed_uuid('system', 'azur-trench'), 'azur-trench', 'Azur Trench', 405, 390, 0.86, 'blue', 'Nebulosa navegable', 'war', null, now() + interval '14 days', 'Corredor azul con pozos de gravedad inestables. Aeldari y Adeptus Custodes han chocado aqui.', false),
+  (public.seed_uuid('system', 'cinder-maw'), 'cinder-maw', 'Cinder Maw', 80, 430, 1.15, 'orange', 'Forja volcanica neutral', 'neutral', null, null, 'Forjas geotermicas y tormentas de ceniza en el borde occidental del subsector.', false),
+  (public.seed_uuid('system', 'eclipse-forge'), 'eclipse-forge', 'Eclipse Forge', 185, 485, 0.86, 'red', 'Forja abandonada', 'neutral', null, null, 'Estructuras de manufactura latentes, codiciadas por saqueadores y expediciones de recuperacion.', false),
+  (public.seed_uuid('system', 'rustmaw-run'), 'rustmaw-run', 'Rustmaw Run', 285, 430, 0.82, 'orange', 'Corredor chatarrero', 'neutral', null, null, 'Ruta de pecios saqueados que apunta hacia el centro del conflicto.', false),
+  (public.seed_uuid('system', 'azur-trench'), 'azur-trench', 'Azur Trench', 405, 390, 0.86, 'blue', 'Nebulosa navegable', 'war', null, now() + interval '14 days', 'Corredor azul con pozos de gravedad inestables. Una horda orka amenaza las rutas de avance custodes.', false),
   (public.seed_uuid('system', 'ossuary-reach'), 'ossuary-reach', 'Ossuary Reach', 485, 625, 0.84, 'violet', 'Osario orbital', 'war', null, now() + interval '14 days', 'Campos funerarios en orbita baja, disputados por plaga y tecnologia necrona.', false),
   (public.seed_uuid('system', 'saint-veil'), 'saint-veil', 'Saint Veil', 650, 395, 0.86, 'yellow', 'Velo sagrado', 'war', null, now() + interval '14 days', 'Santuario velado donde Space Marines combaten una revuelta genestelar.', false),
   (public.seed_uuid('system', 'orison'), 'orison', 'Orison', 470, 310, 0.84, 'yellow', 'Colonia agricola', 'neutral', null, null, 'Graneros presurizados y bastiones de defensa civil abandonados.', false),
@@ -124,22 +135,11 @@ set
   updated_at = now()
 where slug in ('nexus-aster', 'ashen-road');
 
-update public.factions set capital_system_id = public.seed_uuid('system', 'cinder-maw') where slug = 'aeldari';
 update public.factions set capital_system_id = public.seed_uuid('system', 'thokt-vault') where slug = 'necrones';
 update public.factions set capital_system_id = public.seed_uuid('system', 'kharon-prime') where slug = 'adeptus-custodes';
 update public.factions set capital_system_id = public.seed_uuid('system', 'blackglass') where slug = 'cultos-genestealer';
 update public.factions set capital_system_id = public.seed_uuid('system', 'sa-cea-gate') where slug = 'space-marines';
 update public.factions set capital_system_id = public.seed_uuid('system', 'mordax') where slug = 'legiones-daemonicas';
-update public.factions set capital_system_id = public.seed_uuid('system', 'argent-rift') where slug = 'agentes-imperium';
-
-update public.systems
-set
-  status = 'controlled',
-  controller_faction_id = public.seed_uuid('faction', 'agentes-imperium'),
-  is_capital = slug = 'argent-rift',
-  blocked_until = null,
-  updated_at = now()
-where slug in ('argent-rift', 'orison', 'vesper-halo');
 
 update public.systems
 set building_slots = case when is_capital then 6 else 3 end;
@@ -192,12 +192,10 @@ set from_system_id = excluded.from_system_id, to_system_id = excluded.to_system_
 insert into public.faction_resources (faction_id, supply, minerals, ancestral_stone, honor, gold, industrial_material, uridium, technology)
 values
   (public.seed_uuid('faction', 'adeptus-custodes'), 180, 130, 12, 12, 34, 90, 24, 16),
-  (public.seed_uuid('faction', 'aeldari'), 190, 135, 7, 7, 26, 90, 20, 16),
   (public.seed_uuid('faction', 'necrones'), 115, 155, 18, 18, 32, 90, 22, 16),
   (public.seed_uuid('faction', 'cultos-genestealer'), 185, 115, 13, 13, 30, 90, 22, 16),
   (public.seed_uuid('faction', 'space-marines'), 135, 130, 18, 18, 38, 90, 26, 16),
-  (public.seed_uuid('faction', 'legiones-daemonicas'), 155, 135, 15, 15, 28, 90, 20, 16),
-  (public.seed_uuid('faction', 'agentes-imperium'), 160, 125, 14, 14, 42, 90, 24, 16)
+  (public.seed_uuid('faction', 'legiones-daemonicas'), 155, 135, 15, 15, 28, 90, 20, 16)
 on conflict (faction_id) do update
 set supply = excluded.supply, minerals = excluded.minerals, ancestral_stone = excluded.ancestral_stone, honor = excluded.honor, gold = excluded.gold, industrial_material = excluded.industrial_material, uridium = excluded.uridium, technology = excluded.technology, updated_at = now();
 
@@ -1756,24 +1754,20 @@ insert into public.movement_orders (
 )
 values
   (public.seed_uuid('movement_order', 'move-custodes-helios'), public.seed_uuid('faction', 'adeptus-custodes'), public.seed_uuid('system', 'arx-solum'), public.seed_uuid('system', 'helios-drift'), 1, now() - interval '1 second', now() + interval '3 seconds', 'moving', array[public.seed_uuid('system', 'arx-solum'), public.seed_uuid('system', 'helios-drift')]::uuid[], 1, 3),
-  (public.seed_uuid('movement_order', 'move-aeldari-eclipse'), public.seed_uuid('faction', 'aeldari'), public.seed_uuid('system', 'rustmaw-run'), public.seed_uuid('system', 'eclipse-forge'), 1, now() - interval '1 second', now() + interval '3 seconds', 'moving', array[public.seed_uuid('system', 'rustmaw-run'), public.seed_uuid('system', 'eclipse-forge')]::uuid[], 1, 3),
   (public.seed_uuid('movement_order', 'move-space-lyra'), public.seed_uuid('faction', 'space-marines'), public.seed_uuid('system', 'narthex'), public.seed_uuid('system', 'lyra-terminus'), 1, now() - interval '1 second', now() + interval '3 seconds', 'moving', array[public.seed_uuid('system', 'narthex'), public.seed_uuid('system', 'lyra-terminus')]::uuid[], 1, 3),
   (public.seed_uuid('movement_order', 'move-cult-red-sabbath'), public.seed_uuid('faction', 'cultos-genestealer'), public.seed_uuid('system', 'mirrorcoil'), public.seed_uuid('system', 'red-sabbath'), 1, now() - interval '1 second', now() + interval '3 seconds', 'moving', array[public.seed_uuid('system', 'mirrorcoil'), public.seed_uuid('system', 'red-sabbath')]::uuid[], 1, 3),
   (public.seed_uuid('movement_order', 'move-necron-novem'), public.seed_uuid('faction', 'necrones'), public.seed_uuid('system', 'ghostlight'), public.seed_uuid('system', 'novem'), 1, now() - interval '1 second', now() + interval '3 seconds', 'moving', array[public.seed_uuid('system', 'ghostlight'), public.seed_uuid('system', 'novem')]::uuid[], 1, 3),
-  (public.seed_uuid('movement_order', 'move-daemon-drusus'), public.seed_uuid('faction', 'legiones-daemonicas'), public.seed_uuid('system', 'plaguefall-bastion'), public.seed_uuid('system', 'drusus'), 1, now() - interval '1 second', now() + interval '3 seconds', 'moving', array[public.seed_uuid('system', 'plaguefall-bastion'), public.seed_uuid('system', 'drusus')]::uuid[], 1, 3),
-  (public.seed_uuid('movement_order', 'move-agents-vesper'), public.seed_uuid('faction', 'agentes-imperium'), public.seed_uuid('system', 'orison'), public.seed_uuid('system', 'vesper-halo'), 1, now() - interval '1 second', now() + interval '3 seconds', 'moving', array[public.seed_uuid('system', 'orison'), public.seed_uuid('system', 'vesper-halo')]::uuid[], 1, 3)
+  (public.seed_uuid('movement_order', 'move-daemon-drusus'), public.seed_uuid('faction', 'legiones-daemonicas'), public.seed_uuid('system', 'plaguefall-bastion'), public.seed_uuid('system', 'drusus'), 1, now() - interval '1 second', now() + interval '3 seconds', 'moving', array[public.seed_uuid('system', 'plaguefall-bastion'), public.seed_uuid('system', 'drusus')]::uuid[], 1, 3)
 on conflict (id) do update
 set faction_id = excluded.faction_id, from_system_id = excluded.from_system_id, to_system_id = excluded.to_system_id, uridium_cost = excluded.uridium_cost, started_at = excluded.started_at, arrival_at = excluded.arrival_at, status = excluded.status, path_system_ids = excluded.path_system_ids, segment_count = excluded.segment_count, duration_seconds = excluded.duration_seconds;
 
 insert into public.movement_order_units (movement_order_id, unit_id, quantity_at_departure)
 values
   (public.seed_uuid('movement_order', 'move-custodes-helios'), public.seed_uuid('campaign_unit', 'custodes-arx-caladius'), (select quantity from public.campaign_units where slug = 'custodes-arx-caladius')),
-  (public.seed_uuid('movement_order', 'move-aeldari-eclipse'), public.seed_uuid('campaign_unit', 'aeldari-rust-dire-avengers'), (select quantity from public.campaign_units where slug = 'aeldari-rust-dire-avengers')),
   (public.seed_uuid('movement_order', 'move-space-lyra'), public.seed_uuid('campaign_unit', 'space-narthex-rhino'), (select quantity from public.campaign_units where slug = 'space-narthex-rhino')),
   (public.seed_uuid('movement_order', 'move-cult-red-sabbath'), public.seed_uuid('campaign_unit', 'cult-mirror-ridgerunner'), (select quantity from public.campaign_units where slug = 'cult-mirror-ridgerunner')),
   (public.seed_uuid('movement_order', 'move-necron-novem'), public.seed_uuid('campaign_unit', 'necron-ghost-wraiths'), (select quantity from public.campaign_units where slug = 'necron-ghost-wraiths')),
-  (public.seed_uuid('movement_order', 'move-daemon-drusus'), public.seed_uuid('campaign_unit', 'daemon-plaguefall-screamers'), (select quantity from public.campaign_units where slug = 'daemon-plaguefall-screamers')),
-  (public.seed_uuid('movement_order', 'move-agents-vesper'), public.seed_uuid('campaign_unit', 'agents-orison-deathwatch'), (select quantity from public.campaign_units where slug = 'agents-orison-deathwatch'))
+  (public.seed_uuid('movement_order', 'move-daemon-drusus'), public.seed_uuid('campaign_unit', 'daemon-plaguefall-screamers'), (select quantity from public.campaign_units where slug = 'daemon-plaguefall-screamers'))
 on conflict (movement_order_id, unit_id) do update
 set quantity_at_departure = excluded.quantity_at_departure;
 -- END GENERATED 40K MOVEMENTS
@@ -1781,8 +1775,7 @@ insert into public.trade_offers (
   id, creator_faction_id, offer_type, resource_key, resource_amount, gold_amount, fee_gold, status, is_reserved, created_at, updated_at
 )
 values
-  (public.seed_uuid('trade_offer', 'custodes-sell-minerals'), public.seed_uuid('faction', 'adeptus-custodes'), 'sell', 'minerals', 15, 8, 3, 'open', true, now() - interval '8 minutes', now() - interval '8 minutes'),
-  (public.seed_uuid('trade_offer', 'aeldari-buy-supply'), public.seed_uuid('faction', 'aeldari'), 'buy', 'supply', 20, 5, 2, 'open', true, now() - interval '4 minutes', now() - interval '4 minutes')
+  (public.seed_uuid('trade_offer', 'custodes-sell-minerals'), public.seed_uuid('faction', 'adeptus-custodes'), 'sell', 'minerals', 15, 8, 3, 'open', true, now() - interval '8 minutes', now() - interval '8 minutes')
 on conflict (id) do update
 set
   creator_faction_id = excluded.creator_faction_id,
@@ -1802,13 +1795,9 @@ update public.faction_resources
 set minerals = greatest(0, minerals - 15), gold = greatest(0, gold - 3)
 where faction_id = public.seed_uuid('faction', 'adeptus-custodes');
 
-update public.faction_resources
-set gold = greatest(0, gold - 7)
-where faction_id = public.seed_uuid('faction', 'aeldari');
-
 insert into public.conflicts (id, slug, system_id, attacker_faction_id, defender_faction_id, status, blocked_until, notes)
 values
-  (public.seed_uuid('conflict', 'conflict-azur-trench'), 'conflict-azur-trench', public.seed_uuid('system', 'azur-trench'), public.seed_uuid('faction', 'aeldari'), public.seed_uuid('faction', 'adeptus-custodes'), 'pending', now() + interval '14 days', 'Aeldari y Adeptus Custodes han colisionado en la ruta central de la Zanja Azul. Pendiente de batalla fisica.'),
+  (public.seed_uuid('conflict', 'conflict-azur-trench'), 'conflict-azur-trench', public.seed_uuid('system', 'azur-trench'), public.seed_uuid('faction', 'orcos'), public.seed_uuid('faction', 'adeptus-custodes'), 'pending', now() + interval '14 days', 'Una horda orka amenaza el corredor de la Zanja Azul frente a las lineas de Kharon. Pendiente de batalla fisica.'),
   (public.seed_uuid('conflict', 'conflict-ossuary-reach'), 'conflict-ossuary-reach', public.seed_uuid('system', 'ossuary-reach'), public.seed_uuid('faction', 'legiones-daemonicas'), public.seed_uuid('faction', 'necrones'), 'pending', now() + interval '14 days', 'Las Legiones Daemonicas intentan profanar criptas que los Necrones estan reactivando. Pendiente de batalla fisica.'),
   (public.seed_uuid('conflict', 'conflict-saint-veil'), 'conflict-saint-veil', public.seed_uuid('system', 'saint-veil'), public.seed_uuid('faction', 'space-marines'), public.seed_uuid('faction', 'cultos-genestealer'), 'pending', now() + interval '14 days', 'Los Space Marines han descubierto una insurreccion genestelar en el santuario. Pendiente de batalla fisica.')
 on conflict (slug) do update

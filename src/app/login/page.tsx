@@ -18,16 +18,6 @@ const campaignAccounts = [
     password: "rol40k-local-123"
   },
   {
-    label: "Aeldari",
-    email: "aeldari@rol40k.local",
-    password: "rol40k-local-123"
-  },
-  {
-    label: "Agentes del Imperium",
-    email: "agentes-imperium@rol40k.local",
-    password: "rol40k-local-123"
-  },
-  {
     label: "Cultos Genestealer",
     email: "cultos-genestealer@rol40k.local",
     password: "rol40k-local-123"

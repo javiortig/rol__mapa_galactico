@@ -31,7 +31,17 @@ import { retireCampaignUnit } from "@/features/units/api/unit-api";
 import { formatUnitKeywords, getCharacterLevel, getCharacterRank, isCharacterUnit } from "@/features/units/lib/character-ranks";
 import { formatCountdown } from "@/lib/time";
 import { useMediaQuery, useViewportHeightCssVar } from "@/lib/use-media-query";
-import type { BuildingTemplate, CampaignSnapshot, CampaignUnit, Conflict, Faction, StarSystem, SystemBuilding, UnitMovementSelection } from "@/domain/campaign";
+import type {
+  BuildingTemplate,
+  CampaignSnapshot,
+  CampaignUnit,
+  Conflict,
+  Faction,
+  NarrativeMissionEnemyUnit,
+  StarSystem,
+  SystemBuilding,
+  UnitMovementSelection
+} from "@/domain/campaign";
 
 const GalaxyMap = dynamic(
   () => import("@/features/galaxy-map/components/galaxy-map").then((mod) => mod.GalaxyMap),
@@ -783,6 +793,7 @@ function GalaxyTooltip({
           <div className="font-semibold text-cyan-50">{system.name}</div>
           <div className="mt-0.5 text-xs text-slate-400">{system.type}</div>
           <div className="mt-1 flex flex-wrap gap-1">
+            {system.isTemporaryMission ? <Badge tone="amber">mision</Badge> : null}
             {system.systemKind === "gaseous" ? <Badge tone="cyan">gaseoso</Badge> : null}
             {!system.isConquerable ? <Badge tone="slate">no conquistable</Badge> : null}
           </div>
@@ -852,6 +863,22 @@ function SystemPanel({
   const conflict = snapshot.conflicts.find(
     (item) => item.systemId === system.id && item.status === "pending"
   );
+  const incomingNarrativeAttack = snapshot.narrativeAttacks.find(
+    (item) => item.systemId === system.id && item.status === "incoming"
+  );
+  const mission = system.isTemporaryMission
+    ? snapshot.missions.find((item) => item.systemId === system.id) ?? null
+    : null;
+  const missionThreatFaction = system.missionThreatFactionId
+    ? snapshot.factions.find((item) => item.id === system.missionThreatFactionId) ?? null
+    : null;
+  const conflictAttackerFaction = conflict
+    ? snapshot.factions.find((item) => item.id === conflict.attackerFactionId) ?? null
+    : null;
+  const conflictDefenderFaction = conflict?.defenderFactionId
+    ? snapshot.factions.find((item) => item.id === conflict.defenderFactionId) ?? null
+    : null;
+  const isNarrativeConflict = Boolean(conflictAttackerFaction?.isNarrative);
   const tone = system.status === "war" ? "rose" : system.status === "controlled" ? "cyan" : "slate";
   const isSharedSystem = !system.isConquerable || system.allowsSharedOccupation;
   const canUseBuildings = snapshot.currentUser.role === "admin" || system.controllerFactionId === snapshot.currentUser.factionId;
@@ -865,6 +892,7 @@ function SystemPanel({
     system.controllerFactionId === snapshot.currentUser.factionId &&
     system.status === "controlled" &&
     system.systemKind !== "gaseous" &&
+    !system.isTemporaryMission &&
     !isSystemBlockedForMovement(system) &&
     buildingSlotsUsed < buildingSlots &&
     (snapshot.currentUser.role === "admin" || snapshot.currentUser.role === "player");
@@ -907,6 +935,10 @@ function SystemPanel({
       )
     }))
     .filter((group) => group.units.length > 0);
+  const canRevealMissionEnemies =
+    Boolean(system.isTemporaryMission) &&
+    (Boolean(system.missionEnemyUnitsVisible) || snapshot.currentUser.role === "admin");
+  const missionEnemyUnits = canRevealMissionEnemies ? system.missionEnemyUnits ?? [] : [];
   const retireUnitMutation = useMutation({
     mutationFn: retireCampaignUnit,
     onSuccess: async () => {
@@ -931,6 +963,7 @@ function SystemPanel({
               <div className="mb-2 flex items-center gap-2">
                 <Badge tone={tone}>{system.status}</Badge>
                 {system.isCapital ? <Badge tone="amber">capital</Badge> : null}
+                {system.isTemporaryMission ? <Badge tone="amber">mision temporal</Badge> : null}
                 {system.systemKind === "gaseous" ? <Badge tone="cyan">gaseoso</Badge> : null}
                 {!system.isConquerable ? <Badge tone="slate">no conquistable</Badge> : null}
               </div>
@@ -956,6 +989,40 @@ function SystemPanel({
         </div>
 
         <div className="mobile-scroll flex-1 space-y-4 p-4 md:space-y-5 md:p-5">
+          {system.isTemporaryMission ? (
+            <section>
+              <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-amber-200/70">Objetivo narrativo</h2>
+              <div className="rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-50">
+                <div className="mb-2 flex flex-wrap items-center gap-2">
+                  <Badge tone="amber">Sistema temporal</Badge>
+                  {missionThreatFaction ? <Badge tone="rose">{missionThreatFaction.name}</Badge> : null}
+                </div>
+                <h3 className="font-semibold text-cyan-50">{mission?.title ?? system.name}</h3>
+                <p className="mt-2 leading-6 text-slate-200">
+                  {mission?.narrativeDescription ?? system.publicDescription}
+                </p>
+                {mission ? (
+                  <div className="mt-3 grid gap-2 text-xs text-slate-300">
+                    <div>
+                      <span className="font-semibold text-amber-100">Objetivo:</span> {mission.objectives}
+                    </div>
+                    <div>
+                      <span className="font-semibold text-amber-100">Regla:</span> {mission.specialRules}
+                    </div>
+                    <div>
+                      <span className="font-semibold text-amber-100">Victoria:</span> {mission.victoryConditions}
+                    </div>
+                    <div>
+                      <span className="font-semibold text-amber-100">Duracion:</span>{" "}
+                      {system.missionExpiresAt ? `expira en ${formatCountdown(system.missionExpiresAt)}` : "sin caducidad visible"}
+                      {system.missionExpiresAfterBattle ? " o al resolver batalla." : "."}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </section>
+          ) : null}
+
           <section>
             <div className="mb-2 flex items-center justify-between gap-3">
               <h2 className="text-xs uppercase tracking-[0.18em] text-cyan-200/70">Edificios</h2>
@@ -1084,18 +1151,20 @@ function SystemPanel({
           <section>
             <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Tropas visibles</h2>
             <div className="space-y-3">
-              {visibleUnits.length > 0 ? (
+              {visibleUnits.length > 0 || missionEnemyUnits.length > 0 || system.isTemporaryMission ? (
                 <>
-                  <UnitGroup
-                    canRetire
-                    faction={snapshot.factions.find((item) => item.id === snapshot.currentUser.factionId) ?? null}
-                    onRetireUnit={handleRetireUnit}
-                    relics={snapshot.relics}
-                    retirePendingUnitId={retireUnitMutation.isPending ? retireUnitMutation.variables : null}
-                    title="Aliadas"
-                    units={alliedUnits}
-                  />
-                  {enemyUnitsByFaction.length > 0 ? (
+                  {visibleUnits.length > 0 ? (
+                    <UnitGroup
+                      canRetire
+                      faction={snapshot.factions.find((item) => item.id === snapshot.currentUser.factionId) ?? null}
+                      onRetireUnit={handleRetireUnit}
+                      relics={snapshot.relics}
+                      retirePendingUnitId={retireUnitMutation.isPending ? retireUnitMutation.variables : null}
+                      title="Aliadas"
+                      units={alliedUnits}
+                    />
+                  ) : null}
+                  {enemyUnitsByFaction.length > 0 || missionEnemyUnits.length > 0 || system.isTemporaryMission ? (
                     <div className="space-y-2">
                       <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-rose-200/75">Enemigas</div>
                       {enemyUnitsByFaction.map((group) => (
@@ -1108,6 +1177,17 @@ function SystemPanel({
                           units={group.units}
                         />
                       ))}
+                      {missionEnemyUnits.length > 0 ? (
+                        <MissionEnemyUnitGroup
+                          faction={missionThreatFaction ?? faction ?? null}
+                          title={missionThreatFaction?.name ?? "Amenaza narrativa"}
+                          units={missionEnemyUnits}
+                        />
+                      ) : system.isTemporaryMission ? (
+                        <div className="rounded-md border border-rose-300/15 bg-rose-400/8 p-3 text-sm text-rose-100/80">
+                          Presencia enemiga detectada. Composicion no revelada.
+                        </div>
+                      ) : null}
                     </div>
                   ) : null}
                 </>
@@ -1132,7 +1212,7 @@ function SystemPanel({
                       <div>
                         <div className="text-sm font-medium text-slate-100">{group[0].name}</div>
                         <div className="mt-1 text-xs text-slate-400">
-                          {group.length} grupos compatibles · {group.reduce((total, unit) => total + unit.quantity, 0)} miniaturas
+                          {group.length} grupos compatibles - {group.reduce((total, unit) => total + unit.quantity, 0)} miniaturas
                         </div>
                       </div>
                       <Button
@@ -1151,30 +1231,62 @@ function SystemPanel({
             </section>
           ) : null}
 
+          {incomingNarrativeAttack ? (
+            <section>
+              <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-amber-200/70">Amenaza entrante</h2>
+              <div className="rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-50">
+                <div className="mb-2 flex flex-wrap items-center gap-2">
+                  <Badge tone="amber">Llega en {formatCountdown(incomingNarrativeAttack.arrivalAt)}</Badge>
+                  {snapshot.factions.find((item) => item.id === incomingNarrativeAttack.narrativeFactionId) ? (
+                    <Badge tone="rose">
+                      {snapshot.factions.find((item) => item.id === incomingNarrativeAttack.narrativeFactionId)?.name}
+                    </Badge>
+                  ) : null}
+                </div>
+                <p>{incomingNarrativeAttack.description}</p>
+              </div>
+            </section>
+          ) : null}
+
           {conflict ? (
             <section>
-              <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-rose-200/70">Reporte pendiente</h2>
+              <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-rose-200/70">
+                {isNarrativeConflict ? "Amenaza narrativa" : "Reporte pendiente"}
+              </h2>
               <div className="rounded-md border border-rose-300/25 bg-rose-400/10 p-3 text-sm text-rose-50">
-                Este sistema espera resultado de batalla física.
+                <div className="mb-2 flex flex-wrap items-center gap-2">
+                  {conflictAttackerFaction ? <Badge tone="rose">{conflictAttackerFaction.name}</Badge> : null}
+                  {conflictDefenderFaction ? <Badge tone="slate">vs {conflictDefenderFaction.name}</Badge> : null}
+                  {isNarrativeConflict ? <Badge tone="amber">evento admin</Badge> : null}
+                </div>
+                <p>
+                  {isNarrativeConflict
+                    ? conflict.notes || "Una amenaza narrativa controlada por el admin acecha el sistema."
+                    : "Este sistema espera resultado de batalla fisica."}
+                </p>
               </div>
             </section>
           ) : null}
         </div>
 
-        <div className="grid shrink-0 grid-cols-4 gap-2 border-t border-cyan-200/15 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 md:p-5">
-          <Button className="min-w-0 text-xs sm:text-sm">Ver mision</Button>
+        <div className="grid shrink-0 grid-cols-2 gap-2 border-t border-cyan-200/15 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 sm:grid-cols-4 md:p-5">
+          <Button className="min-w-0 px-2 text-xs sm:text-sm">Ver mision</Button>
           {system.systemKind === "gaseous" ? (
-            <Button className="min-w-0 text-xs sm:text-sm" disabled variant="ghost">
+            <Button className="min-w-0 px-2 text-xs sm:text-sm" disabled variant="ghost">
               No edificable
             </Button>
           ) : (
-            <Button className="min-w-0 text-xs sm:text-sm" disabled={!canBuild} onClick={() => onOpenConstruction(system)}>
+            <Button
+              className="min-w-0 px-2 text-xs sm:text-sm"
+              disabled={!canBuild}
+              onClick={() => onOpenConstruction(system)}
+            >
               <Hammer size={16} />
               Construir
             </Button>
           )}
           <Button
-            className="min-w-0 text-xs sm:text-sm"
+            className="min-w-0 px-2 text-xs sm:text-sm"
             disabled={system.status === "war" ? !canReport : !canMove}
             onClick={() => {
               if (system.status === "war" && canReport) {
@@ -1198,7 +1310,7 @@ function SystemPanel({
             )}
           </Button>
           <Button
-            className="min-w-0 text-xs sm:text-sm"
+            className="min-w-0 px-2 text-xs sm:text-sm"
             disabled={!canAttack}
             onClick={() => {
               if (canAttack) {
@@ -1297,6 +1409,36 @@ function UnitGroup({
             Sin unidades visibles.
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function MissionEnemyUnitGroup({
+  title,
+  faction,
+  units
+}: {
+  title: string;
+  faction: Faction | null;
+  units: NarrativeMissionEnemyUnit[];
+}) {
+  return (
+    <div className="rounded-md border border-rose-300/14 bg-rose-400/8 p-2.5">
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <div className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-rose-200/80">
+          {faction ? <span className="size-2 rounded-full" style={{ backgroundColor: faction.color }} /> : null}
+          {title}
+        </div>
+        <Badge tone="rose">{units.length}</Badge>
+      </div>
+      <div className="space-y-2">
+        {units.map((unit) => (
+          <div className="rounded-md border border-rose-300/15 bg-slate-950/35 p-3" key={unit.id}>
+            <div className="text-sm font-medium text-slate-100">{unit.name}</div>
+            {unit.details ? <div className="mt-1 text-xs leading-5 text-slate-400">{unit.details}</div> : null}
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -1403,7 +1545,7 @@ function MovementPlanner({
 
   if (isMobile && mobileStage === "select") {
     return (
-      <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 flex max-h-[calc(var(--app-height)-2rem)] flex-col overflow-hidden lg:hidden">
+      <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] top-[calc(4.5rem+env(safe-area-inset-top))] z-40 flex flex-col overflow-hidden lg:hidden">
         <div className="shrink-0 border-b border-cyan-200/15 p-4">
           <div className="mb-3 flex items-start justify-between gap-3">
             <div>
@@ -1465,8 +1607,8 @@ function MovementPlanner({
 
   if (isMobile && mobileStage === "route") {
     return (
-      <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 overflow-hidden lg:hidden">
-        <div className="border-b border-cyan-200/15 p-3">
+      <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 flex max-h-[calc(var(--app-height)-5rem)] flex-col overflow-hidden lg:hidden">
+        <div className="shrink-0 border-b border-cyan-200/15 p-3">
           <div className="mb-2 flex items-center justify-between gap-3">
             <div className="min-w-0">
               <div className="text-[10px] uppercase tracking-[0.2em] text-cyan-200/70">Ruta de movimiento</div>
@@ -1498,7 +1640,7 @@ function MovementPlanner({
           </div>
         </div>
 
-        <div className="grid grid-cols-4 gap-2 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3">
+        <div className="grid shrink-0 grid-cols-2 gap-2 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 sm:grid-cols-4">
           <Button className="min-w-0 px-1 text-[11px]" disabled={activePathSystemIds.length <= 1} onClick={onUndoPath} size="sm" variant="ghost">
             <Undo2 size={15} />
             Deshacer
@@ -1515,35 +1657,37 @@ function MovementPlanner({
           </Button>
         </div>
 
-        {!rpcReady ? (
-          <div className="border-t border-amber-300/20 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
-            Supabase no esta configurado.
-          </div>
-        ) : null}
-        {mutation.error ? (
-          <div className="border-t border-rose-300/20 bg-rose-400/10 px-3 py-2 text-xs text-rose-100">
-            {mutation.error.message}
-          </div>
-        ) : null}
-        {destinationIsBlocked ? (
-          <div className="border-t border-amber-300/20 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
-            El destino esta bloqueado por una batalla. Puedes atravesarlo, pero no terminar el movimiento alli.
-          </div>
-        ) : destinationIsEnemy ? (
-          <div className="border-t border-rose-300/20 bg-rose-400/10 px-3 py-2 text-xs text-rose-100">
-            El destino es enemigo. Usa Atacar.
-          </div>
-        ) : crossedEnemySystems.length > 0 ? (
-          <div className="border-t border-amber-300/20 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
-            Requiere permiso de paso de {crossedEnemyFactionNames.join(", ")}.
-          </div>
-        ) : null}
+        <div className="mobile-scroll max-h-32 shrink-0">
+          {!rpcReady ? (
+            <div className="border-t border-amber-300/20 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
+              Supabase no esta configurado.
+            </div>
+          ) : null}
+          {mutation.error ? (
+            <div className="border-t border-rose-300/20 bg-rose-400/10 px-3 py-2 text-xs text-rose-100">
+              {mutation.error.message}
+            </div>
+          ) : null}
+          {destinationIsBlocked ? (
+            <div className="border-t border-amber-300/20 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
+              El destino esta bloqueado por una batalla. Puedes atravesarlo, pero no terminar el movimiento alli.
+            </div>
+          ) : destinationIsEnemy ? (
+            <div className="border-t border-rose-300/20 bg-rose-400/10 px-3 py-2 text-xs text-rose-100">
+              El destino es enemigo. Usa Atacar.
+            </div>
+          ) : crossedEnemySystems.length > 0 ? (
+            <div className="border-t border-amber-300/20 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
+              Requiere permiso de paso de {crossedEnemyFactionNames.join(", ")}.
+            </div>
+          ) : null}
+        </div>
       </Panel>
     );
   }
 
   return (
-    <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 mx-auto grid max-h-[calc(var(--app-height)-2rem)] max-w-6xl grid-cols-1 overflow-hidden md:inset-x-4 md:bottom-4 md:max-h-[58vh] md:grid-cols-[1fr_340px] lg:max-h-[42vh]">
+    <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 mx-auto grid max-h-[calc(var(--app-height)-2rem)] max-w-6xl grid-cols-1 overflow-hidden md:inset-x-4 md:bottom-[calc(1rem+env(safe-area-inset-bottom))] md:max-h-[72vh] md:grid-cols-[minmax(0,1fr)_340px] lg:max-h-[64vh]">
       <div className="mobile-scroll p-4 md:min-h-0 md:overflow-y-auto">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -1573,7 +1717,7 @@ function MovementPlanner({
           </div>
         </div>
 
-        <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
           {availableUnits.map((unit) => (
             <UnitSelectionCard
               key={unit.id}
@@ -1585,7 +1729,7 @@ function MovementPlanner({
         </div>
       </div>
 
-      <aside className="border-t border-cyan-200/15 bg-slate-950/35 p-4 md:border-l md:border-t-0">
+      <aside className="mobile-scroll border-t border-cyan-200/15 bg-slate-950/35 p-4 md:min-h-0 md:border-l md:border-t-0">
         <div className="mb-4 flex items-center justify-between gap-3">
           <div className="text-sm font-semibold text-cyan-50">Ruta trazada</div>
           <div className="flex items-center gap-2">
@@ -1625,7 +1769,7 @@ function MovementPlanner({
 
         <div className="mb-4 rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-xs text-slate-300">
           {selectedSelections.length > 0
-            ? `${selectedSelections.length} unidades seleccionadas · ${selectedMiniatures} miniaturas en total`
+            ? `${selectedSelections.length} unidades seleccionadas - ${selectedMiniatures} miniaturas en total`
             : "Sin unidades seleccionadas"}
         </div>
 
@@ -1650,7 +1794,7 @@ function MovementPlanner({
           </p>
         ) : null}
 
-        <Button className="w-full" disabled={!canConfirm || mutation.isPending} onClick={() => mutation.mutate()}>
+        <Button className="sticky bottom-0 w-full" disabled={!canConfirm || mutation.isPending} onClick={() => mutation.mutate()}>
           <Check size={16} />
           {mutation.isPending ? "Enviando..." : "Confirmar movimiento"}
         </Button>
@@ -1698,6 +1842,7 @@ function AttackPlanner({
           system.status === "controlled" &&
           system.controllerFactionId &&
           system.controllerFactionId !== snapshot.currentUser.factionId &&
+          !system.isCapital &&
           !isSystemBlockedForMovement(system) &&
           Boolean(getEdgeBetween(snapshot.edges, originSystem.id, system.id))
       ),
@@ -1711,6 +1856,7 @@ function AttackPlanner({
   const targetFaction = snapshot.factions.find((faction) => faction.id === targetSystem?.controllerFactionId) ?? null;
   const supportFactions = snapshot.factions.filter(
     (faction) =>
+      !faction.isNarrative &&
       faction.id !== snapshot.currentUser.factionId &&
       faction.id !== targetSystem?.controllerFactionId
   );
@@ -1752,8 +1898,8 @@ function AttackPlanner({
   });
 
   return (
-    <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 mx-auto grid max-h-[calc(var(--app-height)-2rem)] max-w-6xl grid-cols-1 overflow-hidden md:inset-x-4 md:bottom-4 md:max-h-[58vh] md:grid-cols-[1fr_340px] lg:max-h-[42vh]">
-      <div className="mobile-scroll p-4 md:min-h-0 md:overflow-y-auto">
+    <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] top-[calc(4.5rem+env(safe-area-inset-top))] z-40 mx-auto flex max-w-6xl flex-col overflow-hidden md:inset-x-4 md:bottom-[calc(1rem+env(safe-area-inset-bottom))] md:top-auto md:grid md:max-h-[72vh] md:grid-cols-[minmax(0,1fr)_340px] lg:max-h-[64vh]">
+      <div className="mobile-scroll min-h-0 flex-1 p-4 md:overflow-y-auto">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="text-xs uppercase tracking-[0.22em] text-rose-200/70">Ataque de unidades</div>
@@ -1784,7 +1930,7 @@ function AttackPlanner({
             </Button>
           </div>
           <div className="text-xs uppercase tracking-[0.18em] text-cyan-200/70">Objetivo adyacente</div>
-          <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
             {targetSystems.map((system) => {
               const faction = snapshot.factions.find((item) => item.id === system.controllerFactionId);
 
@@ -1799,11 +1945,15 @@ function AttackPlanner({
                   onClick={() => onSetTargetSystem(system.id)}
                   type="button"
                 >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-medium text-slate-100">{system.name}</span>
-                    <Badge tone={targetSystemId === system.id ? "rose" : "slate"}>Enemigo</Badge>
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="min-w-0 break-words font-medium text-slate-100">{system.name}</span>
+                    <Badge className="shrink-0 whitespace-nowrap" tone={system.isTemporaryMission || targetSystemId === system.id ? "rose" : "slate"}>
+                      {system.isTemporaryMission ? "Mision" : "Enemigo"}
+                    </Badge>
                   </div>
-                  <div className="mt-1 text-xs text-slate-400">{faction?.name ?? "Faccion rival"}</div>
+                  <div className="mt-1 break-words text-xs text-slate-400">
+                    {system.isTemporaryMission ? "Objetivo narrativo" : faction?.name ?? "Faccion rival"}
+                  </div>
                 </button>
               );
             })}
@@ -1815,7 +1965,7 @@ function AttackPlanner({
           </div>
         </div>
 
-        <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
           {availableUnits.map((unit) => (
             <UnitSelectionCard
               key={unit.id}
@@ -1831,7 +1981,7 @@ function AttackPlanner({
             <div className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">
               Invitar al punto de reunion
             </div>
-            <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
               {supportFactions.map((faction) => {
                 const selected = invitedFactionIds.includes(faction.id);
 
@@ -1852,7 +2002,7 @@ function AttackPlanner({
                     }
                     type="button"
                   >
-                    <div className="font-medium text-slate-100">{faction.name}</div>
+                    <div className="break-words font-medium text-slate-100">{faction.name}</div>
                     <div className="mt-1 text-xs text-slate-400">
                       {selected ? "Recibira invitacion" : "Sin invitar"}
                     </div>
@@ -1864,7 +2014,7 @@ function AttackPlanner({
         ) : null}
       </div>
 
-      <aside className="border-t border-cyan-200/15 bg-slate-950/35 p-4 md:border-l md:border-t-0">
+      <aside className="mobile-scroll max-h-[48%] shrink-0 border-t border-cyan-200/15 bg-slate-950/35 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:max-h-none md:min-h-0 md:border-l md:border-t-0 md:pb-4">
         <div className="mb-4 text-sm font-semibold text-cyan-50">
           {attackMode === "coalition" ? "Preparar coalicion" : "Confirmar ataque"}
         </div>
@@ -1928,7 +2078,7 @@ function AttackPlanner({
         {ownLimitReason ? <p className="mb-3 text-sm text-rose-200">{ownLimitReason}</p> : null}
         {mutation.error ? <p className="mb-3 text-sm text-rose-200">{mutation.error.message}</p> : null}
 
-        <Button className="w-full" disabled={!canConfirm || mutation.isPending} onClick={() => mutation.mutate()} variant="danger">
+        <Button className="sticky bottom-0 w-full" disabled={!canConfirm || mutation.isPending} onClick={() => mutation.mutate()} variant="danger">
           <Swords size={16} />
           {mutation.isPending
             ? attackMode === "coalition"
@@ -1963,8 +2113,8 @@ function UnitSelectionCard({
       }`}
     >
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <div className="font-medium text-slate-100">{unit.name}</div>
+        <div className="min-w-0">
+          <div className="break-words font-medium text-slate-100">{unit.name}</div>
           <div className="mt-1 text-xs text-slate-400">
             {formatUnitStrength(unit)} - {formatUnitKeywords(unit)}
           </div>
@@ -1974,7 +2124,9 @@ function UnitSelectionCard({
             </div>
           ) : null}
         </div>
-        <Badge tone={selected ? "cyan" : "slate"}>{selected ? "Seleccionada" : "No seleccionada"}</Badge>
+        <Badge className="shrink-0 whitespace-nowrap" tone={selected ? "cyan" : "slate"}>
+          {selected ? "Lista" : "Libre"}
+        </Badge>
       </div>
 
       <div className="mt-3 rounded-md border border-cyan-200/10 bg-slate-950/40 px-3 py-2 text-xs text-slate-300">
@@ -2086,7 +2238,7 @@ function BattleReportModal({
                       <div>
                         <div className="font-medium text-slate-100">{unit.name}</div>
                         <div className="mt-1 text-xs text-slate-400">
-                          {faction?.name ?? "Faccion"} · {unit.quantity}/{unit.startingQuantity} miniaturas actuales
+                          {faction?.name ?? "Faccion"} - {unit.quantity}/{unit.startingQuantity} miniaturas actuales
                         </div>
                       </div>
                       <Badge tone={value === 0 ? "rose" : value < unit.quantity ? "amber" : "cyan"}>
@@ -2240,7 +2392,7 @@ function BattleReportModal({
 }
 
 function formatUnitStrength(unit: CampaignUnit) {
-  return `${unit.quantity}/${unit.startingQuantity} miniaturas · ${unit.woundsTaken} heridas · ${getCurrentUnitPoints(unit)} pts`;
+  return `${unit.quantity}/${unit.startingQuantity} miniaturas - ${unit.woundsTaken} heridas - ${getCurrentUnitPoints(unit)} pts`;
 }
 
 function getUnitWoundsPerModel(snapshot: CampaignSnapshot, unit: CampaignUnit) {

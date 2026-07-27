@@ -130,10 +130,10 @@ export function BattleOperationsModal({
   const testTiming = snapshot.movementEdgeDurationSeconds < 86400;
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/80 p-2 backdrop-blur-sm md:p-4">
-      <Panel className="flex max-h-[calc(var(--app-height)-1rem)] w-full max-w-6xl flex-col overflow-hidden">
-        <header className="flex items-center justify-between gap-3 border-b border-cyan-200/15 p-4">
-          <div>
+    <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/80 p-0 backdrop-blur-sm md:p-4">
+      <Panel className="flex h-[var(--app-height)] w-full max-w-6xl flex-col overflow-hidden rounded-none md:h-auto md:max-h-[calc(var(--app-height)-2rem)] md:rounded-lg">
+        <header className="flex shrink-0 items-center justify-between gap-3 border-b border-cyan-200/15 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] md:p-4">
+          <div className="min-w-0">
             <div className="text-xs uppercase text-cyan-200/70">Mando conjunto</div>
             <h2 className="mt-1 text-lg font-semibold text-cyan-50">Operaciones de batalla</h2>
           </div>
@@ -142,7 +142,7 @@ export function BattleOperationsModal({
           </Button>
         </header>
 
-        <div className="mobile-scroll min-h-0 flex-1 overflow-y-auto p-4">
+        <div className="mobile-scroll min-h-0 flex-1 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <div className="mb-4 grid gap-2 md:grid-cols-3">
             <TimingItem label="Movimiento por salto" value={formatTravelDuration(snapshot.movementEdgeDurationSeconds)} />
             <TimingItem label="Llegada del ataque" value={formatTravelDuration(snapshot.attackDurationSeconds)} />
@@ -246,7 +246,7 @@ function OperationCard({
   const origin = snapshot.systems.find((system) => system.id === operation.originSystemId);
   const target = snapshot.systems.find((system) => system.id === operation.targetSystemId);
   const eligibleFactions = snapshot.factions.filter(
-    (faction) => !members.some((member) => member.factionId === faction.id)
+    (faction) => !faction.isNarrative && !members.some((member) => member.factionId === faction.id)
   );
   const canInvite =
     currentMember?.role === "commander" &&
@@ -270,9 +270,9 @@ function OperationCard({
   return (
     <article className="rounded-md border border-cyan-200/15 bg-slate-950/40 p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
+        <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="font-semibold text-cyan-50">
+            <h3 className="min-w-0 break-words font-semibold text-cyan-50">
               {origin?.name ?? "Origen"} {" -> "} {target?.name ?? "Objetivo"}
             </h3>
             <Badge tone={operation.status === "in_battle" ? "rose" : operation.status === "assembling" ? "amber" : "cyan"}>
@@ -286,7 +286,7 @@ function OperationCard({
               : "La salida se decide cuando las tropas aliadas esten reunidas."}
           </p>
         </div>
-        <div className="text-right text-xs text-slate-400">
+        <div className="shrink-0 text-left text-xs text-slate-400 sm:text-right">
           <div>{commitments.length} unidades comprometidas</div>
           <div>{commitments.reduce((total, item) => total + item.pointsAtCommitment, 0)} pts actuales</div>
         </div>
@@ -304,7 +304,7 @@ function OperationCard({
                 .filter((member) => member.side === side)
                 .map((member) => (
                   <Badge key={member.id} tone={member.invitationStatus === "accepted" ? "cyan" : "amber"}>
-                    {snapshot.factions.find((faction) => faction.id === member.factionId)?.name ?? "Faccion"} ·{" "}
+                    {snapshot.factions.find((faction) => faction.id === member.factionId)?.name ?? "Faccion"} -{" "}
                     {invitationLabel(member)}
                   </Badge>
                 ))}
@@ -313,16 +313,16 @@ function OperationCard({
         ))}
       </div>
 
-      <div className="mt-3 grid gap-2 text-xs md:grid-cols-2 xl:grid-cols-3">
+      <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2 xl:grid-cols-3">
         {commitments.map((commitment) => {
           const unit = snapshot.units.find((item) => item.id === commitment.unitId);
           const faction = snapshot.factions.find((item) => item.id === commitment.factionId);
 
           return (
             <div className="rounded-md border border-slate-400/15 bg-slate-900/35 p-2.5" key={commitment.id}>
-              <div className="font-medium text-slate-100">{unit?.name ?? "Unidad comprometida"}</div>
+              <div className="break-words font-medium text-slate-100">{unit?.name ?? "Unidad comprometida"}</div>
               <div className="mt-1 text-slate-400">
-                {faction?.name ?? "Faccion"} · {commitment.pointsAtCommitment} pts · {commitmentStatusLabel(commitment.status)}
+                {faction?.name ?? "Faccion"} - {commitment.pointsAtCommitment} pts - {commitmentStatusLabel(commitment.status)}
               </div>
             </div>
           );
@@ -330,7 +330,7 @@ function OperationCard({
       </div>
 
       {currentMember?.role === "supporter" && currentMember.invitationStatus === "invited" ? (
-        <div className="mt-4 grid grid-cols-2 gap-2">
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
           <Button disabled={actionPending} onClick={onPrepareSupport} size="sm">
             <Check size={15} />
             Aceptar y preparar
@@ -385,7 +385,7 @@ function OperationCard({
       ) : null}
 
       {operation.status === "assembling" && operation.leaderFactionId === currentFactionId ? (
-        <div className="mt-4 grid grid-cols-2 gap-2">
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
           <Button
             disabled={actionPending || waitingUnits > 0}
             onClick={() => onAction({ kind: "launch", operationId: operation.id })}
@@ -481,7 +481,7 @@ function SupportComposer({
           </label>
 
           <div className="mt-4 rounded-md border border-cyan-200/15 bg-slate-950/40 p-3 text-xs text-slate-300">
-            <div className="font-medium text-cyan-50">{routeNames}</div>
+            <div className="break-words font-medium text-cyan-50">{routeNames}</div>
             <div className="mt-2 flex items-center gap-2">
               <Clock3 size={14} />
               {route ? formatTravelDuration(route.durationSeconds) : "Ruta no disponible"}
@@ -496,7 +496,7 @@ function SupportComposer({
         </aside>
 
         <div>
-          <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
             {availableUnits.map((unit) => {
               const selected = selectedUnitIds.includes(unit.id);
 
@@ -511,9 +511,9 @@ function SupportComposer({
                   onClick={() => onToggleUnit(unit.id)}
                   type="button"
                 >
-                  <div className="font-medium text-slate-100">{unit.name}</div>
+                  <div className="break-words font-medium text-slate-100">{unit.name}</div>
                   <div className="mt-1 text-xs text-slate-400">
-                    {unit.quantity} miniaturas · {unit.points} pts de ficha
+                    {unit.quantity} miniaturas - {unit.points} pts de ficha
                   </div>
                 </button>
               );

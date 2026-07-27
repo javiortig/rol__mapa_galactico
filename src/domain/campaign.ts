@@ -20,6 +20,10 @@ export type BattleOperationStatus = "assembling" | "moving" | "in_battle" | "res
 
 export type BattleSide = "attacker" | "defender";
 
+export type NarrativeAttackStatus = "incoming" | "arrived" | "cancelled";
+
+export type TemporaryMissionStatus = "active" | "expired" | "completed" | "removed";
+
 export type BattleInvitationStatus = "invited" | "accepted" | "rejected" | "closed";
 
 export type BattleCommitmentStatus =
@@ -86,6 +90,7 @@ export interface Faction {
   color: string;
   emblemUrl?: string | null;
   capitalSystemId?: string | null;
+  isNarrative?: boolean;
 }
 
 export interface StarSystem {
@@ -107,8 +112,22 @@ export interface StarSystem {
   missionId?: string | null;
   isCapital: boolean;
   buildingSlots?: number;
+  isTemporaryMission?: boolean;
+  missionThreatFactionId?: string | null;
+  missionEnemyUnitsVisible?: boolean;
+  missionEnemyUnits?: NarrativeMissionEnemyUnit[];
+  missionExpiresAt?: string | null;
+  missionExpiresAfterBattle?: boolean;
+  temporaryMissionStatus?: TemporaryMissionStatus;
+  temporaryMissionClosedAt?: string | null;
   production: ResourceBundle;
   specialObjects?: SystemSpecialObject[];
+}
+
+export interface NarrativeMissionEnemyUnit {
+  id: string;
+  name: string;
+  details?: string | null;
 }
 
 export interface SystemSpecialObject {
@@ -511,6 +530,17 @@ export interface BattleReport {
   narrativeNotes?: string | null;
 }
 
+export interface NarrativeAttack {
+  id: string;
+  systemId: string;
+  narrativeFactionId: string;
+  description: string;
+  arrivalAt: string;
+  status: NarrativeAttackStatus;
+  conflictId?: string | null;
+  createdAt: string;
+}
+
 export interface Mission {
   id: string;
   systemId: string;
@@ -560,5 +590,6 @@ export interface CampaignSnapshot {
   tradeOffers: TradeOffer[];
   conflicts: Conflict[];
   battleReports: BattleReport[];
+  narrativeAttacks: NarrativeAttack[];
   missions: Mission[];
 }

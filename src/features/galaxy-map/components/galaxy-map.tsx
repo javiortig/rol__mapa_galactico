@@ -632,6 +632,7 @@ function drawSystems({
     const factionColor = getFactionColor(system, factionColorById);
     const isNeutral = system.status === "neutral";
     const isGaseous = system.systemKind === "gaseous";
+    const isTemporaryMission = Boolean(system.isTemporaryMission);
     const neutralRingColor = isGaseous ? neutralSystemColors.gaseousOuter : neutralSystemColors.ring;
     const neutralCoreColor = neutralSystemColors.core;
     const neutralCoronaColor = neutralSystemColors.corona;
@@ -663,6 +664,29 @@ function drawSystems({
       gaseousLayer.stroke({ color: neutralSystemColors.gaseousInner, alpha: 0.2, width: 0.95 });
       gaseousLayer.rotation = ((hashString(system.id) % 180) * Math.PI) / 180;
       node.addChild(gaseousLayer);
+    }
+
+    if (isTemporaryMission) {
+      const missionColor = factionColor ?? 0xfbbf24;
+      const missionFrame = new PIXI.Graphics();
+      missionFrame.moveTo(0, -radius * 3.7);
+      missionFrame.lineTo(radius * 3.2, 0);
+      missionFrame.lineTo(0, radius * 3.7);
+      missionFrame.lineTo(-radius * 3.2, 0);
+      missionFrame.closePath();
+      missionFrame.fill({ color: missionColor, alpha: 0.075 });
+      missionFrame.stroke({ color: missionColor, alpha: 0.72, width: 1.45 });
+      missionFrame.circle(0, 0, radius * 2.55);
+      missionFrame.stroke({ color: 0xfef3c7, alpha: 0.32, width: 1.05 });
+      node.addChild(missionFrame);
+
+      const beacon = new PIXI.Graphics();
+      beacon.moveTo(-radius * 0.8, -radius * 3.08);
+      beacon.lineTo(radius * 0.8, -radius * 3.08);
+      beacon.moveTo(0, -radius * 3.9);
+      beacon.lineTo(0, -radius * 2.35);
+      beacon.stroke({ color: 0xfef3c7, alpha: 0.78, width: 1.25 });
+      node.addChild(beacon);
     }
 
     if (system.controllerFactionId && system.status !== "neutral") {
@@ -884,6 +908,15 @@ function drawSystemEffects({
       layer.addChild(pulse);
     }
 
+    if (system.isTemporaryMission) {
+      const missionPulse = new PIXI.Graphics();
+      const missionRadius = radius * 3.9 + Math.sin(time * 0.075) * radius * 0.34;
+      const missionColor = getFactionColor(system, factionColorById) ?? 0xfbbf24;
+      missionPulse.circle(system.x, system.y, missionRadius);
+      missionPulse.stroke({ color: missionColor, alpha: 0.28, width: 1.6 });
+      layer.addChild(missionPulse);
+    }
+
     if (system.id === movementOriginSystemId) {
       const origin = new PIXI.Graphics();
       origin.circle(system.x, system.y, radius * 3.8);
@@ -1000,7 +1033,7 @@ function updateLabels(labels: LabelRecord[], scale: number, selectedSystemId: st
   for (const { label, system } of labels) {
     const isSelected = system.id === selectedSystemId;
     const isHovered = system.id === hoveredSystemId;
-    const shouldShow = isSelected || isHovered || scale > 0.82;
+    const shouldShow = system.isTemporaryMission || isSelected || isHovered || scale > 0.82;
     label.visible = shouldShow;
     label.alpha = isSelected || isHovered ? 1 : clamp((scale - 0.72) / 0.28, 0.34, 0.82);
     label.scale.set(clamp(1 / scale, 0.78, 1.18));
@@ -1187,6 +1220,10 @@ function getRouteColor(
 ) {
   if (edge.isBlocked) {
     return 0xfb7185;
+  }
+
+  if (from.isTemporaryMission || to.isTemporaryMission) {
+    return 0xfbbf24;
   }
 
   const sharedFactionId =

@@ -70,13 +70,13 @@ Usuarios locales de prueba:
 ```text
 admin@rol40k.local / admin-local-123
 legiones-daemonicas@rol40k.local / rol40k-local-123
-agentes-imperium@rol40k.local / rol40k-local-123
 cultos-genestealer@rol40k.local / rol40k-local-123
-aeldari@rol40k.local / rol40k-local-123
 space-marines@rol40k.local / rol40k-local-123
 adeptus-custodes@rol40k.local / rol40k-local-123
 necrones@rol40k.local / rol40k-local-123
 ```
+
+Orcos y Tiranidos son facciones narrativas de administrador, sin usuario de login propio.
 
 Si aparece un error de refresh token después de resetear Supabase, entrar de nuevo desde `/login`. Si el navegador conserva una sesión antigua, cerrar sesión o borrar el almacenamiento local del sitio.
 
@@ -157,7 +157,9 @@ Estado tecnico actual:
 Estado jugable actual:
 
 - Campana en tiempo real, sin turnos estrategicos.
-- Facciones jugables finales importadas desde `data/11th40kPoints.txt`: Legiones Daemonicas, Agentes del Imperium, Cultos Genestealer, Aeldari, Space Marines, Adeptus Custodes y Necrones.
+- Facciones jugables finales importadas desde `data/11th40kPoints.txt`: Legiones Daemonicas, Cultos Genestealer, Space Marines, Adeptus Custodes y Necrones.
+- Facciones narrativas de administrador: Orcos y Tiranidos. No tienen capital, usuario de jugador, recursos ni tropas iniciales; se usan para incursiones, control narrativo y misiones temporales.
+- Agentes del Imperium, Aeldari y Astra Militarum no forman parte de esta campana final.
 - `Astra Militarum` ya no es faccion jugable; `Adeptus Custodes` ocupa su hueco de campana en `kharon-prime`.
 - El catalogo final de unidades se genera con `npm run units:generate`; importa 333 hojas de unidad reales de 11a edicion y valida que cada bloque coincide con `NUMBER OF UNITS`.
 - Los costes variables oficiales MFM de 11a edicion se generan con `npm run units:generate-options` desde `https://mfm.warhammer-community.com/en/` y se guardan en `data/11th-unit-cost-options.json`. Este archivo anade tamanos legales, recargos por copia y extras pagados sin modificar `data/11th40kPoints.txt`.
@@ -177,13 +179,14 @@ Estado jugable actual:
 - Cancelar reclutamiento, reabastecimiento o movimiento devuelve el 50% de los recursos gastados, redondeando hacia arriba.
 - Arbol tecnologico comun `common-v1` con progreso independiente por faccion. Incluye rama `Progreso` funcional, rama `Inteligencia` visible pero bloqueada como contenido futuro y tecnologias comunes.
 - Los arboles militares especificos usan la convencion `troops-{faction_slug}-v1`. Cada jugador solo ve/investiga `common-v1` y el arbol militar de su faccion; admin puede inspeccionar facciones desde el selector del arbol.
-- Las primeras facciones objetivo para arboles de tropas son Legiones Daemonicas, Adeptus Custodes, Space Marines, Cultos Genestealer y Necrones; Aeldari y Agentes del Imperium quedan pendientes.
+- Las facciones objetivo para arboles de tropas son Legiones Daemonicas, Adeptus Custodes, Space Marines, Cultos Genestealer y Necrones.
 - Oro es un recurso principal visible en la barra superior y se usa sobre todo para comercio.
 - Material Industrial es un recurso visible y comerciable usado principalmente para construccion.
 - Componentes tecnologicos son un recurso especial del arbol tecnologico; no aparecen en la barra superior y no se producen en planetas ni por edificios de produccion.
 - Honor sustituye a Piedra ancestral como recurso especial visible; las columnas SQL legacy `ancestral_stone` pueden existir temporalmente solo por compatibilidad de migraciones.
 - El panel de mando operativo tiene entrada `Comercio`, no `Recursos`; abre Mercader y Comercio estelar.
 - Batallas se juegan fuera de la app; la web gestiona conflicto, bloqueo, reportes, supervivientes, heridas restantes y control final.
+- Facciones narrativas de admin: `Orcos` y `Tiranidos` son amenazas no jugables (`is_narrative = true`), sin capital, usuarios, recursos ni tropas iniciales. Desde `/admin`, el admin puede programar incursiones narrativas con descripcion publica y dias hasta llegada, darles control inmediato de sistemas conquistables o crear misiones temporales atacables.
 - Comercio estelar usa reserva de recursos: publicar una oferta inmoviliza el recurso/oro y su comision; al aceptar solo se valida el coste del aceptante.
 - Sistemas gaseosos compartidos: `Nexus Aster` y `Ashen Road` son no conquistables, no generan batalla al llegar y permiten coexistencia de facciones.
 
@@ -1429,7 +1432,7 @@ Unidades finales:
 - El arbol de Adeptus Custodes tiene bifurcaciones entre custodios de linea, campeones, exterminadores auricos, Hermanas del Silencio, grav-vehiculos, dreadnoughts, naves, Knights aliados y Titanes, con cierre de poder en `Titanes de Terra`.
 - El arbol de Adeptus Custodes tiene 15 nodos activos, todos de 3 segundos, y cubre las 51 plantillas de Adeptus Custodes importadas exactamente una vez.
 - La descripcion de cada nodo de Adeptus Custodes debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
-- Las cinco facciones objetivo iniciales ya estan `ready`. Aeldari y Agentes del Imperium siguen pendientes para una fase posterior.
+- Las cinco facciones objetivo de jugador ya estan `ready`: Legiones Daemonicas, Adeptus Custodes, Space Marines, Cultos Genestealer y Necrones. Aeldari y Agentes del Imperium no forman parte de esta campana final.
 
 La pantalla de tecnología debe sentirse como interfaz de videojuego:
 
@@ -2539,13 +2542,13 @@ Usuarios locales de prueba:
 ```text
 admin@rol40k.local / admin-local-123
 legiones-daemonicas@rol40k.local / rol40k-local-123
-agentes-imperium@rol40k.local / rol40k-local-123
 cultos-genestealer@rol40k.local / rol40k-local-123
-aeldari@rol40k.local / rol40k-local-123
 space-marines@rol40k.local / rol40k-local-123
 adeptus-custodes@rol40k.local / rol40k-local-123
 necrones@rol40k.local / rol40k-local-123
 ```
+
+Orcos y Tiranidos se gestionan desde la cuenta admin como facciones narrativas.
 
 Las entidades principales mantienen UUID como clave primaria real y anaden `slug` unico para seeds reproducibles:
 
@@ -2873,6 +2876,7 @@ Evitar collage visual.
 - El control se ajusta tras el reporte de batalla.
 - Si atacante gana, el sistema puede pasar al atacante.
 - Si defensor gana, mantiene controlador.
+- Las capitales no pueden ser atacadas por jugadores ni por amenazas narrativas. La UI no debe ofrecerlas como destino y el backend debe rechazar cualquier intento de crear ataque, coalicion, conflicto pendiente o ataque narrativo contra una capital.
 - Si los reportes coinciden, el backend puede aplicar el resultado automáticamente.
 - Si hay discrepancia, el admin decide.
 - Admin puede poner bloqueo temporal posterior.
@@ -2907,6 +2911,48 @@ Cuando tropas llegan a neutral:
 - Admin añade XP manualmente.
 - Admin añade enhancements narrativos manualmente.
 - También se pueden registrar XP y enhancements dentro del reporte de batalla si el admin lo confirma.
+
+### 20.6 Incursiones narrativas de admin
+
+- `Orcos` y `Tiranidos` son facciones de rol controladas por admin.
+- No aparecen en login, arboles tecnologicos, comercio, recursos ni limites de facciones jugables.
+- El admin puede programar un ataque narrativo contra un sistema normal no gaseoso desde `/admin`.
+- El admin escribe una descripcion publica y elige cuantos dias tarda en llegar.
+- Mientras no llega, se guarda como `narrative_attacks.status = incoming` y el panel del sistema lo muestra como `Amenaza entrante`, sin bloquear todavia el sistema.
+- `resolve_narrative_attacks()` convierte ataques vencidos en `conflicts` pendientes: pone el sistema en `war`, aplica bloqueo de batalla de 14 dias y copia la descripcion a `conflicts.notes`.
+- Los jugadores ven esa descripcion en el panel del sistema como `Amenaza narrativa` cuando el conflicto ya existe.
+- El admin tambien puede dar control inmediato de un sistema conquistable a una amenaza narrativa para representar invasion, horda o infestacion sin batalla automatizada.
+
+### 20.7 Misiones temporales de admin
+
+- El admin puede crear misiones temporales desde `/admin`.
+- Una mision temporal aparece como un sistema especial del mapa con `systems.is_temporary_mission = true`.
+- Siempre esta controlada por una faccion narrativa: `Orcos` o `Tiranidos`.
+- El admin elige:
+  - sistema normal de anclaje,
+  - nombre del sistema temporal,
+  - descripcion narrativa,
+  - faccion narrativa ocupante,
+  - si las tropas enemigas son visibles,
+  - lista manual de tropas enemigas si quiere mostrarlas,
+  - cuantos dias existe la mision,
+  - si la mision desaparece automaticamente al resolver la batalla.
+- El backend coloca el sistema temporal cerca del sistema de anclaje y crea una unica arista hacia ese anclaje.
+- La posicion se calcula buscando candidatos alrededor del anclaje y puntuando distancia a sistemas, distancia a aristas existentes, distancia de la nueva arista a otros sistemas y distancia de la nueva arista a otras aristas. El objetivo es que el marcador temporal no colisione visualmente con nodos, rutas ni otros elementos del mapa.
+- Los jugadores pueden lanzar ataque individual o de coalicion contra estos sistemas si tienen un sistema propio adyacente.
+- Las misiones no se usan como rutas logisticas normales: el movimiento normal no puede terminar en una mision temporal ni usarla como tramo intermedio.
+- Si las tropas enemigas no son visibles, `get_visible_systems()` redactor devuelve la lista manual vacia para jugadores.
+- Si son visibles, se muestran en el panel del sistema dentro de `Enemigas` con estilo similar a las unidades reales, pero no son `campaign_units` y no participan en heridas, costes ni movimiento automatico.
+- La ficha narrativa usa la tabla `missions`; el marcador tactico y la niebla de tropas viven en columnas de `systems`.
+- Una mision temporal activa tiene `temporary_mission_status = active`.
+- `resolve_temporary_missions()` cierra misiones cuya `mission_expires_at` ya ha vencido y las marca como `expired`.
+- Si `mission_expires_after_battle = true`, un trigger sobre `conflicts` cierra la mision al pasar el conflicto a `resolved` y la marca como `completed`.
+- El admin puede eliminar misiones temporales activas desde `/admin`; esto llama a `admin_remove_temporary_mission()` y marca la mision como `removed`.
+- Cualquier cierre de mision temporal ejecuta `cleanup_temporary_mission()`:
+  - cancela movimientos, operaciones de coalicion, conflictos pendientes y amenazas narrativas entrantes asociadas a la mision,
+  - oculta la mision de `get_visible_systems()` porque ya no esta activa,
+  - evacua cada unidad de jugador presente o en camino hacia el sistema propio mas cercano que este controlado, no sea gaseoso, no este bloqueado, no tenga conflicto pendiente, no tenga ataque narrativo entrante y no este recibiendo ataque normal o de coalicion,
+  - si no hay sistema seguro, deja la unidad en `retreat_pending` y `current_system_id = null` para que admin la resuelva narrativamente.
 
 ---
 

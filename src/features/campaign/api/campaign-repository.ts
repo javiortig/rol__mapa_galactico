@@ -13,6 +13,8 @@ import type {
   FactionTechnology,
   FactionResources,
   Mission,
+  NarrativeAttack,
+  NarrativeMissionEnemyUnit,
   MovementPassageRequest,
   MovementOrder,
   RecruitmentQueueItem,
@@ -100,7 +102,9 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       supabase.rpc("resolve_movement_orders"),
       supabase.rpc("resolve_recruitment_queue"),
       supabase.rpc("resolve_unit_recovery_queue"),
-      supabase.rpc("resolve_technology_research")
+      supabase.rpc("resolve_technology_research"),
+      supabase.rpc("resolve_narrative_attacks"),
+      supabase.rpc("resolve_temporary_missions")
     ]);
 
     const [
@@ -136,13 +140,14 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       tradeOffersResult,
       conflictsResult,
       battleReportsResult,
+      narrativeAttacksResult,
       missionsResult
     ] = await Promise.all([
       supabase.from("profiles").select("id, display_name, role").eq("id", user.id).maybeSingle(),
       supabase.from("player_factions").select("faction_id").eq("user_id", user.id).order("created_at"),
       supabase.from("campaign_settings").select("*").eq("id", "default").maybeSingle(),
       supabase.from("factions").select("*").order("name"),
-      supabase.from("systems").select("*").order("name"),
+      supabase.rpc("get_visible_systems"),
       supabase.from("system_edges").select("*").order("slug"),
       supabase.from("system_production").select("*"),
       supabase.from("system_special_objects").select("id, system_id, name, type, is_public").eq("is_public", true),
@@ -170,6 +175,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       supabase.from("trade_offers").select("*").order("created_at", { ascending: false }),
       supabase.from("conflicts").select("*").order("created_at"),
       supabase.from("battle_reports").select("*").order("created_at"),
+      supabase.from("narrative_attacks").select("*").order("arrival_at"),
       supabase.from("missions").select("*").order("title")
     ]);
 
@@ -286,6 +292,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       tradeOffers: getRows(tradeOffersResult, "trade_offers").map(mapTradeOffer),
       conflicts: getRows(conflictsResult, "conflicts").map(mapConflict),
       battleReports: getRows(battleReportsResult, "battle_reports").map(mapBattleReport),
+      narrativeAttacks: getRows(narrativeAttacksResult, "narrative_attacks").map(mapNarrativeAttack),
       missions: getRows(missionsResult, "missions").map(mapMission)
     };
   } catch (error) {
@@ -370,7 +377,8 @@ function mapFaction(row: Record<string, unknown>): Faction {
     name: row.name as string,
     color: row.color as string,
     emblemUrl: (row.emblem_url as string | null) ?? null,
-    capitalSystemId: (row.capital_system_id as string | null) ?? null
+    capitalSystemId: (row.capital_system_id as string | null) ?? null,
+    isNarrative: Boolean(row.is_narrative)
   };
 }
 
@@ -401,9 +409,48 @@ function mapSystem(
     missionId: (row.mission_id as string | null) ?? null,
     isCapital: Boolean(row.is_capital),
     buildingSlots: Number(row.building_slots ?? (row.is_capital ? 6 : 3)),
+    isTemporaryMission: Boolean(row.is_temporary_mission),
+    missionThreatFactionId: (row.mission_threat_faction_id as string | null) ?? null,
+    missionEnemyUnitsVisible: Boolean(row.mission_enemy_units_visible),
+    missionEnemyUnits: mapNarrativeMissionEnemyUnits(row.mission_enemy_units),
+    missionExpiresAt: (row.mission_expires_at as string | null) ?? null,
+    missionExpiresAfterBattle: Boolean(row.mission_expires_after_battle),
+    temporaryMissionStatus: (row.temporary_mission_status as StarSystem["temporaryMissionStatus"] | undefined) ?? "active",
+    temporaryMissionClosedAt: (row.temporary_mission_closed_at as string | null) ?? null,
     production,
     specialObjects
   };
+}
+
+function mapNarrativeMissionEnemyUnits(value: unknown): NarrativeMissionEnemyUnit[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map<NarrativeMissionEnemyUnit | null>((item, index) => {
+      if (typeof item === "string") {
+        return { id: `manual-${index + 1}`, name: item, details: null };
+      }
+
+      if (!item || typeof item !== "object") {
+        return null;
+      }
+
+      const raw = item as Record<string, unknown>;
+      const name = String(raw.name ?? "").trim();
+
+      if (!name) {
+        return null;
+      }
+
+      return {
+        id: String(raw.id ?? `manual-${index + 1}`),
+        name,
+        details: raw.details === null || raw.details === undefined ? null : String(raw.details)
+      };
+    })
+    .filter((item): item is NarrativeMissionEnemyUnit => Boolean(item));
 }
 
 function mapEdge(row: Record<string, unknown>): SystemEdge {
@@ -905,6 +952,19 @@ function mapConflict(row: Record<string, unknown>): Conflict {
     winnerFactionId: (row.winner_faction_id as string | null) ?? null,
     blockedUntil: (row.blocked_until as string | null) ?? null,
     notes: (row.notes as string | null) ?? null
+  };
+}
+
+function mapNarrativeAttack(row: Record<string, unknown>): NarrativeAttack {
+  return {
+    id: row.id as string,
+    systemId: row.system_id as string,
+    narrativeFactionId: row.narrative_faction_id as string,
+    description: row.description as string,
+    arrivalAt: row.arrival_at as string,
+    status: row.status as NarrativeAttack["status"],
+    conflictId: (row.conflict_id as string | null) ?? null,
+    createdAt: row.created_at as string
   };
 }
 

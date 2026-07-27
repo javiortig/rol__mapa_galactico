@@ -376,7 +376,7 @@ export function TechnologyTreeModal({
                 }}
                 value={inspectionFactionId ?? ""}
               >
-                {snapshot.factions.map((faction) => (
+                {snapshot.factions.filter((faction) => !faction.isNarrative).map((faction) => (
                   <option key={faction.id} value={faction.id}>
                     {faction.name}
                   </option>

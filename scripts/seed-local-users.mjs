@@ -1,4 +1,5 @@
 import { execSync } from "node:child_process";
+import { randomUUID } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
 import WebSocket from "ws";
@@ -19,25 +20,11 @@ const users = [
     factionSlug: "legiones-daemonicas"
   },
   {
-    email: "agentes-imperium@rol40k.local",
-    password: "rol40k-local-123",
-    displayName: "Ordo del Imperium",
-    role: "player",
-    factionSlug: "agentes-imperium"
-  },
-  {
     email: "cultos-genestealer@rol40k.local",
     password: "rol40k-local-123",
     displayName: "Magus del Culto",
     role: "player",
     factionSlug: "cultos-genestealer"
-  },
-  {
-    email: "aeldari@rol40k.local",
-    password: "rol40k-local-123",
-    displayName: "Vidente Aeldari",
-    role: "player",
-    factionSlug: "aeldari"
   },
   {
     email: "space-marines@rol40k.local",
@@ -61,6 +48,8 @@ const users = [
     factionSlug: "necrones"
   }
 ];
+
+const retiredUserEmails = new Set(["agentes-imperium@rol40k.local", "aeldari@rol40k.local"]);
 
 function parseEnvText(text) {
   return Object.fromEntries(
@@ -232,7 +221,56 @@ async function seedUsers() {
     console.log(`Usuario de campana listo: ${seedUser.email}`);
   }
 
+  await retireOldUsers();
   await seedDemoBattleReport(seeded);
+}
+
+async function retireOldUsers() {
+  const { data: existingUsers, error: listError } = await supabase.auth.admin.listUsers({
+    page: 1,
+    perPage: 1000
+  });
+
+  if (listError) {
+    throw listError;
+  }
+
+  for (const user of existingUsers.users) {
+    if (!user.email || !retiredUserEmails.has(user.email)) {
+      continue;
+    }
+
+    const { error: factionError } = await supabase
+      .from("player_factions")
+      .delete()
+      .eq("user_id", user.id);
+
+    if (factionError) {
+      throw factionError;
+    }
+
+    const { error: profileError } = await supabase.from("profiles").upsert({
+      id: user.id,
+      display_name: "Faccion retirada",
+      role: "spectator"
+    });
+
+    if (profileError) {
+      throw profileError;
+    }
+
+    const randomPassword = `retired-${randomUUID()}`;
+    const { error: authError } = await supabase.auth.admin.updateUserById(user.id, {
+      password: randomPassword,
+      user_metadata: { display_name: "Faccion retirada" }
+    });
+
+    if (authError) {
+      throw authError;
+    }
+
+    console.log(`Usuario de campana retirado y desvinculado: ${user.email}`);
+  }
 }
 
 async function seedDemoBattleReport(seeded) {
