@@ -91,7 +91,8 @@ values
   (public.seed_uuid('system', 'plaguefall-bastion'), 'plaguefall-bastion', 'Plaguefall Bastion', 395, 650, 0.82, 'green', 'Bastion infectado neutral', 'neutral', null, null, 'Plataformas de asedio cubiertas por esporas y ceniza.', false),
   (public.seed_uuid('system', 'sepulchre-nine'), 'sepulchre-nine', 'Sepulchre IX', 385, 815, 0.78, 'violet', 'Necropolis neutral', 'neutral', null, null, 'Tumbas y coordenadas contradictorias en el corredor inferior.', false),
   (public.seed_uuid('system', 'nexus-aster'), 'nexus-aster', 'Nexus Aster', 500, 400, 0.96, 'green', 'Enclave orko central', 'controlled', public.seed_uuid('faction', 'orcos'), null, 'Un nudo de rutas tomado por senales de guerra orkas y chatarra militar.', false),
-  (public.seed_uuid('system', 'goregate'), 'goregate', 'Goregate', 500, 565, 0.96, 'red', 'Portal de guerra orko', 'controlled', public.seed_uuid('faction', 'orcos'), null, 'Paso sangriento convertido en puerta de saqueo para incursiones orkas.', false)
+  (public.seed_uuid('system', 'goregate'), 'goregate', 'Goregate', 500, 565, 0.96, 'red', 'Portal de guerra orko', 'controlled', public.seed_uuid('faction', 'orcos'), null, 'Paso sangriento convertido en puerta de saqueo para incursiones orkas.', false),
+  (public.seed_uuid('system', 'maelstrom-gas'), 'maelstrom-gas', 'Maelstrom Gas', 560, 485, 1.08, 'violet', 'Anomalia gaseosa central', 'neutral', null, null, 'Una nube de plasma y gases ionizados abre un paso peligroso entre los dos nodos centrales.', false)
 on conflict (slug) do update
 set
   name = excluded.name,
@@ -115,6 +116,18 @@ set
   system_kind = 'standard',
   is_conquerable = true,
   allows_shared_occupation = false;
+
+update public.systems
+set
+  system_kind = 'gaseous',
+  is_conquerable = false,
+  allows_shared_occupation = true,
+  status = 'neutral',
+  controller_faction_id = null,
+  blocked_until = null,
+  building_slots = 0,
+  updated_at = now()
+where slug = 'maelstrom-gas';
 
 update public.factions set capital_system_id = public.seed_uuid('system', 'thokt-vault') where slug = 'necrones';
 update public.factions set capital_system_id = public.seed_uuid('system', 'kharon-prime') where slug = 'adeptus-custodes';
@@ -152,7 +165,9 @@ values
   (public.seed_uuid('edge', 'route-23'), 'route-23', public.seed_uuid('system', 'goregate'), public.seed_uuid('system', 'saint-veil'), 2, false),
   (public.seed_uuid('edge', 'route-24'), 'route-24', public.seed_uuid('system', 'goregate'), public.seed_uuid('system', 'ossuary-reach'), 2, false),
   (public.seed_uuid('edge', 'route-25'), 'route-25', public.seed_uuid('system', 'goregate'), public.seed_uuid('system', 'sepulchre-nine'), 2, false),
-  (public.seed_uuid('edge', 'route-26'), 'route-26', public.seed_uuid('system', 'nexus-aster'), public.seed_uuid('system', 'goregate'), 1, false)
+  (public.seed_uuid('edge', 'route-26'), 'route-26', public.seed_uuid('system', 'nexus-aster'), public.seed_uuid('system', 'goregate'), 1, false),
+  (public.seed_uuid('edge', 'route-27'), 'route-27', public.seed_uuid('system', 'nexus-aster'), public.seed_uuid('system', 'maelstrom-gas'), 1, false),
+  (public.seed_uuid('edge', 'route-28'), 'route-28', public.seed_uuid('system', 'goregate'), public.seed_uuid('system', 'maelstrom-gas'), 1, false)
 on conflict (slug) do update
 set from_system_id = excluded.from_system_id, to_system_id = excluded.to_system_id, uridium_cost = excluded.uridium_cost, is_blocked = excluded.is_blocked;
 
@@ -189,7 +204,8 @@ values
   (public.seed_uuid('system', 'plaguefall-bastion'), 3, 5, 1, 0, 1, 0),
   (public.seed_uuid('system', 'sepulchre-nine'), 0, 2, 2, 0, 0, 0),
   (public.seed_uuid('system', 'nexus-aster'), 2, 2, 1, 0, 3, 0),
-  (public.seed_uuid('system', 'goregate'), 2, 3, 0, 0, 2, 0)
+  (public.seed_uuid('system', 'goregate'), 2, 3, 0, 0, 2, 0),
+  (public.seed_uuid('system', 'maelstrom-gas'), 0, 0, 0, 0, 0, 0)
 on conflict (system_id) do update
 set supply_per_tick = excluded.supply_per_tick, minerals_per_tick = excluded.minerals_per_tick, ancestral_stone_per_tick = excluded.ancestral_stone_per_tick, gold_per_tick = excluded.gold_per_tick, uridium_per_tick = excluded.uridium_per_tick, technology_per_tick = excluded.technology_per_tick;
 
@@ -1734,7 +1750,8 @@ where faction_id = public.seed_uuid('faction', 'adeptus-custodes');
 insert into public.system_special_objects (id, system_id, name, type, public_description, is_public)
 values
   (public.seed_uuid('system_special_object', 'obj-nexus-aster'), public.seed_uuid('system', 'nexus-aster'), 'Totem del Nexus', 'anomaly', 'Un enjambre de chatarra, balizas robadas y senales de guerra orkas domina el nodo.', true),
-  (public.seed_uuid('system_special_object', 'obj-goregate'), public.seed_uuid('system', 'goregate'), 'Puerta de la Waaagh', 'anomaly', 'La ruta central inferior vibra con motores improvisados y amenazas pintadas en rojo.', true)
+  (public.seed_uuid('system_special_object', 'obj-goregate'), public.seed_uuid('system', 'goregate'), 'Puerta de la Waaagh', 'anomaly', 'La ruta central inferior vibra con motores improvisados y amenazas pintadas en rojo.', true),
+  (public.seed_uuid('system_special_object', 'obj-maelstrom-gas'), public.seed_uuid('system', 'maelstrom-gas'), 'Marea ionizada', 'anomaly', 'Tormentas de plasma velan el centro del mapa y distorsionan todos los augurios cercanos.', true)
 on conflict (id) do update
 set system_id = excluded.system_id, name = excluded.name, type = excluded.type, public_description = excluded.public_description, is_public = excluded.is_public;
 

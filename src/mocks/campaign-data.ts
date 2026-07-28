@@ -492,6 +492,21 @@ const baseSystems: BaseSystem[] = [
     isCapital: false,
     publicDescription: "Paso estrecho entre chatarra orka y ruinas funerarias.",
     production: dailyProduction({ supply: 2, minerals: 3, uridium: 2 })
+  },
+  {
+    id: "maelstrom-gas",
+    name: "Maelstrom Gas",
+    x: 560,
+    y: 485,
+    size: 1.08,
+    starClass: "violet",
+    type: "Anomalia gaseosa central",
+    status: "neutral",
+    controllerFactionId: null,
+    isCapital: false,
+    publicDescription: "Una nube de plasma y gases ionizados abre un paso peligroso entre los dos nodos centrales.",
+    production: dailyProduction({}),
+    specialObjects: [{ id: "obj-maelstrom-gas", name: "Marea ionizada", type: "anomaly", isPublic: true }]
   }
 ];
 
@@ -517,7 +532,8 @@ const finalMapSystemIds = new Set([
   "plaguefall-bastion",
   "sepulchre-nine",
   "nexus-aster",
-  "goregate"
+  "goregate",
+  "maelstrom-gas"
 ]);
 
 const finalSystemOverrides: Record<string, Partial<BaseSystem>> = {
@@ -645,7 +661,7 @@ const finalSystemOverrides: Record<string, Partial<BaseSystem>> = {
   }
 };
 
-const gaseousSystemIds = new Set<string>();
+const gaseousSystemIds = new Set<string>(["maelstrom-gas"]);
 
 const systems: CampaignSnapshot["systems"] = baseSystems.filter((system) => finalMapSystemIds.has(system.id)).map((system) => {
   const isGaseous = gaseousSystemIds.has(system.id);
@@ -685,7 +701,9 @@ const edges: CampaignSnapshot["edges"] = [
   { id: "route-23", fromSystemId: "goregate", toSystemId: "saint-veil", uridiumCost: 2 },
   { id: "route-24", fromSystemId: "goregate", toSystemId: "ossuary-reach", uridiumCost: 2 },
   { id: "route-25", fromSystemId: "goregate", toSystemId: "sepulchre-nine", uridiumCost: 2 },
-  { id: "route-26", fromSystemId: "nexus-aster", toSystemId: "goregate", uridiumCost: 1 }
+  { id: "route-26", fromSystemId: "nexus-aster", toSystemId: "goregate", uridiumCost: 1 },
+  { id: "route-27", fromSystemId: "nexus-aster", toSystemId: "maelstrom-gas", uridiumCost: 1 },
+  { id: "route-28", fromSystemId: "goregate", toSystemId: "maelstrom-gas", uridiumCost: 1 }
 ];
 
 const resources: CampaignSnapshot["resources"] = [
