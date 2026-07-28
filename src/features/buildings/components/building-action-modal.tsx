@@ -933,9 +933,6 @@ function ProductionBuildingView({
         ) : (
           <p className="mt-2 text-sm text-slate-300">Este edificio no tiene produccion configurada.</p>
         )}
-        <p className="mt-2 max-w-md text-xs leading-5 text-slate-500">
-          La produccion depende de la capacidad natural del planeta para ese recurso, no de un valor fijo del edificio.
-        </p>
       </div>
     </div>
   );
@@ -962,7 +959,7 @@ function PlaceholderBuildingView({ template }: { template: BuildingTemplate }) {
         </div>
         <h3 className="text-xl font-semibold text-cyan-50">{template.name}</h3>
         <p className="mt-2 max-w-md text-sm leading-6 text-slate-300">
-          Este edificio queda preparado para una fase futura. Su sistema asociado aun no esta implementado.
+          Instalacion sin ordenes disponibles por ahora.
         </p>
       </div>
     </div>

@@ -138,7 +138,6 @@ function MerchantPanel({ snapshot }: { snapshot: CampaignSnapshot }) {
         <h3 className="mt-4 text-lg font-semibold text-amber-50">Mercader de frontera</h3>
         <p className="mt-2 text-sm leading-6 text-slate-300">
           Compra a {formatRate(tradeRates.buyMultiplier)} del valor y vende a {formatRate(tradeRates.sellMultiplier)}.
-          Los redondeos siempre favorecen al mercader.
         </p>
         <div className="mt-4 rounded-md border border-amber-200/15 bg-slate-950/45 p-3">
           <div className="mb-2 text-xs uppercase tracking-[0.18em] text-amber-200/70">Caja disponible</div>

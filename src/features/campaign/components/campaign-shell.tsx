@@ -1121,7 +1121,6 @@ function SystemPanel({
                 </div>
               ))}
             </div>
-            <p className="mt-2 text-xs text-slate-400">Cada edificio de produccion activo extrae exactamente la capacidad natural del planeta para su recurso.</p>
           </section>
 
           <section>

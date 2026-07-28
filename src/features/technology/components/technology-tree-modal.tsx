@@ -771,7 +771,7 @@ function TechnologyDetailsPanel({
 
       {status === "planned" ? (
         <div className="mb-4 rounded-md border border-slate-400/25 bg-slate-400/10 p-3 text-sm text-slate-200">
-          Esta rama se muestra para orientar el desarrollo, pero espionaje aun no esta implementado.
+          Proximamente.
         </div>
       ) : null}
 

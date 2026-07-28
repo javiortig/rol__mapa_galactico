@@ -177,8 +177,6 @@ export function BattleOperationsModal({
     return null;
   }
 
-  const testTiming = snapshot.movementEdgeDurationSeconds < 86400;
-
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/80 p-0 backdrop-blur-sm md:p-4">
       <Panel className="flex h-[var(--app-height)] w-full max-w-6xl flex-col overflow-hidden rounded-none md:h-auto md:max-h-[calc(var(--app-height)-2rem)] md:rounded-lg">
@@ -197,14 +195,6 @@ export function BattleOperationsModal({
             <TimingItem label="Ataques disponibles" value={formatBattleAvailability(snapshot.battleLimits, "attacker")} />
             <TimingItem label="Defensas disponibles" value={formatBattleAvailability(snapshot.battleLimits, "defender")} />
             <TimingItem label="Total disponible" value={formatBattleAvailability(snapshot.battleLimits, "total")} />
-          </div>
-          <div className="mb-4 grid gap-2 md:grid-cols-3">
-            <TimingItem label="Movimiento por salto" value={formatTravelDuration(snapshot.movementEdgeDurationSeconds)} />
-            <TimingItem label="Llegada del ataque" value={formatTravelDuration(snapshot.attackDurationSeconds)} />
-            <TimingItem
-              label="Regla de campana"
-              value={testTiming ? "Tiempos de test activos" : "Tiempos finales activos"}
-            />
           </div>
 
           {supportOperation && supportMember ? (
