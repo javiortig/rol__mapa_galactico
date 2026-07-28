@@ -1823,7 +1823,7 @@ update public.campaign_settings
 set
   resource_tick_interval_hours = 24,
   movement_edge_duration_seconds = 3,
-  attack_duration_seconds = 5,
+  attack_duration_seconds = 300,
   conflict_block_duration_minutes = 20160,
   next_resource_tick_at = now() + interval '24 hours',
   updated_at = now()

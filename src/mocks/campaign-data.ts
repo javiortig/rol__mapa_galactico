@@ -2018,7 +2018,7 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
   },
   resourceTickIntervalHours: 24,
   movementEdgeDurationSeconds: 3,
-  attackDurationSeconds: 5,
+  attackDurationSeconds: 300,
   nextResourceTickAt: inHours(24),
   resourceCaps: {
     supply: 500,
