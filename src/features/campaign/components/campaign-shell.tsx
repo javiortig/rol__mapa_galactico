@@ -1806,9 +1806,15 @@ function AttackPlanner({
           system.controllerFactionId !== snapshot.currentUser.factionId &&
           !system.isCapital &&
           !isSystemBlockedForMovement(system) &&
-          Boolean(getEdgeBetween(snapshot.edges, originSystem.id, system.id))
+          Boolean(getEdgeBetween(snapshot.edges, originSystem.id, system.id)) &&
+          !getAttackOperationBlockReason(
+            snapshot.battleOperations,
+            originSystem.id,
+            system.id,
+            snapshot.currentUser.factionId
+          )
       ),
-    [originSystem.id, snapshot.currentUser.factionId, snapshot.edges, snapshot.systems]
+    [originSystem.id, snapshot.currentUser.factionId, snapshot.battleOperations, snapshot.edges, snapshot.systems]
   );
   const selectedSelections = availableUnits.flatMap<UnitMovementSelection>((unit) =>
     selectedQuantities[unit.id] ? [{ unitId: unit.id, quantity: unit.quantity }] : []
@@ -2053,6 +2059,47 @@ function AttackPlanner({
       </aside>
     </Panel>
   );
+}
+
+function getAttackOperationBlockReason(
+  battleOperations: CampaignSnapshot["battleOperations"],
+  originSystemId: string,
+  targetSystemId: string,
+  currentFactionId: string | null
+) {
+  if (!currentFactionId) {
+    return "Sin faccion activa.";
+  }
+
+  const activeOperations = battleOperations.filter((operation) =>
+    ["assembling", "moving", "in_battle"].includes(operation.status)
+  );
+
+  if (
+    activeOperations.some(
+      (operation) => operation.leaderFactionId === currentFactionId && operation.targetSystemId === targetSystemId
+    )
+  ) {
+    return "Ya tienes un ataque activo contra este sistema.";
+  }
+
+  if (activeOperations.some((operation) => operation.targetSystemId === targetSystemId)) {
+    return "Este sistema ya tiene una operacion activa.";
+  }
+
+  if (
+    activeOperations.some(
+      (operation) =>
+        operation.status === "moving" &&
+        operation.defenderFactionId === currentFactionId &&
+        operation.originSystemId === targetSystemId &&
+        operation.targetSystemId === originSystemId
+    )
+  ) {
+    return "No puedes contraatacar al origen de un ataque entrante.";
+  }
+
+  return null;
 }
 
 function UnitSelectionCard({

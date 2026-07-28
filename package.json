@@ -17,6 +17,7 @@
     "db:seed:users": "node scripts/seed-local-users.mjs",
     "db:demo:coalitions": "node scripts/prepare-coalition-demo.mjs",
     "db:test:coalitions": "node scripts/test-battle-coalitions.mjs",
+    "db:test:mechanics": "node scripts/test-campaign-mechanics.mjs",
     "units:generate": "node scripts/generate-40k-unit-catalog.mjs",
     "units:generate-options": "node scripts/generate-11th-cost-options.mjs",
     "tech:validate-troops": "node scripts/validate-troop-tech-trees.mjs"
