@@ -2017,8 +2017,8 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
     factionId: null
   },
   resourceTickIntervalHours: 24,
-  movementEdgeDurationSeconds: 120,
-  attackDurationSeconds: 240,
+  movementEdgeDurationSeconds: 3,
+  attackDurationSeconds: 5,
   nextResourceTickAt: inHours(24),
   resourceCaps: {
     supply: 500,

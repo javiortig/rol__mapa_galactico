@@ -173,7 +173,7 @@ Antes de desplegar frontend que lea estos campos, aplica migraciones Supabase in
 - El defensor si puede invitar apoyos mientras el ataque esta en camino. Supabase calcula la ruta con el tiempo restante real y rechaza cualquier fuerza cuya llegada supere `attack_arrival_at`.
 - Al llegar el ataque se congela el plantel. El sistema queda en guerra y ningun movimiento posterior puede terminar alli, aunque una ruta normal si puede atravesarlo como sistema intermedio.
 - Las unidades de apoyo conservan su planeta de origen. Tras resolver la batalla, los supervivientes regresan mediante una orden `battle_return`; si el origen ya no pertenece a su faccion quedan en `return_pending`.
-- Las reglas finales son 3 dias por arista y 6 dias para un ataque adyacente. El seed local usa 3 segundos por arista y 6 segundos por ataque para permitir pruebas manuales.
+- Las reglas finales son 3 dias por arista y 6 dias para un ataque adyacente. El seed local usa 3 segundos por arista y 5 segundos por ataque para permitir pruebas manuales.
 - Prueba integral local: `npm run db:test:coalitions` despues de `npm run db:reset` y `npm run db:seed:users`.
 
 ## Uso movil v1
