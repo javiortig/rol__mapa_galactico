@@ -168,8 +168,9 @@ Antes de desplegar frontend que lea estos campos, aplica migraciones Supabase in
 ### Coaliciones y apoyos
 
 - `battle_operations` representa el ciclo completo: reunion, ataque en camino, plantel cerrado, resolucion y cancelacion.
-- Un ataque de coalicion reserva las unidades del comandante, invita facciones y recibe sus tropas en el sistema de origen. Solo puede lanzarse cuando todas las tropas comprometidas han llegado.
-- El defensor puede invitar apoyos mientras el ataque esta en camino. Supabase calcula la ruta y rechaza cualquier fuerza cuya llegada supere `attack_arrival_at`.
+- Un ataque de coalicion reserva las unidades del comandante, invita facciones atacantes y recibe sus tropas en el sistema de origen antes de lanzar. Esto es reunion previa, no refuerzo durante el conflicto.
+- Una vez el ataque esta en camino, el bando atacante no puede anadir tropas ni mover refuerzos hacia el conflicto.
+- El defensor si puede invitar apoyos mientras el ataque esta en camino. Supabase calcula la ruta con el tiempo restante real y rechaza cualquier fuerza cuya llegada supere `attack_arrival_at`.
 - Al llegar el ataque se congela el plantel. El sistema queda en guerra y ningun movimiento posterior puede terminar alli, aunque una ruta normal si puede atravesarlo como sistema intermedio.
 - Las unidades de apoyo conservan su planeta de origen. Tras resolver la batalla, los supervivientes regresan mediante una orden `battle_return`; si el origen ya no pertenece a su faccion quedan en `return_pending`.
 - Las reglas finales son 3 dias por arista y 6 dias para un ataque adyacente. El seed local usa 3 segundos por arista y 6 segundos por ataque para permitir pruebas manuales.

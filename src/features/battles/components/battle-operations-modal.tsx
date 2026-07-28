@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Check, Clock3, Flag, Route, Shield, Swords, UserPlus, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -43,6 +43,7 @@ export function BattleOperationsModal({
   const [supportOperationId, setSupportOperationId] = useState<string | null>(null);
   const [supportOriginId, setSupportOriginId] = useState<string | null>(null);
   const [selectedUnitIds, setSelectedUnitIds] = useState<string[]>([]);
+  const [clockMs, setClockMs] = useState(0);
   const operations = snapshot.battleOperations.filter((operation) =>
     ["assembling", "moving", "in_battle"].includes(operation.status)
   );
@@ -80,10 +81,13 @@ export function BattleOperationsModal({
       unit.quantity > 0
   );
   const supportRoute = getSupportRoute(snapshot, supportOperation, supportOriginId, supportDestinationId);
+  const supportSecondsRemaining = supportOperation?.attackArrivalAt && clockMs > 0
+    ? Math.max(0, Math.floor((Date.parse(supportOperation.attackArrivalAt) - clockMs) / 1000))
+    : null;
   const arrivesInTime =
-    !supportOperation ||
-    supportMember?.side === "attacker" ||
-    (Boolean(supportRoute) && (supportRoute?.durationSeconds ?? 0) <= snapshot.attackDurationSeconds);
+    supportMember?.side === "defender"
+      ? Boolean(supportRoute && supportSecondsRemaining !== null && supportRoute.durationSeconds <= supportSecondsRemaining)
+      : Boolean(supportRoute);
   const selectedSelections = availableUnits.flatMap<UnitMovementSelection>((unit) =>
     selectedUnitIds.includes(unit.id) ? [{ unitId: unit.id, quantity: unit.quantity }] : []
   );
@@ -122,6 +126,16 @@ export function BattleOperationsModal({
       setSelectedUnitIds([]);
     }
   });
+
+  useEffect(() => {
+    if (!open || !supportOperation?.attackArrivalAt) {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => setClockMs(Date.now()), 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, [open, supportOperation?.attackArrivalAt]);
 
   if (!open) {
     return null;
@@ -183,6 +197,7 @@ export function BattleOperationsModal({
               selectedOriginId={supportOriginId}
               side={supportMember.side}
               snapshot={snapshot}
+              secondsRemaining={supportSecondsRemaining}
             />
           ) : (
             <div className="grid gap-3">
@@ -248,21 +263,33 @@ function OperationCard({
   const eligibleFactions = snapshot.factions.filter(
     (faction) => !faction.isNarrative && !members.some((member) => member.factionId === faction.id)
   );
-  const canInvite =
+  const canInviteAttackerStaging =
     currentMember?.role === "commander" &&
     currentMember.invitationStatus === "accepted" &&
-    ((currentMember.side === "attacker" && operation.status === "assembling") ||
-      (currentMember.side === "defender" && operation.status === "moving"));
+    currentMember.side === "attacker" &&
+    operation.status === "assembling";
+  const canInviteDefensiveSupport =
+    currentMember?.role === "commander" &&
+    currentMember.invitationStatus === "accepted" &&
+    currentMember.side === "defender" &&
+    operation.status === "moving";
+  const canInvite = canInviteAttackerStaging || canInviteDefensiveSupport;
   const hasOwnCommitment = commitments.some(
     (commitment) =>
       commitment.factionId === currentFactionId &&
       !["cancelled", "returned", "destroyed"].includes(commitment.status)
   );
-  const canPrepareSupport =
+  const canStageAttackerBeforeLaunch =
     currentMember?.role === "supporter" &&
     ["invited", "accepted"].includes(currentMember.invitationStatus) &&
-    ((currentMember.side === "attacker" && operation.status === "assembling") ||
-      (currentMember.side === "defender" && operation.status === "moving"));
+    currentMember.side === "attacker" &&
+    operation.status === "assembling";
+  const canReinforceDefense =
+    currentMember?.role === "supporter" &&
+    ["invited", "accepted"].includes(currentMember.invitationStatus) &&
+    currentMember.side === "defender" &&
+    operation.status === "moving";
+  const canPrepareSupport = canStageAttackerBeforeLaunch || canReinforceDefense;
   const waitingUnits = commitments.filter(
     (commitment) => commitment.side === "attacker" && commitment.status === "en_route"
   ).length;
@@ -329,11 +356,11 @@ function OperationCard({
         })}
       </div>
 
-      {currentMember?.role === "supporter" && currentMember.invitationStatus === "invited" ? (
+      {currentMember?.role === "supporter" && currentMember.invitationStatus === "invited" && canPrepareSupport ? (
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
           <Button disabled={actionPending} onClick={onPrepareSupport} size="sm">
             <Check size={15} />
-            Aceptar y preparar
+            {currentMember.side === "attacker" ? "Unirse a la salida" : "Aceptar y defender"}
           </Button>
           <Button
             disabled={actionPending}
@@ -345,10 +372,15 @@ function OperationCard({
             Rechazar
           </Button>
         </div>
+      ) : currentMember?.role === "supporter" && currentMember.invitationStatus === "invited" ? (
+        <div className="mt-4 rounded-md border border-amber-300/20 bg-amber-300/10 p-3 text-xs text-amber-100">
+          La ventana de esta invitacion ya esta cerrada. Los atacantes no pueden anadir tropas una vez el ataque ha
+          salido; solo el defensor puede traer refuerzos antes de que cierre el plantel.
+        </div>
       ) : canPrepareSupport && !hasOwnCommitment ? (
         <Button className="mt-4" disabled={actionPending} onClick={onPrepareSupport} size="sm">
           <Route size={15} />
-          Preparar tropas de apoyo
+          {currentMember?.side === "attacker" ? "Reunir tropas antes de lanzar" : "Preparar defensa cercana"}
         </Button>
       ) : null}
 
@@ -379,7 +411,7 @@ function OperationCard({
             size="sm"
           >
             <UserPlus size={15} />
-            Invitar
+            {canInviteAttackerStaging ? "Invitar a coalicion" : "Invitar defensa"}
           </Button>
         </div>
       ) : null}
@@ -420,6 +452,7 @@ function SupportComposer({
   selectedUnitIds,
   route,
   arrivesInTime,
+  secondsRemaining,
   isPending,
   error,
   onSelectOrigin,
@@ -437,6 +470,7 @@ function SupportComposer({
   selectedUnitIds: string[];
   route: ReturnType<typeof findCheapestRoute>;
   arrivesInTime: boolean;
+  secondsRemaining: number | null;
   isPending: boolean;
   error: string | null;
   onSelectOrigin: (systemId: string | null) => void;
@@ -453,7 +487,7 @@ function SupportComposer({
       <div className="mb-4 flex items-center justify-between gap-3">
         <div>
           <div className="text-xs uppercase text-cyan-200/70">
-            {side === "attacker" ? "Reunir con el atacante" : "Apoyar la defensa"}
+            {side === "attacker" ? "Reunion previa de coalicion" : "Refuerzo defensivo"}
           </div>
           <h3 className="mt-1 text-lg font-semibold text-cyan-50">{destinationName}</h3>
         </div>
@@ -488,8 +522,17 @@ function SupportComposer({
             </div>
             <div className="mt-1">Coste: {route?.uridiumCost ?? 0} Uridium</div>
             {operation.attackArrivalAt && side === "defender" ? (
+              <div className="mt-1 text-slate-400">
+                Plantel cierra en: {formatTravelDuration(secondsRemaining ?? 0)}
+              </div>
+            ) : null}
+            {operation.attackArrivalAt && side === "defender" ? (
               <div className={arrivesInTime ? "mt-2 text-cyan-100" : "mt-2 text-rose-200"}>
                 {arrivesInTime ? "Llegan antes del cierre." : "Llegarian despues del ataque."}
+              </div>
+            ) : side === "attacker" ? (
+              <div className="mt-2 text-amber-100">
+                Solo es reunion previa. Una vez el ataque salga, el bando atacante no podra anadir refuerzos.
               </div>
             ) : null}
           </div>
@@ -532,7 +575,11 @@ function SupportComposer({
             onClick={onConfirm}
           >
             <Route size={16} />
-            {isPending ? "Comprometiendo tropas..." : "Enviar tropas de apoyo"}
+            {isPending
+              ? "Comprometiendo tropas..."
+              : side === "attacker"
+                ? "Reunir tropas en el origen"
+                : "Enviar refuerzo defensivo"}
           </Button>
         </div>
       </div>

@@ -1149,6 +1149,16 @@ Cuando `now() >= arrival_at`, backend procesa la llegada.
 - Los participantes juegan la batalla en la vida real.
 - Los jugadores participantes o el admin reportan el resultado.
 
+### 8.4.1 Coaliciones y refuerzos defensivos
+
+- La coalicion atacante solo puede reunirse antes de lanzar el ataque.
+- Durante esa fase previa (`battle_operations.status = assembling`), las facciones atacantes invitadas pueden mover tropas hasta el sistema de origen de la coalicion.
+- Cuando el ataque sale y pasa a `battle_operations.status = moving`, el bando atacante queda cerrado: no puede anadir tropas ni mover refuerzos hacia el conflicto.
+- Mientras el ataque esta en camino, el defensor puede invitar apoyos defensivos cercanos.
+- Los apoyos defensivos se validan contra `attack_arrival_at`: si `now() + duracion_ruta > attack_arrival_at`, el backend rechaza la orden.
+- Cuando el ataque llega, el plantel se congela. Los defensores tardios se cancelan y el conflicto queda pendiente de reporte.
+- Tras resolver la batalla, los apoyos supervivientes vuelven a su sistema de origen mediante `battle_return`; si el origen ya no es seguro o propio, quedan en `return_pending`.
+
 ### 8.5 Reporte de batalla
 
 La web no simula el combate de Warhammer 40K.
