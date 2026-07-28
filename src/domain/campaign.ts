@@ -552,6 +552,19 @@ export interface Mission {
   mapImageUrl?: string | null;
 }
 
+export interface CampaignEvent {
+  id: string;
+  slug: string;
+  title: string;
+  content: string;
+  eventType: "manual" | "battle_result" | "system_unblocked" | "movement" | "narrative";
+  systemId?: string | null;
+  conflictId?: string | null;
+  createdByUserId?: string | null;
+  isPublic: boolean;
+  createdAt: string;
+}
+
 export interface CampaignSnapshot {
   currentUser: {
     id: string;
@@ -592,4 +605,5 @@ export interface CampaignSnapshot {
   battleReports: BattleReport[];
   narrativeAttacks: NarrativeAttack[];
   missions: Mission[];
+  campaignEvents: CampaignEvent[];
 }

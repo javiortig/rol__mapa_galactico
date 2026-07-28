@@ -4,14 +4,14 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AlertTriangle, Building2, Check, Clock3, Cpu, Crosshair, Factory, Gem, HandCoins, Hammer, Landmark, Minus, MousePointer2, Plus, RadioTower, Route, Shield, Swords, Undo2, X } from "lucide-react";
+import { AlertTriangle, Bell, Building2, Check, Clock3, Cpu, Crosshair, Factory, Gem, HandCoins, Hammer, Landmark, Megaphone, Minus, MousePointer2, Plus, RadioTower, Route, Shield, Swords, Undo2, X } from "lucide-react";
 import { getCampaignSnapshot, isCampaignAuthRequiredError } from "@/features/campaign/api/campaign-repository";
 import { useCampaignUiStore } from "@/features/campaign/store/campaign-ui-store";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
 import { ResourceIcon, resourceLabels } from "@/components/ui/resource-icon";
-import { canUseMovementRpc, createAttackOrder, createMovementOrder, respondMovementPassageRequest } from "@/features/movement/api/movement-api";
+import { canUseMovementRpc, createAttackOrder, createMovementOrder } from "@/features/movement/api/movement-api";
 import { canUseBattleReportRpc, submitBattleReport } from "@/features/battle-reports/api/battle-report-api";
 import { createCoalitionAttackDraft } from "@/features/battles/api/battle-operation-api";
 import { BattleOperationsModal } from "@/features/battles/components/battle-operations-modal";
@@ -67,6 +67,7 @@ export function CampaignShell() {
   const isMobile = !isDesktop;
   const [tradeOpen, setTradeOpen] = useState(false);
   const [tradeLockedReason, setTradeLockedReason] = useState<string | null>(null);
+  const [eventsOpen, setEventsOpen] = useState(false);
   const [technologyOpen, setTechnologyOpen] = useState(false);
   const [battleOperationsOpen, setBattleOperationsOpen] = useState(false);
   const [constructionSystemId, setConstructionSystemId] = useState<string | null>(null);
@@ -152,6 +153,7 @@ export function CampaignShell() {
       movementOriginSystemId ||
       attackOriginSystemId ||
       tradeOpen ||
+      eventsOpen ||
       technologyOpen ||
       battleOperationsOpen ||
       battleReportSystemId ||
@@ -176,22 +178,6 @@ export function CampaignShell() {
   const selectedBuildingTemplate = selectedBuilding
     ? data.buildingTemplates.find((template) => template.id === selectedBuilding.buildingTemplateId) ?? null
     : null;
-  const hasActiveCommerceBuilding = data.systemBuildings.some((building) => {
-    const system = data.systems.find((item) => item.id === building.systemId);
-    const template = data.buildingTemplates.find((item) => item.id === building.buildingTemplateId);
-    return (
-      building.status === "active" &&
-      template?.slug === "camara-comercio" &&
-      system?.controllerFactionId === data.currentUser.factionId &&
-      system.status === "controlled"
-    );
-  });
-
-  const openTradeFromDock = () => {
-    setTradeLockedReason(hasActiveCommerceBuilding ? null : "Necesitas una Camara de Comercio activa para comerciar.");
-    setTradeOpen(true);
-  };
-
   const openTradeFromBuilding = () => {
     setTradeLockedReason(null);
     setTradeOpen(true);
@@ -339,8 +325,8 @@ export function CampaignShell() {
           {showCommandDock ? (
             <CommandDock
               onOpenBattles={() => setBattleOperationsOpen(true)}
+              onOpenEvents={() => setEventsOpen(true)}
               onOpenTechnology={() => setTechnologyOpen(true)}
-              onOpenTrade={openTradeFromDock}
               snapshot={data}
             />
           ) : null}
@@ -386,6 +372,7 @@ export function CampaignShell() {
         template={selectedBuildingTemplate}
       />
       <TradeModal lockedReason={tradeLockedReason} onClose={() => setTradeOpen(false)} open={tradeOpen} snapshot={data} />
+      <EventsModal onClose={() => setEventsOpen(false)} open={eventsOpen} snapshot={data} />
       <TechnologyTreeModal onClose={() => setTechnologyOpen(false)} open={technologyOpen} snapshot={data} />
       <BattleOperationsModal
         onClose={() => setBattleOperationsOpen(false)}
@@ -573,17 +560,15 @@ function HiddenBuildingSlot({ building }: { building: SystemBuilding }) {
 function CommandDock({
   snapshot,
   onOpenBattles,
-  onOpenTrade,
+  onOpenEvents,
   onOpenTechnology
 }: {
   snapshot: CampaignSnapshot;
   onOpenBattles: () => void;
-  onOpenTrade: () => void;
+  onOpenEvents: () => void;
   onOpenTechnology: () => void;
 }) {
-  const queryClient = useQueryClient();
   const currentFactionId = snapshot.currentUser.factionId;
-  const rpcReady = canUseMovementRpc();
   const pendingPassageRequests = currentFactionId
     ? snapshot.passageRequests.filter(
         (request) => request.responderFactionId === currentFactionId && request.status === "pending"
@@ -596,23 +581,31 @@ function CommandDock({
           (conflict.attackerFactionId === currentFactionId || conflict.defenderFactionId === currentFactionId)
       )
     : [];
-  const pendingBattlesCount = pendingBattles.length + pendingPassageRequests.length;
-  const passageMutation = useMutation({
-    mutationFn: ({ requestId, decision }: { requestId: string; decision: "accepted" | "rejected" }) =>
-      respondMovementPassageRequest(requestId, decision),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
-    }
-  });
+  const pendingReports = currentFactionId
+    ? snapshot.battleReports.filter((report) => {
+        if (!["submitted", "disputed"].includes(report.status)) {
+          return false;
+        }
+
+        const conflict = snapshot.conflicts.find((item) => item.id === report.conflictId);
+        return Boolean(
+          conflict &&
+            (snapshot.currentUser.role === "admin" ||
+              conflict.attackerFactionId === currentFactionId ||
+              conflict.defenderFactionId === currentFactionId)
+        );
+      })
+    : [];
+  const pendingCount = pendingBattles.length + pendingPassageRequests.length + pendingReports.length;
 
   return (
     <>
     <div className="pointer-events-auto fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-30 lg:hidden">
       <Panel className="p-2">
         <div className="grid grid-cols-4 gap-1.5">
-          <Button className="h-12 flex-col gap-1 px-1 text-[11px]" onClick={onOpenTrade} size="sm" variant="ghost">
-            <HandCoins size={16} />
-            Comercio
+          <Button className="h-12 flex-col gap-1 px-1 text-[11px]" onClick={onOpenEvents} size="sm" variant="ghost">
+            <Megaphone size={16} />
+            Eventos
           </Button>
           <Button className="h-12 flex-col gap-1 px-1 text-[11px]" size="sm" variant="ghost">
             <Shield size={16} />
@@ -623,8 +616,8 @@ function CommandDock({
             Tecno.
           </Button>
           <Button className="h-12 flex-col gap-1 px-1 text-[11px]" onClick={onOpenBattles} size="sm" variant="ghost">
-            <Swords size={16} />
-            {pendingBattlesCount > 0 ? `${pendingBattlesCount} avisos` : "Operaciones"}
+            <Bell size={16} />
+            {pendingCount > 0 ? `${pendingCount} avisos` : "Operaciones"}
           </Button>
         </div>
       </Panel>
@@ -638,9 +631,9 @@ function CommandDock({
         </div>
 
         <div className="grid grid-cols-2 gap-2">
-          <Button onClick={onOpenTrade} size="sm" variant="ghost">
-            <HandCoins size={15} />
-            Comercio
+          <Button onClick={onOpenEvents} size="sm" variant="ghost">
+            <Megaphone size={15} />
+            Eventos
           </Button>
           <Button size="sm" variant="ghost">
             <Shield size={15} />
@@ -651,112 +644,95 @@ function CommandDock({
             Tecnologia
           </Button>
           <Button onClick={onOpenBattles} size="sm" variant="ghost">
-            <Swords size={15} />
-            Operaciones
+            <Bell size={15} />
+            {pendingCount > 0 ? `${pendingCount} avisos` : "Operaciones"}
           </Button>
-        </div>
-      </Panel>
-
-      <Panel className="p-4">
-        <h2 className="mb-3 text-sm font-semibold text-cyan-50">Permisos de paso</h2>
-        <div className="space-y-3 text-sm">
-          {pendingPassageRequests.map((request) => {
-            const movement = snapshot.movements.find((item) => item.id === request.movementOrderId);
-            const requester = snapshot.factions.find((item) => item.id === movement?.factionId);
-            const origin = snapshot.systems.find((item) => item.id === movement?.fromSystemId);
-            const destination = snapshot.systems.find((item) => item.id === movement?.toSystemId);
-            const routeText = movement?.pathSystemIds
-              .map((systemId) => snapshot.systems.find((system) => system.id === systemId)?.name ?? systemId)
-              .join(" -> ");
-            const traversedText = request.traversedSystemIds
-              .map((systemId) => snapshot.systems.find((system) => system.id === systemId)?.name ?? systemId)
-              .join(", ");
-            const visibleUnits = movement?.unitSelections
-              .map((selection) => {
-                const unit = snapshot.units.find((item) => item.id === selection.unitId);
-                return unit ? `${unit.name} x${selection.quantity}` : `Unidad oculta x${selection.quantity}`;
-              })
-              .join(", ");
-
-            return (
-              <div className="rounded-md border border-amber-300/25 bg-amber-300/10 p-3" key={request.id}>
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-amber-50">{requester?.name ?? "Faccion solicitante"}</span>
-                  <Badge tone="amber">Paso</Badge>
-                </div>
-                <p className="mt-1 text-xs text-amber-50/80">
-                  {origin?.name ?? "Origen"} {" -> "} {destination?.name ?? "Destino"}
-                </p>
-                <p className="mt-2 text-xs text-slate-300">Ruta: {routeText ?? "No disponible"}</p>
-                <p className="mt-1 text-xs text-slate-300">Tu territorio: {traversedText || "No disponible"}</p>
-                <p className="mt-1 text-xs text-slate-400">
-                  Unidades: {visibleUnits || "Informacion no revelada"}
-                </p>
-                <p className="mt-1 text-[11px] text-slate-500">
-                  Creado: {new Date(request.createdAt).toLocaleString()}
-                </p>
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <Button
-                    disabled={!rpcReady || passageMutation.isPending}
-                    onClick={() => passageMutation.mutate({ requestId: request.id, decision: "accepted" })}
-                    size="sm"
-                  >
-                    Aceptar
-                  </Button>
-                  <Button
-                    disabled={!rpcReady || passageMutation.isPending}
-                    onClick={() => passageMutation.mutate({ requestId: request.id, decision: "rejected" })}
-                    size="sm"
-                    variant="danger"
-                  >
-                    Rechazar
-                  </Button>
-                </div>
-              </div>
-            );
-          })}
-          {pendingPassageRequests.length === 0 ? (
-            <div className="rounded-md border border-slate-400/20 bg-slate-900/30 p-3 text-xs text-slate-400">
-              No tienes permisos de paso pendientes.
-            </div>
-          ) : null}
-          {passageMutation.error ? <p className="text-xs text-rose-200">{passageMutation.error.message}</p> : null}
-        </div>
-      </Panel>
-
-      <Panel className="p-4">
-        <h2 className="mb-3 text-sm font-semibold text-cyan-50">Batallas pendientes</h2>
-        <div className="space-y-3 text-sm">
-          {pendingBattles.map((conflict) => {
-            const system = snapshot.systems.find((item) => item.id === conflict.systemId);
-            const isAttacker = conflict.attackerFactionId === currentFactionId;
-            const enemyFactionId = isAttacker ? conflict.defenderFactionId : conflict.attackerFactionId;
-            const enemyFaction = snapshot.factions.find((item) => item.id === enemyFactionId);
-
-            return (
-            <div className="rounded-md border border-rose-300/20 bg-rose-400/8 p-3" key={conflict.id}>
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-rose-50">{system?.name ?? "Sistema en conflicto"}</span>
-                <Badge tone={isBlockExpired(conflict.blockedUntil) ? "slate" : "rose"}>
-                  {formatBlockCountdown(conflict.blockedUntil)}
-                </Badge>
-              </div>
-              <p className="mt-1 text-xs text-rose-100/80">
-                Rival: {enemyFaction?.name ?? "Fuerza neutral"}
-              </p>
-            </div>
-            );
-          })}
-          {pendingBattles.length === 0 ? (
-            <div className="rounded-md border border-slate-400/20 bg-slate-900/30 p-3 text-xs text-slate-400">
-              No tienes batallas pendientes por librar.
-            </div>
-          ) : null}
         </div>
       </Panel>
     </div>
     </>
   );
+}
+
+function EventsModal({
+  open,
+  snapshot,
+  onClose
+}: {
+  open: boolean;
+  snapshot: CampaignSnapshot;
+  onClose: () => void;
+}) {
+  if (!open) {
+    return null;
+  }
+
+  const events = [...snapshot.campaignEvents].sort(
+    (left, right) => Date.parse(right.createdAt) - Date.parse(left.createdAt)
+  );
+
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/80 p-0 backdrop-blur-sm md:p-4">
+      <Panel className="flex h-[var(--app-height)] w-full max-w-4xl flex-col overflow-hidden rounded-none md:h-auto md:max-h-[calc(var(--app-height)-2rem)] md:rounded-lg">
+        <header className="flex shrink-0 items-center justify-between gap-3 border-b border-cyan-200/15 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] md:p-4">
+          <div>
+            <div className="text-xs uppercase tracking-[0.22em] text-cyan-200/70">Cronica galactica</div>
+            <h2 className="mt-1 text-lg font-semibold text-cyan-50">Eventos</h2>
+          </div>
+          <Button aria-label="Cerrar eventos" onClick={onClose} size="icon" variant="ghost">
+            <X size={17} />
+          </Button>
+        </header>
+
+        <div className="mobile-scroll min-h-0 flex-1 space-y-3 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          {events.map((event) => {
+            const system = event.systemId ? snapshot.systems.find((item) => item.id === event.systemId) : null;
+
+            return (
+              <article
+                className="rounded-md border border-cyan-200/15 bg-slate-950/45 p-4 shadow-[0_0_24px_rgba(8,145,178,0.08)]"
+                key={event.id}
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="break-words font-semibold text-cyan-50">{event.title}</h3>
+                      <Badge tone={event.eventType === "battle_result" ? "rose" : event.eventType === "manual" ? "cyan" : "amber"}>
+                        {eventLabel(event.eventType)}
+                      </Badge>
+                    </div>
+                    <p className="mt-1 text-xs text-slate-500">
+                      {new Date(event.createdAt).toLocaleString()}
+                      {system ? ` - ${system.name}` : ""}
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-200">{event.content}</p>
+              </article>
+            );
+          })}
+
+          {events.length === 0 ? (
+            <div className="rounded-md border border-slate-400/20 bg-slate-900/35 p-5 text-sm text-slate-400">
+              Aun no hay eventos registrados en la galaxia.
+            </div>
+          ) : null}
+        </div>
+      </Panel>
+    </div>
+  );
+}
+
+function eventLabel(type: CampaignSnapshot["campaignEvents"][number]["eventType"]) {
+  const labels: Record<CampaignSnapshot["campaignEvents"][number]["eventType"], string> = {
+    manual: "Comunicado",
+    battle_result: "Batalla",
+    system_unblocked: "Sistema",
+    movement: "Movimiento",
+    narrative: "Narrativa"
+  };
+
+  return labels[type] ?? "Evento";
 }
 
 function GalaxyTooltip({
@@ -1500,13 +1476,9 @@ function MovementPlanner({
       ? activePathSystemIds.map((id) => systemById.get(id)?.name ?? id).join(" -> ")
       : "Sin destino fijado";
   const destinationSystem = activePathSystemIds.length > 1 ? systemById.get(activePathSystemIds[activePathSystemIds.length - 1]) : null;
-  const destinationIsEnemy =
-    Boolean(destinationSystem?.controllerFactionId) &&
-    destinationSystem?.controllerFactionId !== snapshot.currentUser.factionId &&
-    destinationSystem?.status === "controlled";
   const destinationIsBlocked = Boolean(destinationSystem && isSystemBlockedForMovement(destinationSystem));
-  const crossedEnemySystems = activePathSystemIds
-    .slice(1, -1)
+  const approvalSystems = activePathSystemIds
+    .slice(1)
     .map((id) => systemById.get(id))
     .filter(
       (system): system is StarSystem =>
@@ -1514,9 +1486,9 @@ function MovementPlanner({
         system?.controllerFactionId !== snapshot.currentUser.factionId &&
         system?.status === "controlled"
     );
-  const crossedEnemyFactionNames = Array.from(
+  const approvalFactionNames = Array.from(
     new Set(
-      crossedEnemySystems.map(
+      approvalSystems.map(
         (system) => snapshot.factions.find((faction) => faction.id === system.controllerFactionId)?.name ?? "Faccion rival"
       )
     )
@@ -1526,7 +1498,6 @@ function MovementPlanner({
     selectedSelections.length > 0 &&
     Boolean(routePlan && routePlan.segmentCount > 0) &&
     Boolean(hasEnoughUridium) &&
-    !destinationIsEnemy &&
     !destinationIsBlocked;
 
   const mutation = useMutation({
@@ -1672,13 +1643,9 @@ function MovementPlanner({
             <div className="border-t border-amber-300/20 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
               El destino esta bloqueado por una batalla. Puedes atravesarlo, pero no terminar el movimiento alli.
             </div>
-          ) : destinationIsEnemy ? (
-            <div className="border-t border-rose-300/20 bg-rose-400/10 px-3 py-2 text-xs text-rose-100">
-              El destino es enemigo. Usa Atacar.
-            </div>
-          ) : crossedEnemySystems.length > 0 ? (
+          ) : approvalSystems.length > 0 ? (
             <div className="border-t border-amber-300/20 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
-              Requiere permiso de paso de {crossedEnemyFactionNames.join(", ")}.
+              Requiere permiso de paso o estancia de {approvalFactionNames.join(", ")}.
             </div>
           ) : null}
         </div>
@@ -1784,13 +1751,9 @@ function MovementPlanner({
           <p className="mb-3 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
             El destino esta bloqueado por una batalla. Puedes atravesarlo, pero no terminar el movimiento alli.
           </p>
-        ) : destinationIsEnemy ? (
-          <p className="mb-3 rounded-md border border-rose-300/25 bg-rose-400/10 p-3 text-sm text-rose-100">
-            El destino pertenece a un rival. Para entrar en ese sistema usa Atacar.
-          </p>
-        ) : crossedEnemySystems.length > 0 ? (
+        ) : approvalSystems.length > 0 ? (
           <p className="mb-3 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
-            Esta ruta atraviesa territorio rival y quedara pendiente hasta que acepten: {crossedEnemyFactionNames.join(", ")}.
+            Esta ruta atraviesa o termina en territorio de otro jugador. Quedara pendiente hasta que acepten: {approvalFactionNames.join(", ")}.
           </p>
         ) : null}
 

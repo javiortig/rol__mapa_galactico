@@ -138,6 +138,21 @@ export async function adminSetSystemBlock(input: { systemId: string; blockedUnti
   }
 }
 
+export async function adminCreateCampaignEvent(input: { title: string; content: string }) {
+  const supabase = getAdminClient();
+
+  const { data, error } = await supabase.rpc("admin_create_campaign_event", {
+    event_title: input.title,
+    event_content: input.content
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as string;
+}
+
 export async function adminCreateNarrativeAttack(input: {
   systemId: string;
   narrativeFactionId: string;

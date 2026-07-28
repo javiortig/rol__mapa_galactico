@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Check, Clock3, Flag, Route, Shield, Swords, UserPlus, X } from "lucide-react";
+import { AlertTriangle, Check, Clock3, Flag, Route, Shield, Swords, UserPlus, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
@@ -20,6 +20,7 @@ import {
   launchCoalitionAttack,
   respondBattleSupportInvitation
 } from "@/features/battles/api/battle-operation-api";
+import { canUseMovementRpc, respondMovementPassageRequest } from "@/features/movement/api/movement-api";
 import { findCheapestRoute, formatTravelDuration } from "@/features/movement/lib/pathfinding";
 
 type ActionInput =
@@ -44,9 +45,37 @@ export function BattleOperationsModal({
   const [supportOriginId, setSupportOriginId] = useState<string | null>(null);
   const [selectedUnitIds, setSelectedUnitIds] = useState<string[]>([]);
   const [clockMs, setClockMs] = useState(0);
+  const movementRpcReady = canUseMovementRpc();
   const operations = snapshot.battleOperations.filter((operation) =>
     ["assembling", "moving", "in_battle"].includes(operation.status)
   );
+  const pendingPassageRequests = currentFactionId
+    ? snapshot.passageRequests.filter(
+        (request) => request.responderFactionId === currentFactionId && request.status === "pending"
+      )
+    : [];
+  const pendingBattles = currentFactionId
+    ? snapshot.conflicts.filter(
+        (conflict) =>
+          conflict.status === "pending" &&
+          (conflict.attackerFactionId === currentFactionId || conflict.defenderFactionId === currentFactionId)
+      )
+    : [];
+  const pendingReports = currentFactionId
+    ? snapshot.battleReports.filter((report) => {
+        if (!["submitted", "disputed"].includes(report.status)) {
+          return false;
+        }
+
+        const conflict = snapshot.conflicts.find((item) => item.id === report.conflictId);
+        return Boolean(
+          conflict &&
+            (snapshot.currentUser.role === "admin" ||
+              conflict.attackerFactionId === currentFactionId ||
+              conflict.defenderFactionId === currentFactionId)
+        );
+      })
+    : [];
   const supportOperation = operations.find((operation) => operation.id === supportOperationId) ?? null;
   const supportMember =
     supportOperation && currentFactionId
@@ -126,6 +155,13 @@ export function BattleOperationsModal({
       setSelectedUnitIds([]);
     }
   });
+  const passageMutation = useMutation({
+    mutationFn: ({ requestId, decision }: { requestId: string; decision: "accepted" | "rejected" }) =>
+      respondMovementPassageRequest(requestId, decision),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
+  });
 
   useEffect(() => {
     if (!open || !supportOperation?.attackArrivalAt) {
@@ -148,8 +184,8 @@ export function BattleOperationsModal({
       <Panel className="flex h-[var(--app-height)] w-full max-w-6xl flex-col overflow-hidden rounded-none md:h-auto md:max-h-[calc(var(--app-height)-2rem)] md:rounded-lg">
         <header className="flex shrink-0 items-center justify-between gap-3 border-b border-cyan-200/15 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] md:p-4">
           <div className="min-w-0">
-            <div className="text-xs uppercase text-cyan-200/70">Mando conjunto</div>
-            <h2 className="mt-1 text-lg font-semibold text-cyan-50">Operaciones de batalla</h2>
+            <div className="text-xs uppercase text-cyan-200/70">Mando operativo</div>
+            <h2 className="mt-1 text-lg font-semibold text-cyan-50">Operaciones y avisos</h2>
           </div>
           <Button aria-label="Cerrar operaciones" onClick={onClose} size="icon" variant="ghost">
             <X size={17} />
@@ -158,11 +194,16 @@ export function BattleOperationsModal({
 
         <div className="mobile-scroll min-h-0 flex-1 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <div className="mb-4 grid gap-2 md:grid-cols-3">
+            <TimingItem label="Ataques disponibles" value={formatBattleAvailability(snapshot.battleLimits, "attacker")} />
+            <TimingItem label="Defensas disponibles" value={formatBattleAvailability(snapshot.battleLimits, "defender")} />
+            <TimingItem label="Total disponible" value={formatBattleAvailability(snapshot.battleLimits, "total")} />
+          </div>
+          <div className="mb-4 grid gap-2 md:grid-cols-3">
             <TimingItem label="Movimiento por salto" value={formatTravelDuration(snapshot.movementEdgeDurationSeconds)} />
             <TimingItem label="Llegada del ataque" value={formatTravelDuration(snapshot.attackDurationSeconds)} />
             <TimingItem
               label="Regla de campana"
-              value={testTiming ? "3 dias/salto - ataque 6 dias" : "Tiempos finales activos"}
+              value={testTiming ? "Tiempos de test activos" : "Tiempos finales activos"}
             />
           </div>
 
@@ -201,6 +242,21 @@ export function BattleOperationsModal({
             />
           ) : (
             <div className="grid gap-3">
+              <NotificationsPanel
+                movementRpcReady={movementRpcReady}
+                onRespondPassage={(requestId, decision) => passageMutation.mutate({ requestId, decision })}
+                passageError={passageMutation.error?.message ?? null}
+                passagePending={passageMutation.isPending}
+                pendingBattles={pendingBattles}
+                pendingPassageRequests={pendingPassageRequests}
+                pendingReports={pendingReports}
+                snapshot={snapshot}
+              />
+
+              <div className="mt-1 flex items-center gap-2">
+                <Swords size={15} className="text-cyan-100" />
+                <h3 className="text-sm font-semibold text-cyan-50">Operaciones conjuntas activas</h3>
+              </div>
               {operations.map((operation) => (
                 <OperationCard
                   actionPending={actionMutation.isPending}
@@ -594,6 +650,179 @@ function TimingItem({ label, value }: { label: string; value: string }) {
       <div className="mt-1 text-sm font-semibold text-cyan-50">{value}</div>
     </div>
   );
+}
+
+function NotificationsPanel({
+  snapshot,
+  pendingPassageRequests,
+  pendingBattles,
+  pendingReports,
+  movementRpcReady,
+  passagePending,
+  passageError,
+  onRespondPassage
+}: {
+  snapshot: CampaignSnapshot;
+  pendingPassageRequests: CampaignSnapshot["passageRequests"];
+  pendingBattles: CampaignSnapshot["conflicts"];
+  pendingReports: CampaignSnapshot["battleReports"];
+  movementRpcReady: boolean;
+  passagePending: boolean;
+  passageError: string | null;
+  onRespondPassage: (requestId: string, decision: "accepted" | "rejected") => void;
+}) {
+  const total = pendingPassageRequests.length + pendingBattles.length + pendingReports.length;
+
+  return (
+    <section className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-4">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <AlertTriangle size={15} className="text-amber-100" />
+          <h3 className="text-sm font-semibold text-cyan-50">Notificaciones pendientes</h3>
+        </div>
+        <Badge tone={total > 0 ? "amber" : "slate"}>{total} avisos</Badge>
+      </div>
+
+      <div className="grid gap-3">
+        {pendingPassageRequests.map((request) => {
+          const movement = snapshot.movements.find((item) => item.id === request.movementOrderId);
+          const requester = snapshot.factions.find((item) => item.id === movement?.factionId);
+          const origin = snapshot.systems.find((item) => item.id === movement?.fromSystemId);
+          const destination = snapshot.systems.find((item) => item.id === movement?.toSystemId);
+          const routeText = movement?.pathSystemIds
+            .map((systemId) => snapshot.systems.find((system) => system.id === systemId)?.name ?? systemId)
+            .join(" -> ");
+          const traversedText = request.traversedSystemIds
+            .map((systemId) => snapshot.systems.find((system) => system.id === systemId)?.name ?? systemId)
+            .join(", ");
+          const visibleUnits = movement?.unitSelections
+            .map((selection) => {
+              const unit = snapshot.units.find((item) => item.id === selection.unitId);
+              return unit ? `${unit.name} x${selection.quantity}` : `Unidad oculta x${selection.quantity}`;
+            })
+            .join(", ");
+
+          return (
+            <article className="rounded-md border border-amber-300/25 bg-amber-300/10 p-3" key={request.id}>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-medium text-amber-50">{requester?.name ?? "Faccion solicitante"}</span>
+                <Badge tone="amber">Permiso de paso/estancia</Badge>
+              </div>
+              <p className="mt-1 text-xs text-amber-50/80">
+                {origin?.name ?? "Origen"} {" -> "} {destination?.name ?? "Destino"}
+              </p>
+              <p className="mt-2 break-words text-xs text-slate-300">Ruta: {routeText ?? "No disponible"}</p>
+              <p className="mt-1 text-xs text-slate-300">Tu territorio implicado: {traversedText || "No disponible"}</p>
+              <p className="mt-1 text-xs text-slate-400">
+                Unidades: {visibleUnits || "Informacion no revelada"}
+              </p>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <Button
+                  disabled={!movementRpcReady || passagePending}
+                  onClick={() => onRespondPassage(request.id, "accepted")}
+                  size="sm"
+                >
+                  Aceptar
+                </Button>
+                <Button
+                  disabled={!movementRpcReady || passagePending}
+                  onClick={() => onRespondPassage(request.id, "rejected")}
+                  size="sm"
+                  variant="danger"
+                >
+                  Rechazar
+                </Button>
+              </div>
+            </article>
+          );
+        })}
+
+        {pendingBattles.map((conflict) => {
+          const system = snapshot.systems.find((item) => item.id === conflict.systemId);
+          const currentFactionId = snapshot.currentUser.factionId;
+          const isAttacker = conflict.attackerFactionId === currentFactionId;
+          const rivalFactionId = isAttacker ? conflict.defenderFactionId : conflict.attackerFactionId;
+          const rival = snapshot.factions.find((item) => item.id === rivalFactionId);
+
+          return (
+            <article className="rounded-md border border-rose-300/25 bg-rose-400/10 p-3" key={conflict.id}>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-medium text-rose-50">{system?.name ?? "Sistema en conflicto"}</span>
+                <Badge tone="rose">{isAttacker ? "Atacante" : "Defensor"}</Badge>
+              </div>
+              <p className="mt-1 text-xs text-rose-100/80">Rival: {rival?.name ?? "Fuerza desconocida"}</p>
+              <p className="mt-1 text-xs text-slate-400">
+                Estado: pendiente de batalla fisica o reporte. Bloqueo: {formatConflictTimer(conflict.blockedUntil)}
+              </p>
+            </article>
+          );
+        })}
+
+        {pendingReports.map((report) => {
+          const conflict = snapshot.conflicts.find((item) => item.id === report.conflictId);
+          const system = conflict ? snapshot.systems.find((item) => item.id === conflict.systemId) : null;
+          const winner = report.winnerFactionId
+            ? snapshot.factions.find((item) => item.id === report.winnerFactionId)?.name
+            : null;
+
+          return (
+            <article className="rounded-md border border-cyan-200/15 bg-cyan-300/8 p-3" key={report.id}>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-medium text-cyan-50">{system?.name ?? "Reporte de batalla"}</span>
+                <Badge tone={report.status === "disputed" ? "rose" : "cyan"}>{report.status}</Badge>
+              </div>
+              <p className="mt-1 text-xs text-slate-300">
+                Resultado declarado: {winner ?? "sin ganador indicado"}. Esperando confirmacion coincidente o decision admin.
+              </p>
+              {report.narrativeNotes ? (
+                <p className="mt-1 line-clamp-2 text-xs text-slate-500">{report.narrativeNotes}</p>
+              ) : null}
+            </article>
+          );
+        })}
+
+        {total === 0 ? (
+          <div className="rounded-md border border-slate-400/20 bg-slate-900/35 p-4 text-sm text-slate-400">
+            No hay avisos pendientes por resolver.
+          </div>
+        ) : null}
+        {passageError ? <p className="text-sm text-rose-200">{passageError}</p> : null}
+      </div>
+    </section>
+  );
+}
+
+function formatBattleAvailability(
+  limits: CampaignSnapshot["battleLimits"],
+  kind: "attacker" | "defender" | "total"
+) {
+  if (!limits) {
+    return "Sin datos";
+  }
+
+  if (kind === "attacker") {
+    return `${Math.max(0, limits.maxStartedAttacks - limits.startedAttacks)} / ${limits.maxStartedAttacks}`;
+  }
+
+  if (kind === "defender") {
+    return `${Math.max(0, limits.maxReceivedAttacks - limits.receivedAttacks)} / ${limits.maxReceivedAttacks}`;
+  }
+
+  return `${Math.max(0, limits.maxTotalParticipations - limits.totalParticipations)} / ${limits.maxTotalParticipations}`;
+}
+
+function formatConflictTimer(blockedUntil?: string | null) {
+  if (!blockedUntil) {
+    return "sin cierre";
+  }
+
+  const timestamp = Date.parse(blockedUntil);
+
+  if (Number.isNaN(timestamp)) {
+    return "sin cierre";
+  }
+
+  return timestamp <= Date.now() ? "Expirado" : new Date(blockedUntil).toLocaleString();
 }
 
 function invitationLabel(member: BattleOperationMember) {

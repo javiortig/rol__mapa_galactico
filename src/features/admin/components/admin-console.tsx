@@ -11,6 +11,7 @@ import {
   EyeOff,
   Factory,
   MapPin,
+  Megaphone,
   Save,
   Send,
   ShieldAlert,
@@ -27,6 +28,7 @@ import { ResourceIcon, resourceLabels } from "@/components/ui/resource-icon";
 import { formatCountdown } from "@/lib/time";
 import {
   adminConstructBuilding,
+  adminCreateCampaignEvent,
   adminCreateNarrativeAttack,
   adminCreateNarrativeMission,
   adminCreateUnit,
@@ -92,6 +94,10 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
   const [maxArmyPointsDraft, setMaxArmyPointsDraft] = useState(snapshot.maxArmyPoints);
   const [blockSystemId, setBlockSystemId] = useState(snapshot.systems[0]?.id ?? "");
   const [blockDays, setBlockDays] = useState(14);
+  const [eventTitle, setEventTitle] = useState("Comunicado del sector");
+  const [eventContent, setEventContent] = useState(
+    "Los canales de astropatas transmiten nuevas ordenes. Todas las facciones deben reajustar sus planes de campana."
+  );
   const [narrativeSystemId, setNarrativeSystemId] = useState(
     snapshot.systems.find((system) => system.systemKind !== "gaseous" && !system.isCapital)?.id ?? ""
   );
@@ -302,6 +308,19 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
     }
   });
 
+  const createCampaignEventMutation = useMutation({
+    mutationFn: () =>
+      adminCreateCampaignEvent({
+        title: eventTitle.trim(),
+        content: eventContent.trim()
+      }),
+    onSuccess: async () => {
+      setEventTitle("");
+      setEventContent("");
+      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
+  });
+
   const createNarrativeAttackMutation = useMutation({
     mutationFn: () =>
       adminCreateNarrativeAttack({
@@ -451,6 +470,43 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
             <p className="mt-3 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
               Supabase no esta configurado. La consola no puede ejecutar cambios.
             </p>
+          ) : null}
+        </Panel>
+
+        <Panel className="p-4 md:p-5">
+          <div className="mb-3 flex items-center gap-2">
+            <span className="grid size-8 place-items-center rounded-md border border-amber-200/20 bg-amber-300/10 text-amber-100">
+              <Megaphone size={16} />
+            </span>
+            <div>
+              <h2 className="text-base font-semibold text-cyan-50">Crear evento galactico</h2>
+              <p className="text-xs text-slate-400">Aparecera en el panel Eventos de todos los jugadores.</p>
+            </div>
+          </div>
+          <div className="grid gap-3 md:grid-cols-[minmax(0,260px)_1fr_auto]">
+            <input
+              className="rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm text-cyan-50 outline-none"
+              onChange={(event) => setEventTitle(event.target.value)}
+              placeholder="Titulo"
+              value={eventTitle}
+            />
+            <textarea
+              className="min-h-20 resize-y rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm text-cyan-50 outline-none"
+              onChange={(event) => setEventContent(event.target.value)}
+              placeholder="Contenido narrativo breve"
+              value={eventContent}
+            />
+            <Button
+              className="self-start"
+              disabled={!rpcReady || createCampaignEventMutation.isPending || eventTitle.trim().length < 3 || eventContent.trim().length < 5}
+              onClick={() => createCampaignEventMutation.mutate()}
+            >
+              <Megaphone size={16} />
+              {createCampaignEventMutation.isPending ? "Publicando..." : "Publicar"}
+            </Button>
+          </div>
+          {createCampaignEventMutation.error ? (
+            <p className="mt-3 text-sm text-rose-200">{createCampaignEventMutation.error.message}</p>
           ) : null}
         </Panel>
 

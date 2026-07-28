@@ -7,6 +7,7 @@ import type {
   BattleLimitSummary,
   CampaignRelic,
   CampaignUnit,
+  CampaignEvent,
   CampaignSnapshot,
   Conflict,
   Faction,
@@ -141,7 +142,8 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       conflictsResult,
       battleReportsResult,
       narrativeAttacksResult,
-      missionsResult
+      missionsResult,
+      campaignEventsResult
     ] = await Promise.all([
       supabase.from("profiles").select("id, display_name, role").eq("id", user.id).maybeSingle(),
       supabase.from("player_factions").select("faction_id").eq("user_id", user.id).order("created_at"),
@@ -176,7 +178,8 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       supabase.from("conflicts").select("*").order("created_at"),
       supabase.from("battle_reports").select("*").order("created_at"),
       supabase.from("narrative_attacks").select("*").order("arrival_at"),
-      supabase.from("missions").select("*").order("title")
+      supabase.from("missions").select("*").order("title"),
+      supabase.from("campaign_events").select("*").order("created_at", { ascending: false }).limit(80)
     ]);
 
     if (profileResult.error) {
@@ -293,7 +296,8 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       conflicts: getRows(conflictsResult, "conflicts").map(mapConflict),
       battleReports: getRows(battleReportsResult, "battle_reports").map(mapBattleReport),
       narrativeAttacks: getRows(narrativeAttacksResult, "narrative_attacks").map(mapNarrativeAttack),
-      missions: getRows(missionsResult, "missions").map(mapMission)
+      missions: getRows(missionsResult, "missions").map(mapMission),
+      campaignEvents: getRows(campaignEventsResult, "campaign_events").map(mapCampaignEvent)
     };
   } catch (error) {
     if (isStaleSupabaseRefreshTokenError(error)) {
@@ -1145,6 +1149,21 @@ function mapMission(row: Record<string, unknown>): Mission {
     specialRules: row.special_rules as string,
     victoryConditions: row.victory_conditions as string,
     mapImageUrl: (row.map_image_url as string | null) ?? null
+  };
+}
+
+function mapCampaignEvent(row: Record<string, unknown>): CampaignEvent {
+  return {
+    id: row.id as string,
+    slug: row.slug as string,
+    title: row.title as string,
+    content: row.content as string,
+    eventType: row.event_type as CampaignEvent["eventType"],
+    systemId: (row.system_id as string | null) ?? null,
+    conflictId: (row.conflict_id as string | null) ?? null,
+    createdByUserId: (row.created_by_user_id as string | null) ?? null,
+    isPublic: row.is_public === null || row.is_public === undefined ? true : Boolean(row.is_public),
+    createdAt: row.created_at as string
   };
 }
 

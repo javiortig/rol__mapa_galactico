@@ -2068,7 +2068,8 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
   conflicts,
   battleReports: [],
   narrativeAttacks: [],
-  missions
+  missions,
+  campaignEvents: []
 };
 
 function getMockResourceCapabilities(system: CampaignSnapshot["systems"][number]): CampaignSnapshot["systemResourceCapabilities"] {

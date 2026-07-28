@@ -184,7 +184,8 @@ Estado jugable actual:
 - Material Industrial es un recurso visible y comerciable usado principalmente para construccion.
 - Componentes tecnologicos son un recurso especial del arbol tecnologico; no aparecen en la barra superior y no se producen en planetas ni por edificios de produccion.
 - Honor sustituye a Piedra ancestral como recurso especial visible; las columnas SQL legacy `ancestral_stone` pueden existir temporalmente solo por compatibilidad de migraciones.
-- El panel de mando operativo tiene entrada `Comercio`, no `Recursos`; abre Mercader y Comercio estelar.
+- El panel de mando operativo tiene entrada `Eventos`, no `Comercio` ni `Recursos`; Comercio se abre desde una `Camara de Comercio` activa.
+- El boton `Operaciones` abre avisos pendientes: permisos de paso/estancia, batallas pendientes y reportes pendientes, con contador de disponibilidad mensual de batallas.
 - Batallas se juegan fuera de la app; la web gestiona conflicto, bloqueo, reportes, supervivientes, heridas restantes y control final.
 - Facciones narrativas de admin: `Orcos` y `Tiranidos` son amenazas no jugables (`is_narrative = true`), sin capital, usuarios, recursos ni tropas iniciales. Desde `/admin`, el admin puede programar incursiones narrativas con descripcion publica y dias hasta llegada, darles control inmediato de sistemas conquistables o crear misiones temporales atacables.
 - Comercio estelar usa reserva de recursos: publicar una oferta inmoviliza el recurso/oro y su comision; al aceptar solo se valida el coste del aceptante.
@@ -626,9 +627,9 @@ Reglas de valor económico:
 
 #### Mercader
 
-El panel de mando operativo muestra `Comercio` en lugar de `Recursos`.
+El comercio no aparece como boton global del panel de mando operativo. Se abre al seleccionar una `Camara de Comercio` activa en un sistema propio.
 
-Al abrir comercio, la pestaña por defecto es `Mercader`.
+Al abrir comercio desde el edificio, la pestaña por defecto es `Mercader`.
 
 El mercader:
 
@@ -1083,7 +1084,8 @@ Llegada: 3 segundos
 Al llegar:
 - Si es propio: quedará estacionado.
 - Si es neutral: podrá iniciar conflicto/conquista.
-- Si es enemigo: el sistema pasará a En guerra.
+- Si es de otro jugador y se uso `Mover`: queda pendiente de permiso de paso/estancia del propietario. Si acepta, las tropas pueden atravesarlo o quedarse alli sin iniciar batalla.
+- Si se quiere combatir contra un sistema enemigo, debe usarse `Atacar`.
 
 [Confirmar movimiento]
 [Cancelar]
@@ -1102,7 +1104,8 @@ El backend debe comprobar:
 - Todos los sistemas de la ruta existen.
 - La ruta es continua por aristas existentes.
 - Las aristas de la ruta no estan bloqueadas.
-- El sistema destino no esta bloqueado para ataque si el destino es enemigo o neutral disputable.
+- El sistema destino no esta en guerra ni bloqueado.
+- Si la ruta atraviesa o termina en sistemas controlados por otra faccion jugable, crea `movement_passage_requests` para cada propietario afectado y deja la orden en `pending_approval`.
 - La faccion tiene suficiente Uridium.
 - El coste calculado por backend coincide.
 - No hay otra orden contradictoria.
@@ -1658,7 +1661,7 @@ Debe tener iconos bonitos. La version implementada muestra: Suministro vital, Mi
 
 ### 12.2 Panel de comercio
 
-El panel de mando operativo muestra `Comercio` en lugar de `Recursos`.
+El comercio no aparece como boton global del panel de mando operativo. Se abre desde el edificio `Camara de Comercio`.
 
 Al abrir comercio:
 
@@ -2893,13 +2896,15 @@ Evitar collage visual.
 
 ### 20.2 Guerra
 
-Cuando tropas llegan a un sistema enemigo:
+Cuando tropas llegan mediante una orden de `Atacar` a un sistema enemigo:
 
 - El sistema pasa a `war`.
 - Se crea conflicto.
 - El sistema queda bloqueado mientras exista batalla pendiente.
 - La batalla se juega fuera de la aplicación.
 - Los participantes o el admin reportan el resultado.
+
+Si las tropas llegan con una orden de `Mover` autorizada por el propietario, no se crea guerra: quedan estacionadas en el sistema ajeno hasta que el jugador vuelva a moverlas o el admin intervenga.
 
 ### 20.3 Neutral
 
@@ -2964,6 +2969,20 @@ Cuando tropas llegan a neutral:
   - evacua cada unidad de jugador presente o en camino hacia el sistema propio mas cercano que este controlado, no sea gaseoso, no este bloqueado, no tenga conflicto pendiente, no tenga ataque narrativo entrante y no este recibiendo ataque normal o de coalicion,
   - si no hay sistema seguro, deja la unidad en `retreat_pending` y `current_system_id = null` para que admin la resuelva narrativamente.
 
+### 20.8 Operaciones, permisos y eventos
+
+- `Operaciones` es el panel de avisos accionables del jugador.
+- En la parte superior muestra disponibilidad mensual de batallas: ataques disponibles, defensas disponibles y total disponible. La regla vigente es maximo 3 participaciones activas/mensuales segun backend, sin poder consumirlas todas como atacante o todas como defensor.
+- Muestra `movement_passage_requests` pendientes para permitir o rechazar que otra faccion atraviese sistemas propios o termine el movimiento dentro de ellos.
+- Si se rechaza un permiso de paso/estancia, el movimiento se cancela y se aplican las reglas de reembolso de movimiento.
+- Muestra batallas pendientes en las que la faccion participa como atacante o defensor.
+- Muestra reportes de batalla pendientes de confirmacion o discrepantes relacionados con la faccion.
+- El bando atacante no puede sumar refuerzos cuando el ataque ya salio; el defensor si puede traer tropas cercanas si llegan antes del cierre del plantel.
+- `Eventos` es una cronica galactica no accionable. Sustituye al antiguo boton global de Comercio.
+- El admin puede crear eventos manuales desde `/admin` con titulo y contenido.
+- Al resolverse una batalla, el backend crea automaticamente un evento breve con sistema, ganador, perdedor y si vencio atacante o defensor.
+- Cuando el admin desbloquea un sistema con conflicto pendiente, el conflicto pasa a `cancelled`, desaparece de pendientes y las tropas `in_war` vuelven al sistema aliado seguro mas cercano. Si no hay sistema seguro, quedan `retreat_pending`.
+
 ---
 
 ## 21. Roadmap de implementación
@@ -3007,7 +3026,7 @@ Sin login todavía.
 
 - Barra superior.
 - Oro como recurso visible.
-- Comercio en el panel de mando operativo.
+- Eventos en el panel de mando operativo y Comercio abierto desde Camara de Comercio.
 - Mercader con compra/venta contra Oro.
 - Comercio estelar entre jugadores con ofertas y comision.
 - Producción diaria por tick backend de 24h.
