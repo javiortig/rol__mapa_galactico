@@ -496,51 +496,57 @@ const baseSystems: BaseSystem[] = [
   {
     id: "maelstrom-gas",
     name: "Maelstrom Gas",
-    x: 560,
-    y: 485,
+    x: 500,
+    y: 360,
     size: 1.08,
     starClass: "violet",
     type: "Anomalia gaseosa central",
     status: "neutral",
     controllerFactionId: null,
     isCapital: false,
-    publicDescription: "Una nube de plasma y gases ionizados abre un paso peligroso entre los dos nodos centrales.",
+    publicDescription: "Una nube de plasma y gases ionizados abre un paso peligroso hacia el nucleo orko.",
     production: dailyProduction({}),
     specialObjects: [{ id: "obj-maelstrom-gas", name: "Marea ionizada", type: "anomaly", isPublic: true }]
+  },
+  {
+    id: "voidmist-basin",
+    name: "Voidmist Basin",
+    x: 500,
+    y: 640,
+    size: 1.04,
+    starClass: "blue",
+    type: "Cuenca gaseosa central",
+    status: "neutral",
+    controllerFactionId: null,
+    isCapital: false,
+    publicDescription: "Un oceano de niebla estelar permite rodear el centro sin reclamar territorio estable.",
+    production: dailyProduction({}),
+    specialObjects: [{ id: "obj-voidmist-basin", name: "Cuenca de vacio", type: "anomaly", isPublic: true }]
   }
 ];
 
 const finalMapSystemIds = new Set([
-  "kharon-prime",
-  "helios-drift",
-  "arx-solum",
-  "azur-trench",
-  "sa-cea-gate",
-  "lyra-terminus",
-  "narthex",
-  "vesper-halo",
-  "blackglass",
-  "red-sabbath",
-  "mirrorcoil",
-  "saint-veil",
-  "thokt-vault",
-  "novem",
-  "ghostlight",
-  "ossuary-reach",
   "mordax",
   "drusus",
-  "plaguefall-bastion",
-  "sepulchre-nine",
+  "sa-cea-gate",
+  "lyra-terminus",
+  "thokt-vault",
+  "novem",
+  "kharon-prime",
+  "helios-drift",
+  "blackglass",
+  "red-sabbath",
+  "maelstrom-gas",
+  "voidmist-basin",
   "nexus-aster",
-  "goregate",
-  "maelstrom-gas"
+  "goregate"
 ]);
 
 const finalSystemOverrides: Record<string, Partial<BaseSystem>> = {
-  "kharon-prime": { x: 90, y: 150, status: "controlled", controllerFactionId: "adeptus-custodes", isCapital: true },
+  "kharon-prime": { x: 145, y: 850, status: "controlled", controllerFactionId: "adeptus-custodes", isCapital: true },
   "helios-drift": {
-    x: 230,
-    y: 190,
+    x: 285,
+    y: 735,
     status: "neutral",
     controllerFactionId: null,
     isCapital: false,
@@ -585,10 +591,10 @@ const finalSystemOverrides: Record<string, Partial<BaseSystem>> = {
     publicDescription: "Complejo sacro con rutas de descenso peligrosas hacia el nucleo del mapa."
   },
   "vesper-halo": { x: 640, y: 270, status: "neutral", controllerFactionId: null, isCapital: false },
-  blackglass: { x: 930, y: 500, status: "controlled", controllerFactionId: "cultos-genestealer", isCapital: true },
+  blackglass: { x: 820, y: 850, status: "controlled", controllerFactionId: "cultos-genestealer", isCapital: true },
   "red-sabbath": {
-    x: 785,
-    y: 500,
+    x: 705,
+    y: 735,
     status: "neutral",
     controllerFactionId: null,
     isCapital: false,
@@ -606,10 +612,10 @@ const finalSystemOverrides: Record<string, Partial<BaseSystem>> = {
     publicDescription: "Santuario velado donde los augurios se confunden con sabotajes y plegarias.",
     specialObjects: undefined
   },
-  "thokt-vault": { x: 820, y: 850, status: "controlled", controllerFactionId: "necrones", isCapital: true },
+  "thokt-vault": { x: 930, y: 500, status: "controlled", controllerFactionId: "necrones", isCapital: true },
   novem: {
-    x: 705,
-    y: 735,
+    x: 785,
+    y: 500,
     status: "neutral",
     controllerFactionId: null,
     isCapital: false,
@@ -627,10 +633,10 @@ const finalSystemOverrides: Record<string, Partial<BaseSystem>> = {
     publicDescription: "Campos funerarios en orbita baja donde la tecnologia antigua sigue respondiendo.",
     specialObjects: undefined
   },
-  mordax: { x: 145, y: 850, status: "controlled", controllerFactionId: "legiones-daemonicas", isCapital: true },
+  mordax: { x: 90, y: 150, status: "controlled", controllerFactionId: "legiones-daemonicas", isCapital: true },
   drusus: {
-    x: 285,
-    y: 735,
+    x: 230,
+    y: 190,
     status: "neutral",
     controllerFactionId: null,
     isCapital: false,
@@ -640,8 +646,8 @@ const finalSystemOverrides: Record<string, Partial<BaseSystem>> = {
   "plaguefall-bastion": { x: 395, y: 650, status: "neutral", controllerFactionId: null, isCapital: false },
   "sepulchre-nine": { x: 385, y: 815, status: "neutral", controllerFactionId: null, isCapital: false },
   "nexus-aster": {
-    x: 500,
-    y: 400,
+    x: 420,
+    y: 500,
     size: 0.96,
     status: "controlled",
     controllerFactionId: "orcos",
@@ -650,8 +656,8 @@ const finalSystemOverrides: Record<string, Partial<BaseSystem>> = {
     specialObjects: [{ id: "obj-nexus-aster", name: "Totem del Nexus", type: "anomaly", isPublic: true }]
   },
   goregate: {
-    x: 500,
-    y: 565,
+    x: 580,
+    y: 500,
     size: 0.96,
     status: "controlled",
     controllerFactionId: "orcos",
@@ -661,7 +667,7 @@ const finalSystemOverrides: Record<string, Partial<BaseSystem>> = {
   }
 };
 
-const gaseousSystemIds = new Set<string>(["maelstrom-gas"]);
+const gaseousSystemIds = new Set<string>(["maelstrom-gas", "voidmist-basin"]);
 
 const systems: CampaignSnapshot["systems"] = baseSystems.filter((system) => finalMapSystemIds.has(system.id)).map((system) => {
   const isGaseous = gaseousSystemIds.has(system.id);
@@ -676,34 +682,20 @@ const systems: CampaignSnapshot["systems"] = baseSystems.filter((system) => fina
 });
 
 const edges: CampaignSnapshot["edges"] = [
-  { id: "route-01", fromSystemId: "kharon-prime", toSystemId: "helios-drift", uridiumCost: 1 },
-  { id: "route-02", fromSystemId: "helios-drift", toSystemId: "arx-solum", uridiumCost: 1 },
-  { id: "route-03", fromSystemId: "helios-drift", toSystemId: "azur-trench", uridiumCost: 1 },
-  { id: "route-04", fromSystemId: "sa-cea-gate", toSystemId: "lyra-terminus", uridiumCost: 1 },
-  { id: "route-05", fromSystemId: "lyra-terminus", toSystemId: "narthex", uridiumCost: 1 },
-  { id: "route-06", fromSystemId: "lyra-terminus", toSystemId: "vesper-halo", uridiumCost: 1 },
-  { id: "route-07", fromSystemId: "blackglass", toSystemId: "red-sabbath", uridiumCost: 1 },
-  { id: "route-08", fromSystemId: "red-sabbath", toSystemId: "mirrorcoil", uridiumCost: 1 },
-  { id: "route-09", fromSystemId: "red-sabbath", toSystemId: "saint-veil", uridiumCost: 1 },
-  { id: "route-10", fromSystemId: "thokt-vault", toSystemId: "novem", uridiumCost: 1 },
-  { id: "route-11", fromSystemId: "novem", toSystemId: "ghostlight", uridiumCost: 1 },
-  { id: "route-12", fromSystemId: "novem", toSystemId: "ossuary-reach", uridiumCost: 1 },
-  { id: "route-13", fromSystemId: "mordax", toSystemId: "drusus", uridiumCost: 1 },
-  { id: "route-14", fromSystemId: "drusus", toSystemId: "plaguefall-bastion", uridiumCost: 1 },
-  { id: "route-15", fromSystemId: "drusus", toSystemId: "sepulchre-nine", uridiumCost: 1 },
-  { id: "route-16", fromSystemId: "nexus-aster", toSystemId: "arx-solum", uridiumCost: 2 },
-  { id: "route-17", fromSystemId: "nexus-aster", toSystemId: "narthex", uridiumCost: 2 },
-  { id: "route-18", fromSystemId: "nexus-aster", toSystemId: "mirrorcoil", uridiumCost: 2 },
-  { id: "route-19", fromSystemId: "nexus-aster", toSystemId: "ghostlight", uridiumCost: 2 },
-  { id: "route-20", fromSystemId: "nexus-aster", toSystemId: "plaguefall-bastion", uridiumCost: 2 },
-  { id: "route-21", fromSystemId: "goregate", toSystemId: "azur-trench", uridiumCost: 2 },
-  { id: "route-22", fromSystemId: "goregate", toSystemId: "vesper-halo", uridiumCost: 2 },
-  { id: "route-23", fromSystemId: "goregate", toSystemId: "saint-veil", uridiumCost: 2 },
-  { id: "route-24", fromSystemId: "goregate", toSystemId: "ossuary-reach", uridiumCost: 2 },
-  { id: "route-25", fromSystemId: "goregate", toSystemId: "sepulchre-nine", uridiumCost: 2 },
-  { id: "route-26", fromSystemId: "nexus-aster", toSystemId: "goregate", uridiumCost: 1 },
-  { id: "route-27", fromSystemId: "nexus-aster", toSystemId: "maelstrom-gas", uridiumCost: 1 },
-  { id: "route-28", fromSystemId: "goregate", toSystemId: "maelstrom-gas", uridiumCost: 1 }
+  { id: "route-01", fromSystemId: "mordax", toSystemId: "drusus", uridiumCost: 1 },
+  { id: "route-02", fromSystemId: "drusus", toSystemId: "maelstrom-gas", uridiumCost: 1 },
+  { id: "route-03", fromSystemId: "sa-cea-gate", toSystemId: "lyra-terminus", uridiumCost: 1 },
+  { id: "route-04", fromSystemId: "lyra-terminus", toSystemId: "maelstrom-gas", uridiumCost: 1 },
+  { id: "route-05", fromSystemId: "thokt-vault", toSystemId: "novem", uridiumCost: 1 },
+  { id: "route-06", fromSystemId: "novem", toSystemId: "maelstrom-gas", uridiumCost: 1 },
+  { id: "route-07", fromSystemId: "kharon-prime", toSystemId: "helios-drift", uridiumCost: 1 },
+  { id: "route-08", fromSystemId: "helios-drift", toSystemId: "voidmist-basin", uridiumCost: 1 },
+  { id: "route-09", fromSystemId: "blackglass", toSystemId: "red-sabbath", uridiumCost: 1 },
+  { id: "route-10", fromSystemId: "red-sabbath", toSystemId: "voidmist-basin", uridiumCost: 1 },
+  { id: "route-11", fromSystemId: "maelstrom-gas", toSystemId: "nexus-aster", uridiumCost: 1 },
+  { id: "route-12", fromSystemId: "maelstrom-gas", toSystemId: "goregate", uridiumCost: 1 },
+  { id: "route-13", fromSystemId: "voidmist-basin", toSystemId: "nexus-aster", uridiumCost: 1 },
+  { id: "route-14", fromSystemId: "voidmist-basin", toSystemId: "goregate", uridiumCost: 1 }
 ];
 
 const resources: CampaignSnapshot["resources"] = [

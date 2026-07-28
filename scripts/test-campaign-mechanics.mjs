@@ -202,21 +202,15 @@ async function resetCombatFixture(maps) {
   );
 
   const resetSystems = [
-    ["azur-trench", "controlled", "necrones"],
+    ["novem", "controlled", "necrones"],
     ["nexus-aster", "neutral", null],
     ["goregate", "neutral", null],
-    ["saint-veil", "controlled", "cultos-genestealer"],
-    ["ossuary-reach", "neutral", null],
-    ["arx-solum", "controlled", "adeptus-custodes"],
+    ["maelstrom-gas", "neutral", null],
+    ["voidmist-basin", "neutral", null],
     ["helios-drift", "controlled", "adeptus-custodes"],
     ["lyra-terminus", "controlled", "space-marines"],
-    ["narthex", "neutral", null],
-    ["vesper-halo", "neutral", null],
     ["red-sabbath", "controlled", "cultos-genestealer"],
-    ["mirrorcoil", "neutral", null],
-    ["drusus", "controlled", "legiones-daemonicas"],
-    ["plaguefall-bastion", "neutral", null],
-    ["sepulchre-nine", "controlled", "legiones-daemonicas"]
+    ["drusus", "controlled", "legiones-daemonicas"]
   ];
 
   for (const [slug, status, factionSlug] of resetSystems) {
@@ -227,11 +221,26 @@ async function resetCombatFixture(maps) {
         .update({
           status,
           controller_faction_id: factionSlug ? maps.factionBySlug[factionSlug].id : null,
-          blocked_until: null
+          blocked_until: null,
+          system_kind: slug.endsWith("-gas") || slug === "voidmist-basin" ? "gaseous" : "standard",
+          is_conquerable: !(slug.endsWith("-gas") || slug === "voidmist-basin"),
+          allows_shared_occupation: slug.endsWith("-gas") || slug === "voidmist-basin"
         })
         .eq("id", maps.systemBySlug[slug].id)
     );
   }
+
+  await must(
+    "ruta fixture coalicion",
+    service.from("system_edges").upsert({
+      id: "00000000-0000-0000-0000-000000000054",
+      slug: "route-test-helios-novem",
+      from_system_id: maps.systemBySlug["helios-drift"].id,
+      to_system_id: maps.systemBySlug.novem.id,
+      uridium_cost: 1,
+      is_blocked: false
+    })
+  );
 
   const warUnits = await must(
     "unidades guerra seed",
@@ -255,10 +264,10 @@ async function resetCombatFixture(maps) {
 
   const necronWarrior = await getUnitByName(maps.factionBySlug.necrones.id, "Necron Warriors");
   await must(
-    "poner defensor necron en Azur",
+    "poner defensor necron en Novem",
     service
       .from("campaign_units")
-      .update({ current_system_id: maps.systemBySlug["azur-trench"].id, status: "ready" })
+      .update({ current_system_id: maps.systemBySlug.novem.id, status: "ready" })
       .eq("id", necronWarrior.id)
   );
 
@@ -266,7 +275,7 @@ async function resetCombatFixture(maps) {
     "preparar Caladius inicial",
     service
       .from("campaign_units")
-      .update({ current_system_id: maps.systemBySlug["arx-solum"].id, status: "ready" })
+      .update({ current_system_id: maps.systemBySlug["helios-drift"].id, status: "ready" })
       .eq("faction_id", maps.factionBySlug["adeptus-custodes"].id)
       .ilike("name", "%Caladius%")
   );
@@ -295,7 +304,7 @@ async function resetCombatFixture(maps) {
       .eq("name", "Pink Horrors")
   );
 
-  recordCheck("fixture combate", "Azur Necrones, Arx Custodes, rutas limpias");
+  recordCheck("fixture combate", "Novem Necrones, Helios Custodes, rutas limpias");
 }
 
 async function main() {
@@ -625,7 +634,7 @@ async function main() {
     "create_movement_order",
     {
       unit_selections: [{ unit_id: intercessor.id, quantity: intercessor.quantity }],
-      path_system_ids: ["sa-cea-gate", "lyra-terminus", "narthex", "nexus-aster", "arx-solum"].map(
+      path_system_ids: ["sa-cea-gate", "lyra-terminus", "maelstrom-gas", "nexus-aster", "voidmist-basin", "helios-drift"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     },
@@ -666,7 +675,7 @@ async function main() {
       status: "moving",
       leader_faction_id: maps.factionBySlug.necrones.id,
       defender_faction_id: maps.factionBySlug["adeptus-custodes"].id,
-      origin_system_id: maps.systemBySlug["azur-trench"].id,
+      origin_system_id: maps.systemBySlug.novem.id,
       target_system_id: maps.systemBySlug["kharon-prime"].id,
       created_by_user_id: admin.userId
     }),
@@ -686,7 +695,7 @@ async function main() {
     admin.client,
     "admin_create_narrative_attack",
     {
-      target_system_id: maps.systemBySlug["vesper-halo"].id,
+      target_system_id: maps.systemBySlug["red-sabbath"].id,
       narrative_faction_id: maps.factionBySlug.tiranidos.id,
       attack_description: "Una bioflota de prueba cruza los sensores exteriores.",
       arrival_at: new Date(Date.now() + 60000).toISOString()
@@ -730,11 +739,11 @@ async function main() {
   const caladius = await getUnitByName(maps.factionBySlug["adeptus-custodes"].id, "Caladius Grav-tank");
   const rhino = await getUnitByName(maps.factionBySlug["space-marines"].id, "Rhino");
   await must(
-    "liberar Arx para ruta coalicion",
+    "asegurar origen custodes",
     service
       .from("systems")
-      .update({ status: "neutral", controller_faction_id: null, blocked_until: null })
-      .eq("id", maps.systemBySlug["arx-solum"].id)
+      .update({ status: "controlled", controller_faction_id: maps.factionBySlug["adeptus-custodes"].id, blocked_until: null })
+      .eq("id", maps.systemBySlug["helios-drift"].id)
   );
   await must(
     "preparar Caladius coalicion",
@@ -756,7 +765,7 @@ async function main() {
     {
       unit_selections: [{ unit_id: caladius.id, quantity: caladius.quantity }],
       origin_system_id: maps.systemBySlug["helios-drift"].id,
-      target_system_id: maps.systemBySlug["azur-trench"].id,
+      target_system_id: maps.systemBySlug.novem.id,
       invited_faction_ids: [maps.factionBySlug["space-marines"].id]
     },
     "crear coalicion atacante"
@@ -786,7 +795,7 @@ async function main() {
     marines.client.rpc("join_battle_operation", {
       operation_id: operationId,
       unit_selections: [{ unit_id: rhino.id, quantity: rhino.quantity }],
-      path_system_ids: ["lyra-terminus", "narthex", "nexus-aster", "arx-solum", "helios-drift"].map(
+      path_system_ids: ["lyra-terminus", "maelstrom-gas", "nexus-aster", "voidmist-basin", "helios-drift"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     }),
@@ -797,7 +806,7 @@ async function main() {
     "create_movement_order",
     {
       unit_selections: [{ unit_id: rhino.id, quantity: rhino.quantity }],
-      path_system_ids: ["lyra-terminus", "narthex", "nexus-aster", "arx-solum", "helios-drift"].map(
+      path_system_ids: ["lyra-terminus", "maelstrom-gas", "nexus-aster", "voidmist-basin", "helios-drift"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     },
@@ -843,7 +852,7 @@ async function main() {
       leader_faction_id: maps.factionBySlug["adeptus-custodes"].id,
       defender_faction_id: maps.factionBySlug.necrones.id,
       origin_system_id: maps.systemBySlug["helios-drift"].id,
-      target_system_id: maps.systemBySlug["azur-trench"].id,
+      target_system_id: maps.systemBySlug.novem.id,
       created_by_user_id: admin.userId
     }),
     "ataque activo"
@@ -855,7 +864,7 @@ async function main() {
       status: "moving",
       leader_faction_id: maps.factionBySlug.necrones.id,
       defender_faction_id: maps.factionBySlug["adeptus-custodes"].id,
-      origin_system_id: maps.systemBySlug["azur-trench"].id,
+      origin_system_id: maps.systemBySlug.novem.id,
       target_system_id: maps.systemBySlug["helios-drift"].id,
       created_by_user_id: admin.userId
     }),
@@ -891,7 +900,7 @@ async function main() {
     cultos.client.rpc("join_battle_operation", {
       operation_id: operationId,
       unit_selections: [{ unit_id: primus.id, quantity: primus.quantity }],
-      path_system_ids: [maps.systemBySlug["azur-trench"].id]
+      path_system_ids: [maps.systemBySlug.novem.id]
     }),
     "apoyo defensivo"
   );
@@ -900,7 +909,7 @@ async function main() {
     "create_movement_order",
     {
       unit_selections: [{ unit_id: primus.id, quantity: primus.quantity }],
-      path_system_ids: ["red-sabbath", "saint-veil", "goregate", "azur-trench"].map(
+      path_system_ids: ["red-sabbath", "voidmist-basin", "nexus-aster", "maelstrom-gas", "novem"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     },
@@ -911,7 +920,7 @@ async function main() {
     "create_movement_order",
     {
       unit_selections: [{ unit_id: horrors.id, quantity: horrors.quantity }],
-      path_system_ids: ["drusus", "sepulchre-nine", "goregate", "azur-trench"].map(
+      path_system_ids: ["drusus", "maelstrom-gas", "novem"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     },
@@ -951,7 +960,7 @@ async function main() {
   await rpc(
     admin.client,
     "admin_set_system_block",
-    { target_system_id: maps.systemBySlug["azur-trench"].id, blocked_until: null },
+    { target_system_id: maps.systemBySlug.novem.id, blocked_until: null },
     "admin desbloquea conflicto"
   );
   const clearedConflict = await must(
@@ -961,7 +970,7 @@ async function main() {
   assert(clearedConflict.status === "cancelled" && clearedConflict.blocked_until === null, "Admin unlock no cancelo conflicto");
   const unitsStillInWar = await must(
     "unidades aun en guerra Azur",
-    service.from("campaign_units").select("id").eq("current_system_id", maps.systemBySlug["azur-trench"].id).eq("status", "in_war")
+    service.from("campaign_units").select("id").eq("current_system_id", maps.systemBySlug.novem.id).eq("status", "in_war")
   );
   assert(unitsStillInWar.length === 0, "Quedan unidades in_war en el sistema desbloqueado");
   recordCheck("admin desbloqueo conflicto", "conflicto desaparece y tropas evacuan a aliado seguro");
