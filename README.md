@@ -139,12 +139,13 @@ La produccion de recursos funciona con tick diario de backend, no por turno estr
 ## Construcciones v1
 
 - Los sistemas tienen slots de edificio: 6 en capitales y 3 en el resto.
-- La produccion diaria sale de edificios activos, no de valores planetarios manuales.
+- El panel del sistema muestra la capacidad natural diaria; la produccion real sale de edificios activos que explotan esa capacidad.
 - El reclutamiento se hace clicando un edificio militar activo: Barracon, Cuartel, Taller, Nido o Camara de Leyendas.
 - El reclutamiento admite variantes oficiales MFM: tamanos legales, recargos por copia y opciones de equipo pagadas. El contrato adicional vive en `data/11th-unit-cost-options.json` y se regenera con `npm run units:generate-options`.
 - La Camara de Leyendas recluta unidades `[Crucible]`; su tecnologia existe despues de Asamblea Planetaria, pero esta bloqueada por ahora.
 - Las unidades heridas pueden curarse desde edificios militares compatibles a mitad de coste proporcional.
 - La Camara de Comercio desbloquea el acceso al mercader y comercio estelar.
+- Los edificios propios pueden destruirse sin reembolso; no se puede destruir un edificio con cola activa.
 - Honor sustituye a Piedra ancestral en UI/reglas; columnas legacy pueden existir solo por compatibilidad.
 - Material Industrial se produce en Planta de Fundicion y se usa principalmente para construir.
 

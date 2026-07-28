@@ -334,12 +334,7 @@ export function CampaignShell() {
             <SystemPanel
               onClose={() => setSelectedSystem(null)}
               onOpenBattleReport={(system) => setBattleReportSystemId(system.id)}
-              onOpenBuilding={(building, template) => {
-                if (template.slug === "camara-comercio") {
-                  openTradeFromBuilding();
-                  return;
-                }
-
+              onOpenBuilding={(building) => {
                 setSelectedBuildingId(building.id);
               }}
               onOpenConstruction={(system) => setConstructionSystemId(system.id)}
@@ -367,6 +362,10 @@ export function CampaignShell() {
       <BuildingActionModal
         building={selectedBuilding}
         onClose={() => setSelectedBuildingId(null)}
+        onOpenTrade={() => {
+          setSelectedBuildingId(null);
+          openTradeFromBuilding();
+        }}
         open={Boolean(selectedBuilding && selectedBuildingTemplate)}
         snapshot={data}
         template={selectedBuildingTemplate}
@@ -749,13 +748,8 @@ function GalaxyTooltip({
   }
 
   const faction = snapshot.factions.find((item) => item.id === system.controllerFactionId);
-  const totalProduction =
-    system.production.supply +
-    system.production.minerals +
-    system.production.honor +
-    system.production.gold +
-    system.production.industrialMaterial +
-    system.production.uridium;
+  const naturalProduction = getNaturalSystemProduction(snapshot, system.id);
+  const totalProduction = planetProductionResources.reduce((total, key) => total + naturalProduction[key], 0);
   const stateText =
     system.status === "war" ? "En guerra" : system.status === "controlled" ? "Controlado" : "Neutral";
 
@@ -805,6 +799,27 @@ function GalaxyTooltip({
         ) : null}
       </div>
     </div>
+  );
+}
+
+function getNaturalSystemProduction(snapshot: CampaignSnapshot, systemId: string) {
+  return planetProductionResources.reduce(
+    (production, key) => {
+      production[key] =
+        snapshot.systemResourceCapabilities.find(
+          (capability) => capability.systemId === systemId && capability.resourceKey === key
+        )?.productionAmount ?? 0;
+
+      return production;
+    },
+    {
+      supply: 0,
+      minerals: 0,
+      honor: 0,
+      gold: 0,
+      industrialMaterial: 0,
+      uridium: 0
+    } as Record<(typeof planetProductionResources)[number], number>
   );
 }
 
@@ -929,6 +944,7 @@ function SystemPanel({
     retireUnitMutation.mutate(unit.id);
   };
   const blockExpired = isBlockExpired(system.blockedUntil);
+  const naturalProduction = getNaturalSystemProduction(snapshot, system.id);
 
   return (
     <Panel className="pointer-events-auto fixed inset-x-2 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] top-[calc(4.85rem+env(safe-area-inset-top))] z-30 flex w-auto max-w-none overflow-hidden lg:static lg:z-auto lg:w-full lg:max-w-md lg:self-stretch">
@@ -1109,7 +1125,7 @@ function SystemPanel({
           ) : null}
 
           <section>
-            <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Produccion activa diaria</h2>
+            <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Capacidad natural diaria</h2>
             <div className="grid grid-cols-2 gap-2">
               {planetProductionResources.map((key) => (
                 <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={key}>
@@ -1117,7 +1133,7 @@ function SystemPanel({
                     <ResourceIcon className="size-4" resource={key} />
                     {resourceLabels[key]}
                   </div>
-                  <div className="font-semibold tabular-nums text-cyan-50">+{system.production[key]}</div>
+                  <div className="font-semibold tabular-nums text-cyan-50">+{naturalProduction[key]}</div>
                 </div>
               ))}
             </div>

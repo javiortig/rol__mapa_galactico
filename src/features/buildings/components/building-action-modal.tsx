@@ -2,11 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Activity, Building2, Clock3, Gem, HeartPulse, Minus, Plus, Shield, Sparkles, X } from "lucide-react";
+import { Activity, Building2, Clock3, Gem, HandCoins, HeartPulse, Minus, Plus, Shield, Sparkles, Trash2, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
 import { ResourceAmount, ResourceIcon, resourceLabels } from "@/components/ui/resource-icon";
+import { canUseBuildingRpc, destroySystemBuilding } from "@/features/buildings/api/building-api";
 import {
   canUseRecruitmentRpc,
   cancelRecruitmentQueue,
@@ -49,23 +50,37 @@ export function BuildingActionModal({
   building,
   template,
   open,
+  onOpenTrade,
   onClose
 }: {
   snapshot: CampaignSnapshot;
   building: SystemBuilding | null;
   template: BuildingTemplate | null;
   open: boolean;
+  onOpenTrade: () => void;
   onClose: () => void;
 }) {
+  const queryClient = useQueryClient();
   const [tab, setTab] = useState<BuildingTab>("recruit");
+  const destroyMutation = useMutation({
+    mutationFn: destroySystemBuilding,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+      onClose();
+    }
+  });
 
   if (!open || !building || !template) {
     return null;
   }
 
-  if (template.buildingKind === "commerce") {
-    return null;
-  }
+  const handleDestroy = () => {
+    if (!window.confirm(`Destruir ${template.name}? Esta accion no devuelve recursos.`)) {
+      return;
+    }
+
+    destroyMutation.mutate(building.id);
+  };
 
   return (
     <div className="pointer-events-auto fixed inset-0 z-50 grid place-items-center bg-black/60 p-0 backdrop-blur-sm md:px-4 md:py-6">
@@ -77,10 +92,23 @@ export function BuildingActionModal({
               <h2 className="mt-1 text-2xl font-semibold text-cyan-50">{template.name}</h2>
               <p className="mt-1 text-sm text-slate-400">{template.description}</p>
             </div>
-            <Button aria-label="Cerrar edificio" onClick={onClose} size="icon" variant="ghost">
-              <X size={18} />
-            </Button>
+            <div className="flex shrink-0 items-center gap-2">
+              <Button
+                aria-label="Destruir edificio"
+                disabled={!canUseBuildingRpc() || destroyMutation.isPending}
+                onClick={handleDestroy}
+                size="icon"
+                title="Destruir edificio"
+                variant="danger"
+              >
+                <Trash2 size={17} />
+              </Button>
+              <Button aria-label="Cerrar edificio" onClick={onClose} size="icon" variant="ghost">
+                <X size={18} />
+              </Button>
+            </div>
           </div>
+          {destroyMutation.error ? <p className="mt-3 text-sm text-rose-200">{destroyMutation.error.message}</p> : null}
         </div>
 
         {building.status !== "active" ? (
@@ -96,12 +124,33 @@ export function BuildingActionModal({
           />
         ) : template.buildingKind === "production" ? (
           <ProductionBuildingView building={building} snapshot={snapshot} template={template} />
+        ) : template.buildingKind === "commerce" ? (
+          <CommerceBuildingView onOpenTrade={onOpenTrade} />
         ) : template.buildingKind === "relic" ? (
           <RelicSanctuaryView building={building} snapshot={snapshot} />
         ) : (
           <PlaceholderBuildingView template={template} />
         )}
       </Panel>
+    </div>
+  );
+}
+
+function CommerceBuildingView({ onOpenTrade }: { onOpenTrade: () => void }) {
+  return (
+    <div className="grid flex-1 place-items-center p-6 text-center">
+      <div>
+        <div className="mx-auto mb-4 grid size-14 place-items-center rounded-md border border-amber-300/30 bg-amber-300/10 text-amber-100">
+          <HandCoins size={26} />
+        </div>
+        <h3 className="text-xl font-semibold text-cyan-50">Camara de Comercio</h3>
+        <p className="mt-2 max-w-md text-sm leading-6 text-slate-300">
+          Acceso al mercader y al comercio estelar de la campana.
+        </p>
+        <Button className="mt-5 w-full" onClick={onOpenTrade}>
+          Abrir comercio
+        </Button>
+      </div>
     </div>
   );
 }

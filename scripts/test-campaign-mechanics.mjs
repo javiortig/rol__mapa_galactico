@@ -453,6 +453,75 @@ async function main() {
   );
   assert(produced.industrial_material === 20, `Planta de Kharon debia producir 20 material, produjo ${produced.industrial_material}`);
   recordCheck("produccion por capacidad planetaria", "Kharon Prime material industrial = 20/dia");
+
+  const foundry = (
+    await must(
+      "buscar planta de Kharon",
+      service
+        .from("system_buildings")
+        .select("*")
+        .eq("system_id", maps.systemBySlug["kharon-prime"].id)
+        .eq("building_template_id", maps.buildingBySlug["planta-fundicion"].id)
+        .eq("status", "active")
+        .limit(1)
+    )
+  )[0];
+  assert(foundry, "Kharon Prime debia tener Planta de Fundicion activa");
+  const resourcesBeforeDestroy = await must(
+    "recursos antes destruir edificio",
+    service.from("faction_resources").select("*").eq("faction_id", maps.factionBySlug["adeptus-custodes"].id).single()
+  );
+  const destroyedBuildingId = await rpc(
+    custodes.client,
+    "destroy_system_building",
+    { system_building_id: foundry.id },
+    "destruir edificio propio"
+  );
+  assert(destroyedBuildingId === foundry.id, "La RPC de destruccion no devolvio el edificio destruido");
+  const resourcesAfterDestroy = await must(
+    "recursos tras destruir edificio",
+    service.from("faction_resources").select("*").eq("faction_id", maps.factionBySlug["adeptus-custodes"].id).single()
+  );
+  assert(
+    resourcesAfterDestroy.industrial_material === resourcesBeforeDestroy.industrial_material &&
+      resourcesAfterDestroy.supply === resourcesBeforeDestroy.supply &&
+      resourcesAfterDestroy.minerals === resourcesBeforeDestroy.minerals,
+    "Destruir edificio no debe devolver recursos"
+  );
+  const destroyedRows = await must(
+    "edificio destruido desaparece",
+    service.from("system_buildings").select("id").eq("id", foundry.id)
+  );
+  assert(destroyedRows.length === 0, "El edificio destruido no desaparecio del sistema");
+  const productionAfterDestroy = await must(
+    "produccion tras destruir edificio",
+    service
+      .from("system_production")
+      .select("industrial_material_per_tick")
+      .eq("system_id", maps.systemBySlug["kharon-prime"].id)
+      .single()
+  );
+  assert(
+    productionAfterDestroy.industrial_material_per_tick === 0,
+    "La produccion derivada de Material Industrial debia caer a 0 tras destruir la Planta"
+  );
+  await must(
+    "reconstruir planta fixture",
+    service
+      .from("system_buildings")
+      .insert({
+        system_id: maps.systemBySlug["kharon-prime"].id,
+        building_template_id: maps.buildingBySlug["planta-fundicion"].id,
+        status: "active",
+        started_at: new Date().toISOString(),
+        finishes_at: new Date().toISOString(),
+        constructed_at: new Date().toISOString()
+      })
+      .select("*")
+      .single()
+  );
+  await rpc(service, "refresh_system_production_from_buildings", {}, "refrescar produccion tras reconstruir planta");
+  recordCheck("destruccion de edificios", "sin reembolso, libera slot y refresca produccion derivada");
   await setResources(playerFactionIds, 5000);
 
   await rpc(
@@ -909,7 +978,7 @@ async function main() {
     "create_movement_order",
     {
       unit_selections: [{ unit_id: primus.id, quantity: primus.quantity }],
-      path_system_ids: ["red-sabbath", "voidmist-basin", "nexus-aster", "maelstrom-gas", "novem"].map(
+      path_system_ids: ["red-sabbath", "maelstrom-gas", "nexus-aster", "voidmist-basin", "novem"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     },
@@ -920,7 +989,7 @@ async function main() {
     "create_movement_order",
     {
       unit_selections: [{ unit_id: horrors.id, quantity: horrors.quantity }],
-      path_system_ids: ["drusus", "maelstrom-gas", "novem"].map(
+      path_system_ids: ["drusus", "maelstrom-gas", "nexus-aster", "voidmist-basin", "novem"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     },

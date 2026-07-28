@@ -19,6 +19,24 @@ export async function startBuildingConstruction(systemId: string, buildingTempla
   return data as string;
 }
 
+export async function destroySystemBuilding(systemBuildingId: string) {
+  const supabase = getSupabaseBrowserClient();
+
+  if (!supabase) {
+    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+  }
+
+  const { data, error } = await supabase.rpc("destroy_system_building", {
+    system_building_id: systemBuildingId
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as string;
+}
+
 export function canUseBuildingRpc() {
   return Boolean(getSupabaseBrowserClient());
 }

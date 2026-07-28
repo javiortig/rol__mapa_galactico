@@ -587,7 +587,7 @@ Suministro vital | Mineral | Honor | Oro | Material Industrial | Uridium
 
 Los Componentes tecnológicos no aparecen en la barra superior. Solo se muestran dentro del panel/árbol de tecnologías.
 
-El panel de sistema debe mostrar producción diaria derivada de sus edificios activos.
+El panel de sistema debe mostrar la capacidad natural diaria del sistema desde `system_resource_capabilities`. La producción activa real sigue dependiendo de que exista un edificio de producción activo para explotar esa capacidad.
 
 ### 4.4 Componentes tecnológicos
 
@@ -913,7 +913,8 @@ Reglas v1:
 - En sistemas no capitales, los edificios de producción solo pueden construirse si `system_resource_capabilities` permite ese recurso.
 - Construir edificios solo cuesta `Material Industrial`; no consume Suministro, Mineral, Honor, Oro, Uridium ni Componentes tecnológicos.
 - Los edificios pertenecen al sistema. Si cambia el controlador, el nuevo controlador puede usar los edificios activos.
-- No hay demolición, mejoras ni destrucción de edificios en v1 salvo edición admin/base de datos.
+- Los edificios propios pueden destruirse desde su panel. Destruir no devuelve recursos y no se permite si el edificio tiene cola activa de reclutamiento o reabastecimiento. Admin puede destruir edificios desde `/admin`.
+- No hay mejoras de edificios en v1.
 
 Catálogo inicial:
 
@@ -2039,6 +2040,7 @@ RPCs de edificios:
 ```text
 start_building_construction(system_id, building_template_id)
 resolve_building_construction()
+destroy_system_building(system_building_id)
 recruit_unit_at_building(system_building_id, unit_template_id, quantity)
 heal_unit_at_building(system_building_id, campaign_unit_id, heal_quantity)
 resolve_unit_recovery_queue()

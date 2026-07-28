@@ -32,6 +32,7 @@ import {
   adminCreateNarrativeAttack,
   adminCreateNarrativeMission,
   adminCreateUnit,
+  adminDestroySystemBuilding,
   adminRemoveTemporaryMission,
   adminSetCampaignLimits,
   adminSetFactionResources,
@@ -403,6 +404,17 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
       setBuildingDrafts((current) => {
         const next = { ...current };
         delete next[variables.building.id];
+        return next;
+      });
+      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
+  });
+  const destroyBuildingMutation = useMutation({
+    mutationFn: adminDestroySystemBuilding,
+    onSuccess: async (_data, systemBuildingId) => {
+      setBuildingDrafts((current) => {
+        const next = { ...current };
+        delete next[systemBuildingId];
         return next;
       });
       await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
@@ -1194,14 +1206,29 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                           />
                         </label>
                       </div>
-                      <Button
-                        className="mt-3 w-full"
-                        disabled={!rpcReady || updateBuildingMutation.isPending || !draft.buildingTemplateId || !draft.systemId}
-                        onClick={() => updateBuildingMutation.mutate({ building, draft })}
-                      >
-                        <Save size={16} />
-                        Guardar edificio
-                      </Button>
+                      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                        <Button
+                          className="w-full"
+                          disabled={!rpcReady || updateBuildingMutation.isPending || !draft.buildingTemplateId || !draft.systemId}
+                          onClick={() => updateBuildingMutation.mutate({ building, draft })}
+                        >
+                          <Save size={16} />
+                          Guardar edificio
+                        </Button>
+                        <Button
+                          className="w-full"
+                          disabled={!rpcReady || destroyBuildingMutation.isPending || building.status === "disabled"}
+                          onClick={() => {
+                            if (window.confirm(`Destruir ${template?.name ?? "este edificio"}? No devuelve recursos.`)) {
+                              destroyBuildingMutation.mutate(building.id);
+                            }
+                          }}
+                          variant="danger"
+                        >
+                          <Trash2 size={16} />
+                          Destruir
+                        </Button>
+                      </div>
                     </div>
                   );
                 })
@@ -1212,6 +1239,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
               )}
             </div>
             {updateBuildingMutation.error ? <p className="text-sm text-rose-200">{updateBuildingMutation.error.message}</p> : null}
+            {destroyBuildingMutation.error ? <p className="text-sm text-rose-200">{destroyBuildingMutation.error.message}</p> : null}
           </div>
         </Panel>
 

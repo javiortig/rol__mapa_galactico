@@ -289,6 +289,20 @@ export async function adminUpdateSystemBuilding(input: {
   return data as string;
 }
 
+export async function adminDestroySystemBuilding(systemBuildingId: string) {
+  const supabase = getAdminClient();
+
+  const { data, error } = await supabase.rpc("destroy_system_building", {
+    system_building_id: systemBuildingId
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as string;
+}
+
 export function canUseAdminRpc() {
   return Boolean(getSupabaseBrowserClient());
 }
