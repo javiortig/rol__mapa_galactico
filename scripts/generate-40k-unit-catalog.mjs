@@ -189,34 +189,28 @@ const FACTION_DEFS = [
 
 const INITIAL_UNITS = [
   ["custodes-kharon-guard", "adeptus-custodes", "Custodian Guard", "kharon-prime", "ready", 1, null, 0],
-  ["custodes-arx-caladius", "adeptus-custodes", "Caladius Grav-tank", "arx-solum", "moving", 1, null, 0],
+  ["custodes-arx-caladius", "adeptus-custodes", "Caladius Grav-tank", "kharon-prime", "ready", 1, null, 0],
   ["custodes-shield-captain", "adeptus-custodes", "Shield-Captain", "kharon-prime", "ready", 3, null, 0],
-  ["custodes-azur-guard", "adeptus-custodes", "Custodian Guard", "azur-trench", "in_war", 1, null, 0],
+  ["custodes-azur-guard", "adeptus-custodes", "Custodian Guard", "kharon-prime", "ready", 1, null, 0],
   ["space-gate-intercessors", "space-marines", "Intercessor Squad", "sa-cea-gate", "ready", 1, null, 0],
-  ["space-narthex-rhino", "space-marines", "Rhino", "narthex", "moving", 1, null, 0],
+  ["space-narthex-rhino", "space-marines", "Rhino", "sa-cea-gate", "ready", 1, null, 0],
   ["space-captain", "space-marines", "Captain", "sa-cea-gate", "ready", 3, null, 0],
-  ["space-saint-intercessors", "space-marines", "Intercessor Squad", "saint-veil", "in_war", 1, null, 0],
+  ["space-saint-intercessors", "space-marines", "Intercessor Squad", "sa-cea-gate", "ready", 1, null, 0],
   ["cult-blackglass-neophytes", "cultos-genestealer", "Neophyte Hybrids", "blackglass", "ready", 1, null, 0],
-  ["cult-mirror-ridgerunner", "cultos-genestealer", "Achilles Ridgerunners", "mirrorcoil", "moving", 1, null, 0],
+  ["cult-mirror-ridgerunner", "cultos-genestealer", "Achilles Ridgerunners", "blackglass", "ready", 1, null, 0],
   ["cult-primus", "cultos-genestealer", "Primus", "blackglass", "ready", 3, null, 0],
-  ["cult-saint-neophytes", "cultos-genestealer", "Neophyte Hybrids", "saint-veil", "in_war", 1, null, 0],
+  ["cult-saint-neophytes", "cultos-genestealer", "Neophyte Hybrids", "blackglass", "ready", 1, null, 0],
   ["necron-thokt-warriors", "necrones", "Necron Warriors", "thokt-vault", "ready", 1, null, 0],
-  ["necron-ghost-wraiths", "necrones", "Canoptek Wraiths", "ghostlight", "moving", 1, null, 0],
+  ["necron-ghost-wraiths", "necrones", "Canoptek Wraiths", "thokt-vault", "ready", 1, null, 0],
   ["necron-overlord", "necrones", "Overlord", "thokt-vault", "ready", 3, null, 0],
-  ["necron-ossuary-warriors", "necrones", "Necron Warriors", "ossuary-reach", "in_war", 1, null, 0],
+  ["necron-ossuary-warriors", "necrones", "Necron Warriors", "thokt-vault", "ready", 1, null, 0],
   ["daemon-mordax-horrors", "legiones-daemonicas", "Pink Horrors", "mordax", "ready", 1, null, 0],
-  ["daemon-plaguefall-screamers", "legiones-daemonicas", "Screamers", "plaguefall-bastion", "moving", 1, null, 0],
+  ["daemon-plaguefall-screamers", "legiones-daemonicas", "Screamers", "mordax", "ready", 1, null, 0],
   ["daemon-lord-change", "legiones-daemonicas", "Lord of Change", "mordax", "ready", 3, null, 0],
-  ["daemon-ossuary-horrors", "legiones-daemonicas", "Blue Horrors", "ossuary-reach", "in_war", 1, null, 0]
+  ["daemon-ossuary-horrors", "legiones-daemonicas", "Blue Horrors", "mordax", "ready", 1, null, 0]
 ];
 
-const MOVEMENT_ORDERS = [
-  ["move-custodes-helios", "adeptus-custodes", "custodes-arx-caladius", "arx-solum", "helios-drift"],
-  ["move-space-lyra", "space-marines", "space-narthex-rhino", "narthex", "lyra-terminus"],
-  ["move-cult-red-sabbath", "cultos-genestealer", "cult-mirror-ridgerunner", "mirrorcoil", "red-sabbath"],
-  ["move-necron-novem", "necrones", "necron-ghost-wraiths", "ghostlight", "novem"],
-  ["move-daemon-drusus", "legiones-daemonicas", "daemon-plaguefall-screamers", "plaguefall-bastion", "drusus"]
-];
+const MOVEMENT_ORDERS = [];
 
 function main() {
   const text = readFileSync(SOURCE_PATH, "utf8");
@@ -793,6 +787,10 @@ set faction_id = excluded.faction_id, unit_template_id = excluded.unit_template_
 }
 
 function buildMovementSql() {
+  if (MOVEMENT_ORDERS.length === 0) {
+    return "-- El mapa final no arranca con movimientos precargados.";
+  }
+
   const orders = MOVEMENT_ORDERS.map(([slug, factionSlug, , from, to]) =>
     `  (public.seed_uuid('movement_order', ${sql(slug)}), public.seed_uuid('faction', ${sql(factionSlug)}), public.seed_uuid('system', ${sql(from)}), public.seed_uuid('system', ${sql(to)}), 1, now() - interval '1 second', now() + interval '3 seconds', 'moving', array[public.seed_uuid('system', ${sql(from)}), public.seed_uuid('system', ${sql(to)})]::uuid[], 1, 3)`
   ).join(",\n");

@@ -203,17 +203,20 @@ async function resetCombatFixture(maps) {
 
   const resetSystems = [
     ["azur-trench", "controlled", "necrones"],
-    ["orison", "neutral", null],
-    ["saint-veil", "neutral", null],
+    ["nexus-aster", "neutral", null],
+    ["goregate", "neutral", null],
+    ["saint-veil", "controlled", "cultos-genestealer"],
     ["ossuary-reach", "neutral", null],
     ["arx-solum", "controlled", "adeptus-custodes"],
     ["helios-drift", "controlled", "adeptus-custodes"],
     ["lyra-terminus", "controlled", "space-marines"],
-    ["narthex", "controlled", "space-marines"],
+    ["narthex", "neutral", null],
+    ["vesper-halo", "neutral", null],
     ["red-sabbath", "controlled", "cultos-genestealer"],
-    ["mirrorcoil", "controlled", "cultos-genestealer"],
+    ["mirrorcoil", "neutral", null],
     ["drusus", "controlled", "legiones-daemonicas"],
-    ["plaguefall-bastion", "controlled", "legiones-daemonicas"]
+    ["plaguefall-bastion", "neutral", null],
+    ["sepulchre-nine", "controlled", "legiones-daemonicas"]
   ];
 
   for (const [slug, status, factionSlug] of resetSystems) {
@@ -622,7 +625,7 @@ async function main() {
     "create_movement_order",
     {
       unit_selections: [{ unit_id: intercessor.id, quantity: intercessor.quantity }],
-      path_system_ids: ["sa-cea-gate", "lyra-terminus", "narthex", "vesper-halo", "argent-rift", "orison", "arx-solum"].map(
+      path_system_ids: ["sa-cea-gate", "lyra-terminus", "narthex", "nexus-aster", "arx-solum"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     },
@@ -683,7 +686,7 @@ async function main() {
     admin.client,
     "admin_create_narrative_attack",
     {
-      target_system_id: maps.systemBySlug["cinder-maw"].id,
+      target_system_id: maps.systemBySlug["vesper-halo"].id,
       narrative_faction_id: maps.factionBySlug.tiranidos.id,
       attack_description: "Una bioflota de prueba cruza los sensores exteriores.",
       arrival_at: new Date(Date.now() + 60000).toISOString()
@@ -699,7 +702,7 @@ async function main() {
     admin.client,
     "admin_create_narrative_mission",
     {
-      anchor_system_id: maps.systemBySlug["voidfall-anchor"].id,
+      anchor_system_id: maps.systemBySlug["nexus-aster"].id,
       narrative_faction_id: maps.factionBySlug.orcos.id,
       mission_name: "Puesto orbital de prueba",
       mission_description: "Una senal de guerra improvisada reclama botin entre asteroides.",
@@ -727,10 +730,17 @@ async function main() {
   const caladius = await getUnitByName(maps.factionBySlug["adeptus-custodes"].id, "Caladius Grav-tank");
   const rhino = await getUnitByName(maps.factionBySlug["space-marines"].id, "Rhino");
   await must(
+    "liberar Arx para ruta coalicion",
+    service
+      .from("systems")
+      .update({ status: "neutral", controller_faction_id: null, blocked_until: null })
+      .eq("id", maps.systemBySlug["arx-solum"].id)
+  );
+  await must(
     "preparar Caladius coalicion",
     service
       .from("campaign_units")
-      .update({ current_system_id: maps.systemBySlug["arx-solum"].id, status: "ready" })
+      .update({ current_system_id: maps.systemBySlug["helios-drift"].id, status: "ready" })
       .eq("id", caladius.id)
   );
   await must(
@@ -745,7 +755,7 @@ async function main() {
     "create_coalition_attack_draft",
     {
       unit_selections: [{ unit_id: caladius.id, quantity: caladius.quantity }],
-      origin_system_id: maps.systemBySlug["arx-solum"].id,
+      origin_system_id: maps.systemBySlug["helios-drift"].id,
       target_system_id: maps.systemBySlug["azur-trench"].id,
       invited_faction_ids: [maps.factionBySlug["space-marines"].id]
     },
@@ -761,7 +771,7 @@ async function main() {
     marines.client.rpc("join_battle_operation", {
       operation_id: operationId,
       unit_selections: [{ unit_id: rhino.id, quantity: rhino.quantity }],
-      path_system_ids: [maps.systemBySlug["arx-solum"].id]
+      path_system_ids: [maps.systemBySlug["helios-drift"].id]
     }),
     "aceptar"
   );
@@ -776,7 +786,7 @@ async function main() {
     marines.client.rpc("join_battle_operation", {
       operation_id: operationId,
       unit_selections: [{ unit_id: rhino.id, quantity: rhino.quantity }],
-      path_system_ids: ["lyra-terminus", "narthex", "vesper-halo", "argent-rift", "orison", "arx-solum"].map(
+      path_system_ids: ["lyra-terminus", "narthex", "nexus-aster", "arx-solum", "helios-drift"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     }),
@@ -787,7 +797,7 @@ async function main() {
     "create_movement_order",
     {
       unit_selections: [{ unit_id: rhino.id, quantity: rhino.quantity }],
-      path_system_ids: ["lyra-terminus", "narthex", "vesper-halo", "argent-rift", "orison", "arx-solum"].map(
+      path_system_ids: ["lyra-terminus", "narthex", "nexus-aster", "arx-solum", "helios-drift"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     },
@@ -804,7 +814,7 @@ async function main() {
     service.from("campaign_units").select("current_system_id,status").eq("id", rhino.id).single()
   );
   assert(
-    rhinoAtOrigin.current_system_id === maps.systemBySlug["arx-solum"].id && rhinoAtOrigin.status === "ready",
+    rhinoAtOrigin.current_system_id === maps.systemBySlug["helios-drift"].id && rhinoAtOrigin.status === "ready",
     "Rhino no llego listo al origen"
   );
   await rpc(
@@ -813,7 +823,7 @@ async function main() {
     {
       operation_id: operationId,
       unit_selections: [{ unit_id: rhino.id, quantity: rhino.quantity }],
-      path_system_ids: [maps.systemBySlug["arx-solum"].id]
+      path_system_ids: [maps.systemBySlug["helios-drift"].id]
     },
     "marcar atacante listo"
   );
@@ -832,7 +842,7 @@ async function main() {
       status: "moving",
       leader_faction_id: maps.factionBySlug["adeptus-custodes"].id,
       defender_faction_id: maps.factionBySlug.necrones.id,
-      origin_system_id: maps.systemBySlug["arx-solum"].id,
+      origin_system_id: maps.systemBySlug["helios-drift"].id,
       target_system_id: maps.systemBySlug["azur-trench"].id,
       created_by_user_id: admin.userId
     }),
@@ -846,7 +856,7 @@ async function main() {
       leader_faction_id: maps.factionBySlug.necrones.id,
       defender_faction_id: maps.factionBySlug["adeptus-custodes"].id,
       origin_system_id: maps.systemBySlug["azur-trench"].id,
-      target_system_id: maps.systemBySlug["arx-solum"].id,
+      target_system_id: maps.systemBySlug["helios-drift"].id,
       created_by_user_id: admin.userId
     }),
     "contraatacar"
@@ -890,7 +900,7 @@ async function main() {
     "create_movement_order",
     {
       unit_selections: [{ unit_id: primus.id, quantity: primus.quantity }],
-      path_system_ids: ["red-sabbath", "mirrorcoil", "pale-choir", "ashen-road", "ossuary-reach", "nexus-aster", "azur-trench"].map(
+      path_system_ids: ["red-sabbath", "saint-veil", "goregate", "azur-trench"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     },
@@ -901,7 +911,7 @@ async function main() {
     "create_movement_order",
     {
       unit_selections: [{ unit_id: horrors.id, quantity: horrors.quantity }],
-      path_system_ids: ["drusus", "plaguefall-bastion", "sepulchre-nine", "goregate", "azur-trench"].map(
+      path_system_ids: ["drusus", "sepulchre-nine", "goregate", "azur-trench"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     },
@@ -928,7 +938,10 @@ async function main() {
     "daemonicas redirigidas",
     service.from("campaign_units").select("current_system_id,status").eq("id", horrors.id).single()
   );
-  const daemonHome = maps.systems.find((system) => system.id === lateDaemon.current_system_id);
+  const daemonHome = await must(
+    "sistema vivo apoyo tardio",
+    service.from("systems").select("controller_faction_id,status").eq("id", lateDaemon.current_system_id).single()
+  );
   assert(
     lateDaemon.status === "ready" && daemonHome.controller_faction_id === maps.factionBySlug["legiones-daemonicas"].id,
     "Apoyo tardio no fue redirigido a aliado seguro"

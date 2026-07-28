@@ -495,13 +495,164 @@ const baseSystems: BaseSystem[] = [
   }
 ];
 
-const gaseousSystemIds = new Set(["nexus-aster", "ashen-road"]);
+const finalMapSystemIds = new Set([
+  "kharon-prime",
+  "helios-drift",
+  "arx-solum",
+  "azur-trench",
+  "sa-cea-gate",
+  "lyra-terminus",
+  "narthex",
+  "vesper-halo",
+  "blackglass",
+  "red-sabbath",
+  "mirrorcoil",
+  "saint-veil",
+  "thokt-vault",
+  "novem",
+  "ghostlight",
+  "ossuary-reach",
+  "mordax",
+  "drusus",
+  "plaguefall-bastion",
+  "sepulchre-nine",
+  "nexus-aster",
+  "goregate"
+]);
 
-const systems: CampaignSnapshot["systems"] = baseSystems.map((system) => {
+const finalSystemOverrides: Record<string, Partial<BaseSystem>> = {
+  "kharon-prime": { x: 90, y: 150, status: "controlled", controllerFactionId: "adeptus-custodes", isCapital: true },
+  "helios-drift": {
+    x: 230,
+    y: 190,
+    status: "neutral",
+    controllerFactionId: null,
+    isCapital: false,
+    type: "Cinturon minero neutral",
+    publicDescription: "Primer corredor desde Kharon: asteroides ricos en mineral y rutas abiertas hacia el centro."
+  },
+  "arx-solum": {
+    x: 350,
+    y: 110,
+    status: "neutral",
+    controllerFactionId: null,
+    isCapital: false,
+    type: "Bastion exterior neutral",
+    publicDescription: "Fortaleza avanzada abandonada sobre una ruta alta hacia los nodos centrales."
+  },
+  "azur-trench": {
+    x: 360,
+    y: 270,
+    status: "neutral",
+    controllerFactionId: null,
+    blockedUntil: undefined,
+    isCapital: false,
+    publicDescription: "Corredor azul con pozos de gravedad inestables y lecturas de patrullas orkas lejanas."
+  },
+  "sa-cea-gate": { x: 910, y: 150, status: "controlled", controllerFactionId: "space-marines", isCapital: true },
+  "lyra-terminus": {
+    x: 770,
+    y: 190,
+    status: "neutral",
+    controllerFactionId: null,
+    isCapital: false,
+    type: "Puerto externo neutral",
+    publicDescription: "Puerto orbital sin mando estable, demasiado cercano al frente para ser ignorado."
+  },
+  narthex: {
+    x: 650,
+    y: 110,
+    status: "neutral",
+    controllerFactionId: null,
+    isCapital: false,
+    type: "Santuario sellado neutral",
+    publicDescription: "Complejo sacro con rutas de descenso peligrosas hacia el nucleo del mapa."
+  },
+  "vesper-halo": { x: 640, y: 270, status: "neutral", controllerFactionId: null, isCapital: false },
+  blackglass: { x: 930, y: 500, status: "controlled", controllerFactionId: "cultos-genestealer", isCapital: true },
+  "red-sabbath": {
+    x: 785,
+    y: 500,
+    status: "neutral",
+    controllerFactionId: null,
+    isCapital: false,
+    type: "Mundo sermonario neutral",
+    publicDescription: "Ciudades santuario sin autoridad estable, llenas de rutas subterraneas y ruido civil."
+  },
+  mirrorcoil: { x: 660, y: 415, status: "neutral", controllerFactionId: null, isCapital: false },
+  "saint-veil": {
+    x: 650,
+    y: 585,
+    status: "neutral",
+    controllerFactionId: null,
+    blockedUntil: undefined,
+    isCapital: false,
+    publicDescription: "Santuario velado donde los augurios se confunden con sabotajes y plegarias.",
+    specialObjects: undefined
+  },
+  "thokt-vault": { x: 820, y: 850, status: "controlled", controllerFactionId: "necrones", isCapital: true },
+  novem: {
+    x: 705,
+    y: 735,
+    status: "neutral",
+    controllerFactionId: null,
+    isCapital: false,
+    type: "Luna industrial neutral",
+    publicDescription: "Complejo lunar de extraccion automatizada a la espera de un nuevo amo."
+  },
+  ghostlight: { x: 610, y: 650, status: "neutral", controllerFactionId: null, isCapital: false },
+  "ossuary-reach": {
+    x: 585,
+    y: 815,
+    status: "neutral",
+    controllerFactionId: null,
+    blockedUntil: undefined,
+    isCapital: false,
+    publicDescription: "Campos funerarios en orbita baja donde la tecnologia antigua sigue respondiendo.",
+    specialObjects: undefined
+  },
+  mordax: { x: 145, y: 850, status: "controlled", controllerFactionId: "legiones-daemonicas", isCapital: true },
+  drusus: {
+    x: 285,
+    y: 735,
+    status: "neutral",
+    controllerFactionId: null,
+    isCapital: false,
+    type: "Bastion menor neutral",
+    publicDescription: "Fortaleza abandonada en una ruta baja hacia los fuegos centrales."
+  },
+  "plaguefall-bastion": { x: 395, y: 650, status: "neutral", controllerFactionId: null, isCapital: false },
+  "sepulchre-nine": { x: 385, y: 815, status: "neutral", controllerFactionId: null, isCapital: false },
+  "nexus-aster": {
+    x: 500,
+    y: 400,
+    size: 0.96,
+    status: "controlled",
+    controllerFactionId: "orcos",
+    type: "Enclave orko central",
+    publicDescription: "Un nudo de rutas tomado por senales de guerra orkas y chatarra militar.",
+    specialObjects: [{ id: "obj-nexus-aster", name: "Totem del Nexus", type: "anomaly", isPublic: true }]
+  },
+  goregate: {
+    x: 500,
+    y: 565,
+    size: 0.96,
+    status: "controlled",
+    controllerFactionId: "orcos",
+    type: "Portal de guerra orko",
+    publicDescription: "Paso sangriento convertido en puerta de saqueo para incursiones orkas.",
+    specialObjects: [{ id: "obj-goregate", name: "Puerta de la Waaagh", type: "anomaly", isPublic: true }]
+  }
+};
+
+const gaseousSystemIds = new Set<string>();
+
+const systems: CampaignSnapshot["systems"] = baseSystems.filter((system) => finalMapSystemIds.has(system.id)).map((system) => {
   const isGaseous = gaseousSystemIds.has(system.id);
+  const finalSystem = { ...system, ...finalSystemOverrides[system.id] };
 
   return {
-    ...system,
+    ...finalSystem,
     systemKind: isGaseous ? "gaseous" : "standard",
     isConquerable: !isGaseous,
     allowsSharedOccupation: isGaseous
@@ -511,44 +662,30 @@ const systems: CampaignSnapshot["systems"] = baseSystems.map((system) => {
 const edges: CampaignSnapshot["edges"] = [
   { id: "route-01", fromSystemId: "kharon-prime", toSystemId: "helios-drift", uridiumCost: 1 },
   { id: "route-02", fromSystemId: "helios-drift", toSystemId: "arx-solum", uridiumCost: 1 },
-  { id: "route-03", fromSystemId: "arx-solum", toSystemId: "azur-trench", uridiumCost: 2 },
-  { id: "route-04", fromSystemId: "arx-solum", toSystemId: "orison", uridiumCost: 2 },
-  { id: "route-05", fromSystemId: "cinder-maw", toSystemId: "eclipse-forge", uridiumCost: 1 },
-  { id: "route-06", fromSystemId: "eclipse-forge", toSystemId: "rustmaw-run", uridiumCost: 1 },
-  { id: "route-07", fromSystemId: "rustmaw-run", toSystemId: "azur-trench", uridiumCost: 2 },
-  { id: "route-08", fromSystemId: "rustmaw-run", toSystemId: "goregate", uridiumCost: 1 },
-  { id: "route-09", fromSystemId: "sa-cea-gate", toSystemId: "lyra-terminus", uridiumCost: 1 },
-  { id: "route-10", fromSystemId: "lyra-terminus", toSystemId: "narthex", uridiumCost: 1 },
-  { id: "route-11", fromSystemId: "narthex", toSystemId: "saint-veil", uridiumCost: 2 },
-  { id: "route-12", fromSystemId: "narthex", toSystemId: "vesper-halo", uridiumCost: 1 },
-  { id: "route-13", fromSystemId: "blackglass", toSystemId: "red-sabbath", uridiumCost: 1 },
-  { id: "route-14", fromSystemId: "red-sabbath", toSystemId: "mirrorcoil", uridiumCost: 1 },
-  { id: "route-15", fromSystemId: "mirrorcoil", toSystemId: "saint-veil", uridiumCost: 2 },
-  { id: "route-16", fromSystemId: "mirrorcoil", toSystemId: "pale-choir", uridiumCost: 1 },
-  { id: "route-17", fromSystemId: "thokt-vault", toSystemId: "novem", uridiumCost: 1 },
-  { id: "route-18", fromSystemId: "novem", toSystemId: "ghostlight", uridiumCost: 1 },
-  { id: "route-19", fromSystemId: "ghostlight", toSystemId: "ossuary-reach", uridiumCost: 2 },
-  { id: "route-20", fromSystemId: "ghostlight", toSystemId: "voidfall-anchor", uridiumCost: 1 },
-  { id: "route-21", fromSystemId: "mordax", toSystemId: "drusus", uridiumCost: 1 },
-  { id: "route-22", fromSystemId: "drusus", toSystemId: "plaguefall-bastion", uridiumCost: 1 },
-  { id: "route-23", fromSystemId: "plaguefall-bastion", toSystemId: "ossuary-reach", uridiumCost: 2 },
-  { id: "route-24", fromSystemId: "plaguefall-bastion", toSystemId: "sepulchre-nine", uridiumCost: 1 },
-  { id: "route-25", fromSystemId: "azur-trench", toSystemId: "orison", uridiumCost: 2 },
-  { id: "route-26", fromSystemId: "orison", toSystemId: "argent-rift", uridiumCost: 1 },
-  { id: "route-27", fromSystemId: "argent-rift", toSystemId: "vesper-halo", uridiumCost: 1 },
-  { id: "route-28", fromSystemId: "vesper-halo", toSystemId: "saint-veil", uridiumCost: 2 },
-  { id: "route-29", fromSystemId: "saint-veil", toSystemId: "pale-choir", uridiumCost: 2 },
-  { id: "route-30", fromSystemId: "pale-choir", toSystemId: "ashen-road", uridiumCost: 1 },
-  { id: "route-31", fromSystemId: "ashen-road", toSystemId: "ossuary-reach", uridiumCost: 2 },
-  { id: "route-32", fromSystemId: "ossuary-reach", toSystemId: "voidfall-anchor", uridiumCost: 2 },
-  { id: "route-33", fromSystemId: "voidfall-anchor", toSystemId: "sepulchre-nine", uridiumCost: 1 },
-  { id: "route-34", fromSystemId: "sepulchre-nine", toSystemId: "goregate", uridiumCost: 2 },
-  { id: "route-35", fromSystemId: "goregate", toSystemId: "azur-trench", uridiumCost: 1 },
-  { id: "route-36", fromSystemId: "nexus-aster", toSystemId: "orison", uridiumCost: 3 },
-  { id: "route-37", fromSystemId: "nexus-aster", toSystemId: "azur-trench", uridiumCost: 3 },
-  { id: "route-38", fromSystemId: "nexus-aster", toSystemId: "saint-veil", uridiumCost: 3 },
-  { id: "route-39", fromSystemId: "nexus-aster", toSystemId: "ashen-road", uridiumCost: 3 },
-  { id: "route-40", fromSystemId: "nexus-aster", toSystemId: "ossuary-reach", uridiumCost: 3 }
+  { id: "route-03", fromSystemId: "helios-drift", toSystemId: "azur-trench", uridiumCost: 1 },
+  { id: "route-04", fromSystemId: "sa-cea-gate", toSystemId: "lyra-terminus", uridiumCost: 1 },
+  { id: "route-05", fromSystemId: "lyra-terminus", toSystemId: "narthex", uridiumCost: 1 },
+  { id: "route-06", fromSystemId: "lyra-terminus", toSystemId: "vesper-halo", uridiumCost: 1 },
+  { id: "route-07", fromSystemId: "blackglass", toSystemId: "red-sabbath", uridiumCost: 1 },
+  { id: "route-08", fromSystemId: "red-sabbath", toSystemId: "mirrorcoil", uridiumCost: 1 },
+  { id: "route-09", fromSystemId: "red-sabbath", toSystemId: "saint-veil", uridiumCost: 1 },
+  { id: "route-10", fromSystemId: "thokt-vault", toSystemId: "novem", uridiumCost: 1 },
+  { id: "route-11", fromSystemId: "novem", toSystemId: "ghostlight", uridiumCost: 1 },
+  { id: "route-12", fromSystemId: "novem", toSystemId: "ossuary-reach", uridiumCost: 1 },
+  { id: "route-13", fromSystemId: "mordax", toSystemId: "drusus", uridiumCost: 1 },
+  { id: "route-14", fromSystemId: "drusus", toSystemId: "plaguefall-bastion", uridiumCost: 1 },
+  { id: "route-15", fromSystemId: "drusus", toSystemId: "sepulchre-nine", uridiumCost: 1 },
+  { id: "route-16", fromSystemId: "nexus-aster", toSystemId: "arx-solum", uridiumCost: 2 },
+  { id: "route-17", fromSystemId: "nexus-aster", toSystemId: "narthex", uridiumCost: 2 },
+  { id: "route-18", fromSystemId: "nexus-aster", toSystemId: "mirrorcoil", uridiumCost: 2 },
+  { id: "route-19", fromSystemId: "nexus-aster", toSystemId: "ghostlight", uridiumCost: 2 },
+  { id: "route-20", fromSystemId: "nexus-aster", toSystemId: "plaguefall-bastion", uridiumCost: 2 },
+  { id: "route-21", fromSystemId: "goregate", toSystemId: "azur-trench", uridiumCost: 2 },
+  { id: "route-22", fromSystemId: "goregate", toSystemId: "vesper-halo", uridiumCost: 2 },
+  { id: "route-23", fromSystemId: "goregate", toSystemId: "saint-veil", uridiumCost: 2 },
+  { id: "route-24", fromSystemId: "goregate", toSystemId: "ossuary-reach", uridiumCost: 2 },
+  { id: "route-25", fromSystemId: "goregate", toSystemId: "sepulchre-nine", uridiumCost: 2 },
+  { id: "route-26", fromSystemId: "nexus-aster", toSystemId: "goregate", uridiumCost: 1 }
 ];
 
 const resources: CampaignSnapshot["resources"] = [
@@ -1139,98 +1276,7 @@ const characterUnits: CampaignSnapshot["units"] = [
 
 const units: CampaignSnapshot["units"] = generated40kInitialUnits.filter((unit) => isActiveFactionId(unit.factionId));
 
-const movements: CampaignSnapshot["movements"] = [
-  {
-    id: "move-custodes-helios",
-    unitIds: ["custodes-arx-caladius"],
-    unitSelections: [{ unitId: "custodes-arx-caladius", quantity: 1 }],
-    factionId: "adeptus-custodes",
-    fromSystemId: "arx-solum",
-    toSystemId: "helios-drift",
-    movementType: "move",
-    movementPurpose: "normal",
-    pathSystemIds: ["arx-solum", "helios-drift"],
-    uridiumCost: 1,
-    segmentCount: 1,
-    durationSeconds: 120,
-    startedAt: inMinutes(-0.5),
-    departureAt: inMinutes(-0.5),
-    arrivalAt: inMinutes(1.5),
-    status: "moving"
-  },
-  {
-    id: "move-sombra-lyra",
-    unitIds: ["sombra-lyra-intercessors"],
-    unitSelections: [{ unitId: "sombra-lyra-intercessors", quantity: 1 }],
-    factionId: "space-marines",
-    fromSystemId: "sa-cea-gate",
-    toSystemId: "lyra-terminus",
-    movementType: "move",
-    movementPurpose: "normal",
-    pathSystemIds: ["sa-cea-gate", "lyra-terminus"],
-    uridiumCost: 1,
-    segmentCount: 1,
-    durationSeconds: 120,
-    startedAt: inMinutes(-0.5),
-    departureAt: inMinutes(-0.5),
-    arrivalAt: inMinutes(1.5),
-    status: "moving"
-  },
-  {
-    id: "move-cult-sabbath",
-    unitIds: ["cult-sabbath-ridgerunner"],
-    unitSelections: [{ unitId: "cult-sabbath-ridgerunner", quantity: 1 }],
-    factionId: "cultos-genestealer",
-    fromSystemId: "blackglass",
-    toSystemId: "red-sabbath",
-    movementType: "move",
-    movementPurpose: "normal",
-    pathSystemIds: ["blackglass", "red-sabbath"],
-    uridiumCost: 1,
-    segmentCount: 1,
-    durationSeconds: 120,
-    startedAt: inMinutes(-0.5),
-    departureAt: inMinutes(-0.5),
-    arrivalAt: inMinutes(1.5),
-    status: "moving"
-  },
-  {
-    id: "move-necron-novem",
-    unitIds: ["necron-novem-immortals"],
-    unitSelections: [{ unitId: "necron-novem-immortals", quantity: 2 }],
-    factionId: "necrones",
-    fromSystemId: "thokt-vault",
-    toSystemId: "novem",
-    movementType: "move",
-    movementPurpose: "normal",
-    pathSystemIds: ["thokt-vault", "novem"],
-    uridiumCost: 1,
-    segmentCount: 1,
-    durationSeconds: 120,
-    startedAt: inMinutes(-0.5),
-    departureAt: inMinutes(-0.5),
-    arrivalAt: inMinutes(1.5),
-    status: "moving"
-  },
-  {
-    id: "move-death-drusus",
-    unitIds: ["death-drusus-drone"],
-    unitSelections: [{ unitId: "death-drusus-drone", quantity: 1 }],
-    factionId: "legiones-daemonicas",
-    fromSystemId: "mordax",
-    toSystemId: "drusus",
-    movementType: "move",
-    movementPurpose: "normal",
-    pathSystemIds: ["mordax", "drusus"],
-    uridiumCost: 1,
-    segmentCount: 1,
-    durationSeconds: 120,
-    startedAt: inMinutes(-0.5),
-    departureAt: inMinutes(-0.5),
-    arrivalAt: inMinutes(1.5),
-    status: "moving"
-  }
-];
+const movements: CampaignSnapshot["movements"] = [];
 
 type MockUnitTemplate = Omit<CampaignSnapshot["unitTemplates"][number], "defaultQuantity" | "woundsPerModel" | "unitType" | "unitKeywords">;
 
@@ -1778,65 +1824,9 @@ void baseUnits;
 void characterUnits;
 void unitTemplateBase;
 
-const conflicts: CampaignSnapshot["conflicts"] = [
-  {
-    id: "conflict-azur-trench",
-    systemId: "azur-trench",
-    attackerFactionId: "orcos",
-    defenderFactionId: "adeptus-custodes",
-    status: "pending",
-    blockedUntil: inDays(14),
-    notes: "Una horda orka amenaza el corredor de la Zanja Azul frente a las lineas de Kharon. Pendiente de batalla fisica."
-  },
-  {
-    id: "conflict-ossuary-reach",
-    systemId: "ossuary-reach",
-    attackerFactionId: "legiones-daemonicas",
-    defenderFactionId: "necrones",
-    status: "pending",
-    blockedUntil: inDays(14),
-    notes: "La Guardia de la Muerte intenta profanar criptas que los Necrones estan reactivando. Pendiente de batalla fisica."
-  },
-  {
-    id: "conflict-saint-veil",
-    systemId: "saint-veil",
-    attackerFactionId: "space-marines",
-    defenderFactionId: "cultos-genestealer",
-    status: "pending",
-    blockedUntil: inDays(14),
-    notes: "La Sombra del Emperador ha descubierto una insurreccion genestelar en el santuario. Pendiente de batalla fisica."
-  }
-];
+const conflicts: CampaignSnapshot["conflicts"] = [];
 
-const missions: CampaignSnapshot["missions"] = [
-  {
-    id: "mission-azur-trench",
-    systemId: "azur-trench",
-    title: "La Zanja Azul",
-    narrativeDescription: "Una nebulosa de gases ionizados parte el campo de batalla en corredores estrechos.",
-    objectives: "Controlar las balizas de navegacion al final de la batalla fisica.",
-    specialRules: "Las unidades que avancen por el centro cuentan como expuestas por la luz azul.",
-    victoryConditions: "El ganador decide el control final de Azur Trench."
-  },
-  {
-    id: "mission-ossuary-reach",
-    systemId: "ossuary-reach",
-    title: "Ecos del Osario",
-    narrativeDescription: "Criptas rotas y fosas contaminadas hacen que cada metro sea una amenaza.",
-    objectives: "Asegurar tres criptas antes del final de la partida.",
-    specialRules: "El terreno central se considera peligroso por emanaciones toxicas y energia necrodermis.",
-    victoryConditions: "El ganador decide el control final de Ossuary Reach."
-  },
-  {
-    id: "mission-saint-veil",
-    systemId: "saint-veil",
-    title: "El Velo Sagrado",
-    narrativeDescription: "Un santuario en sombra se convierte en campo de purga e insurreccion.",
-    objectives: "Mantener el altar central y dos accesos laterales.",
-    specialRules: "La primera ronda usa visibilidad reducida por incienso, humo y apagones.",
-    victoryConditions: "El ganador decide el control final de Saint Veil."
-  }
-];
+const missions: CampaignSnapshot["missions"] = [];
 
 const technologyNodes: CampaignSnapshot["technologyNodes"] = [
   makeTechnologyNode({ id: "fundacion-planetaria", slug: "fundacion-planetaria", name: "Fundacion Planetaria", description: "Protocolos basicos para levantar la primera infraestructura estable de campana.", branch: "Progreso", tier: 0, positionX: 46, positionY: 48, costTechnology: 0, researchTimeSeconds: 3, iconKey: "foundation", effectSummary: "Permite construir Barracones de Infanteria y Granjas Biologicas.", isStarter: true }),

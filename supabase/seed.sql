@@ -70,36 +70,28 @@ insert into public.systems (
   id, slug, name, x, y, size, star_class, type, status, controller_faction_id, blocked_until, public_description, is_capital
 )
 values
-  (public.seed_uuid('system', 'kharon-prime'), 'kharon-prime', 'Kharon Prime', 90, 170, 1.2, 'blue', 'Capital fortificada', 'controlled', public.seed_uuid('faction', 'adeptus-custodes'), null, 'Bastion aurico y astropuerto militar custodiado por los guardianes del Trono.', true),
-  (public.seed_uuid('system', 'helios-drift'), 'helios-drift', 'Helios Drift', 215, 190, 0.9, 'orange', 'Cinturon minero', 'controlled', public.seed_uuid('faction', 'adeptus-custodes'), null, 'Asteroides ricos en mineral defendidos por baterias orbitales custodes.', false),
-  (public.seed_uuid('system', 'arx-solum'), 'arx-solum', 'Arx Solum', 315, 255, 0.82, 'white', 'Bastion exterior', 'controlled', public.seed_uuid('faction', 'adeptus-custodes'), null, 'Fortaleza avanzada que vigila las rutas hacia la Zanja Azul.', false),
+  (public.seed_uuid('system', 'kharon-prime'), 'kharon-prime', 'Kharon Prime', 90, 150, 1.2, 'blue', 'Capital fortificada', 'controlled', public.seed_uuid('faction', 'adeptus-custodes'), null, 'Bastion aurico y astropuerto militar custodiado por los guardianes del Trono.', true),
+  (public.seed_uuid('system', 'helios-drift'), 'helios-drift', 'Helios Drift', 230, 190, 0.9, 'orange', 'Cinturon minero neutral', 'neutral', null, null, 'Primer corredor desde Kharon: asteroides ricos en mineral y rutas abiertas hacia el centro.', false),
+  (public.seed_uuid('system', 'arx-solum'), 'arx-solum', 'Arx Solum', 350, 110, 0.82, 'white', 'Bastion exterior neutral', 'neutral', null, null, 'Fortaleza avanzada abandonada sobre una ruta alta hacia los nodos centrales.', false),
+  (public.seed_uuid('system', 'azur-trench'), 'azur-trench', 'Azur Trench', 360, 270, 0.86, 'blue', 'Nebulosa navegable', 'neutral', null, null, 'Corredor azul con pozos de gravedad inestables y lecturas de patrullas orkas lejanas.', false),
   (public.seed_uuid('system', 'sa-cea-gate'), 'sa-cea-gate', 'Sa''cea Gate', 910, 150, 1.2, 'white', 'Capital orbital', 'controlled', public.seed_uuid('faction', 'space-marines'), null, 'Estacion de paso con matrices de navegacion de largo alcance.', true),
-  (public.seed_uuid('system', 'lyra-terminus'), 'lyra-terminus', 'Lyra Terminus', 790, 210, 0.88, 'blue', 'Puerto externo', 'controlled', public.seed_uuid('faction', 'space-marines'), null, 'Puerto orbital en el borde del subsector.', false),
-  (public.seed_uuid('system', 'narthex'), 'narthex', 'Narthex', 685, 285, 0.95, 'yellow', 'Santuario sellado', 'controlled', public.seed_uuid('faction', 'space-marines'), null, 'Complejo sacro con rutas de descenso peligrosas.', false),
-  (public.seed_uuid('system', 'blackglass'), 'blackglass', 'Blackglass', 930, 440, 1.16, 'white', 'Capital cristalina', 'controlled', public.seed_uuid('faction', 'cultos-genestealer'), null, 'Honor bajo oceanos de vidrio oscuro.', true),
-  (public.seed_uuid('system', 'red-sabbath'), 'red-sabbath', 'Red Sabbath', 805, 485, 0.88, 'red', 'Mundo sermonario', 'controlled', public.seed_uuid('faction', 'cultos-genestealer'), null, 'Ciudades santuario infiltradas por redes de culto.', false),
-  (public.seed_uuid('system', 'mirrorcoil'), 'mirrorcoil', 'Mirrorcoil', 685, 510, 0.82, 'violet', 'Enjambre orbital', 'controlled', public.seed_uuid('faction', 'cultos-genestealer'), null, 'Estaciones gemelas que repiten senales falsas hacia el centro.', false),
-  (public.seed_uuid('system', 'thokt-vault'), 'thokt-vault', 'Thokt Vault', 805, 800, 1.2, 'green', 'Capital tumba', 'controlled', public.seed_uuid('faction', 'necrones'), null, 'Cripta silenciosa rodeada de energia verdosa.', true),
-  (public.seed_uuid('system', 'novem'), 'novem', 'Novem', 725, 700, 0.84, 'white', 'Luna industrial', 'controlled', public.seed_uuid('faction', 'necrones'), null, 'Complejo lunar de extraccion automatizada.', false),
-  (public.seed_uuid('system', 'ghostlight'), 'ghostlight', 'Ghostlight', 625, 645, 0.8, 'green', 'Faro perdido', 'controlled', public.seed_uuid('faction', 'necrones'), null, 'Faro de navegacion que parpadea con luz fria.', false),
-  (public.seed_uuid('system', 'mordax'), 'mordax', 'Mordax', 150, 780, 1.18, 'red', 'Capital corrupta', 'controlled', public.seed_uuid('faction', 'legiones-daemonicas'), null, 'Mundo industrial desgarrado por senales disformes.', true),
-  (public.seed_uuid('system', 'drusus'), 'drusus', 'Drusus', 260, 700, 0.86, 'orange', 'Bastion menor', 'controlled', public.seed_uuid('faction', 'legiones-daemonicas'), null, 'Fortaleza tomada tras una campana sangrienta.', false),
-  (public.seed_uuid('system', 'plaguefall-bastion'), 'plaguefall-bastion', 'Plaguefall Bastion', 360, 640, 0.82, 'green', 'Bastion infectado', 'controlled', public.seed_uuid('faction', 'legiones-daemonicas'), null, 'Plataformas de asedio cubiertas por esporas y ceniza.', false),
-  (public.seed_uuid('system', 'cinder-maw'), 'cinder-maw', 'Cinder Maw', 80, 430, 1.15, 'orange', 'Forja volcanica neutral', 'neutral', null, null, 'Forjas geotermicas y tormentas de ceniza en el borde occidental del subsector.', false),
-  (public.seed_uuid('system', 'eclipse-forge'), 'eclipse-forge', 'Eclipse Forge', 185, 485, 0.86, 'red', 'Forja abandonada', 'neutral', null, null, 'Estructuras de manufactura latentes, codiciadas por saqueadores y expediciones de recuperacion.', false),
-  (public.seed_uuid('system', 'rustmaw-run'), 'rustmaw-run', 'Rustmaw Run', 285, 430, 0.82, 'orange', 'Corredor chatarrero', 'neutral', null, null, 'Ruta de pecios saqueados que apunta hacia el centro del conflicto.', false),
-  (public.seed_uuid('system', 'azur-trench'), 'azur-trench', 'Azur Trench', 405, 390, 0.86, 'blue', 'Nebulosa navegable', 'war', null, now() + interval '14 days', 'Corredor azul con pozos de gravedad inestables. Una horda orka amenaza las rutas de avance custodes.', false),
-  (public.seed_uuid('system', 'ossuary-reach'), 'ossuary-reach', 'Ossuary Reach', 485, 625, 0.84, 'violet', 'Osario orbital', 'war', null, now() + interval '14 days', 'Campos funerarios en orbita baja, disputados por plaga y tecnologia necrona.', false),
-  (public.seed_uuid('system', 'saint-veil'), 'saint-veil', 'Saint Veil', 650, 395, 0.86, 'yellow', 'Velo sagrado', 'war', null, now() + interval '14 days', 'Santuario velado donde Space Marines combaten una revuelta genestelar.', false),
-  (public.seed_uuid('system', 'orison'), 'orison', 'Orison', 470, 310, 0.84, 'yellow', 'Colonia agricola', 'neutral', null, null, 'Graneros presurizados y bastiones de defensa civil abandonados.', false),
-  (public.seed_uuid('system', 'vesper-halo'), 'vesper-halo', 'Vesper Halo', 560, 220, 0.82, 'violet', 'Anillo orbital', 'neutral', null, null, 'Ruinas orbitales con ecos de tecnologia antigua.', false),
-  (public.seed_uuid('system', 'pale-choir'), 'pale-choir', 'Pale Choir', 690, 605, 0.78, 'violet', 'Anomalia psiquica', 'neutral', null, null, 'Un coro de senales imposibles atraviesa el vacio.', false),
-  (public.seed_uuid('system', 'ashen-road'), 'ashen-road', 'Ashen Road', 560, 555, 0.78, 'blue', 'Nodo de transito', 'neutral', null, null, 'Rutas estables entre corrientes de polvo orbital.', false),
-  (public.seed_uuid('system', 'sepulchre-nine'), 'sepulchre-nine', 'Sepulchre IX', 340, 780, 0.78, 'violet', 'Necropolis', 'neutral', null, null, 'Tumbas y coordenadas contradictorias.', false),
-  (public.seed_uuid('system', 'nexus-aster'), 'nexus-aster', 'Nexus Aster', 525, 455, 0.92, 'green', 'Nodo central', 'neutral', null, null, 'Interseccion de corrientes de salto que todas las facciones desean controlar.', false),
-  (public.seed_uuid('system', 'argent-rift'), 'argent-rift', 'Argent Rift', 500, 245, 0.76, 'white', 'Fisura plateada', 'neutral', null, null, 'Brecha gravitatoria brillante, estable solo en ventanas cortas.', false),
-  (public.seed_uuid('system', 'voidfall-anchor'), 'voidfall-anchor', 'Voidfall Anchor', 510, 735, 0.78, 'blue', 'Ancla de vacio', 'neutral', null, null, 'Macroestructura que estabiliza saltos en el borde inferior del mapa.', false),
-  (public.seed_uuid('system', 'goregate'), 'goregate', 'Goregate', 260, 540, 0.78, 'red', 'Paso sangriento', 'neutral', null, null, 'Paso estrecho entre chatarra orka y ruinas funerarias.', false)
+  (public.seed_uuid('system', 'lyra-terminus'), 'lyra-terminus', 'Lyra Terminus', 770, 190, 0.88, 'blue', 'Puerto externo neutral', 'neutral', null, null, 'Puerto orbital sin mando estable, demasiado cercano al frente para ser ignorado.', false),
+  (public.seed_uuid('system', 'narthex'), 'narthex', 'Narthex', 650, 110, 0.95, 'yellow', 'Santuario sellado neutral', 'neutral', null, null, 'Complejo sacro con rutas de descenso peligrosas hacia el nucleo del mapa.', false),
+  (public.seed_uuid('system', 'vesper-halo'), 'vesper-halo', 'Vesper Halo', 640, 270, 0.82, 'violet', 'Anillo orbital neutral', 'neutral', null, null, 'Ruinas orbitales con ecos de tecnologia antigua y pasos hacia territorio disputado.', false),
+  (public.seed_uuid('system', 'blackglass'), 'blackglass', 'Blackglass', 930, 500, 1.16, 'white', 'Capital cristalina', 'controlled', public.seed_uuid('faction', 'cultos-genestealer'), null, 'Honor bajo oceanos de vidrio oscuro.', true),
+  (public.seed_uuid('system', 'red-sabbath'), 'red-sabbath', 'Red Sabbath', 785, 500, 0.88, 'red', 'Mundo sermonario neutral', 'neutral', null, null, 'Ciudades santuario sin autoridad estable, llenas de rutas subterraneas y ruido civil.', false),
+  (public.seed_uuid('system', 'mirrorcoil'), 'mirrorcoil', 'Mirrorcoil', 660, 415, 0.82, 'violet', 'Enjambre orbital neutral', 'neutral', null, null, 'Estaciones gemelas que repiten senales falsas hacia el centro.', false),
+  (public.seed_uuid('system', 'saint-veil'), 'saint-veil', 'Saint Veil', 650, 585, 0.86, 'yellow', 'Velo sagrado neutral', 'neutral', null, null, 'Santuario velado donde los augurios se confunden con sabotajes y plegarias.', false),
+  (public.seed_uuid('system', 'thokt-vault'), 'thokt-vault', 'Thokt Vault', 820, 850, 1.2, 'green', 'Capital tumba', 'controlled', public.seed_uuid('faction', 'necrones'), null, 'Cripta silenciosa rodeada de energia verdosa.', true),
+  (public.seed_uuid('system', 'novem'), 'novem', 'Novem', 705, 735, 0.84, 'white', 'Luna industrial neutral', 'neutral', null, null, 'Complejo lunar de extraccion automatizada a la espera de un nuevo amo.', false),
+  (public.seed_uuid('system', 'ghostlight'), 'ghostlight', 'Ghostlight', 610, 650, 0.8, 'green', 'Faro perdido neutral', 'neutral', null, null, 'Faro de navegacion que parpadea con luz fria cerca de los ejes orkos.', false),
+  (public.seed_uuid('system', 'ossuary-reach'), 'ossuary-reach', 'Ossuary Reach', 585, 815, 0.84, 'violet', 'Osario orbital neutral', 'neutral', null, null, 'Campos funerarios en orbita baja donde la tecnologia antigua sigue respondiendo.', false),
+  (public.seed_uuid('system', 'mordax'), 'mordax', 'Mordax', 145, 850, 1.18, 'red', 'Capital corrupta', 'controlled', public.seed_uuid('faction', 'legiones-daemonicas'), null, 'Mundo industrial desgarrado por senales disformes.', true),
+  (public.seed_uuid('system', 'drusus'), 'drusus', 'Drusus', 285, 735, 0.86, 'orange', 'Bastion menor neutral', 'neutral', null, null, 'Fortaleza abandonada en una ruta baja hacia los fuegos centrales.', false),
+  (public.seed_uuid('system', 'plaguefall-bastion'), 'plaguefall-bastion', 'Plaguefall Bastion', 395, 650, 0.82, 'green', 'Bastion infectado neutral', 'neutral', null, null, 'Plataformas de asedio cubiertas por esporas y ceniza.', false),
+  (public.seed_uuid('system', 'sepulchre-nine'), 'sepulchre-nine', 'Sepulchre IX', 385, 815, 0.78, 'violet', 'Necropolis neutral', 'neutral', null, null, 'Tumbas y coordenadas contradictorias en el corredor inferior.', false),
+  (public.seed_uuid('system', 'nexus-aster'), 'nexus-aster', 'Nexus Aster', 500, 400, 0.96, 'green', 'Enclave orko central', 'controlled', public.seed_uuid('faction', 'orcos'), null, 'Un nudo de rutas tomado por senales de guerra orkas y chatarra militar.', false),
+  (public.seed_uuid('system', 'goregate'), 'goregate', 'Goregate', 500, 565, 0.96, 'red', 'Portal de guerra orko', 'controlled', public.seed_uuid('faction', 'orcos'), null, 'Paso sangriento convertido en puerta de saqueo para incursiones orkas.', false)
 on conflict (slug) do update
 set
   name = excluded.name,
@@ -124,17 +116,6 @@ set
   is_conquerable = true,
   allows_shared_occupation = false;
 
-update public.systems
-set
-  system_kind = 'gaseous',
-  is_conquerable = false,
-  allows_shared_occupation = true,
-  status = 'neutral',
-  controller_faction_id = null,
-  blocked_until = null,
-  updated_at = now()
-where slug in ('nexus-aster', 'ashen-road');
-
 update public.factions set capital_system_id = public.seed_uuid('system', 'thokt-vault') where slug = 'necrones';
 update public.factions set capital_system_id = public.seed_uuid('system', 'kharon-prime') where slug = 'adeptus-custodes';
 update public.factions set capital_system_id = public.seed_uuid('system', 'blackglass') where slug = 'cultos-genestealer';
@@ -148,44 +129,30 @@ insert into public.system_edges (id, slug, from_system_id, to_system_id, uridium
 values
   (public.seed_uuid('edge', 'route-01'), 'route-01', public.seed_uuid('system', 'kharon-prime'), public.seed_uuid('system', 'helios-drift'), 1, false),
   (public.seed_uuid('edge', 'route-02'), 'route-02', public.seed_uuid('system', 'helios-drift'), public.seed_uuid('system', 'arx-solum'), 1, false),
-  (public.seed_uuid('edge', 'route-03'), 'route-03', public.seed_uuid('system', 'arx-solum'), public.seed_uuid('system', 'azur-trench'), 2, false),
-  (public.seed_uuid('edge', 'route-04'), 'route-04', public.seed_uuid('system', 'arx-solum'), public.seed_uuid('system', 'orison'), 2, false),
-  (public.seed_uuid('edge', 'route-05'), 'route-05', public.seed_uuid('system', 'cinder-maw'), public.seed_uuid('system', 'eclipse-forge'), 1, false),
-  (public.seed_uuid('edge', 'route-06'), 'route-06', public.seed_uuid('system', 'eclipse-forge'), public.seed_uuid('system', 'rustmaw-run'), 1, false),
-  (public.seed_uuid('edge', 'route-07'), 'route-07', public.seed_uuid('system', 'rustmaw-run'), public.seed_uuid('system', 'azur-trench'), 2, false),
-  (public.seed_uuid('edge', 'route-08'), 'route-08', public.seed_uuid('system', 'rustmaw-run'), public.seed_uuid('system', 'goregate'), 1, false),
-  (public.seed_uuid('edge', 'route-09'), 'route-09', public.seed_uuid('system', 'sa-cea-gate'), public.seed_uuid('system', 'lyra-terminus'), 1, false),
-  (public.seed_uuid('edge', 'route-10'), 'route-10', public.seed_uuid('system', 'lyra-terminus'), public.seed_uuid('system', 'narthex'), 1, false),
-  (public.seed_uuid('edge', 'route-11'), 'route-11', public.seed_uuid('system', 'narthex'), public.seed_uuid('system', 'saint-veil'), 2, false),
-  (public.seed_uuid('edge', 'route-12'), 'route-12', public.seed_uuid('system', 'narthex'), public.seed_uuid('system', 'vesper-halo'), 1, false),
-  (public.seed_uuid('edge', 'route-13'), 'route-13', public.seed_uuid('system', 'blackglass'), public.seed_uuid('system', 'red-sabbath'), 1, false),
-  (public.seed_uuid('edge', 'route-14'), 'route-14', public.seed_uuid('system', 'red-sabbath'), public.seed_uuid('system', 'mirrorcoil'), 1, false),
-  (public.seed_uuid('edge', 'route-15'), 'route-15', public.seed_uuid('system', 'mirrorcoil'), public.seed_uuid('system', 'saint-veil'), 2, false),
-  (public.seed_uuid('edge', 'route-16'), 'route-16', public.seed_uuid('system', 'mirrorcoil'), public.seed_uuid('system', 'pale-choir'), 1, false),
-  (public.seed_uuid('edge', 'route-17'), 'route-17', public.seed_uuid('system', 'thokt-vault'), public.seed_uuid('system', 'novem'), 1, false),
-  (public.seed_uuid('edge', 'route-18'), 'route-18', public.seed_uuid('system', 'novem'), public.seed_uuid('system', 'ghostlight'), 1, false),
-  (public.seed_uuid('edge', 'route-19'), 'route-19', public.seed_uuid('system', 'ghostlight'), public.seed_uuid('system', 'ossuary-reach'), 2, false),
-  (public.seed_uuid('edge', 'route-20'), 'route-20', public.seed_uuid('system', 'ghostlight'), public.seed_uuid('system', 'voidfall-anchor'), 1, false),
-  (public.seed_uuid('edge', 'route-21'), 'route-21', public.seed_uuid('system', 'mordax'), public.seed_uuid('system', 'drusus'), 1, false),
-  (public.seed_uuid('edge', 'route-22'), 'route-22', public.seed_uuid('system', 'drusus'), public.seed_uuid('system', 'plaguefall-bastion'), 1, false),
-  (public.seed_uuid('edge', 'route-23'), 'route-23', public.seed_uuid('system', 'plaguefall-bastion'), public.seed_uuid('system', 'ossuary-reach'), 2, false),
-  (public.seed_uuid('edge', 'route-24'), 'route-24', public.seed_uuid('system', 'plaguefall-bastion'), public.seed_uuid('system', 'sepulchre-nine'), 1, false),
-  (public.seed_uuid('edge', 'route-25'), 'route-25', public.seed_uuid('system', 'azur-trench'), public.seed_uuid('system', 'orison'), 2, false),
-  (public.seed_uuid('edge', 'route-26'), 'route-26', public.seed_uuid('system', 'orison'), public.seed_uuid('system', 'argent-rift'), 1, false),
-  (public.seed_uuid('edge', 'route-27'), 'route-27', public.seed_uuid('system', 'argent-rift'), public.seed_uuid('system', 'vesper-halo'), 1, false),
-  (public.seed_uuid('edge', 'route-28'), 'route-28', public.seed_uuid('system', 'vesper-halo'), public.seed_uuid('system', 'saint-veil'), 2, false),
-  (public.seed_uuid('edge', 'route-29'), 'route-29', public.seed_uuid('system', 'saint-veil'), public.seed_uuid('system', 'pale-choir'), 2, false),
-  (public.seed_uuid('edge', 'route-30'), 'route-30', public.seed_uuid('system', 'pale-choir'), public.seed_uuid('system', 'ashen-road'), 1, false),
-  (public.seed_uuid('edge', 'route-31'), 'route-31', public.seed_uuid('system', 'ashen-road'), public.seed_uuid('system', 'ossuary-reach'), 2, false),
-  (public.seed_uuid('edge', 'route-32'), 'route-32', public.seed_uuid('system', 'ossuary-reach'), public.seed_uuid('system', 'voidfall-anchor'), 2, false),
-  (public.seed_uuid('edge', 'route-33'), 'route-33', public.seed_uuid('system', 'voidfall-anchor'), public.seed_uuid('system', 'sepulchre-nine'), 1, false),
-  (public.seed_uuid('edge', 'route-34'), 'route-34', public.seed_uuid('system', 'sepulchre-nine'), public.seed_uuid('system', 'goregate'), 2, false),
-  (public.seed_uuid('edge', 'route-35'), 'route-35', public.seed_uuid('system', 'goregate'), public.seed_uuid('system', 'azur-trench'), 1, false),
-  (public.seed_uuid('edge', 'route-36'), 'route-36', public.seed_uuid('system', 'nexus-aster'), public.seed_uuid('system', 'orison'), 3, false),
-  (public.seed_uuid('edge', 'route-37'), 'route-37', public.seed_uuid('system', 'nexus-aster'), public.seed_uuid('system', 'azur-trench'), 3, false),
-  (public.seed_uuid('edge', 'route-38'), 'route-38', public.seed_uuid('system', 'nexus-aster'), public.seed_uuid('system', 'saint-veil'), 3, false),
-  (public.seed_uuid('edge', 'route-39'), 'route-39', public.seed_uuid('system', 'nexus-aster'), public.seed_uuid('system', 'ashen-road'), 3, false),
-  (public.seed_uuid('edge', 'route-40'), 'route-40', public.seed_uuid('system', 'nexus-aster'), public.seed_uuid('system', 'ossuary-reach'), 3, false)
+  (public.seed_uuid('edge', 'route-03'), 'route-03', public.seed_uuid('system', 'helios-drift'), public.seed_uuid('system', 'azur-trench'), 1, false),
+  (public.seed_uuid('edge', 'route-04'), 'route-04', public.seed_uuid('system', 'sa-cea-gate'), public.seed_uuid('system', 'lyra-terminus'), 1, false),
+  (public.seed_uuid('edge', 'route-05'), 'route-05', public.seed_uuid('system', 'lyra-terminus'), public.seed_uuid('system', 'narthex'), 1, false),
+  (public.seed_uuid('edge', 'route-06'), 'route-06', public.seed_uuid('system', 'lyra-terminus'), public.seed_uuid('system', 'vesper-halo'), 1, false),
+  (public.seed_uuid('edge', 'route-07'), 'route-07', public.seed_uuid('system', 'blackglass'), public.seed_uuid('system', 'red-sabbath'), 1, false),
+  (public.seed_uuid('edge', 'route-08'), 'route-08', public.seed_uuid('system', 'red-sabbath'), public.seed_uuid('system', 'mirrorcoil'), 1, false),
+  (public.seed_uuid('edge', 'route-09'), 'route-09', public.seed_uuid('system', 'red-sabbath'), public.seed_uuid('system', 'saint-veil'), 1, false),
+  (public.seed_uuid('edge', 'route-10'), 'route-10', public.seed_uuid('system', 'thokt-vault'), public.seed_uuid('system', 'novem'), 1, false),
+  (public.seed_uuid('edge', 'route-11'), 'route-11', public.seed_uuid('system', 'novem'), public.seed_uuid('system', 'ghostlight'), 1, false),
+  (public.seed_uuid('edge', 'route-12'), 'route-12', public.seed_uuid('system', 'novem'), public.seed_uuid('system', 'ossuary-reach'), 1, false),
+  (public.seed_uuid('edge', 'route-13'), 'route-13', public.seed_uuid('system', 'mordax'), public.seed_uuid('system', 'drusus'), 1, false),
+  (public.seed_uuid('edge', 'route-14'), 'route-14', public.seed_uuid('system', 'drusus'), public.seed_uuid('system', 'plaguefall-bastion'), 1, false),
+  (public.seed_uuid('edge', 'route-15'), 'route-15', public.seed_uuid('system', 'drusus'), public.seed_uuid('system', 'sepulchre-nine'), 1, false),
+  (public.seed_uuid('edge', 'route-16'), 'route-16', public.seed_uuid('system', 'nexus-aster'), public.seed_uuid('system', 'arx-solum'), 2, false),
+  (public.seed_uuid('edge', 'route-17'), 'route-17', public.seed_uuid('system', 'nexus-aster'), public.seed_uuid('system', 'narthex'), 2, false),
+  (public.seed_uuid('edge', 'route-18'), 'route-18', public.seed_uuid('system', 'nexus-aster'), public.seed_uuid('system', 'mirrorcoil'), 2, false),
+  (public.seed_uuid('edge', 'route-19'), 'route-19', public.seed_uuid('system', 'nexus-aster'), public.seed_uuid('system', 'ghostlight'), 2, false),
+  (public.seed_uuid('edge', 'route-20'), 'route-20', public.seed_uuid('system', 'nexus-aster'), public.seed_uuid('system', 'plaguefall-bastion'), 2, false),
+  (public.seed_uuid('edge', 'route-21'), 'route-21', public.seed_uuid('system', 'goregate'), public.seed_uuid('system', 'azur-trench'), 2, false),
+  (public.seed_uuid('edge', 'route-22'), 'route-22', public.seed_uuid('system', 'goregate'), public.seed_uuid('system', 'vesper-halo'), 2, false),
+  (public.seed_uuid('edge', 'route-23'), 'route-23', public.seed_uuid('system', 'goregate'), public.seed_uuid('system', 'saint-veil'), 2, false),
+  (public.seed_uuid('edge', 'route-24'), 'route-24', public.seed_uuid('system', 'goregate'), public.seed_uuid('system', 'ossuary-reach'), 2, false),
+  (public.seed_uuid('edge', 'route-25'), 'route-25', public.seed_uuid('system', 'goregate'), public.seed_uuid('system', 'sepulchre-nine'), 2, false),
+  (public.seed_uuid('edge', 'route-26'), 'route-26', public.seed_uuid('system', 'nexus-aster'), public.seed_uuid('system', 'goregate'), 1, false)
 on conflict (slug) do update
 set from_system_id = excluded.from_system_id, to_system_id = excluded.to_system_id, uridium_cost = excluded.uridium_cost, is_blocked = excluded.is_blocked;
 
@@ -204,32 +171,24 @@ values
   (public.seed_uuid('system', 'kharon-prime'), 9, 6, 0, 0, 2, 0),
   (public.seed_uuid('system', 'helios-drift'), 1, 7, 0, 0, 1, 0),
   (public.seed_uuid('system', 'arx-solum'), 5, 3, 0, 0, 1, 0),
+  (public.seed_uuid('system', 'azur-trench'), 0, 0, 0, 0, 5, 0),
   (public.seed_uuid('system', 'sa-cea-gate'), 5, 4, 0, 0, 5, 0),
   (public.seed_uuid('system', 'lyra-terminus'), 3, 1, 0, 0, 4, 0),
   (public.seed_uuid('system', 'narthex'), 2, 0, 2, 0, 1, 0),
+  (public.seed_uuid('system', 'vesper-halo'), 0, 2, 1, 0, 2, 0),
   (public.seed_uuid('system', 'blackglass'), 3, 4, 2, 0, 1, 0),
   (public.seed_uuid('system', 'red-sabbath'), 5, 2, 1, 0, 1, 0),
   (public.seed_uuid('system', 'mirrorcoil'), 2, 2, 1, 0, 3, 0),
+  (public.seed_uuid('system', 'saint-veil'), 2, 0, 2, 0, 2, 0),
   (public.seed_uuid('system', 'thokt-vault'), 0, 8, 3, 0, 2, 0),
   (public.seed_uuid('system', 'novem'), 0, 7, 0, 0, 1, 0),
   (public.seed_uuid('system', 'ghostlight'), 0, 2, 1, 0, 3, 0),
+  (public.seed_uuid('system', 'ossuary-reach'), 0, 2, 2, 0, 2, 0),
   (public.seed_uuid('system', 'mordax'), 5, 6, 1, 0, 2, 0),
   (public.seed_uuid('system', 'drusus'), 4, 4, 0, 0, 1, 0),
   (public.seed_uuid('system', 'plaguefall-bastion'), 3, 5, 1, 0, 1, 0),
-  (public.seed_uuid('system', 'cinder-maw'), 4, 7, 0, 0, 1, 0),
-  (public.seed_uuid('system', 'eclipse-forge'), 1, 6, 0, 0, 1, 0),
-  (public.seed_uuid('system', 'rustmaw-run'), 3, 5, 0, 0, 2, 0),
-  (public.seed_uuid('system', 'azur-trench'), 0, 0, 0, 0, 5, 0),
-  (public.seed_uuid('system', 'ossuary-reach'), 0, 2, 2, 0, 2, 0),
-  (public.seed_uuid('system', 'saint-veil'), 2, 0, 2, 0, 2, 0),
-  (public.seed_uuid('system', 'orison'), 7, 1, 0, 0, 0, 0),
-  (public.seed_uuid('system', 'vesper-halo'), 0, 2, 1, 0, 2, 0),
-  (public.seed_uuid('system', 'pale-choir'), 0, 0, 2, 0, 2, 0),
-  (public.seed_uuid('system', 'ashen-road'), 1, 1, 0, 0, 4, 0),
   (public.seed_uuid('system', 'sepulchre-nine'), 0, 2, 2, 0, 0, 0),
   (public.seed_uuid('system', 'nexus-aster'), 2, 2, 1, 0, 3, 0),
-  (public.seed_uuid('system', 'argent-rift'), 0, 1, 0, 0, 4, 0),
-  (public.seed_uuid('system', 'voidfall-anchor'), 1, 2, 0, 0, 3, 0),
   (public.seed_uuid('system', 'goregate'), 2, 3, 0, 0, 2, 0)
 on conflict (system_id) do update
 set supply_per_tick = excluded.supply_per_tick, minerals_per_tick = excluded.minerals_per_tick, ancestral_stone_per_tick = excluded.ancestral_stone_per_tick, gold_per_tick = excluded.gold_per_tick, uridium_per_tick = excluded.uridium_per_tick, technology_per_tick = excluded.technology_per_tick;
@@ -366,8 +325,10 @@ with preferred_resource as (
     end as building_slug
   from public.systems
   join public.system_resource_capabilities capabilities on capabilities.system_id = systems.id
+  join public.factions controllers on controllers.id = systems.controller_faction_id
   where systems.status = 'controlled'
     and systems.is_capital = false
+    and controllers.is_narrative = false
   order by systems.id,
     case capabilities.resource_key
       when 'supply' then 1
@@ -1065,32 +1026,25 @@ select
 from (
   values
     ('custodes-kharon-guard', 'adeptus-custodes', 'unit-adeptus-custodes-custodian-guard', 'Custodian Guard', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 160, 4, 4, 0, 1, null, 'kharon-prime', 'ready'),
-    ('custodes-arx-caladius', 'adeptus-custodes', 'unit-adeptus-custodes-caladius-grav-tank', 'Caladius Grav-tank', 'Otras hojas de datos', 'vehicle', array['Vehiculo']::text[], 215, 1, 1, 0, 1, null, 'arx-solum', 'moving'),
+    ('custodes-arx-caladius', 'adeptus-custodes', 'unit-adeptus-custodes-caladius-grav-tank', 'Caladius Grav-tank', 'Otras hojas de datos', 'vehicle', array['Vehiculo']::text[], 215, 1, 1, 0, 1, null, 'kharon-prime', 'ready'),
     ('custodes-shield-captain', 'adeptus-custodes', 'unit-adeptus-custodes-shield-captain', 'Shield-Captain', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 120, 1, 1, 0, 3, null, 'kharon-prime', 'ready'),
-    ('custodes-azur-guard', 'adeptus-custodes', 'unit-adeptus-custodes-custodian-guard', 'Custodian Guard', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 160, 4, 4, 0, 1, null, 'azur-trench', 'in_war'),
-    ('aeldari-cinder-guardians', 'aeldari', 'unit-aeldari-guardian-defenders', 'Guardian Defenders', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 100, 11, 11, 0, 1, null, 'cinder-maw', 'ready'),
-    ('aeldari-rust-dire-avengers', 'aeldari', 'unit-aeldari-dire-avengers', 'Dire Avengers', 'Otras hojas de datos', 'infantry', array['Infanteria']::text[], 75, 5, 5, 0, 1, null, 'rustmaw-run', 'moving'),
-    ('aeldari-farseer', 'aeldari', 'unit-aeldari-farseer', 'Farseer', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 70, 1, 1, 0, 3, null, 'cinder-maw', 'ready'),
-    ('aeldari-azur-guardians', 'aeldari', 'unit-aeldari-guardian-defenders', 'Guardian Defenders', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 100, 11, 11, 0, 1, null, 'azur-trench', 'in_war'),
+    ('custodes-azur-guard', 'adeptus-custodes', 'unit-adeptus-custodes-custodian-guard', 'Custodian Guard', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 160, 4, 4, 0, 1, null, 'kharon-prime', 'ready'),
     ('space-gate-intercessors', 'space-marines', 'unit-space-marines-intercessor-squad', 'Intercessor Squad', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 80, 5, 5, 0, 1, null, 'sa-cea-gate', 'ready'),
-    ('space-narthex-rhino', 'space-marines', 'unit-space-marines-rhino', 'Rhino', 'Transporte', 'vehicle', array['Vehiculo']::text[], 75, 1, 1, 0, 1, null, 'narthex', 'moving'),
+    ('space-narthex-rhino', 'space-marines', 'unit-space-marines-rhino', 'Rhino', 'Transporte', 'vehicle', array['Vehiculo']::text[], 75, 1, 1, 0, 1, null, 'sa-cea-gate', 'ready'),
     ('space-captain', 'space-marines', 'unit-space-marines-captain', 'Captain', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 80, 1, 1, 0, 3, null, 'sa-cea-gate', 'ready'),
-    ('space-saint-intercessors', 'space-marines', 'unit-space-marines-intercessor-squad', 'Intercessor Squad', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 80, 5, 5, 0, 1, null, 'saint-veil', 'in_war'),
+    ('space-saint-intercessors', 'space-marines', 'unit-space-marines-intercessor-squad', 'Intercessor Squad', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 80, 5, 5, 0, 1, null, 'sa-cea-gate', 'ready'),
     ('cult-blackglass-neophytes', 'cultos-genestealer', 'unit-cultos-genestealer-neophyte-hybrids', 'Neophyte Hybrids', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 65, 10, 10, 0, 1, null, 'blackglass', 'ready'),
-    ('cult-mirror-ridgerunner', 'cultos-genestealer', 'unit-cultos-genestealer-achilles-ridgerunners', 'Achilles Ridgerunners', 'Otras hojas de datos', 'vehicle', array['Vehiculo']::text[], 95, 1, 1, 0, 1, null, 'mirrorcoil', 'moving'),
+    ('cult-mirror-ridgerunner', 'cultos-genestealer', 'unit-cultos-genestealer-achilles-ridgerunners', 'Achilles Ridgerunners', 'Otras hojas de datos', 'vehicle', array['Vehiculo']::text[], 95, 1, 1, 0, 1, null, 'blackglass', 'ready'),
     ('cult-primus', 'cultos-genestealer', 'unit-cultos-genestealer-primus', 'Primus', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 70, 1, 1, 0, 3, null, 'blackglass', 'ready'),
-    ('cult-saint-neophytes', 'cultos-genestealer', 'unit-cultos-genestealer-neophyte-hybrids', 'Neophyte Hybrids', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 65, 10, 10, 0, 1, null, 'saint-veil', 'in_war'),
+    ('cult-saint-neophytes', 'cultos-genestealer', 'unit-cultos-genestealer-neophyte-hybrids', 'Neophyte Hybrids', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 65, 10, 10, 0, 1, null, 'blackglass', 'ready'),
     ('necron-thokt-warriors', 'necrones', 'unit-necrones-necron-warriors', 'Necron Warriors', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 90, 10, 10, 0, 1, null, 'thokt-vault', 'ready'),
-    ('necron-ghost-wraiths', 'necrones', 'unit-necrones-canoptek-wraiths', 'Canoptek Wraiths', 'Otras hojas de datos', 'beast', array['Bestia']::text[], 110, 3, 3, 0, 1, null, 'ghostlight', 'moving'),
+    ('necron-ghost-wraiths', 'necrones', 'unit-necrones-canoptek-wraiths', 'Canoptek Wraiths', 'Otras hojas de datos', 'beast', array['Bestia']::text[], 110, 3, 3, 0, 1, null, 'thokt-vault', 'ready'),
     ('necron-overlord', 'necrones', 'unit-necrones-overlord', 'Overlord', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 85, 1, 1, 0, 3, null, 'thokt-vault', 'ready'),
-    ('necron-ossuary-warriors', 'necrones', 'unit-necrones-necron-warriors', 'Necron Warriors', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 90, 10, 10, 0, 1, null, 'ossuary-reach', 'in_war'),
+    ('necron-ossuary-warriors', 'necrones', 'unit-necrones-necron-warriors', 'Necron Warriors', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 90, 10, 10, 0, 1, null, 'thokt-vault', 'ready'),
     ('daemon-mordax-horrors', 'legiones-daemonicas', 'unit-legiones-daemonicas-pink-horrors', 'Pink Horrors', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 140, 10, 10, 0, 1, null, 'mordax', 'ready'),
-    ('daemon-plaguefall-screamers', 'legiones-daemonicas', 'unit-legiones-daemonicas-screamers', 'Screamers', 'Otras hojas de datos', 'beast', array['Bestia']::text[], 80, 3, 3, 0, 1, null, 'plaguefall-bastion', 'moving'),
+    ('daemon-plaguefall-screamers', 'legiones-daemonicas', 'unit-legiones-daemonicas-screamers', 'Screamers', 'Otras hojas de datos', 'beast', array['Bestia']::text[], 80, 3, 3, 0, 1, null, 'mordax', 'ready'),
     ('daemon-lord-change', 'legiones-daemonicas', 'unit-legiones-daemonicas-lord-of-change', 'Lord of Change', 'Personaje', 'character', array['Bestia', 'Caracter']::text[], 285, 1, 1, 0, 3, null, 'mordax', 'ready'),
-    ('daemon-ossuary-horrors', 'legiones-daemonicas', 'unit-legiones-daemonicas-blue-horrors', 'Blue Horrors', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 125, 10, 10, 0, 1, null, 'ossuary-reach', 'in_war'),
-    ('agents-argent-breachers', 'agentes-imperium', 'unit-agentes-imperium-imperial-navy-breachers', 'Imperial Navy Breachers', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 90, 10, 10, 0, 1, null, 'argent-rift', 'ready'),
-    ('agents-orison-deathwatch', 'agentes-imperium', 'unit-agentes-imperium-deathwatch-kill-team', 'Deathwatch Kill Team', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 100, 5, 5, 0, 1, null, 'orison', 'moving'),
-    ('agents-inquisitor', 'agentes-imperium', 'unit-agentes-imperium-inquisitor', 'Inquisitor', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 55, 1, 1, 0, 3, null, 'argent-rift', 'ready')
+    ('daemon-ossuary-horrors', 'legiones-daemonicas', 'unit-legiones-daemonicas-blue-horrors', 'Blue Horrors', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 125, 10, 10, 0, 1, null, 'mordax', 'ready')
 ) as data(slug, faction_slug, template_slug, name, category, unit_type, unit_keywords, points, quantity, starting_quantity, wounds_taken, experience, rank, system_slug, status)
 join public.factions on factions.slug = data.faction_slug
 join public.unit_templates on unit_templates.slug = data.template_slug
@@ -1749,27 +1703,7 @@ on conflict (slug) do update
 set faction_id = excluded.faction_id, system_id = coalesce(public.relics.system_id, excluded.system_id), name = excluded.name, description = excluded.description, effect_text = excluded.effect_text, icon_key = excluded.icon_key, rarity = excluded.rarity, is_public = excluded.is_public;
 
 -- BEGIN GENERATED 40K MOVEMENTS
-insert into public.movement_orders (
-  id, faction_id, from_system_id, to_system_id, uridium_cost, started_at, arrival_at, status, path_system_ids, segment_count, duration_seconds
-)
-values
-  (public.seed_uuid('movement_order', 'move-custodes-helios'), public.seed_uuid('faction', 'adeptus-custodes'), public.seed_uuid('system', 'arx-solum'), public.seed_uuid('system', 'helios-drift'), 1, now() - interval '1 second', now() + interval '3 seconds', 'moving', array[public.seed_uuid('system', 'arx-solum'), public.seed_uuid('system', 'helios-drift')]::uuid[], 1, 3),
-  (public.seed_uuid('movement_order', 'move-space-lyra'), public.seed_uuid('faction', 'space-marines'), public.seed_uuid('system', 'narthex'), public.seed_uuid('system', 'lyra-terminus'), 1, now() - interval '1 second', now() + interval '3 seconds', 'moving', array[public.seed_uuid('system', 'narthex'), public.seed_uuid('system', 'lyra-terminus')]::uuid[], 1, 3),
-  (public.seed_uuid('movement_order', 'move-cult-red-sabbath'), public.seed_uuid('faction', 'cultos-genestealer'), public.seed_uuid('system', 'mirrorcoil'), public.seed_uuid('system', 'red-sabbath'), 1, now() - interval '1 second', now() + interval '3 seconds', 'moving', array[public.seed_uuid('system', 'mirrorcoil'), public.seed_uuid('system', 'red-sabbath')]::uuid[], 1, 3),
-  (public.seed_uuid('movement_order', 'move-necron-novem'), public.seed_uuid('faction', 'necrones'), public.seed_uuid('system', 'ghostlight'), public.seed_uuid('system', 'novem'), 1, now() - interval '1 second', now() + interval '3 seconds', 'moving', array[public.seed_uuid('system', 'ghostlight'), public.seed_uuid('system', 'novem')]::uuid[], 1, 3),
-  (public.seed_uuid('movement_order', 'move-daemon-drusus'), public.seed_uuid('faction', 'legiones-daemonicas'), public.seed_uuid('system', 'plaguefall-bastion'), public.seed_uuid('system', 'drusus'), 1, now() - interval '1 second', now() + interval '3 seconds', 'moving', array[public.seed_uuid('system', 'plaguefall-bastion'), public.seed_uuid('system', 'drusus')]::uuid[], 1, 3)
-on conflict (id) do update
-set faction_id = excluded.faction_id, from_system_id = excluded.from_system_id, to_system_id = excluded.to_system_id, uridium_cost = excluded.uridium_cost, started_at = excluded.started_at, arrival_at = excluded.arrival_at, status = excluded.status, path_system_ids = excluded.path_system_ids, segment_count = excluded.segment_count, duration_seconds = excluded.duration_seconds;
-
-insert into public.movement_order_units (movement_order_id, unit_id, quantity_at_departure)
-values
-  (public.seed_uuid('movement_order', 'move-custodes-helios'), public.seed_uuid('campaign_unit', 'custodes-arx-caladius'), (select quantity from public.campaign_units where slug = 'custodes-arx-caladius')),
-  (public.seed_uuid('movement_order', 'move-space-lyra'), public.seed_uuid('campaign_unit', 'space-narthex-rhino'), (select quantity from public.campaign_units where slug = 'space-narthex-rhino')),
-  (public.seed_uuid('movement_order', 'move-cult-red-sabbath'), public.seed_uuid('campaign_unit', 'cult-mirror-ridgerunner'), (select quantity from public.campaign_units where slug = 'cult-mirror-ridgerunner')),
-  (public.seed_uuid('movement_order', 'move-necron-novem'), public.seed_uuid('campaign_unit', 'necron-ghost-wraiths'), (select quantity from public.campaign_units where slug = 'necron-ghost-wraiths')),
-  (public.seed_uuid('movement_order', 'move-daemon-drusus'), public.seed_uuid('campaign_unit', 'daemon-plaguefall-screamers'), (select quantity from public.campaign_units where slug = 'daemon-plaguefall-screamers'))
-on conflict (movement_order_id, unit_id) do update
-set quantity_at_departure = excluded.quantity_at_departure;
+-- El mapa final no arranca con movimientos precargados.
 -- END GENERATED 40K MOVEMENTS
 insert into public.trade_offers (
   id, creator_faction_id, offer_type, resource_key, resource_amount, gold_amount, fee_gold, status, is_reserved, created_at, updated_at
@@ -1795,27 +1729,12 @@ update public.faction_resources
 set minerals = greatest(0, minerals - 15), gold = greatest(0, gold - 3)
 where faction_id = public.seed_uuid('faction', 'adeptus-custodes');
 
-insert into public.conflicts (id, slug, system_id, attacker_faction_id, defender_faction_id, status, blocked_until, notes)
-values
-  (public.seed_uuid('conflict', 'conflict-azur-trench'), 'conflict-azur-trench', public.seed_uuid('system', 'azur-trench'), public.seed_uuid('faction', 'orcos'), public.seed_uuid('faction', 'adeptus-custodes'), 'pending', now() + interval '14 days', 'Una horda orka amenaza el corredor de la Zanja Azul frente a las lineas de Kharon. Pendiente de batalla fisica.'),
-  (public.seed_uuid('conflict', 'conflict-ossuary-reach'), 'conflict-ossuary-reach', public.seed_uuid('system', 'ossuary-reach'), public.seed_uuid('faction', 'legiones-daemonicas'), public.seed_uuid('faction', 'necrones'), 'pending', now() + interval '14 days', 'Las Legiones Daemonicas intentan profanar criptas que los Necrones estan reactivando. Pendiente de batalla fisica.'),
-  (public.seed_uuid('conflict', 'conflict-saint-veil'), 'conflict-saint-veil', public.seed_uuid('system', 'saint-veil'), public.seed_uuid('faction', 'space-marines'), public.seed_uuid('faction', 'cultos-genestealer'), 'pending', now() + interval '14 days', 'Los Space Marines han descubierto una insurreccion genestelar en el santuario. Pendiente de batalla fisica.')
-on conflict (slug) do update
-set system_id = excluded.system_id, attacker_faction_id = excluded.attacker_faction_id, defender_faction_id = excluded.defender_faction_id, status = excluded.status, winner_faction_id = null, blocked_until = excluded.blocked_until, notes = excluded.notes, resolved_at = null;
-
-insert into public.missions (id, system_id, title, narrative_description, recommended_points, objectives, special_rules, victory_conditions)
-values
-  (public.seed_uuid('mission', 'mission-azur-trench'), public.seed_uuid('system', 'azur-trench'), 'La Zanja Azul', 'Una nebulosa de gases ionizados parte el campo de batalla en corredores estrechos.', '1000-1500 pts', 'Controlar las balizas de navegacion al final de la batalla fisica.', 'Las unidades que avancen por el centro cuentan como expuestas por la luz azul.', 'El ganador decide el control final de Azur Trench.'),
-  (public.seed_uuid('mission', 'mission-ossuary-reach'), public.seed_uuid('system', 'ossuary-reach'), 'Ecos del Osario', 'Criptas rotas y fosas contaminadas hacen que cada metro sea una amenaza.', '1000-1500 pts', 'Asegurar tres criptas antes del final de la partida.', 'El terreno central se considera peligroso por emanaciones toxicas y energia necrodermis.', 'El ganador decide el control final de Ossuary Reach.'),
-  (public.seed_uuid('mission', 'mission-saint-veil'), public.seed_uuid('system', 'saint-veil'), 'El Velo Sagrado', 'Un santuario en sombra se convierte en campo de purga e insurreccion.', '1000-1500 pts', 'Mantener el altar central y dos accesos laterales.', 'La primera ronda usa visibilidad reducida por incienso, humo y apagones.', 'El ganador decide el control final de Saint Veil.')
-on conflict (id) do update
-set system_id = excluded.system_id, title = excluded.title, narrative_description = excluded.narrative_description, recommended_points = excluded.recommended_points, objectives = excluded.objectives, special_rules = excluded.special_rules, victory_conditions = excluded.victory_conditions, updated_at = now();
+-- El mapa final no arranca con conflictos ni misiones bloqueadas.
 
 insert into public.system_special_objects (id, system_id, name, type, public_description, is_public)
 values
-  (public.seed_uuid('system_special_object', 'obj-nexus-aster'), public.seed_uuid('system', 'nexus-aster'), 'Baliza del Nexus', 'technology', 'Lecturas verdes y doradas en el nodo central.', true),
-  (public.seed_uuid('system_special_object', 'obj-saint-veil'), public.seed_uuid('system', 'saint-veil'), 'Reliquia velada', 'relic', 'Un relicario emite pulsos violetas bajo el santuario.', true),
-  (public.seed_uuid('system_special_object', 'obj-ossuary-reach'), public.seed_uuid('system', 'ossuary-reach'), 'Cripta fracturada', 'anomaly', 'Senales intermitentes salen de tumbas orbitales abiertas.', true)
+  (public.seed_uuid('system_special_object', 'obj-nexus-aster'), public.seed_uuid('system', 'nexus-aster'), 'Totem del Nexus', 'anomaly', 'Un enjambre de chatarra, balizas robadas y senales de guerra orkas domina el nodo.', true),
+  (public.seed_uuid('system_special_object', 'obj-goregate'), public.seed_uuid('system', 'goregate'), 'Puerta de la Waaagh', 'anomaly', 'La ruta central inferior vibra con motores improvisados y amenazas pintadas en rojo.', true)
 on conflict (id) do update
 set system_id = excluded.system_id, name = excluded.name, type = excluded.type, public_description = excluded.public_description, is_public = excluded.is_public;
 
