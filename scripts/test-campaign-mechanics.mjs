@@ -192,6 +192,42 @@ async function setResources(factionIds, amount) {
   );
 }
 
+async function ensureActiveBuilding(maps, systemSlug, buildingSlug, label = "edificio fixture") {
+  const existing = (
+    await must(
+      `buscar ${label}`,
+      service
+        .from("system_buildings")
+        .select("*")
+        .eq("system_id", maps.systemBySlug[systemSlug].id)
+        .eq("building_template_id", maps.buildingBySlug[buildingSlug].id)
+        .limit(1)
+    )
+  )[0];
+
+  if (existing) {
+    return existing;
+  }
+
+  const now = new Date().toISOString();
+
+  return must(
+    `crear ${label}`,
+    service
+      .from("system_buildings")
+      .insert({
+        system_id: maps.systemBySlug[systemSlug].id,
+        building_template_id: maps.buildingBySlug[buildingSlug].id,
+        status: "active",
+        started_at: now,
+        finishes_at: now,
+        constructed_at: now
+      })
+      .select("*")
+      .single()
+  );
+}
+
 async function resetCombatFixture(maps) {
   await must(
     "limpiar conflictos fixture",
@@ -336,6 +372,13 @@ async function main() {
   }
   recordCheck("roster final de facciones", "5 jugables + orcos/tiranidos narrativas");
 
+  const initialBuildings = await must(
+    "edificios iniciales",
+    service.from("system_buildings").select("id")
+  );
+  assert(initialBuildings.length === 0, `La campana debe arrancar sin edificios; encontrados ${initialBuildings.length}`);
+  recordCheck("arranque sin edificios", "system_buildings vacio");
+
   const settings = await must(
     "campaign_settings",
     service.from("campaign_settings").select("*").eq("id", "default").single()
@@ -436,6 +479,21 @@ async function main() {
       })
       .eq("faction_id", maps.factionBySlug["adeptus-custodes"].id)
   );
+  const foundryFixture = await must(
+    "crear planta Kharon fixture",
+    service
+      .from("system_buildings")
+      .insert({
+        system_id: maps.systemBySlug["kharon-prime"].id,
+        building_template_id: maps.buildingBySlug["planta-fundicion"].id,
+        status: "active",
+        started_at: new Date().toISOString(),
+        finishes_at: new Date().toISOString(),
+        constructed_at: new Date().toISOString()
+      })
+      .select("*")
+      .single()
+  );
   await must(
     "tick vencido",
     service
@@ -451,8 +509,8 @@ async function main() {
     "recursos producidos Custodes",
     service.from("faction_resources").select("*").eq("faction_id", maps.factionBySlug["adeptus-custodes"].id).single()
   );
-  assert(produced.industrial_material === 20, `Planta de Kharon debia producir 20 material, produjo ${produced.industrial_material}`);
-  recordCheck("produccion por capacidad planetaria", "Kharon Prime material industrial = 20/dia");
+  assert(Number(produced.industrial_material) === 5, `Planta de Kharon debia producir 5 material, produjo ${produced.industrial_material}`);
+  recordCheck("produccion por capacidad planetaria", "Kharon Prime material industrial = 5/dia");
 
   const foundry = (
     await must(
@@ -460,9 +518,7 @@ async function main() {
       service
         .from("system_buildings")
         .select("*")
-        .eq("system_id", maps.systemBySlug["kharon-prime"].id)
-        .eq("building_template_id", maps.buildingBySlug["planta-fundicion"].id)
-        .eq("status", "active")
+        .eq("id", foundryFixture.id)
         .limit(1)
     )
   )[0];
@@ -523,6 +579,8 @@ async function main() {
   await rpc(service, "refresh_system_production_from_buildings", {}, "refrescar produccion tras reconstruir planta");
   recordCheck("destruccion de edificios", "sin reembolso, libera slot y refresca produccion derivada");
   await setResources(playerFactionIds, 5000);
+  await ensureActiveBuilding(maps, "kharon-prime", "camara-comercio", "camara comercio Custodes fixture");
+  await ensureActiveBuilding(maps, "sa-cea-gate", "camara-comercio", "camara comercio Marines fixture");
 
   await rpc(
     custodes.client,
@@ -552,34 +610,7 @@ async function main() {
   );
   recordCheck("comercio", "mercader + oferta estelar con reserva y resourceKey camelCase");
 
-  let taller = (
-    await must(
-      "buscar taller Custodes",
-      service
-        .from("system_buildings")
-        .select("*")
-        .eq("system_id", maps.systemBySlug["kharon-prime"].id)
-        .eq("building_template_id", maps.buildingBySlug["taller-guerra"].id)
-        .limit(1)
-    )
-  )[0];
-  if (!taller) {
-    taller = await must(
-      "crear taller fixture",
-      service
-        .from("system_buildings")
-        .insert({
-          system_id: maps.systemBySlug["kharon-prime"].id,
-          building_template_id: maps.buildingBySlug["taller-guerra"].id,
-          status: "active",
-          started_at: new Date().toISOString(),
-          finishes_at: new Date().toISOString(),
-          constructed_at: new Date().toISOString()
-        })
-        .select("*")
-        .single()
-    );
-  }
+  const taller = await ensureActiveBuilding(maps, "kharon-prime", "taller-guerra", "taller Custodes fixture");
   const caladiusTemplate = await must(
     "template Caladius",
     service
@@ -631,14 +662,11 @@ async function main() {
   );
   recordCheck("reclutamiento variantes", "Caladius 225 pts con Twin Arachnus, sin ambiguous column");
 
-  const sanctuary = await must(
-    "santuario Custodes",
-    service
-      .from("system_buildings")
-      .select("*")
-      .eq("system_id", maps.systemBySlug["kharon-prime"].id)
-      .eq("building_template_id", maps.buildingBySlug["santuario-reliquias"].id)
-      .single()
+  const sanctuary = await ensureActiveBuilding(
+    maps,
+    "kharon-prime",
+    "santuario-reliquias",
+    "santuario Custodes fixture"
   );
   const relic = (
     await must(

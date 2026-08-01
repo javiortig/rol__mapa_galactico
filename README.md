@@ -149,6 +149,20 @@ La produccion de recursos funciona con tick diario de backend, no por turno estr
 - Honor sustituye a Piedra ancestral en UI/reglas; columnas legacy pueden existir solo por compatibilidad.
 - Material Industrial se produce en Planta de Fundicion y se usa principalmente para construir.
 
+## Balance economico v1
+
+- Las unidades siempre cumplen `Suministro + 2*Mineral + 5*Honor + 5*Oro = puntos Warhammer`.
+- Las unidades no cuestan Material Industrial ni Uridium; Material Industrial es para edificios y Uridium para movimiento.
+- La progresion de costes sigue el arbol de tropas: infanteria inicial solo Suministro, infanteria avanzada con Mineral, Caracteres con mas Honor, Vehiculos/Aeronaves/Fortificaciones con mas Mineral, y oro para unidades avanzadas, aliadas, Crucible, epicas o finales de rama.
+- Aproximadamente el 40% de las plantillas de cada faccion jugable cuestan oro.
+- Capital + sistema neutral adyacente estan balanceados para producir 16 puntos/dia potenciales en recursos de reclutamiento. Material Industrial y Uridium no cuentan en ese calculo.
+- La campana empieza sin edificios construidos: la capacidad natural existe, pero la produccion real solo empieza cuando se construyen edificios activos.
+- Las capitales tienen 5 Material Industrial/dia de capacidad natural y 0 Uridium. Los sistemas adyacentes tienen 0 Material Industrial y 0.3 Uridium/dia.
+- Los edificios basicos cuestan 20 Material Industrial, asi que una capital con Planta de Fundicion activa genera un edificio basico cada 4 dias.
+- Solo `nexus-aster` y `goregate` tienen capacidad natural de oro en el mapa final.
+- La configuracion vive en `data/balance/faction-balance.json`; el informe generado vive en `docs/generated/faction-balance-report.md`.
+- Validacion: `npm run balance:validate`.
+
 Antes de desplegar frontend que lea estos campos, aplica migraciones Supabase incluida `0009_buildings_honor_industrial_material.sql` y despues actualiza/ejecuta `supabase/production-cron.sql`.
 
 ## Movimientos, permisos y ataques

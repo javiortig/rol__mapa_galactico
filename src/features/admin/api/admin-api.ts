@@ -115,7 +115,7 @@ export async function adminSetCampaignLimits(input: {
     max_honor: input.resourceCaps.honor,
     max_gold: input.resourceCaps.gold,
     max_industrial_material: input.resourceCaps.industrialMaterial,
-    max_uridium: input.resourceCaps.uridium,
+    max_uridium: Math.ceil(input.resourceCaps.uridium),
     max_technology: input.resourceCaps.technology,
     max_army_points: input.maxArmyPoints
   });

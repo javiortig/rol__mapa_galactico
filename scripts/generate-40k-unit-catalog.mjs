@@ -1,11 +1,19 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { dirname } from "node:path";
+import {
+  applyUnitCostBalance,
+  systemWarhammerPointValue,
+  warhammerPointValue
+} from "./lib/campaign-balance.mjs";
 
 const SOURCE_PATH = "data/11th40kPoints.txt";
 const SEED_PATH = "supabase/seed.sql";
 const MOCK_PATH = "src/mocks/generated/40k-unit-templates.ts";
 const REPORT_PATH = "docs/generated/40k-unit-import-report.md";
+const BALANCE_CONFIG_PATH = "data/balance/faction-balance.json";
+const TROOP_TREE_CONFIG_PATH = "data/technology/faction-troop-trees.json";
+const BALANCE_REPORT_PATH = "docs/generated/faction-balance-report.md";
 const BSDATA_REPO_URL = "https://github.com/BSData/wh40k-10e.git";
 const BSDATA_PATH = ".tmp/wh40k-10e";
 
@@ -214,10 +222,14 @@ const MOVEMENT_ORDERS = [];
 
 function main() {
   const text = readFileSync(SOURCE_PATH, "utf8");
+  const balanceConfig = readJson(BALANCE_CONFIG_PATH);
+  const troopTreeConfig = readJson(TROOP_TREE_CONFIG_PATH);
   const keywordSource = buildBsDataKeywordSource();
   const catalog = parseCatalog(text, keywordSource);
+  const balance = applyUnitCostBalance(catalog.units, troopTreeConfig, balanceConfig);
   const report = buildReport(catalog);
   writeText(REPORT_PATH, report);
+  writeText(BALANCE_REPORT_PATH, buildBalanceReport(catalog, balance, balanceConfig));
   writeText(MOCK_PATH, buildMockFile(catalog.units));
   updateSeed(catalog.units);
 
@@ -268,7 +280,6 @@ function parseCatalog(text, keywordSource) {
       const isAlliedUnit = isAlliedMatch(faction.slug, keywordMatch);
       const category = deriveCategory(isAlliedUnit, isCharacterLine, keywordMatch.rawKeywords);
       const sourceSection = deriveSourceSection(category, isCharacterLine);
-      const costs = computeCosts(points, unitKeywords, category);
       const slug = uniqueSlug(units, `unit-${faction.slug}-${slugify(name)}`);
       keywordMatches.push(`${faction.sourceName}: ${name} -> ${unitKeywords.join(", ")} (${keywordMatch.fileName})`);
 
@@ -286,7 +297,7 @@ function parseCatalog(text, keywordSource) {
         defaultQuantity,
         woundsPerModel: inferWoundsPerModel(name, unitKeywords),
         recruitmentBuildingType: recruitmentBuildingType(name, unitKeywords),
-        ...costs,
+        ...emptyCosts(points),
         notes: `${isAlliedUnit ? "Unidad aliada" : "Unidad"} importada desde data/11th40kPoints.txt (${sourceSection}).`,
         isAvailable: false
       });
@@ -610,44 +621,16 @@ function looksLikeWargear(label) {
   return /\b(pistol|rifle|weapon|weapons|blade|sword|claw|claws|teeth|cannon|bolter|gun|flamer|staff|stave|hammer|lance|launcher|melta|plasma|grenade|shield|bite|fire|blast|gateway|gaze|orb|laspistol|shotgun|carbine|fist|gauntlet|whip|spear|bow|catapult|spinner|cutter|volley|mortar|autogun|stubber|chainsword)\b/i.test(label);
 }
 
-function computeCosts(points, unitKeywords, category) {
-  const profile = costProfile(unitKeywords, category);
-  const minerals = Math.floor((points * profile.minerals) / 2);
-  const honor = Math.floor((points * profile.honor) / 5);
-  const gold = Math.floor((points * profile.gold) / 5);
-  const supply = points - minerals * 2 - honor * 5 - gold * 5;
-
+function emptyCosts(points) {
   return {
-    supplyCost: supply,
-    mineralsCost: minerals,
-    honorCost: honor,
-    goldCost: gold,
+    supplyCost: points,
+    mineralsCost: 0,
+    honorCost: 0,
+    goldCost: 0,
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0
   };
-}
-
-function costProfile(unitKeywords, category) {
-  if (unitKeywords.includes("Caracter") && unitKeywords.includes("Vehiculo")) {
-    return { minerals: 0.45, honor: 0.3, gold: 0.1 };
-  }
-  if (unitKeywords.includes("Caracter")) {
-    return { minerals: 0.25, honor: 0.35, gold: 0.15 };
-  }
-  if (unitKeywords.includes("Vehiculo") || unitKeywords.includes("Aeronave") || unitKeywords.includes("Fortificacion")) {
-    return { minerals: 0.7, honor: 0.1, gold: category === "Aliada" ? 0.1 : 0.05 };
-  }
-  if (unitKeywords.includes("Bestia")) {
-    return { minerals: 0.15, honor: 0.3, gold: category === "Aliada" ? 0.05 : 0 };
-  }
-  if (unitKeywords.includes("Montado")) {
-    return { minerals: 0.45, honor: 0.1, gold: category === "Aliada" ? 0.05 : 0 };
-  }
-  if (category === "Aliada") {
-    return { minerals: 0.25, honor: 0.15, gold: 0.1 };
-  }
-  return { minerals: 0.25, honor: 0.1, gold: 0 };
 }
 
 function inferWoundsPerModel(name, unitKeywords) {
@@ -979,6 +962,75 @@ function buildReport(catalog) {
   ];
 
   return `${lines.join("\n")}\n`;
+}
+
+function buildBalanceReport(catalog, balance, balanceConfig) {
+  const targetFactionSlugs = new Set(balanceConfig.targetFactionSlugs ?? []);
+  const summaryLines = balance.factionSummaries
+    .filter((summary) => targetFactionSlugs.has(summary.factionSlug))
+    .map((summary) => {
+      const values = summary.totals;
+      return `| ${summary.factionSlug} | ${summary.unitCount} | ${summary.goldUnits}/${summary.targetGoldUnits} (${summary.goldUnitPercent}%) | ${values.points} | ${values.supply} | ${values.minerals} | ${values.honor} | ${values.gold} |`;
+    });
+
+  const initialInfantry = balance.summaries
+    .filter((item) => targetFactionSlugs.has(item.factionSlug) && item.isInitialBasicInfantry)
+    .map((item) => `- ${item.factionSlug}: ${item.name} -> ${item.costs.supplyCost} Suministro`);
+
+  const invalidPointValues = balance.summaries.filter((item) => warhammerPointValue(item.costs) !== item.points);
+  const invalidMilitaryCosts = balance.summaries.filter(
+    (item) => (item.costs.industrialMaterialCost ?? 0) !== 0 || (item.costs.uridiumCost ?? 0) !== 0
+  );
+  const pairLines = (balanceConfig.initialPairs ?? []).map((pair) => {
+    const capital = balanceConfig.systemCapacities?.[pair.capitalSlug] ?? {};
+    const adjacent = balanceConfig.systemCapacities?.[pair.adjacentSlug] ?? {};
+    return `| ${pair.factionSlug} | ${pair.capitalSlug} | ${systemWarhammerPointValue(capital)} | ${pair.adjacentSlug} | ${systemWarhammerPointValue(adjacent)} | ${systemWarhammerPointValue(capital) + systemWarhammerPointValue(adjacent)} | ${capital.industrial_material ?? 0} | ${adjacent.uridium ?? 0} |`;
+  });
+
+  const lines = [
+    "# Informe de balance de facciones",
+    "",
+    "Generado por `npm run units:generate`.",
+    "",
+    "## Reglas aplicadas",
+    "",
+    "- Conversion: `supply + 2*minerals + 5*honor + 5*gold = points`.",
+    "- Material Industrial y Uridium no se usan para reclutar unidades.",
+    `- Capital + adyacente objetivo: ${balanceConfig.dailyInitialPairRecruitmentPoints} puntos de reclutamiento/dia.`,
+    "- Uridium y Material Industrial tienen economia separada.",
+    "- La campana empieza sin edificios construidos.",
+    `- Objetivo de unidades con oro: ${Math.round(Number(balanceConfig.targetGoldUnitRatio ?? 0.4) * 100)}% por faccion.`,
+    "- Las primeras infanterias de tier 1 cuestan solo Suministro vital.",
+    "- Las variantes de miniaturas/equipo escalan desde el perfil de coste de la plantilla base.",
+    "",
+    "## Resumen por faccion jugable",
+    "",
+    "| Faccion | Unidades | Unidades con oro | Puntos catalogo | Suministro | Mineral | Honor | Oro |",
+    "|---|---:|---:|---:|---:|---:|---:|---:|",
+    ...summaryLines,
+    "",
+    "## Infanteria inicial solo suministro",
+    "",
+    ...initialInfantry,
+    "",
+    "## Produccion natural inicial",
+    "",
+    "| Faccion | Capital | Pts capital | Adyacente | Pts adyacente | Total | Material capital | Uridium adyacente |",
+    "|---|---|---:|---|---:|---:|---:|---:|",
+    ...pairLines,
+    "",
+    "## Validaciones rapidas",
+    "",
+    `- Unidades con conversion de puntos invalida: ${invalidPointValues.length}.`,
+    `- Unidades con Material Industrial o Uridium: ${invalidMilitaryCosts.length}.`,
+    `- Facciones importadas desde catalogo: ${catalog.factionSummaries.length}.`
+  ];
+
+  return `${lines.join("\n")}\n`;
+}
+
+function readJson(path) {
+  return JSON.parse(readFileSync(path, "utf8"));
 }
 
 function sql(value) {

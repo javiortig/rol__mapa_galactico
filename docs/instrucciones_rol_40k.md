@@ -163,6 +163,8 @@ Estado jugable actual:
 - `Astra Militarum` ya no es faccion jugable; `Adeptus Custodes` ocupa su hueco de campana en `kharon-prime`.
 - El catalogo final de unidades se genera con `npm run units:generate`; importa 333 hojas de unidad reales de 11a edicion y valida que cada bloque coincide con `NUMBER OF UNITS`.
 - Los costes variables oficiales MFM de 11a edicion se generan con `npm run units:generate-options` desde `https://mfm.warhammer-community.com/en/` y se guardan en `data/11th-unit-cost-options.json`. Este archivo anade tamanos legales, recargos por copia y extras pagados sin modificar `data/11th40kPoints.txt`.
+- El balance de costes y produccion vive en `data/balance/faction-balance.json`; se audita con `docs/generated/faction-balance-report.md` y se valida con `npm run balance:validate`.
+- Capital + adyacente neutral suman 16 puntos/dia potenciales en recursos de reclutamiento; Material Industrial y Uridium tienen economia separada. Solo `nexus-aster` y `goregate` tienen Oro natural.
 - Los arboles de tropas por faccion se definen de forma declarativa en `data/technology/faction-troop-trees.json` y se validan con `npm run tech:validate-troops`.
 - Produccion diaria por tick temporal configurable, calculada desde edificios activos.
 - Movimiento, reclutamiento e investigacion funcionan por timestamps y resolvers backend/lazy processing.
@@ -534,7 +536,21 @@ Fórmula:
 Coste en puntos = Suministro + 2*Mineral + 5*Honor + 5*Oro
 ```
 
-Uridium equivale a 2 puntos a efectos económicos/comerciales, pero no se usa para generar tropas normales. Material Industrial no tiene conversión a puntos de ejército en v1; sirve principalmente para construcción.
+Uridium equivale a 2 puntos a efectos económicos/comerciales, pero no se usa para generar tropas normales. Su saldo y producción admiten decimales, por ejemplo `0.3 Uridium/día`, aunque los costes de movimiento sigan siendo enteros. Material Industrial no tiene conversión a puntos de ejército en v1; sirve principalmente para construcción.
+
+Regla de balance vigente para unidades:
+
+- Toda unidad debe cumplir exactamente `Suministro + 2*Mineral + 5*Honor + 5*Oro = puntos Warhammer`.
+- Las unidades no pueden costar Material Industrial ni Uridium.
+- Las primeras unidades de infantería desbloqueadas por cada árbol de tropas cuestan solo Suministro vital.
+- La infantería posterior mezcla Suministro y Mineral; si es élite puede incorporar Honor.
+- Los Caracteres tienen peso alto de Honor, y Oro solo si son avanzados, únicos, Crucible o final de rama.
+- Vehículos, Aeronaves y Fortificaciones tienen peso alto de Mineral.
+- Bestias mezclan Suministro y Honor. Montadas mezclan Suministro y Mineral.
+- Aproximadamente el 40% de las plantillas de cada facción jugable deben costar Oro, con tolerancia de una unidad.
+- Las unidades aliadas, Crucible, épicas, titánicas o últimos nodos de rama son candidatas prioritarias a Oro.
+
+El balance se genera desde `scripts/generate-40k-unit-catalog.mjs` usando `data/balance/faction-balance.json` y los árboles de `data/technology/faction-troop-trees.json`. El informe de auditoría es `docs/generated/faction-balance-report.md` y la validación se ejecuta con `npm run balance:validate`.
 
 ### 4.2 Uso de Honor
 
@@ -567,7 +583,7 @@ La producción diaria real ya no sale de producción planetaria manual. Sale de 
 
 En base de datos, `system_production` queda como proyección visible/derivada de edificios activos, no como fuente de verdad manual. El resolver `refresh_system_production_from_buildings()` reconstruye esos valores desde `system_buildings`.
 
-Regla funcional actual: cada edificio de producción produce exactamente la capacidad que tiene el sistema para ese recurso en `system_resource_capabilities`. Ejemplo: si `Kharon Prime` tiene capacidad `industrial_material = 20`, una `Planta de Fundición` activa en Kharon Prime produce `+20 Material Industrial` por tick diario. El campo `building_templates.produced_amount` queda como legado/metadata y no debe usarse para calcular producción real.
+Regla funcional actual: cada edificio de producción produce exactamente la capacidad que tiene el sistema para ese recurso en `system_resource_capabilities`. Ejemplo: si `Kharon Prime` tiene capacidad `industrial_material = 5`, una `Planta de Fundición` activa en Kharon Prime produce `+5 Material Industrial` por tick diario. El campo `building_templates.produced_amount` queda como legado/metadata y no debe usarse para calcular producción real.
 
 Los Componentes tecnológicos no se producen en planetas, sistemas ni edificios de producción.
 
@@ -588,6 +604,33 @@ Suministro vital | Mineral | Honor | Oro | Material Industrial | Uridium
 Los Componentes tecnológicos no aparecen en la barra superior. Solo se muestran dentro del panel/árbol de tecnologías.
 
 El panel de sistema debe mostrar la capacidad natural diaria del sistema desde `system_resource_capabilities`. La producción activa real sigue dependiendo de que exista un edificio de producción activo para explotar esa capacidad.
+
+### 4.3.1 Balance de producción inicial
+
+El mapa final usa capacidades explícitas, no generación determinista. El objetivo de apertura es que cada jugador pueda alcanzar un segundo sistema garantizado sin romper el equilibrio económico:
+
+- Cada jugador empieza controlando solo su capital.
+- El sistema adyacente directo empieza neutral y aporta parte de la economia inicial cuando se conquista, pero no empieza con edificios construidos.
+- Capital + adyacente suman `16 puntos/día` potenciales solo en recursos de reclutamiento: Suministro, Mineral, Honor y Oro.
+- Material Industrial y Uridium no cuentan para ese calculo de puntos Warhammer.
+- Capital y adyacente no tienen capacidad natural de Oro.
+- Las capitales tienen `5 Material Industrial/día` de capacidad natural y `0 Uridium/día`.
+- Los sistemas adyacentes tienen `0 Material Industrial/día` y `0.3 Uridium/día`.
+- Solo `nexus-aster` y `goregate`, los dos sistemas centrales controlados por Orcos, tienen capacidad natural de Oro.
+- Los sistemas gaseosos no producen recursos.
+- Todos los sistemas empiezan sin edificios construidos. Por tanto, la producción activa inicial es 0 hasta que una facción construya edificios de producción.
+
+Tabla vigente de capital + adyacente:
+
+| Facción | Capital | Capacidad capital | Adyacente neutral | Capacidad adyacente | Total reclutamiento |
+|---|---|---:|---|---:|---:|
+| Legiones Daemónicas | Mordax | 7 Suministro, 1 Honor, 5 Material Industrial | Drusus | 2 Suministro, 1 Mineral, 0.3 Uridium | 16 pts/día |
+| Space Marines | Sa'cea Gate | 3 Mineral, 1 Honor, 5 Material Industrial | Lyra Terminus | 5 Suministro, 0.3 Uridium | 16 pts/día |
+| Necrones | Thokt Vault | 4 Mineral, 1 Honor, 5 Material Industrial | Novem | 3 Suministro, 0.3 Uridium | 16 pts/día |
+| Adeptus Custodes | Kharon Prime | 3 Mineral, 1 Honor, 5 Material Industrial | Helios Drift | 5 Suministro, 0.3 Uridium | 16 pts/día |
+| Cultos Genestealer | Blackglass | 10 Suministro, 5 Material Industrial | Red Sabbath | 4 Suministro, 1 Mineral, 0.3 Uridium | 16 pts/día |
+
+Los edificios iniciales ya no existen. Las facciones empiezan con `80 Material Industrial` y `3 Uridium` para poder construir, moverse y probar el sistema sin que la economía arranque ya explotada.
 
 ### 4.4 Componentes tecnológicos
 
@@ -936,7 +979,27 @@ Catálogo inicial:
 | Monumento | Producción | Genera Honor. |
 | Santuario de Reliquias | Reliquias | Guarda reliquias y permite equiparlas o desequiparlas en Caracteres presentes. |
 
-Las capitales del seed empiezan con 5 edificios activos: Barracón de Infantería, Cámara de Comercio, Planta de Fundición, Monumento y Santuario de Reliquias.
+El seed actual empieza sin edificios construidos en ningún sistema. Los slots existen desde el inicio, pero cada facción debe construir sus edificios.
+
+Costes actuales de construccion, todos pagados solo con Material Industrial:
+
+| Edificio | Coste |
+|---|---:|
+| Granja Biológica | 20 |
+| Complejo Minero | 20 |
+| Planta de Fundición | 20 |
+| Barracón de Infantería | 20 |
+| Monumento | 24 |
+| Refinería de Iridium | 26 |
+| Cámara de Comercio | 30 |
+| Antenas de Reconocimiento | 30 |
+| Mina de Oro | 34 |
+| Taller de Guerra | 38 |
+| Nido de Bestias | 38 |
+| Nexo de Inteligencia | 38 |
+| Cuartel de Mando | 42 |
+| Santuario de Reliquias | 44 |
+| Cámara de Leyendas | 56 |
 
 RPCs principales:
 
@@ -1528,9 +1591,9 @@ El `Santuario de Reliquias` es un edificio `building_kind = relic`.
 Reglas:
 
 - Requiere tecnologia `monumentos-gloria`.
-- Coste v1: 8 Suministro, 8 Mineral, 2 Honor, 1 Oro y 5 Material Industrial.
+- Coste v1: 44 Material Industrial.
 - Tiempo de construccion de test: 3 segundos.
-- Cada capital empieza con un Santuario activo para probar la feature.
+- No empieza construido en capitales; debe construirse como cualquier edificio.
 - Al abrirlo muestra reliquias guardadas en ese sistema, Caracteres propios presentes y reliquias equipadas.
 
 ### 10.3 Equipar reliquias
@@ -1655,7 +1718,7 @@ Tabla `missions` guarda URL pública/privada según diseño.
 Siempre visible:
 
 ```text
-Suministro vital: 120 | Mineral: 85 | Honor: 8 | Oro: 30 | Material Industrial: 90 | Uridium: 14
+Suministro vital: 120 | Mineral: 85 | Honor: 8 | Oro: 30 | Material Industrial: 80 | Uridium: 3.0
 ```
 
 Debe tener iconos bonitos. La version implementada muestra: Suministro vital, Mineral, Honor, Oro, Material Industrial y Uridium. Los Componentes tecnologicos solo se ven dentro del panel de Tecnologia.
@@ -1700,19 +1763,19 @@ El bloque antiguo de panel detallado de recursos queda solo como referencia hist
 Recursos actuales
 
 Suministro vital: 120
-Producción diaria: +18
+Producción activa: depende de edificios construidos.
 
 Mineral: 85
-Producción diaria: +11
+Producción activa: depende de edificios construidos.
 
 Honor: 8
-Producción diaria: +2
+Producción activa: depende de edificios construidos.
 
-Material Industrial: 90
+Material Industrial: 80
 Produccion diaria: segun capacidad planetaria explotada por edificios activos
 
-Uridium: 14
-Producción diaria: +4
+Uridium: 3.0
+Producción activa: 0.3/día en adyacente si hay Refinería de Iridium activa.
 
 Componentes tecnológicos: 16
 
@@ -2127,7 +2190,7 @@ faction_resources
 - honor integer default 0
 - gold integer default 0
 - industrial_material integer default 0
-- uridium integer default 0
+- uridium numeric(12,2) default 0
 - ancestral_stone integer default 0 -- legacy temporal sin uso funcional
 - technology integer default 0 -- Componentes tecnológicos
 - updated_at timestamptz
@@ -2145,7 +2208,7 @@ system_production
 - honor_per_tick integer default 0
 - gold_per_tick integer default 0
 - industrial_material_per_tick integer default 0
-- uridium_per_tick integer default 0
+- uridium_per_tick numeric(12,2) default 0
 - ancestral_stone_per_tick integer default 0 -- legacy temporal sin uso funcional
 - technology_per_tick integer default 0 -- debe permanecer en 0; los Componentes tecnológicos no son producción planetaria
 ```

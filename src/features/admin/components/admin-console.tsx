@@ -1405,7 +1405,8 @@ function ResourceEditorGrid<K extends keyof ResourceBundle>({
           <input
             className="w-full rounded-md border border-cyan-200/15 bg-slate-950/50 px-2 py-1.5 text-sm text-cyan-50"
             min={0}
-            onChange={(event) => onChange(resourceKey, Math.max(0, toInt(event.target.value, 0)))}
+            onChange={(event) => onChange(resourceKey, Math.max(0, toNumber(event.target.value, 0)))}
+            step={resourceKey === "uridium" ? "0.1" : "1"}
             type="number"
             value={value[resourceKey] ?? 0}
           />
@@ -1486,6 +1487,11 @@ function parseNarrativeEnemyUnits(value: string): NarrativeMissionEnemyUnit[] {
 
 function toInt(value: string, fallback: number) {
   const parsed = Number.parseInt(value, 10);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function toNumber(value: string, fallback: number) {
+  const parsed = Number.parseFloat(value);
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 

@@ -172,17 +172,31 @@ export function getBaseRecruitmentVariantCost(template: UnitTemplate, points: nu
 
 export function computeRecruitmentCostsForPoints(template: UnitTemplate, points: number) {
   const safePoints = Math.max(0, Math.trunc(points));
-  const profile = getCostProfile(template);
-  const minerals = Math.floor((safePoints * profile.minerals) / 2);
-  const honor = Math.floor((safePoints * profile.honor) / 5);
-  const gold = Math.floor((safePoints * profile.gold) / 5);
-  const supply = safePoints - minerals * 2 - honor * 5 - gold * 5;
+  const basePoints = Math.max(0, Math.trunc(template.points));
+
+  if (basePoints <= 0 || safePoints === basePoints) {
+    return {
+      supply: template.supplyCost,
+      minerals: template.mineralsCost,
+      honor: template.honorCost,
+      gold: template.goldCost,
+      industrialMaterial: 0,
+      uridium: 0,
+      technology: 0
+    } satisfies Record<ResourceKey, number>;
+  }
+
+  const minerals = Math.floor(((safePoints * template.mineralsCost * 2) / basePoints) / 2);
+  const honor = Math.floor(((safePoints * template.honorCost * 5) / basePoints) / 5);
+  const rawGold = Math.floor(((safePoints * template.goldCost * 5) / basePoints) / 5);
+  const gold = template.goldCost > 0 && safePoints >= 5 ? Math.max(1, rawGold) : rawGold;
+  const normalized = normalizeRecruitmentCosts(safePoints, minerals, honor, gold);
 
   return {
-    supply,
-    minerals,
-    honor,
-    gold,
+    supply: normalized.supply,
+    minerals: normalized.minerals,
+    honor: normalized.honor,
+    gold: normalized.gold,
     industrialMaterial: 0,
     uridium: 0,
     technology: 0
@@ -280,34 +294,31 @@ function applyDiscount(cost: number, percent: number) {
   return Math.max(1, Math.floor((cost * (100 - percent)) / 100));
 }
 
-function getCostProfile(template: UnitTemplate) {
-  if (template.unitKeywords.includes("Caracter") && template.unitKeywords.includes("Vehiculo")) {
-    return { minerals: 0.45, honor: 0.3, gold: 0.1 };
+function normalizeRecruitmentCosts(points: number, minerals: number, honor: number, gold: number) {
+  const normalized = {
+    minerals: Math.max(0, Math.trunc(minerals)),
+    honor: Math.max(0, Math.trunc(honor)),
+    gold: Math.max(0, Math.trunc(gold))
+  };
+
+  while (resourcePointValue(normalized) > points && normalized.gold > 0) {
+    normalized.gold -= 1;
+  }
+  while (resourcePointValue(normalized) > points && normalized.honor > 0) {
+    normalized.honor -= 1;
+  }
+  while (resourcePointValue(normalized) > points && normalized.minerals > 0) {
+    normalized.minerals -= 1;
   }
 
-  if (template.unitKeywords.includes("Caracter")) {
-    return { minerals: 0.25, honor: 0.35, gold: 0.15 };
-  }
+  return {
+    supply: points - normalized.minerals * 2 - normalized.honor * 5 - normalized.gold * 5,
+    minerals: normalized.minerals,
+    honor: normalized.honor,
+    gold: normalized.gold
+  };
+}
 
-  if (
-    template.unitKeywords.includes("Vehiculo") ||
-    template.unitKeywords.includes("Aeronave") ||
-    template.unitKeywords.includes("Fortificacion")
-  ) {
-    return { minerals: 0.7, honor: 0.1, gold: template.category === "Aliada" ? 0.1 : 0.05 };
-  }
-
-  if (template.unitKeywords.includes("Bestia")) {
-    return { minerals: 0.15, honor: 0.3, gold: template.category === "Aliada" ? 0.05 : 0 };
-  }
-
-  if (template.unitKeywords.includes("Montado")) {
-    return { minerals: 0.45, honor: 0.1, gold: template.category === "Aliada" ? 0.05 : 0 };
-  }
-
-  if (template.category === "Aliada") {
-    return { minerals: 0.25, honor: 0.15, gold: 0.1 };
-  }
-
-  return { minerals: 0.2, honor: 0.05, gold: 0 };
+function resourcePointValue(costs: { minerals: number; honor: number; gold: number }) {
+  return costs.minerals * 2 + costs.honor * 5 + costs.gold * 5;
 }

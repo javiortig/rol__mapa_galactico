@@ -705,8 +705,8 @@ const resources: CampaignSnapshot["resources"] = [
     minerals: 130,
     honor: 12,
     gold: 34,
-    industrialMaterial: 90,
-    uridium: 24,
+    industrialMaterial: 80,
+    uridium: 3,
     technology: 16,
     updatedAt: new Date(now).toISOString()
   },
@@ -716,8 +716,8 @@ const resources: CampaignSnapshot["resources"] = [
     minerals: 155,
     honor: 18,
     gold: 32,
-    industrialMaterial: 90,
-    uridium: 22,
+    industrialMaterial: 80,
+    uridium: 3,
     technology: 16,
     updatedAt: new Date(now).toISOString()
   },
@@ -727,8 +727,8 @@ const resources: CampaignSnapshot["resources"] = [
     minerals: 115,
     honor: 13,
     gold: 30,
-    industrialMaterial: 90,
-    uridium: 22,
+    industrialMaterial: 80,
+    uridium: 3,
     technology: 16,
     updatedAt: new Date(now).toISOString()
   },
@@ -738,8 +738,8 @@ const resources: CampaignSnapshot["resources"] = [
     minerals: 130,
     honor: 18,
     gold: 38,
-    industrialMaterial: 90,
-    uridium: 26,
+    industrialMaterial: 80,
+    uridium: 3,
     technology: 16,
     updatedAt: new Date(now).toISOString()
   },
@@ -749,8 +749,8 @@ const resources: CampaignSnapshot["resources"] = [
     minerals: 135,
     honor: 15,
     gold: 28,
-    industrialMaterial: 90,
-    uridium: 20,
+    industrialMaterial: 80,
+    uridium: 3,
     technology: 16,
     updatedAt: new Date(now).toISOString()
   }
@@ -1939,39 +1939,52 @@ const technologyEffects: CampaignSnapshot["technologyEffects"] = [
 ].concat(troopTechnologyEffects);
 
 const buildingTemplates: CampaignSnapshot["buildingTemplates"] = [
-  makeBuildingTemplate({ id: "barracon-infanteria", name: "Barracon de Infanteria", category: "Reclutamiento", description: "Centro de instruccion para tropas de linea y cuadros veteranos.", buildingKind: "recruitment", industrialMaterialCost: 24, constructionTimeSeconds: 3, allowedUnitCategories: ["Infanteria", "Elite"], requiredTechnologyNodeId: "fundacion-planetaria", iconKey: "infantry_barracks" }),
-  makeBuildingTemplate({ id: "cuartel-mando", name: "Cuartel de Mando", category: "Reclutamiento", description: "Instalacion de oficiales, heroes y personajes de mando.", buildingKind: "recruitment", industrialMaterialCost: 27, constructionTimeSeconds: 3, allowedUnitCategories: ["Personaje"], requiredTechnologyNodeId: "asamblea-planetaria", iconKey: "command_quarters" }),
-  makeBuildingTemplate({ id: "camara-leyendas", name: "Camara de Leyendas", category: "Reclutamiento", description: "Camara sellada para reclutar unidades [Crucible] cuando su tecnologia deje de estar bloqueada.", buildingKind: "recruitment", industrialMaterialCost: 37, constructionTimeSeconds: 3, allowedUnitCategories: ["Personaje", "Linea de batalla", "Transporte", "Otras hojas de datos", "Aliada", "Infanteria", "Elite", "Vehiculo", "Monstruo", "Hoja de datos", "Otro", "Superpesado"], requiredTechnologyNodeId: "camara-leyendas", iconKey: "legend_chamber" }),
-  makeBuildingTemplate({ id: "taller-guerra", name: "Taller de Guerra", category: "Reclutamiento", description: "Bahias de reparacion y ensamblaje de vehiculos.", buildingKind: "recruitment", industrialMaterialCost: 30, constructionTimeSeconds: 3, allowedUnitCategories: ["Vehiculo"], requiredTechnologyNodeId: "maquinaria-belica", iconKey: "war_workshop" }),
-  makeBuildingTemplate({ id: "nido-bestias", name: "Nido de Bestias", category: "Reclutamiento", description: "Jaulas y rituales de control para monstruos de guerra.", buildingKind: "recruitment", industrialMaterialCost: 29, constructionTimeSeconds: 3, allowedUnitCategories: ["Monstruo"], requiredTechnologyNodeId: "criadero-guerra", iconKey: "beast_lair" }),
-  makeBuildingTemplate({ id: "camara-comercio", name: "Camara de Comercio", category: "Comercio", description: "Mercado orbital y punto de contacto con rutas mercantes.", buildingKind: "commerce", industrialMaterialCost: 21, constructionTimeSeconds: 3, requiredTechnologyNodeId: "pactos-mercantiles", iconKey: "commerce" }),
-  makeBuildingTemplate({ id: "nexo-inteligencia", name: "Nexo de Inteligencia", category: "Inteligencia", description: "Centro de analisis para operaciones de espionaje futuras.", buildingKind: "intelligence", industrialMaterialCost: 25, constructionTimeSeconds: 3, requiredTechnologyNodeId: "oficina-inteligencia", iconKey: "intelligence" }),
-  makeBuildingTemplate({ id: "antenas-reconocimiento", name: "Antenas de Reconocimiento", category: "Inteligencia", description: "Matrices de escucha y auspex de largo alcance.", buildingKind: "intelligence", industrialMaterialCost: 19, constructionTimeSeconds: 3, requiredTechnologyNodeId: "celulas-informacion", iconKey: "recon" }),
-  makeBuildingTemplate({ id: "granja-biologica", name: "Granja Biologica", category: "Produccion", description: "Complejos de biomasa y cultivos adaptados al frente.", buildingKind: "production", industrialMaterialCost: 11, constructionTimeSeconds: 3, producedResourceKey: "supply", producedAmount: 0, requiredTechnologyNodeId: "fundacion-planetaria", iconKey: "biofarm" }),
-  makeBuildingTemplate({ id: "complejo-minero", name: "Complejo Minero", category: "Produccion", description: "Pozos, excavadoras y refinerias de mineral bruto.", buildingKind: "production", industrialMaterialCost: 14, constructionTimeSeconds: 3, producedResourceKey: "minerals", producedAmount: 0, requiredTechnologyNodeId: "extraccion-subterranea", iconKey: "mine" }),
-  makeBuildingTemplate({ id: "refineria-iridium", name: "Refineria de Iridium", category: "Produccion", description: "Planta especializada para estabilizar cristales de salto.", buildingKind: "production", industrialMaterialCost: 17, constructionTimeSeconds: 3, producedResourceKey: "uridium", producedAmount: 0, requiredTechnologyNodeId: "cristalizacion-combustible-cuantico", iconKey: "iridium_refinery" }),
-  makeBuildingTemplate({ id: "mina-oro", name: "Mina de Oro", category: "Produccion", description: "Extraccion de metales preciosos para rutas comerciales.", buildingKind: "production", industrialMaterialCost: 17, constructionTimeSeconds: 3, producedResourceKey: "gold", producedAmount: 0, requiredTechnologyNodeId: "fiebre-oro", iconKey: "gold_mine" }),
-  makeBuildingTemplate({ id: "planta-fundicion", name: "Planta de Fundicion", category: "Produccion", description: "Produce Material Industrial para nuevas construcciones.", buildingKind: "production", industrialMaterialCost: 17, constructionTimeSeconds: 3, producedResourceKey: "industrialMaterial", producedAmount: 0, requiredTechnologyNodeId: "procesado-metalurgico", iconKey: "foundry" }),
-  makeBuildingTemplate({ id: "monumento", name: "Monumento", category: "Produccion", description: "Estructura ceremonial que transforma gloria local en Honor.", buildingKind: "production", industrialMaterialCost: 22, constructionTimeSeconds: 3, producedResourceKey: "honor", producedAmount: 0, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "monument" }),
-  makeBuildingTemplate({ id: "santuario-reliquias", name: "Santuario de Reliquias", category: "Reliquias", description: "Camara sellada donde se custodian reliquias narrativas y se equipan a Caracteres veteranos.", buildingKind: "relic", industrialMaterialCost: 24, constructionTimeSeconds: 3, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "relic_sanctuary" })
+  makeBuildingTemplate({ id: "barracon-infanteria", name: "Barracon de Infanteria", category: "Reclutamiento", description: "Centro de instruccion para tropas de linea y cuadros veteranos.", buildingKind: "recruitment", industrialMaterialCost: 20, constructionTimeSeconds: 3, allowedUnitCategories: ["Infanteria", "Elite"], requiredTechnologyNodeId: "fundacion-planetaria", iconKey: "infantry_barracks" }),
+  makeBuildingTemplate({ id: "cuartel-mando", name: "Cuartel de Mando", category: "Reclutamiento", description: "Instalacion de oficiales, heroes y personajes de mando.", buildingKind: "recruitment", industrialMaterialCost: 42, constructionTimeSeconds: 3, allowedUnitCategories: ["Personaje"], requiredTechnologyNodeId: "asamblea-planetaria", iconKey: "command_quarters" }),
+  makeBuildingTemplate({ id: "camara-leyendas", name: "Camara de Leyendas", category: "Reclutamiento", description: "Camara sellada para reclutar unidades [Crucible] cuando su tecnologia deje de estar bloqueada.", buildingKind: "recruitment", industrialMaterialCost: 56, constructionTimeSeconds: 3, allowedUnitCategories: ["Personaje", "Linea de batalla", "Transporte", "Otras hojas de datos", "Aliada", "Infanteria", "Elite", "Vehiculo", "Monstruo", "Hoja de datos", "Otro", "Superpesado"], requiredTechnologyNodeId: "camara-leyendas", iconKey: "legend_chamber" }),
+  makeBuildingTemplate({ id: "taller-guerra", name: "Taller de Guerra", category: "Reclutamiento", description: "Bahias de reparacion y ensamblaje de vehiculos.", buildingKind: "recruitment", industrialMaterialCost: 38, constructionTimeSeconds: 3, allowedUnitCategories: ["Vehiculo"], requiredTechnologyNodeId: "maquinaria-belica", iconKey: "war_workshop" }),
+  makeBuildingTemplate({ id: "nido-bestias", name: "Nido de Bestias", category: "Reclutamiento", description: "Jaulas y rituales de control para monstruos de guerra.", buildingKind: "recruitment", industrialMaterialCost: 38, constructionTimeSeconds: 3, allowedUnitCategories: ["Monstruo"], requiredTechnologyNodeId: "criadero-guerra", iconKey: "beast_lair" }),
+  makeBuildingTemplate({ id: "camara-comercio", name: "Camara de Comercio", category: "Comercio", description: "Mercado orbital y punto de contacto con rutas mercantes.", buildingKind: "commerce", industrialMaterialCost: 30, constructionTimeSeconds: 3, requiredTechnologyNodeId: "pactos-mercantiles", iconKey: "commerce" }),
+  makeBuildingTemplate({ id: "nexo-inteligencia", name: "Nexo de Inteligencia", category: "Inteligencia", description: "Centro de analisis para operaciones de espionaje futuras.", buildingKind: "intelligence", industrialMaterialCost: 38, constructionTimeSeconds: 3, requiredTechnologyNodeId: "oficina-inteligencia", iconKey: "intelligence" }),
+  makeBuildingTemplate({ id: "antenas-reconocimiento", name: "Antenas de Reconocimiento", category: "Inteligencia", description: "Matrices de escucha y auspex de largo alcance.", buildingKind: "intelligence", industrialMaterialCost: 30, constructionTimeSeconds: 3, requiredTechnologyNodeId: "celulas-informacion", iconKey: "recon" }),
+  makeBuildingTemplate({ id: "granja-biologica", name: "Granja Biologica", category: "Produccion", description: "Complejos de biomasa y cultivos adaptados al frente.", buildingKind: "production", industrialMaterialCost: 20, constructionTimeSeconds: 3, producedResourceKey: "supply", producedAmount: 0, requiredTechnologyNodeId: "fundacion-planetaria", iconKey: "biofarm" }),
+  makeBuildingTemplate({ id: "complejo-minero", name: "Complejo Minero", category: "Produccion", description: "Pozos, excavadoras y refinerias de mineral bruto.", buildingKind: "production", industrialMaterialCost: 20, constructionTimeSeconds: 3, producedResourceKey: "minerals", producedAmount: 0, requiredTechnologyNodeId: "extraccion-subterranea", iconKey: "mine" }),
+  makeBuildingTemplate({ id: "refineria-iridium", name: "Refineria de Iridium", category: "Produccion", description: "Planta especializada para estabilizar cristales de salto.", buildingKind: "production", industrialMaterialCost: 26, constructionTimeSeconds: 3, producedResourceKey: "uridium", producedAmount: 0, requiredTechnologyNodeId: "cristalizacion-combustible-cuantico", iconKey: "iridium_refinery" }),
+  makeBuildingTemplate({ id: "mina-oro", name: "Mina de Oro", category: "Produccion", description: "Extraccion de metales preciosos para rutas comerciales.", buildingKind: "production", industrialMaterialCost: 34, constructionTimeSeconds: 3, producedResourceKey: "gold", producedAmount: 0, requiredTechnologyNodeId: "fiebre-oro", iconKey: "gold_mine" }),
+  makeBuildingTemplate({ id: "planta-fundicion", name: "Planta de Fundicion", category: "Produccion", description: "Produce Material Industrial para nuevas construcciones.", buildingKind: "production", industrialMaterialCost: 20, constructionTimeSeconds: 3, producedResourceKey: "industrialMaterial", producedAmount: 0, requiredTechnologyNodeId: "procesado-metalurgico", iconKey: "foundry" }),
+  makeBuildingTemplate({ id: "monumento", name: "Monumento", category: "Produccion", description: "Estructura ceremonial que transforma gloria local en Honor.", buildingKind: "production", industrialMaterialCost: 24, constructionTimeSeconds: 3, producedResourceKey: "honor", producedAmount: 0, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "monument" }),
+  makeBuildingTemplate({ id: "santuario-reliquias", name: "Santuario de Reliquias", category: "Reliquias", description: "Camara sellada donde se custodian reliquias narrativas y se equipan a Caracteres veteranos.", buildingKind: "relic", industrialMaterialCost: 44, constructionTimeSeconds: 3, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "relic_sanctuary" })
 ];
 
 type ProductionResourceKey = Exclude<CampaignSnapshot["systemResourceCapabilities"][number]["resourceKey"], "technology">;
 
-const productionBuildingSlugByResource: Record<ProductionResourceKey, string> = {
-  supply: "granja-biologica",
-  minerals: "complejo-minero",
-  honor: "monumento",
-  gold: "mina-oro",
-  industrialMaterial: "planta-fundicion",
-  uridium: "refineria-iridium"
-};
+const productionResourceKeys: ProductionResourceKey[] = [
+  "supply",
+  "minerals",
+  "honor",
+  "gold",
+  "industrialMaterial",
+  "uridium"
+];
 
-const productionResourceKeys = Object.keys(productionBuildingSlugByResource) as ProductionResourceKey[];
+const balancedSystemCapacities: Record<string, Partial<Record<ProductionResourceKey, number>>> = {
+  "mordax": { supply: 7, honor: 1, industrialMaterial: 5 },
+  "drusus": { supply: 2, minerals: 1, uridium: 0.3 },
+  "sa-cea-gate": { minerals: 3, honor: 1, industrialMaterial: 5 },
+  "lyra-terminus": { supply: 5, uridium: 0.3 },
+  "thokt-vault": { minerals: 4, honor: 1, industrialMaterial: 5 },
+  "novem": { supply: 3, uridium: 0.3 },
+  "kharon-prime": { minerals: 3, honor: 1, industrialMaterial: 5 },
+  "helios-drift": { supply: 5, uridium: 0.3 },
+  "blackglass": { supply: 10, industrialMaterial: 5 },
+  "red-sabbath": { supply: 4, minerals: 1, uridium: 0.3 },
+  "nexus-aster": { minerals: 4, gold: 8, industrialMaterial: 6 },
+  "goregate": { supply: 4, honor: 1, gold: 8, industrialMaterial: 6 }
+};
 
 const systemResourceCapabilities: CampaignSnapshot["systemResourceCapabilities"] = systems.flatMap(getMockResourceCapabilities);
 
-const systemBuildings: CampaignSnapshot["systemBuildings"] = systems.flatMap(getMockStartingBuildings);
+const systemBuildings: CampaignSnapshot["systemBuildings"] = [];
 
 const unitRecoveryQueue: CampaignSnapshot["unitRecoveryQueue"] = [];
 
@@ -2073,165 +2086,20 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
 };
 
 function getMockResourceCapabilities(system: CampaignSnapshot["systems"][number]): CampaignSnapshot["systemResourceCapabilities"] {
-  if (system.systemKind === "gaseous") {
-    return [];
-  }
-
-  if (system.isCapital) {
-    return productionResourceKeys.map((resourceKey) => ({
-      systemId: system.id,
-      resourceKey,
-      productionAmount: getCapitalCapability(resourceKey)
-    }));
-  }
+  const capacities = balancedSystemCapacities[system.id] ?? {};
 
   return productionResourceKeys
     .map((resourceKey) => ({
       systemId: system.id,
       resourceKey,
-      productionAmount: getMockDeterministicCapability(system.id, resourceKey)
+      productionAmount: capacities[resourceKey] ?? 0
     }))
     .filter((capability) => capability.productionAmount > 0);
 }
 
-function getMockStartingBuildings(system: CampaignSnapshot["systems"][number]): CampaignSnapshot["systemBuildings"] {
-  if (system.status !== "controlled" || !system.controllerFactionId) {
-    return [];
-  }
-
-  if (system.isCapital) {
-    return ["barracon-infanteria", "camara-comercio", "planta-fundicion", "monumento", "santuario-reliquias"].map((slug) =>
-      makeSystemBuilding(system.id, slug)
-    );
-  }
-
-  const capability = getPreferredMockCapability(system.id);
-  const slug = capability ? productionBuildingSlugByResource[capability.resourceKey as ProductionResourceKey] : null;
-
-  return slug ? [makeSystemBuilding(system.id, slug)] : [];
-}
-
 function getMockBaseProduction(systemId: string): ResourceBundle {
-  const production = { ...emptyResources };
-  const capabilities = systemResourceCapabilities.filter((capability) => capability.systemId === systemId);
-
-  for (const capability of capabilities) {
-    production[capability.resourceKey] = capability.productionAmount;
-  }
-
-  return production;
-}
-
-function getPreferredMockCapability(systemId: string) {
-  const priority: ProductionResourceKey[] = ["supply", "minerals", "industrialMaterial", "uridium", "gold", "honor"];
-  const capabilities = systemResourceCapabilities.filter((capability) => capability.systemId === systemId);
-
-  return priority
-    .map((resourceKey) => capabilities.find((capability) => capability.resourceKey === resourceKey))
-    .find(Boolean);
-}
-
-function getCapitalCapability(resourceKey: ProductionResourceKey) {
-  const capitalCapabilities: Record<ProductionResourceKey, number> = {
-    supply: 10,
-    minerals: 5,
-    industrialMaterial: 20,
-    uridium: 5,
-    honor: 3,
-    gold: 3
-  };
-
-  return capitalCapabilities[resourceKey];
-}
-
-function getMockDeterministicCapability(systemId: string, resourceKey: ProductionResourceKey) {
-  const profile = deterministicInt(`${systemId}:profile`, 0, 4);
-
-  if (profile === 0) {
-    return capabilityRange(systemId, resourceKey, {
-      supply: [5, 9],
-      minerals: [2, 5],
-      industrialMaterial: [4, 9],
-      uridium: [1, 3],
-      honor: [1, 3],
-      gold: [1, 3]
-    });
-  }
-
-  if (profile === 1) {
-    return capabilityRange(systemId, resourceKey, {
-      supply: [2, 5],
-      minerals: [6, 10],
-      industrialMaterial: [8, 13],
-      uridium: [1, 4],
-      honor: [0, 2],
-      gold: [1, 3]
-    });
-  }
-
-  if (profile === 2) {
-    return capabilityRange(systemId, resourceKey, {
-      supply: [3, 6],
-      minerals: [2, 5],
-      industrialMaterial: [3, 7],
-      uridium: [5, 9],
-      honor: [1, 3],
-      gold: [1, 4]
-    });
-  }
-
-  if (profile === 3) {
-    return capabilityRange(systemId, resourceKey, {
-      supply: [3, 6],
-      minerals: [1, 4],
-      industrialMaterial: [2, 6],
-      uridium: [1, 3],
-      honor: [4, 7],
-      gold: [2, 5]
-    });
-  }
-
-  return capabilityRange(systemId, resourceKey, {
-    supply: [4, 7],
-    minerals: [3, 6],
-    industrialMaterial: [5, 10],
-    uridium: [2, 5],
-    honor: [2, 4],
-    gold: [2, 4]
-  });
-}
-
-function capabilityRange(
-  systemId: string,
-  resourceKey: ProductionResourceKey,
-  ranges: Record<ProductionResourceKey, [number, number]>
-) {
-  const [min, max] = ranges[resourceKey];
-  return deterministicInt(`${systemId}:${resourceKey}`, min, max);
-}
-
-function deterministicInt(seed: string, min: number, max: number) {
-  let hash = 2166136261;
-
-  for (let index = 0; index < seed.length; index += 1) {
-    hash ^= seed.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
-  }
-
-  const normalized = (hash >>> 0) % (max - min + 1);
-  return min + normalized;
-}
-
-function makeSystemBuilding(systemId: string, buildingTemplateSlug: string): CampaignSnapshot["systemBuildings"][number] {
-  return {
-    id: `building-${systemId}-${buildingTemplateSlug}`,
-    systemId,
-    buildingTemplateId: buildingTemplateSlug,
-    status: "active",
-    startedAt: inMinutes(-30),
-    finishesAt: inMinutes(-25),
-    constructedAt: inMinutes(-25)
-  };
+  void systemId;
+  return { ...emptyResources };
 }
 
 function makeMockCharacterUnit(

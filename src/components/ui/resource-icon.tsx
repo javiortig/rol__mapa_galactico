@@ -62,7 +62,17 @@ export function ResourceAmount({
     <span className={cn("inline-flex items-center gap-1.5 tabular-nums text-slate-100", className)}>
       <ResourceIcon className="size-4" resource={resource} />
       {prefix}
-      {value}
+      {formatResourceValue(value)}
     </span>
   );
+}
+
+function formatResourceValue(value: number) {
+  if (Number.isInteger(value)) {
+    return value.toLocaleString("es-ES");
+  }
+
+  return value.toLocaleString("es-ES", {
+    maximumFractionDigits: 2
+  });
 }

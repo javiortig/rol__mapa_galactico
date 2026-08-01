@@ -500,7 +500,11 @@ function formatCompactNumber(value: number) {
     return `${(value / 1000).toFixed(value >= 10000 ? 0 : 1)}k`;
   }
 
-  return String(value);
+  if (!Number.isInteger(value)) {
+    return value.toLocaleString("es-ES", { maximumFractionDigits: 2 });
+  }
+
+  return value.toLocaleString("es-ES");
 }
 
 function isBlockExpired(blockedUntil?: string | null) {

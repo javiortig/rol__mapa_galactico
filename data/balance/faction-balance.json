@@ -1,0 +1,91 @@
+{
+  "version": 2,
+  "targetGoldUnitRatio": 0.4,
+  "goldUnitTolerance": 1,
+  "dailyInitialPairRecruitmentPoints": 16,
+  "weeklyInitialPairRecruitmentPoints": 112,
+  "pointValues": {
+    "supply": 1,
+    "minerals": 2,
+    "honor": 5,
+    "gold": 5
+  },
+  "targetFactionSlugs": [
+    "legiones-daemonicas",
+    "adeptus-custodes",
+    "space-marines",
+    "cultos-genestealer",
+    "necrones"
+  ],
+  "initialPairs": [
+    {
+      "factionSlug": "legiones-daemonicas",
+      "capitalSlug": "mordax",
+      "adjacentSlug": "drusus"
+    },
+    {
+      "factionSlug": "space-marines",
+      "capitalSlug": "sa-cea-gate",
+      "adjacentSlug": "lyra-terminus"
+    },
+    {
+      "factionSlug": "necrones",
+      "capitalSlug": "thokt-vault",
+      "adjacentSlug": "novem"
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "capitalSlug": "kharon-prime",
+      "adjacentSlug": "helios-drift"
+    },
+    {
+      "factionSlug": "cultos-genestealer",
+      "capitalSlug": "blackglass",
+      "adjacentSlug": "red-sabbath"
+    }
+  ],
+  "systemCapacities": {
+    "mordax": { "supply": 7, "honor": 1, "industrial_material": 5 },
+    "drusus": { "supply": 2, "minerals": 1, "uridium": 0.3 },
+    "sa-cea-gate": { "minerals": 3, "honor": 1, "industrial_material": 5 },
+    "lyra-terminus": { "supply": 5, "uridium": 0.3 },
+    "thokt-vault": { "minerals": 4, "honor": 1, "industrial_material": 5 },
+    "novem": { "supply": 3, "uridium": 0.3 },
+    "kharon-prime": { "minerals": 3, "honor": 1, "industrial_material": 5 },
+    "helios-drift": { "supply": 5, "uridium": 0.3 },
+    "blackglass": { "supply": 10, "industrial_material": 5 },
+    "red-sabbath": { "supply": 4, "minerals": 1, "uridium": 0.3 },
+    "maelstrom-gas": {},
+    "voidmist-basin": {},
+    "nexus-aster": { "minerals": 4, "gold": 8, "industrial_material": 6 },
+    "goregate": { "supply": 4, "honor": 1, "gold": 8, "industrial_material": 6 }
+  },
+  "initialFactionResources": {
+    "industrialMaterial": 80,
+    "uridium": 3
+  },
+  "initialBuildings": "none",
+  "basicBuildingSlugs": [
+    "granja-biologica",
+    "complejo-minero",
+    "planta-fundicion",
+    "barracon-infanteria"
+  ],
+  "buildingCosts": {
+    "granja-biologica": 20,
+    "complejo-minero": 20,
+    "planta-fundicion": 20,
+    "barracon-infanteria": 20,
+    "monumento": 24,
+    "refineria-iridium": 26,
+    "camara-comercio": 30,
+    "antenas-reconocimiento": 30,
+    "mina-oro": 34,
+    "taller-guerra": 38,
+    "nido-bestias": 38,
+    "nexo-inteligencia": 38,
+    "cuartel-mando": 42,
+    "santuario-reliquias": 44,
+    "camara-leyendas": 56
+  }
+}
