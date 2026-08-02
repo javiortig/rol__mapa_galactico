@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Activity, Building2, Clock3, Gem, HandCoins, HeartPulse, Minus, Plus, Shield, Sparkles, Trash2, X } from "lucide-react";
+import { Activity, Building2, Clock3, Gem, HandCoins, HeartPulse, Lock, Minus, Plus, Shield, Sparkles, Trash2, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
@@ -309,6 +309,7 @@ function RecruitTab({
             templates.map((unitTemplate) => {
               const selected = unitTemplate.id === selectedTemplate?.id;
               const unlocked = isUnitTemplateUnlocked(snapshot, unitTemplate);
+              const requiredTechnologyName = getRequiredTechnologyName(snapshot, unitTemplate.requiredTechnologyNodeId);
               const previewCopyIndex = getRecruitmentCopyIndex(snapshot, unitTemplate);
               const previewChoice = getModelChoices(unitTemplate, previewCopyIndex)[0];
               const previewPoints = previewChoice?.points ?? unitTemplate.points;
@@ -318,30 +319,56 @@ function RecruitTab({
 
               return (
                 <button
-                  className={`rounded-lg border p-4 text-left transition ${
+                  className={`relative overflow-hidden rounded-lg border p-4 text-left transition ${
                     selected
-                      ? "border-cyan-200/55 bg-cyan-300/12 shadow-[0_0_24px_rgba(34,211,238,0.14)]"
+                      ? unlocked
+                        ? "border-cyan-200/55 bg-cyan-300/12 shadow-[0_0_24px_rgba(34,211,238,0.14)]"
+                        : "border-violet-200/60 bg-violet-400/12 shadow-[0_0_26px_rgba(167,139,250,0.16)]"
                       : unlocked
                         ? "border-cyan-200/15 bg-slate-950/35 hover:border-cyan-200/35"
-                        : "border-slate-500/20 bg-slate-950/25 opacity-70 hover:border-violet-200/25"
+                        : "border-violet-300/18 bg-slate-950/45 hover:border-violet-200/45"
                   }`}
                   key={unitTemplate.id}
                   onClick={() => setSelectedTemplateId(unitTemplate.id)}
                   type="button"
                 >
+                  {!unlocked ? (
+                    <>
+                      <div
+                        aria-hidden="true"
+                        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_12%,rgba(167,139,250,0.16),transparent_34%),linear-gradient(135deg,rgba(139,92,246,0.12),transparent_42%)]"
+                      />
+                      <div
+                        aria-hidden="true"
+                        className="pointer-events-none absolute -right-8 top-7 h-px w-36 rotate-45 bg-violet-200/25"
+                      />
+                    </>
+                  ) : null}
                   <div className="mb-3 flex items-start justify-between gap-3">
-                    <div>
-                      <div className="font-semibold text-cyan-50">{unitTemplate.name}</div>
+                    <div className="relative min-w-0">
+                      <div className={`font-semibold ${unlocked ? "text-cyan-50" : "text-violet-50"}`}>{unitTemplate.name}</div>
                       <div className="mt-1 text-xs text-slate-400">
                         Desde {previewPoints} pts · {previewChoice?.models ?? unitTemplate.defaultQuantity} miniaturas
                       </div>
                     </div>
-                    <Badge tone={!unlocked ? "violet" : affordable ? "cyan" : "rose"}>
-                      {!unlocked ? "Tecnologia" : hasVariants ? "Opciones" : unitTemplate.category}
-                    </Badge>
+                    <div className="relative shrink-0">
+                      <Badge tone={!unlocked ? "violet" : affordable ? "cyan" : "rose"}>
+                        {!unlocked ? "Sellada" : hasVariants ? "Opciones" : unitTemplate.category}
+                      </Badge>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 text-xs">
+                  {!unlocked ? (
+                    <div className="relative mb-3 flex items-start gap-2 rounded-md border border-violet-300/20 bg-violet-400/10 p-2 text-xs text-violet-100">
+                      <Lock className="mt-0.5 size-3.5 shrink-0" />
+                      <div className="min-w-0">
+                        <div className="font-medium">Patron de guerra bloqueado</div>
+                        <div className="mt-0.5 break-words text-violet-100/75">{requiredTechnologyName}</div>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  <div className={`relative grid grid-cols-2 gap-2 text-xs ${unlocked ? "" : "opacity-80"}`}>
                     {costResources.map((resource) => (
                       <CostPill
                         key={resource}
@@ -445,8 +472,22 @@ function RecruitTab({
             ) : null}
 
             {!selectedUnlocked ? (
-              <div className="rounded-md border border-violet-300/25 bg-violet-400/10 p-3 text-sm text-violet-100">
-                Requiere investigar {getRequiredTechnologyName(snapshot, selectedTemplate.requiredTechnologyNodeId)}.
+              <div className="overflow-hidden rounded-md border border-violet-300/30 bg-slate-950/55 text-sm text-violet-100">
+                <div className="flex items-center gap-2 border-b border-violet-300/15 bg-violet-400/10 px-3 py-2 text-xs uppercase tracking-[0.18em] text-violet-100/80">
+                  <Lock size={14} />
+                  Autorizacion tecnologica
+                </div>
+                <div className="flex gap-3 p-3">
+                  <div className="grid size-10 shrink-0 place-items-center rounded-md border border-violet-300/25 bg-violet-300/10">
+                    <Sparkles size={18} />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-medium text-violet-50">Patron de guerra sellado</div>
+                    <div className="mt-1 break-words text-violet-100/75">
+                      {getRequiredTechnologyName(snapshot, selectedTemplate.requiredTechnologyNodeId)}
+                    </div>
+                  </div>
+                </div>
               </div>
             ) : null}
 
