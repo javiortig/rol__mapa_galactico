@@ -901,13 +901,17 @@ function SystemPanel({
       target.status === "controlled" &&
       target.controllerFactionId &&
       target.controllerFactionId !== snapshot.currentUser.factionId &&
-      Boolean(getEdgeBetween(snapshot.edges, system.id, target.id))
+      !target.isCapital &&
+      !isSystemBlockedForMovement(target) &&
+      Boolean(getEdgeBetween(snapshot.edges, system.id, target.id)) &&
+      !getAttackOperationBlockReason(
+        snapshot.battleOperations,
+        system.id,
+        target.id,
+        snapshot.currentUser.factionId
+      )
   );
-  const canAttack =
-    canMove &&
-    system.status === "controlled" &&
-    system.controllerFactionId === snapshot.currentUser.factionId &&
-    hasAdjacentEnemySystem;
+  const canAttack = canMove && hasAdjacentEnemySystem;
   const canReport =
     Boolean(conflict) &&
     !isSharedSystem &&
@@ -1488,8 +1492,10 @@ function MovementPlanner({
   const selectedSelections = availableUnits.flatMap<UnitMovementSelection>((unit) => {
     return selectedQuantities[unit.id] ? [{ unitId: unit.id, quantity: unit.quantity }] : [];
   });
+  const selectedUnitCount = selectedSelections.length;
   const selectedMiniatures = selectedSelections.reduce((total, selection) => total + selection.quantity, 0);
-  const hasEnoughUridium = resources && routePlan ? resources.uridium >= routePlan.uridiumCost : false;
+  const totalUridiumCost = routePlan ? routePlan.uridiumCost * selectedUnitCount : 0;
+  const hasEnoughUridium = resources && routePlan ? resources.uridium >= totalUridiumCost : false;
   const routeText =
     activePathSystemIds.length > 1
       ? activePathSystemIds.map((id) => systemById.get(id)?.name ?? id).join(" -> ")
@@ -1620,7 +1626,7 @@ function MovementPlanner({
                 Uridium
               </div>
               <div className={hasEnoughUridium ? "font-semibold text-cyan-50" : "font-semibold text-rose-100"}>
-                {routePlan?.uridiumCost ?? 0}/{resources?.uridium ?? 0}
+                {formatCompactNumber(totalUridiumCost)}/{formatCompactNumber(resources?.uridium ?? 0)}
               </div>
             </div>
             <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 p-2">
@@ -1741,8 +1747,13 @@ function MovementPlanner({
               Uridium
             </div>
             <div className={hasEnoughUridium ? "font-semibold text-cyan-50" : "font-semibold text-rose-100"}>
-              {routePlan?.uridiumCost ?? 0} / {resources?.uridium ?? 0}
+              {formatCompactNumber(totalUridiumCost)} / {formatCompactNumber(resources?.uridium ?? 0)}
             </div>
+            {routePlan && selectedUnitCount > 1 ? (
+              <div className="mt-1 text-[11px] text-slate-500">
+                Ruta {routePlan.uridiumCost} x {selectedUnitCount}
+              </div>
+            ) : null}
           </div>
           <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 p-3">
             <div className="mb-1 flex items-center gap-2 text-xs text-slate-400">
@@ -1851,9 +1862,9 @@ function AttackPlanner({
   const limits = snapshot.battleLimits;
   const ownLimitReason =
     limits && limits.startedAttacks >= limits.maxStartedAttacks
-      ? "Has alcanzado el limite de ataques iniciados este mes."
+      ? "Has alcanzado el limite de ataques iniciados en esta ventana."
       : limits && limits.totalParticipations >= limits.maxTotalParticipations
-        ? "Has alcanzado el maximo de participaciones mensuales."
+        ? "Has alcanzado el maximo de participaciones de la ventana."
         : limits && limits.activeBattles >= limits.maxActiveBattles
           ? "Has alcanzado el maximo de batallas activas."
           : null;
@@ -2049,7 +2060,7 @@ function AttackPlanner({
 
         {limits ? (
           <div className="mb-4 rounded-md border border-cyan-200/15 bg-slate-950/45 p-3 text-xs text-slate-300">
-            <div className="mb-2 font-semibold text-cyan-50">Limites del mes</div>
+            <div className="mb-2 font-semibold text-cyan-50">Ventana de campana</div>
             <div>Ataques iniciados: {limits.startedAttacks}/{limits.maxStartedAttacks}</div>
             <div>Ataques recibidos: {limits.receivedAttacks}/{limits.maxReceivedAttacks}</div>
             <div>Participaciones: {limits.totalParticipations}/{limits.maxTotalParticipations}</div>

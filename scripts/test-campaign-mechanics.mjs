@@ -387,6 +387,14 @@ async function main() {
   assert(settings.attack_duration_seconds === 300, `Ataque esperado 300s, recibido ${settings.attack_duration_seconds}`);
   recordCheck("timers de test", "movimiento 3s/arista y ataque 5min");
 
+  const battleLimits = await rpc(custodes.client, "get_battle_limit_summary", {}, "limites batalla ventana");
+  const battleWindowMs = Date.parse(battleLimits.month_end) - Date.parse(battleLimits.month_start);
+  assert(
+    Math.abs(battleWindowMs - 33 * 24 * 60 * 60 * 1000) < 1000,
+    `La ventana de operaciones debe ser 33 dias, recibida ${battleWindowMs / 86400000} dias`
+  );
+  recordCheck("ventana operaciones", "cupos de batalla se recargan cada 33 dias");
+
   await rpc(
     admin.client,
     "admin_set_campaign_limits",
@@ -413,6 +421,187 @@ async function main() {
   );
   await forceArrival(initialMoving.map((row) => row.id));
   recordCheck("movimientos seed resueltos", `${initialMoving.length} llegadas forzadas`);
+
+  const custodianGuardForMove = await getUnitByName(maps.factionBySlug["adeptus-custodes"].id, "Custodian Guard");
+  const shieldCaptainForMove = await getUnitByName(maps.factionBySlug["adeptus-custodes"].id, "Shield-Captain");
+  await must(
+    "preparar dos unidades para coste por unidad",
+    service
+      .from("campaign_units")
+      .update({ current_system_id: maps.systemBySlug["kharon-prime"].id, status: "ready" })
+      .in("id", [custodianGuardForMove.id, shieldCaptainForMove.id])
+  );
+  await must(
+    "preparar helios neutral coste por unidad",
+    service
+      .from("systems")
+      .update({ status: "neutral", controller_faction_id: null, blocked_until: null })
+      .eq("id", maps.systemBySlug["helios-drift"].id)
+  );
+  const kharonHeliosEdge = await must(
+    "arista Kharon-Helios",
+    service
+      .from("system_edges")
+      .select("uridium_cost")
+      .or(
+        `and(from_system_id.eq.${maps.systemBySlug["kharon-prime"].id},to_system_id.eq.${maps.systemBySlug["helios-drift"].id}),and(from_system_id.eq.${maps.systemBySlug["helios-drift"].id},to_system_id.eq.${maps.systemBySlug["kharon-prime"].id})`
+      )
+      .single()
+  );
+  const resourcesBeforeUnitCost = await must(
+    "recursos antes coste por unidad",
+    service.from("faction_resources").select("uridium").eq("faction_id", maps.factionBySlug["adeptus-custodes"].id).single()
+  );
+  const unitCostMoveId = await rpc(
+    custodes.client,
+    "create_movement_order",
+    {
+      unit_selections: [
+        { unit_id: custodianGuardForMove.id, quantity: custodianGuardForMove.quantity },
+        { unit_id: shieldCaptainForMove.id, quantity: shieldCaptainForMove.quantity }
+      ],
+      path_system_ids: [maps.systemBySlug["kharon-prime"].id, maps.systemBySlug["helios-drift"].id]
+    },
+    "movimiento coste por unidad"
+  );
+  const unitCostOrder = await must(
+    "orden coste por unidad",
+    service.from("movement_orders").select("uridium_cost").eq("id", unitCostMoveId).single()
+  );
+  const expectedUnitCost = kharonHeliosEdge.uridium_cost * 2;
+  assert(
+    unitCostOrder.uridium_cost === expectedUnitCost,
+    `Coste esperado ${expectedUnitCost}, recibido ${unitCostOrder.uridium_cost}`
+  );
+  const resourcesAfterUnitCost = await must(
+    "recursos despues coste por unidad",
+    service.from("faction_resources").select("uridium").eq("faction_id", maps.factionBySlug["adeptus-custodes"].id).single()
+  );
+  assert(
+    Number(resourcesBeforeUnitCost.uridium) - Number(resourcesAfterUnitCost.uridium) === expectedUnitCost,
+    "El descuento de Uridium no coincide con unidades movidas"
+  );
+  await forceArrival(unitCostMoveId);
+  recordCheck("movimiento coste por unidad", `ruta ${kharonHeliosEdge.uridium_cost} x 2 unidades`);
+
+  await must(
+    "preparar gaseoso para ataque",
+    service
+      .from("systems")
+      .update({ status: "neutral", controller_faction_id: null, blocked_until: null, system_kind: "gaseous", is_conquerable: false, allows_shared_occupation: true })
+      .eq("id", maps.systemBySlug["maelstrom-gas"].id)
+  );
+  await must(
+    "preparar objetivo orko gaseoso",
+    service
+      .from("systems")
+      .update({ status: "controlled", controller_faction_id: maps.factionBySlug.orcos.id, blocked_until: null })
+      .eq("id", maps.systemBySlug["nexus-aster"].id)
+  );
+  await must(
+    "preparar unidad ataque gaseoso",
+    service
+      .from("campaign_units")
+      .update({ current_system_id: maps.systemBySlug["maelstrom-gas"].id, status: "ready" })
+      .eq("id", custodianGuardForMove.id)
+  );
+  const gasAttackOrderId = await rpc(
+    custodes.client,
+    "create_attack_order",
+    {
+      unit_selections: [{ unit_id: custodianGuardForMove.id, quantity: custodianGuardForMove.quantity }],
+      origin_system_id: maps.systemBySlug["maelstrom-gas"].id,
+      target_system_id: maps.systemBySlug["nexus-aster"].id
+    },
+    "ataque desde gaseoso"
+  );
+  const gasAttackOrder = await must(
+    "orden ataque gaseoso",
+    service.from("movement_orders").select("battle_operation_id,status").eq("id", gasAttackOrderId).single()
+  );
+  assert(gasAttackOrder.status === "moving", "El ataque desde gaseoso no quedo en camino");
+  await must(
+    "limpiar ataque gaseoso fixture",
+    service.from("battle_operations").update({ status: "cancelled", updated_at: new Date().toISOString() }).eq("id", gasAttackOrder.battle_operation_id)
+  );
+  await must(
+    "limpiar orden ataque gaseoso fixture",
+    service.from("movement_orders").update({ status: "cancelled", cancelled_at: new Date().toISOString() }).eq("id", gasAttackOrderId)
+  );
+  await must(
+    "devolver unidad ataque gaseoso fixture",
+    service
+      .from("campaign_units")
+      .update({ current_system_id: maps.systemBySlug["kharon-prime"].id, status: "ready" })
+      .eq("id", custodianGuardForMove.id)
+  );
+  recordCheck("ataque desde gaseoso", "origen compartido permite lanzar contra adyacente enemigo");
+
+  await must(
+    "preparar origen enemigo autorizado",
+    service
+      .from("systems")
+      .update({ status: "controlled", controller_faction_id: maps.factionBySlug.necrones.id, blocked_until: null })
+      .in("id", [maps.systemBySlug["kharon-prime"].id, maps.systemBySlug["helios-drift"].id])
+  );
+  await must(
+    "preparar unidad en origen enemigo",
+    service
+      .from("campaign_units")
+      .update({ current_system_id: maps.systemBySlug["kharon-prime"].id, status: "ready" })
+      .eq("id", custodianGuardForMove.id)
+  );
+  const foreignOriginAttackOrderId = await rpc(
+    custodes.client,
+    "create_attack_order",
+    {
+      unit_selections: [{ unit_id: custodianGuardForMove.id, quantity: custodianGuardForMove.quantity }],
+      origin_system_id: maps.systemBySlug["kharon-prime"].id,
+      target_system_id: maps.systemBySlug["helios-drift"].id
+    },
+    "ataque desde origen enemigo autorizado"
+  );
+  const foreignOriginAttackOrder = await must(
+    "orden ataque origen enemigo",
+    service.from("movement_orders").select("battle_operation_id,status").eq("id", foreignOriginAttackOrderId).single()
+  );
+  assert(foreignOriginAttackOrder.status === "moving", "El ataque desde origen enemigo autorizado no quedo en camino");
+  await must(
+    "limpiar operacion origen enemigo fixture",
+    service
+      .from("battle_operations")
+      .update({ status: "cancelled", updated_at: new Date().toISOString() })
+      .eq("id", foreignOriginAttackOrder.battle_operation_id)
+  );
+  await must(
+    "limpiar orden origen enemigo fixture",
+    service
+      .from("movement_orders")
+      .update({ status: "cancelled", cancelled_at: new Date().toISOString() })
+      .eq("id", foreignOriginAttackOrderId)
+  );
+  await must(
+    "restaurar sistemas origen enemigo fixture",
+    service
+      .from("systems")
+      .update({ status: "controlled", controller_faction_id: maps.factionBySlug["adeptus-custodes"].id, blocked_until: null })
+      .eq("id", maps.systemBySlug["kharon-prime"].id)
+  );
+  await must(
+    "restaurar Helios origen enemigo fixture",
+    service
+      .from("systems")
+      .update({ status: "neutral", controller_faction_id: null, blocked_until: null })
+      .eq("id", maps.systemBySlug["helios-drift"].id)
+  );
+  await must(
+    "devolver unidad origen enemigo fixture",
+    service
+      .from("campaign_units")
+      .update({ current_system_id: maps.systemBySlug["kharon-prime"].id, status: "ready" })
+      .eq("id", custodianGuardForMove.id)
+  );
+  recordCheck("ataque desde origen enemigo", "presencia propia autorizada sirve como origen");
 
   await expectError(
     "tecnologia planned bloqueada",

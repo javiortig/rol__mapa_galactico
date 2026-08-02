@@ -187,7 +187,7 @@ Estado jugable actual:
 - Componentes tecnologicos son un recurso especial del arbol tecnologico; no aparecen en la barra superior y no se producen en planetas ni por edificios de produccion.
 - Honor sustituye a Piedra ancestral como recurso especial visible; las columnas SQL legacy `ancestral_stone` pueden existir temporalmente solo por compatibilidad de migraciones.
 - El panel de mando operativo tiene entrada `Eventos`, no `Comercio` ni `Recursos`; Comercio se abre desde una `Camara de Comercio` activa.
-- El boton `Operaciones` abre avisos pendientes: permisos de paso/estancia, batallas pendientes y reportes pendientes, con contador de disponibilidad mensual de batallas.
+- El boton `Operaciones` abre avisos pendientes: permisos de paso/estancia, batallas pendientes y reportes pendientes, con contador de disponibilidad de batalla de la ventana vigente de 33 dias.
 - Batallas se juegan fuera de la app; la web gestiona conflicto, bloqueo, reportes, supervivientes, heridas restantes y control final.
 - Facciones narrativas de admin: `Orcos` y `Tiranidos` son amenazas no jugables (`is_narrative = true`), sin capital, usuarios, recursos ni tropas iniciales. Desde `/admin`, el admin puede programar incursiones narrativas con descripcion publica y dias hasta llegada, darles control inmediato de sistemas conquistables o crear misiones temporales atacables.
 - Comercio estelar usa reserva de recursos: publicar una oferta inmoviliza el recurso/oro y su comision; al aceptar solo se valida el coste del aceptante.
@@ -1024,7 +1024,7 @@ Cada fila de `campaign_units` representa una unidad Warhammer persistente e indi
 
 Cada unidad movible es una unidad real de faccion importada desde `data/11th40kPoints.txt`, por ejemplo `Custodian Guard`, `Shield-Captain`, `Caladius Grav-tank`, `Necron Warriors`, `Guardian Defenders`, `Intercessor Squad`, `Pink Horrors` o `Imperial Navy Breachers`.
 
-El coste se paga con Uridium.
+El coste se paga con Uridium. El coste total de una orden es `coste de ruta * numero de unidades seleccionadas`; mover tres unidades por una ruta de coste 1 gasta 3 Uridium.
 
 Por ahora no hay riesgos aleatorios en rutas. Algunas rutas simplemente pueden costar mas.
 
@@ -1037,6 +1037,8 @@ Cada arista/ruta tiene:
 ```text
 uridium_cost
 ```
+
+Ese valor es el coste base por unidad movida, no el coste total de la orden.
 
 Ejemplos:
 
@@ -1099,6 +1101,7 @@ Primera version:
 
 - Seleccion multiple de unidades Warhammer concretas.
 - Cada unidad se selecciona completa; no se pueden mover miniaturas sueltas.
+- El panel debe mostrar el coste real total multiplicando el coste base de la ruta por el numero de unidades seleccionadas.
 - El backend rechaza cualquier `unit_selection.quantity` distinto al `campaign_units.quantity` actual.
 - Las filas `parent_unit_id` pueden existir como legacy, pero no se crean nuevas unidades hijas en el flujo actual.
 - Todas deben estar en el sistema origen.
@@ -2955,6 +2958,7 @@ Evitar collage visual.
 - Si atacante gana, el sistema puede pasar al atacante.
 - Si defensor gana, mantiene controlador.
 - Las capitales no pueden ser atacadas por jugadores ni por amenazas narrativas. La UI no debe ofrecerlas como destino y el backend debe rechazar cualquier intento de crear ataque, coalicion, conflicto pendiente o ataque narrativo contra una capital.
+- Un ataque puede salir desde cualquier sistema no bloqueado donde la faccion tenga unidades propias listas. Esto incluye sistemas enemigos si el jugador llego alli mediante permiso de paso/estancia.
 - Si los reportes coinciden, el backend puede aplicar el resultado automáticamente.
 - Si hay discrepancia, el admin decide.
 - Admin puede poner bloqueo temporal posterior.
@@ -3037,7 +3041,7 @@ Cuando tropas llegan a neutral:
 ### 20.8 Operaciones, permisos y eventos
 
 - `Operaciones` es el panel de avisos accionables del jugador.
-- En la parte superior muestra disponibilidad mensual de batallas: ataques disponibles, defensas disponibles y total disponible. La regla vigente es maximo 3 participaciones activas/mensuales segun backend, sin poder consumirlas todas como atacante o todas como defensor.
+- En la parte superior muestra la disponibilidad de batalla de la ventana vigente: ataques disponibles, defensas disponibles y total disponible. Los cupos se recargan cada 33 dias. La regla vigente es maximo 3 participaciones por ventana segun backend, sin poder consumirlas todas como atacante o todas como defensor.
 - Muestra `movement_passage_requests` pendientes para permitir o rechazar que otra faccion atraviese sistemas propios o termine el movimiento dentro de ellos.
 - Si se rechaza un permiso de paso/estancia, el movimiento se cancela y se aplican las reglas de reembolso de movimiento.
 - Muestra batallas pendientes en las que la faccion participa como atacante o defensor.

@@ -610,6 +610,10 @@ function SupportComposer({
   const routeNames =
     route?.pathSystemIds.map((id) => snapshot.systems.find((system) => system.id === id)?.name ?? id).join(" -> ") ??
     "Sin ruta";
+  const selectedUnitCount = selectedUnitIds.length;
+  const currentResources = snapshot.resources.find((item) => item.factionId === snapshot.currentUser.factionId);
+  const totalUridiumCost = route ? route.uridiumCost * selectedUnitCount : 0;
+  const hasEnoughUridium = Boolean(route && currentResources && currentResources.uridium >= totalUridiumCost);
 
   return (
     <div>
@@ -656,7 +660,14 @@ function SupportComposer({
               <Clock3 size={14} />
               {route ? formatTravelDuration(route.durationSeconds) : "Ruta no disponible"}
             </div>
-            <div className="mt-1">Coste: {route?.uridiumCost ?? 0} Uridium</div>
+            <div className={hasEnoughUridium ? "mt-1 text-slate-300" : "mt-1 text-rose-200"}>
+              Coste: {formatResourceValue(totalUridiumCost)} / {formatResourceValue(currentResources?.uridium ?? 0)} Uridium
+            </div>
+            {route && selectedUnitCount > 1 ? (
+              <div className="mt-1 text-slate-500">
+                Ruta {route.uridiumCost} x {selectedUnitCount} unidades
+              </div>
+            ) : null}
             {operation.attackArrivalAt && side === "defender" ? (
               <div className="mt-1 text-slate-400">
                 Plantel cierra en: {formatTravelDuration(secondsRemaining ?? 0)}
@@ -708,7 +719,7 @@ function SupportComposer({
 
           <Button
             className="mt-4 w-full"
-            disabled={!route || !arrivesInTime || selectedUnitIds.length === 0 || isPending}
+            disabled={!route || !arrivesInTime || selectedUnitIds.length === 0 || !hasEnoughUridium || isPending}
             onClick={onConfirm}
           >
             <Route size={16} />
@@ -890,6 +901,14 @@ function formatBattleAvailability(
   }
 
   return `${Math.max(0, limits.maxTotalParticipations - limits.totalParticipations)} / ${limits.maxTotalParticipations}`;
+}
+
+function formatResourceValue(value: number) {
+  if (Number.isInteger(value)) {
+    return value.toLocaleString("es-ES");
+  }
+
+  return value.toLocaleString("es-ES", { maximumFractionDigits: 2 });
 }
 
 function formatConflictTimer(blockedUntil?: string | null) {

@@ -2053,7 +2053,7 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
   battleLimits: {
     factionId: null,
     monthStart: new Date().toISOString(),
-    monthEnd: inHours(24 * 30),
+    monthEnd: inHours(24 * 33),
     startedAttacks: 0,
     receivedAttacks: 0,
     totalParticipations: 0,
