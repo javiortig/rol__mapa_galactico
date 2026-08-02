@@ -83,6 +83,18 @@ export type RecoveryStatus = "queued" | "completed" | "cancelled";
 
 export type RelicRarity = "common" | "rare" | "epic" | "legendary";
 
+export type BattleResolutionMode = "tabletop" | "autoresolve";
+
+export type BattleReportStatus =
+  | "draft"
+  | "awaiting_validation"
+  | "players_confirmed"
+  | "submitted"
+  | "auto_confirmed"
+  | "admin_confirmed"
+  | "disputed"
+  | "rejected";
+
 export interface Faction {
   id: string;
   slug?: string | null;
@@ -523,11 +535,22 @@ export interface BattleReport {
   reporterFactionId?: string | null;
   winnerFactionId?: string | null;
   finalControllerFactionId?: string | null;
-  status: "submitted" | "auto_confirmed" | "admin_confirmed" | "disputed" | "rejected";
+  status: BattleReportStatus;
+  battleMode: BattleResolutionMode;
+  revision: number;
+  participantValidations: Record<string, BattleReportValidation>;
   casualties?: Record<string, number> | null;
   survivors?: Record<string, number> | null;
   woundsRemaining?: Record<string, number> | null;
   narrativeNotes?: string | null;
+  updatedAt?: string | null;
+}
+
+export interface BattleReportValidation {
+  factionId: string;
+  userId?: string | null;
+  revision: number;
+  confirmedAt?: string | null;
 }
 
 export interface NarrativeAttack {

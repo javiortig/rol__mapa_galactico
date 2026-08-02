@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
 import { ResourceIcon, resourceLabels } from "@/components/ui/resource-icon";
 import { canUseMovementRpc, createAttackOrder, createMovementOrder } from "@/features/movement/api/movement-api";
-import { canUseBattleReportRpc, submitBattleReport } from "@/features/battle-reports/api/battle-report-api";
+import { adminConfirmBattleReport, canUseBattleReportRpc, submitBattleReport, validateBattleReport } from "@/features/battle-reports/api/battle-report-api";
 import { createCoalitionAttackDraft } from "@/features/battles/api/battle-operation-api";
 import { BattleOperationsModal } from "@/features/battles/components/battle-operations-modal";
 import {
@@ -32,6 +32,8 @@ import { formatUnitKeywords, getCharacterLevel, getCharacterRank, isCharacterUni
 import { formatCountdown } from "@/lib/time";
 import { useMediaQuery, useViewportHeightCssVar } from "@/lib/use-media-query";
 import type {
+  BattleReport,
+  BattleResolutionMode,
   BuildingTemplate,
   CampaignSnapshot,
   CampaignUnit,
@@ -53,6 +55,7 @@ const GalaxyMap = dynamic(
 
 const mainResources = ["supply", "minerals", "honor", "gold", "industrialMaterial", "uridium"] as const;
 const planetProductionResources = ["supply", "minerals", "honor", "gold", "industrialMaterial", "uridium"] as const;
+const defaultPostBattleBlockDays = 7;
 
 export function CampaignShell() {
   const router = useRouter();
@@ -2181,6 +2184,10 @@ function BattleReportModal({
   onClose: () => void;
 }) {
   const queryClient = useQueryClient();
+  const report = useMemo(
+    () => findLatestBattleReport(snapshot.battleReports, conflict.id),
+    [conflict.id, snapshot.battleReports]
+  );
   const warUnits = useMemo(
     () =>
       snapshot.units.filter(
@@ -2188,43 +2195,72 @@ function BattleReportModal({
       ),
     [snapshot.units, system.id]
   );
-  const factionOptions = snapshot.factions.filter(
-    (faction) => faction.id === conflict.attackerFactionId || faction.id === conflict.defenderFactionId
+  const requiredFactionIds = useMemo(
+    () => getBattleReportRequiredFactionIds(conflict, warUnits, snapshot.battleUnitCommitments),
+    [conflict, snapshot.battleUnitCommitments, warUnits]
   );
+  const factionOptions = snapshot.factions.filter((faction) =>
+    getConflictFactionIds(conflict).includes(faction.id)
+  );
+  const participantFactions = snapshot.factions.filter((faction) => requiredFactionIds.includes(faction.id));
+  const currentFactionId = snapshot.currentUser.factionId;
+  const isParticipant = Boolean(currentFactionId && requiredFactionIds.includes(currentFactionId));
+  const isAdmin = snapshot.currentUser.role === "admin";
   const defaultWinner =
-    factionOptions.find((faction) => faction.id === snapshot.currentUser.factionId)?.id ??
+    factionOptions.find((faction) => faction.id === currentFactionId)?.id ??
     conflict.attackerFactionId;
   const isConquerableSystem = system.isConquerable;
-  const [winnerFactionId, setWinnerFactionId] = useState<string | null>(defaultWinner);
-  const [finalControllerFactionId, setFinalControllerFactionId] = useState<string | null>(
-    isConquerableSystem ? defaultWinner : null
-  );
-  const [postBlockMinutes, setPostBlockMinutes] = useState(0);
-  const [narrativeNotes, setNarrativeNotes] = useState("");
-  const [survivors, setSurvivors] = useState<Record<string, number>>(() =>
-    Object.fromEntries(warUnits.map((unit) => [unit.id, unit.quantity]))
-  );
+  const [battleMode, setBattleMode] = useState<BattleResolutionMode>(report?.battleMode ?? "tabletop");
+  const [winnerFactionId, setWinnerFactionId] = useState<string | null>(report?.winnerFactionId ?? defaultWinner);
+  const [narrativeNotes, setNarrativeNotes] = useState(report?.narrativeNotes ?? "");
+  const [survivors, setSurvivors] = useState<Record<string, number>>(() => buildReportSurvivors(warUnits, report));
   const [woundsRemaining, setWoundsRemaining] = useState<Record<string, number>>(() =>
-    Object.fromEntries(warUnits.map((unit) => [unit.id, unit.woundsTaken]))
+    buildReportWounds(snapshot, warUnits, report, buildReportSurvivors(warUnits, report))
   );
 
   const rpcReady = canUseBattleReportRpc();
-  const mutation = useMutation({
+  const finalControllerFactionId = isConquerableSystem ? winnerFactionId : null;
+
+  const buildPayload = () => ({
+    battleMode,
+    winnerFactionId,
+    finalControllerFactionId,
+    survivors,
+    woundsRemaining,
+    postBattleBlockedUntil: buildDefaultPostBattleBlockedUntil(),
+    narrativeNotes: narrativeNotes.trim() || null
+  });
+
+  const saveMutation = useMutation({
     mutationFn: () =>
-      submitBattleReport(conflict.id, {
-        winnerFactionId,
-        finalControllerFactionId: isConquerableSystem ? finalControllerFactionId : null,
-        survivors,
-        woundsRemaining,
-        postBattleBlockedUntil:
-          postBlockMinutes > 0 ? new Date(Date.now() + postBlockMinutes * 60_000).toISOString() : null,
-        narrativeNotes: narrativeNotes.trim() || null
-      }),
+      submitBattleReport(conflict.id, buildPayload()),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
+  });
+  const validateMutation = useMutation({
+    mutationFn: () => validateBattleReport(conflict.id),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
+  });
+  const adminMutation = useMutation({
+    mutationFn: () => adminConfirmBattleReport(conflict.id, buildPayload()),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
       onClose();
     }
   });
+  const busy = saveMutation.isPending || validateMutation.isPending || adminMutation.isPending;
+  const currentFactionValidated = Boolean(
+    report && currentFactionId && hasFactionValidated(report, currentFactionId)
+  );
+  const validatedCount = report
+    ? requiredFactionIds.filter((factionId) => hasFactionValidated(report, factionId)).length
+    : 0;
+  const allPlayersValidated = report
+    ? requiredFactionIds.length > 0 && requiredFactionIds.every((factionId) => hasFactionValidated(report, factionId))
+    : false;
 
   return (
     <div className="pointer-events-auto fixed inset-0 z-50 grid place-items-center bg-black/60 p-0 backdrop-blur-sm md:px-4 md:py-6">
@@ -2242,14 +2278,32 @@ function BattleReportModal({
         <div className="mobile-scroll flex-1 lg:grid lg:overflow-hidden lg:grid-cols-[1fr_300px]">
           <div className="p-4 md:p-5 lg:min-h-0 lg:overflow-y-auto">
             <div className="mb-4 grid gap-3 md:grid-cols-2">
-              {factionOptions.map((faction) => (
+              {participantFactions.map((faction) => (
                 <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={faction.id}>
-                  <div className="inline-flex items-center gap-2 text-sm font-medium text-slate-100">
-                    <span className="size-2 rounded-full" style={{ backgroundColor: faction.color }} />
-                    {faction.name}
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="inline-flex items-center gap-2 text-sm font-medium text-slate-100">
+                      <span className="size-2 rounded-full" style={{ backgroundColor: faction.color }} />
+                      {faction.name}
+                    </div>
+                    <Badge tone={report && hasFactionValidated(report, faction.id) ? "cyan" : "amber"}>
+                      {report && hasFactionValidated(report, faction.id) ? "Validado" : "Pendiente"}
+                    </Badge>
                   </div>
                 </div>
               ))}
+            </div>
+
+            <div className="mb-4 rounded-md border border-cyan-200/15 bg-slate-950/35 p-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge tone={getBattleReportStatusTone(report)}>{getBattleReportStatusLabel(report)}</Badge>
+                {report ? <Badge tone="slate">Revision {report.revision}</Badge> : null}
+                <Badge tone={battleMode === "autoresolve" ? "violet" : "cyan"}>
+                  {battleMode === "autoresolve" ? "Autoresolver" : "Mesa"}
+                </Badge>
+                <Badge tone={allPlayersValidated ? "cyan" : "amber"}>
+                  {validatedCount}/{requiredFactionIds.length} validaciones
+                </Badge>
+              </div>
             </div>
 
             <h3 className="mb-3 text-sm font-semibold text-cyan-50">Supervivientes por unidad</h3>
@@ -2277,7 +2331,7 @@ function BattleReportModal({
 
                     <div className="flex items-center justify-between rounded-md border border-cyan-200/10 bg-slate-950/40 p-2">
                       <Button
-                        disabled={value <= 0 || mutation.isPending}
+                        disabled={value <= 0 || busy}
                         onClick={() => {
                           const nextValue = value - 1;
                           setSurvivors((current) => ({ ...current, [unit.id]: nextValue }));
@@ -2296,7 +2350,7 @@ function BattleReportModal({
                         <div className="text-base font-semibold text-cyan-50">{value}</div>
                       </div>
                       <Button
-                        disabled={value >= unit.quantity || mutation.isPending}
+                        disabled={value >= unit.quantity || busy}
                         onClick={() => setSurvivors((current) => ({ ...current, [unit.id]: value + 1 }))}
                         size="icon"
                         variant="ghost"
@@ -2307,7 +2361,7 @@ function BattleReportModal({
 
                     <div className="mt-2 flex items-center justify-between rounded-md border border-cyan-200/10 bg-slate-950/40 p-2">
                       <Button
-                        disabled={woundsValue <= 0 || mutation.isPending}
+                        disabled={woundsValue <= 0 || busy}
                         onClick={() => setWoundsRemaining((current) => ({ ...current, [unit.id]: woundsValue - 1 }))}
                         size="icon"
                         variant="ghost"
@@ -2319,7 +2373,7 @@ function BattleReportModal({
                         <div className="text-base font-semibold text-cyan-50">{woundsValue}/{maxWounds}</div>
                       </div>
                       <Button
-                        disabled={woundsValue >= maxWounds || mutation.isPending}
+                        disabled={woundsValue >= maxWounds || busy}
                         onClick={() => setWoundsRemaining((current) => ({ ...current, [unit.id]: woundsValue + 1 }))}
                         size="icon"
                         variant="ghost"
@@ -2336,12 +2390,27 @@ function BattleReportModal({
           <aside className="border-t border-cyan-200/15 bg-slate-950/35 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-4 md:p-5 lg:border-l lg:border-t-0">
             <div className="space-y-4">
               <label className="block text-sm">
+                <span className="mb-2 block text-slate-300">Resolucion</span>
+                <select
+                  className="w-full rounded-md border border-cyan-200/15 bg-slate-950/70 px-3 py-2 text-sm text-cyan-50 outline-none"
+                  disabled={busy}
+                  onChange={(event) => setBattleMode(event.target.value as BattleResolutionMode)}
+                  value={battleMode}
+                >
+                  <option value="tabletop">Jugada en mesa</option>
+                  <option value="autoresolve">Autoresolver</option>
+                </select>
+              </label>
+
+              <label className="block text-sm">
                 <span className="mb-2 block text-slate-300">Ganador</span>
                 <select
                   className="w-full rounded-md border border-cyan-200/15 bg-slate-950/70 px-3 py-2 text-sm text-cyan-50 outline-none"
+                  disabled={busy}
                   onChange={(event) => setWinnerFactionId(event.target.value || null)}
                   value={winnerFactionId ?? ""}
                 >
+                  <option value="">Empate / sin ganador</option>
                   {factionOptions.map((faction) => (
                     <option key={faction.id} value={faction.id}>
                       {faction.name}
@@ -2351,49 +2420,18 @@ function BattleReportModal({
               </label>
 
               <label className="block text-sm">
-                <span className="mb-2 block text-slate-300">Control final</span>
-                <select
-                  className="w-full rounded-md border border-cyan-200/15 bg-slate-950/70 px-3 py-2 text-sm text-cyan-50 outline-none"
-                  disabled={!isConquerableSystem}
-                  onChange={(event) => setFinalControllerFactionId(event.target.value || null)}
-                  value={finalControllerFactionId ?? ""}
-                >
-                  <option value="">Neutral</option>
-                  {isConquerableSystem
-                    ? factionOptions.map((faction) => (
-                        <option key={faction.id} value={faction.id}>
-                          {faction.name}
-                        </option>
-                      ))
-                    : null}
-                </select>
-                {!isConquerableSystem ? (
-                  <p className="mt-2 text-xs text-slate-400">Sistema no conquistable: el control final siempre es Neutral.</p>
-                ) : null}
-              </label>
-
-              <label className="block text-sm">
-                <span className="mb-2 block text-slate-300">Bloqueo posterior</span>
-                <select
-                  className="w-full rounded-md border border-cyan-200/15 bg-slate-950/70 px-3 py-2 text-sm text-cyan-50 outline-none"
-                  onChange={(event) => setPostBlockMinutes(Number(event.target.value))}
-                  value={postBlockMinutes}
-                >
-                  <option value={0}>Sin bloqueo</option>
-                  <option value={1440}>1 dia</option>
-                  <option value={10080}>7 dias</option>
-                  <option value={20160}>14 dias</option>
-                </select>
-              </label>
-
-              <label className="block text-sm">
                 <span className="mb-2 block text-slate-300">Notas narrativas</span>
                 <textarea
                   className="min-h-24 w-full resize-none rounded-md border border-cyan-200/15 bg-slate-950/70 px-3 py-2 text-sm text-cyan-50 outline-none"
+                  disabled={busy}
                   onChange={(event) => setNarrativeNotes(event.target.value)}
                   value={narrativeNotes}
                 />
               </label>
+
+              <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-xs leading-5 text-slate-400">
+                No se registran recursos ganados: las batallas solo actualizan resultado, control, bajas, heridas y retirada.
+              </div>
 
               {!rpcReady ? (
                 <div className="rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
@@ -2401,17 +2439,48 @@ function BattleReportModal({
                 </div>
               ) : null}
 
-              {mutation.error ? <p className="text-sm text-rose-200">{mutation.error.message}</p> : null}
+              {saveMutation.error ? <p className="text-sm text-rose-200">{saveMutation.error.message}</p> : null}
+              {validateMutation.error ? <p className="text-sm text-rose-200">{validateMutation.error.message}</p> : null}
+              {adminMutation.error ? <p className="text-sm text-rose-200">{adminMutation.error.message}</p> : null}
 
               <Button
-                className="sticky bottom-0 w-full"
-                disabled={!rpcReady || warUnits.length === 0 || mutation.isPending}
-                onClick={() => mutation.mutate()}
+                className="w-full"
+                disabled={!rpcReady || warUnits.length === 0 || busy || (!isParticipant && !isAdmin)}
+                onClick={() => saveMutation.mutate()}
                 variant="danger"
               >
-                <Check size={16} />
-                {mutation.isPending ? "Enviando..." : "Enviar reporte"}
+                {saveMutation.isPending ? "Guardando..." : report ? "Guardar edicion" : "Crear informe"}
               </Button>
+
+              {isParticipant ? (
+                <Button
+                  className="w-full"
+                  disabled={!rpcReady || !report || currentFactionValidated || busy}
+                  onClick={() => validateMutation.mutate()}
+                  variant="primary"
+                >
+                  <Check size={16} />
+                  {currentFactionValidated ? "Ya validado" : validateMutation.isPending ? "Validando..." : "Validar informe"}
+                </Button>
+              ) : null}
+
+              {isAdmin ? (
+                <Button
+                  className="sticky bottom-0 w-full"
+                  disabled={!rpcReady || warUnits.length === 0 || busy || !allPlayersValidated}
+                  onClick={() => adminMutation.mutate()}
+                  variant="primary"
+                >
+                  <Check size={16} />
+                  {adminMutation.isPending ? "Aplicando..." : "Confirmar admin y aplicar"}
+                </Button>
+              ) : null}
+
+              {isAdmin && !allPlayersValidated ? (
+                <p className="text-xs text-amber-100">
+                  El admin podra aplicar el resultado cuando todos los participantes hayan validado la revision actual.
+                </p>
+              ) : null}
             </div>
           </aside>
         </div>
@@ -2420,12 +2489,126 @@ function BattleReportModal({
   );
 }
 
+function findLatestBattleReport(reports: BattleReport[], conflictId: string) {
+  return reports
+    .filter((report) => report.conflictId === conflictId && report.status !== "rejected")
+    .sort((a, b) => getReportTime(b) - getReportTime(a))[0] ?? null;
+}
+
+function buildReportSurvivors(units: CampaignUnit[], report: BattleReport | null) {
+  return Object.fromEntries(
+    units.map((unit) => [
+      unit.id,
+      clampInteger(report?.survivors?.[unit.id] ?? unit.quantity, 0, unit.quantity)
+    ])
+  );
+}
+
+function buildReportWounds(
+  snapshot: CampaignSnapshot,
+  units: CampaignUnit[],
+  report: BattleReport | null,
+  survivors: Record<string, number>
+) {
+  return Object.fromEntries(
+    units.map((unit) => {
+      const survivorsValue = survivors[unit.id] ?? unit.quantity;
+      const maxWounds = survivorsValue * getUnitWoundsPerModel(snapshot, unit);
+
+      return [
+        unit.id,
+        clampInteger(report?.woundsRemaining?.[unit.id] ?? unit.woundsTaken, 0, maxWounds)
+      ];
+    })
+  );
+}
+
+function getReportTime(report: BattleReport) {
+  return report.updatedAt ? new Date(report.updatedAt).getTime() : 0;
+}
+
+function getConflictFactionIds(conflict: Conflict) {
+  return [conflict.attackerFactionId, conflict.defenderFactionId].filter((id): id is string => Boolean(id));
+}
+
+function getBattleReportRequiredFactionIds(
+  conflict: Conflict,
+  warUnits: CampaignUnit[],
+  commitments: CampaignSnapshot["battleUnitCommitments"]
+) {
+  const factionIds = new Set(getConflictFactionIds(conflict));
+
+  for (const unit of warUnits) {
+    factionIds.add(unit.factionId);
+  }
+
+  if (conflict.battleOperationId) {
+    for (const commitment of commitments) {
+      if (
+        commitment.operationId === conflict.battleOperationId &&
+        isActiveBattleCommitmentStatus(commitment.status)
+      ) {
+        factionIds.add(commitment.factionId);
+      }
+    }
+  }
+
+  return Array.from(factionIds);
+}
+
+function isActiveBattleCommitmentStatus(status: CampaignSnapshot["battleUnitCommitments"][number]["status"]) {
+  return status !== "returned" && status !== "destroyed" && status !== "cancelled";
+}
+
+function hasFactionValidated(report: BattleReport, factionId: string) {
+  return report.participantValidations[factionId]?.revision === report.revision;
+}
+
+function getBattleReportStatusLabel(report: BattleReport | null) {
+  if (!report) {
+    return "Sin informe";
+  }
+
+  const labels: Record<BattleReport["status"], string> = {
+    draft: "Borrador",
+    awaiting_validation: "Pendiente de validar",
+    players_confirmed: "Validado por jugadores",
+    submitted: "Enviado",
+    auto_confirmed: "Confirmado automaticamente",
+    admin_confirmed: "Confirmado por admin",
+    disputed: "En disputa",
+    rejected: "Rechazado"
+  };
+
+  return labels[report.status];
+}
+
+function getBattleReportStatusTone(report: BattleReport | null) {
+  if (!report) {
+    return "slate";
+  }
+
+  if (report.status === "players_confirmed" || report.status === "admin_confirmed" || report.status === "auto_confirmed") {
+    return "cyan";
+  }
+
+  if (report.status === "disputed" || report.status === "rejected") {
+    return "rose";
+  }
+
+  return "amber";
+}
+
 function formatUnitStrength(unit: CampaignUnit) {
   return `${unit.quantity}/${unit.startingQuantity} miniaturas - ${unit.woundsTaken} heridas - ${getCurrentUnitPoints(unit)} pts`;
 }
 
 function getUnitWoundsPerModel(snapshot: CampaignSnapshot, unit: CampaignUnit) {
   return snapshot.unitTemplates.find((template) => template.id === unit.unitTemplateId)?.woundsPerModel ?? 1;
+}
+
+function buildDefaultPostBattleBlockedUntil() {
+  return new Date(Date.now() + defaultPostBattleBlockDays * 24 * 60 * 60 * 1000).toISOString();
 }
 
 function getCurrentUnitPoints(unit: CampaignUnit) {

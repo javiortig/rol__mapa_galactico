@@ -1095,11 +1095,33 @@ function mapBattleReport(row: Record<string, unknown>): BattleReport {
     winnerFactionId: (row.winner_faction_id as string | null) ?? null,
     finalControllerFactionId: (row.final_controller_faction_id as string | null) ?? null,
     status: row.status as BattleReport["status"],
+    battleMode: row.battle_mode === "autoresolve" ? "autoresolve" : "tabletop",
+    revision: Number(row.revision ?? 1),
+    participantValidations: mapBattleReportValidations(row.participant_validations),
     casualties: mapNumberRecord(row.casualties),
     survivors: mapNumberRecord(row.survivors),
     woundsRemaining: mapNumberRecord(row.wounds_remaining),
-    narrativeNotes: (row.narrative_notes as string | null) ?? null
+    narrativeNotes: (row.narrative_notes as string | null) ?? null,
+    updatedAt: (row.updated_at as string | null) ?? null
   };
+}
+
+function mapBattleReportValidations(value: unknown): BattleReport["participantValidations"] {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(value as Record<string, Record<string, unknown>>).map(([factionId, validation]) => [
+      factionId,
+      {
+        factionId: String(validation.faction_id ?? factionId),
+        userId: (validation.user_id as string | null) ?? null,
+        revision: Number(validation.revision ?? 0),
+        confirmedAt: (validation.confirmed_at as string | null) ?? null
+      }
+    ])
+  );
 }
 
 function mapNumberRecord(value: unknown): Record<string, number> | null {
