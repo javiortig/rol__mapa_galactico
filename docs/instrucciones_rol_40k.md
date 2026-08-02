@@ -1236,20 +1236,29 @@ La web no simula el combate de Warhammer 40K.
 Cuando exista un conflicto:
 
 - La batalla se juega fuera de la aplicación.
-- Los jugadores participantes pueden enviar un reporte de resultado.
-- El admin puede escribir y confirmar directamente el resultado completo.
-- Si los reportes de los participantes coinciden, el backend puede aplicar automáticamente el resultado.
-- Si los reportes no coinciden, el conflicto queda pendiente de decisión del admin.
+- El informe debe indicar si fue `Jugada en mesa` o `Autoresolver`.
+- Existe un unico informe compartido por conflicto, visible para todos los participantes.
+- En batallas con coalicion o apoyos, participantes incluye tambien las facciones con unidades comprometidas activas en la batalla.
+- Cualquier jugador participante puede rellenar o editar el informe completo.
+- Cada edicion crea una nueva revision y borra las validaciones previas.
+- Cada jugador/faccion participante debe validar la revision actual.
+- Si un participante detecta un fallo, edita el informe y todos vuelven a validar.
+- El informe no se considera aceptado hasta que todos los participantes validen.
+- Despues, el admin puede revisar/corregir y confirmar para aplicar el resultado.
+- Librar una batalla no genera recursos; no debe haber recursos ganados/perdidos en el informe.
+- Los jugadores no eligen control final ni bloqueo posterior: el control queda en manos del vencedor y el bloqueo estandar es de 14 dias. Solo admin puede corregir esos valores si hace falta.
 
 El reporte debe permitir registrar:
 
+- Modo de resolucion: mesa o autoresolver.
 - Facción ganadora.
+- Empate o resultado sin ganador si procede.
 - Supervivientes por unidad, expresados como miniaturas restantes.
 - Bajas calculadas por backend a partir de los supervivientes reportados.
-- Control final del sistema.
-- XP o enhancements narrativos si aplica.
+- Heridas restantes por unidad superviviente.
+- Control final del sistema, derivado automaticamente del vencedor.
 - Notas narrativas.
-- Duración de bloqueo posterior.
+- Duracion de bloqueo posterior: 14 dias por defecto, corregible por admin.
 
 Al aplicar el resultado:
 
@@ -1909,9 +1918,9 @@ resolve_resource_ticks()
 resolve_movement_orders()
 resolve_recruitment_queue()
 resolve_technology_research()
-submit_battle_report(conflict_id, report_payload) -- incluye survivors y wounds_remaining
-admin_confirm_battle_report(conflict_id, final_payload)
-admin_resolve_battle(conflict_id, winner_faction_id, blocked_days)
+submit_battle_report(conflict_id, report_payload) -- crea/edita informe compartido
+validate_battle_report(conflict_id)
+admin_confirm_battle_report(conflict_id, final_payload) -- revisa y aplica resultado
 admin_update_system_control(system_id, faction_id)
 admin_add_experience(unit_id, amount)
 admin_delete_unit(unit_id)
@@ -1969,11 +1978,14 @@ Para comercio:
 Para reportes de batalla:
 
 - Conflicto existente y pendiente.
-- Usuario participante del conflicto o admin.
+- Usuario participante del conflicto, apoyo comprometido activo o admin.
 - Sistema asociado bloqueado/en guerra.
 - Ganador válido entre facciones participantes, neutral o resultado narrativo permitido por admin.
 - Bajas/supervivientes coherentes con tropas implicadas.
-- No aplicar cambios críticos hasta que los reportes coincidan o el admin confirme.
+- El informe compartido debe incluir todas las unidades `in_war` implicadas.
+- Editar el informe reinicia las validaciones de jugadores.
+- El backend deriva control final y bloqueo posterior para impedir que jugadores alteren esos campos.
+- No aplicar cambios críticos hasta que todos los participantes validen y el admin confirme.
 
 Para admin:
 
@@ -2492,18 +2504,29 @@ battle_reports
 - reporter_faction_id uuid nullable references factions(id)
 - winner_faction_id uuid nullable references factions(id)
 - final_controller_faction_id uuid nullable references factions(id)
+- battle_mode text check in ('tabletop', 'autoresolve')
+- revision integer
+- participant_validations jsonb
 - casualties jsonb nullable
 - survivors jsonb nullable
-- xp_awards jsonb nullable
-- enhancements jsonb nullable
+- wounds_remaining jsonb nullable
+- xp_awards jsonb nullable -- reservado; no se usa para recursos
+- enhancements jsonb nullable -- reservado para narrativa futura/admin
 - post_battle_blocked_until timestamptz nullable
 - narrative_notes text nullable
-- status text check in ('submitted', 'auto_confirmed', 'admin_confirmed', 'disputed', 'rejected')
+- status text check in ('draft', 'awaiting_validation', 'players_confirmed', 'submitted', 'auto_confirmed', 'admin_confirmed', 'disputed', 'rejected')
 - created_at timestamptz
+- updated_at timestamptz
 - resolved_at timestamptz nullable
 ```
 
-Si los reportes de los participantes coinciden, el backend puede marcarlos como `auto_confirmed` y aplicar el resultado. Si no coinciden, quedan como `disputed` hasta que el admin confirme el resultado final.
+El flujo vigente es informe compartido:
+
+- `submit_battle_report(conflict_id, report_payload)` crea/edita la revision actual y reinicia `participant_validations`.
+- `validate_battle_report(conflict_id)` marca la revision actual como validada por la faccion del usuario.
+- Cuando todas las facciones participantes han validado, el estado pasa a `players_confirmed`.
+- `admin_confirm_battle_report(conflict_id, report_payload)` permite al admin revisar/corregir y aplicar el resultado final.
+- `get_battle_report_required_faction_ids(conflict_id)` deriva las facciones que deben validar usando atacante, defensor, unidades `in_war` y compromisos activos de operacion.
 
 ### 16.16 missions
 
@@ -2673,7 +2696,8 @@ create_trade_offer(offer_type, resource_key, resource_amount, gold_amount)
 accept_trade_offer(offer_id)
 cancel_trade_offer(offer_id)
 submit_battle_report(conflict_id, report_payload)
-admin_resolve_battle(target_conflict_id, winner_faction_id, final_controller_faction_id, survivors, wounds_remaining, post_battle_blocked_until, narrative_notes)
+validate_battle_report(conflict_id)
+admin_confirm_battle_report(conflict_id, report_payload)
 ```
 
 Supabase Studio en `http://127.0.0.1:54323` es la herramienta recomendada para ver y editar la base local durante desarrollo.
@@ -2959,8 +2983,10 @@ Evitar collage visual.
 - Si defensor gana, mantiene controlador.
 - Las capitales no pueden ser atacadas por jugadores ni por amenazas narrativas. La UI no debe ofrecerlas como destino y el backend debe rechazar cualquier intento de crear ataque, coalicion, conflicto pendiente o ataque narrativo contra una capital.
 - Un ataque puede salir desde cualquier sistema no bloqueado donde la faccion tenga unidades propias listas. Esto incluye sistemas enemigos si el jugador llego alli mediante permiso de paso/estancia.
-- Si los reportes coinciden, el backend puede aplicar el resultado automáticamente.
-- Si hay discrepancia, el admin decide.
+- El bloqueo posterior estandar tras aplicar una batalla es de 14 dias.
+- El informe compartido debe estar validado por todos los participantes antes de la confirmacion final.
+- Si hay discrepancia, cualquier participante edita el informe y se reinician las validaciones.
+- El admin revisa y confirma para aplicar cambios criticos, y puede corregir control/bloqueo si es necesario.
 - Admin puede poner bloqueo temporal posterior.
 
 ### 20.2 Guerra

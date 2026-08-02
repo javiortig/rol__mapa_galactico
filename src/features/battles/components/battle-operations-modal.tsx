@@ -7,10 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
 import type {
+  BattleReport,
   BattleOperation,
   BattleOperationMember,
   BattleSide,
   CampaignSnapshot,
+  CampaignUnit,
+  Conflict,
   UnitMovementSelection
 } from "@/domain/campaign";
 import {
@@ -61,21 +64,9 @@ export function BattleOperationsModal({
           (conflict.attackerFactionId === currentFactionId || conflict.defenderFactionId === currentFactionId)
       )
     : [];
-  const pendingReports = currentFactionId
-    ? snapshot.battleReports.filter((report) => {
-        if (!["submitted", "disputed"].includes(report.status)) {
-          return false;
-        }
-
-        const conflict = snapshot.conflicts.find((item) => item.id === report.conflictId);
-        return Boolean(
-          conflict &&
-            (snapshot.currentUser.role === "admin" ||
-              conflict.attackerFactionId === currentFactionId ||
-              conflict.defenderFactionId === currentFactionId)
-        );
-      })
-    : [];
+  const pendingReports = snapshot.battleReports.filter((report) =>
+    isBattleReportActionableForCurrentUser(snapshot, report, currentFactionId)
+  );
   const supportOperation = operations.find((operation) => operation.id === supportOperationId) ?? null;
   const supportMember =
     supportOperation && currentFactionId
@@ -861,7 +852,7 @@ function NotificationsPanel({
             <article className="rounded-md border border-cyan-200/15 bg-cyan-300/8 p-3" key={report.id}>
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="font-medium text-cyan-50">{system?.name ?? "Reporte de batalla"}</span>
-                <Badge tone={report.status === "disputed" ? "rose" : "cyan"}>{report.status}</Badge>
+                <Badge tone={getBattleReportStatusTone(report)}>{getBattleReportStatusLabel(report)}</Badge>
               </div>
               <p className="mt-1 text-xs text-slate-300">
                 Resultado declarado: {winner ?? "sin ganador indicado"}. Esperando confirmacion coincidente o decision admin.
@@ -901,6 +892,109 @@ function formatBattleAvailability(
   }
 
   return `${Math.max(0, limits.maxTotalParticipations - limits.totalParticipations)} / ${limits.maxTotalParticipations}`;
+}
+
+function isBattleReportActionableForCurrentUser(
+  snapshot: CampaignSnapshot,
+  report: BattleReport,
+  currentFactionId?: string | null
+) {
+  const conflict = snapshot.conflicts.find((item) => item.id === report.conflictId);
+
+  if (!conflict) {
+    return false;
+  }
+
+  if (snapshot.currentUser.role === "admin") {
+    return ["players_confirmed", "submitted", "disputed"].includes(report.status);
+  }
+
+  if (!currentFactionId) {
+    return false;
+  }
+
+  const warUnits = snapshot.units.filter(
+    (unit) => unit.currentSystemId === conflict.systemId && unit.status !== "destroyed" && unit.quantity > 0
+  );
+  const participantFactionIds = getBattleReportRequiredFactionIds(
+    conflict,
+    warUnits,
+    snapshot.battleUnitCommitments
+  );
+
+  if (!participantFactionIds.includes(currentFactionId)) {
+    return false;
+  }
+
+  if (report.status === "awaiting_validation") {
+    return !hasFactionValidated(report, currentFactionId);
+  }
+
+  return ["draft", "submitted", "disputed"].includes(report.status);
+}
+
+function getConflictFactionIds(conflict: Conflict) {
+  return [conflict.attackerFactionId, conflict.defenderFactionId].filter((id): id is string => Boolean(id));
+}
+
+function getBattleReportRequiredFactionIds(
+  conflict: Conflict,
+  warUnits: CampaignUnit[],
+  commitments: CampaignSnapshot["battleUnitCommitments"]
+) {
+  const factionIds = new Set(getConflictFactionIds(conflict));
+
+  for (const unit of warUnits) {
+    factionIds.add(unit.factionId);
+  }
+
+  if (conflict.battleOperationId) {
+    for (const commitment of commitments) {
+      if (
+        commitment.operationId === conflict.battleOperationId &&
+        isActiveBattleCommitmentStatus(commitment.status)
+      ) {
+        factionIds.add(commitment.factionId);
+      }
+    }
+  }
+
+  return Array.from(factionIds);
+}
+
+function isActiveBattleCommitmentStatus(status: CampaignSnapshot["battleUnitCommitments"][number]["status"]) {
+  return status !== "returned" && status !== "destroyed" && status !== "cancelled";
+}
+
+function hasFactionValidated(report: BattleReport, factionId: string) {
+  return report.participantValidations[factionId]?.revision === report.revision;
+}
+
+function getBattleReportStatusLabel(report: BattleReport) {
+  const labels: Record<BattleReport["status"], string> = {
+    draft: "Borrador",
+    awaiting_validation: "Pendiente de validar",
+    players_confirmed: "Listo para admin",
+    submitted: "Enviado",
+    auto_confirmed: "Confirmado",
+    admin_confirmed: "Resuelto",
+    disputed: "En disputa",
+    rejected: "Rechazado"
+  };
+
+  return labels[report.status];
+}
+
+function getBattleReportStatusTone(report: BattleReport): "cyan" | "rose" | "amber" | "slate" | "violet" {
+  if (report.status === "players_confirmed" || report.status === "admin_confirmed" || report.status === "auto_confirmed") {
+    return "cyan";
+  }
+
+  if (report.status === "disputed" || report.status === "rejected") {
+    return "rose";
+  }
+
+  return "amber";
 }
 
 function formatResourceValue(value: number) {
