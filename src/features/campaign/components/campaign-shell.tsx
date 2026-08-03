@@ -243,6 +243,7 @@ export function CampaignShell() {
         edges: data.edges,
         originSystemId: movementOriginSystemId,
         targetSystemId: systemId,
+        currentFactionId: data.currentUser.factionId,
         edgeDurationSeconds: data.movementEdgeDurationSeconds
       });
       setMovementHoverPathSystemIds(route?.pathSystemIds ?? []);
@@ -270,6 +271,7 @@ export function CampaignShell() {
         edges: data.edges,
         originSystemId: movementOriginSystemId,
         targetSystemId: systemId,
+        currentFactionId: data.currentUser.factionId,
         edgeDurationSeconds: data.movementEdgeDurationSeconds
       });
 
@@ -520,6 +522,24 @@ function formatBlockCountdown(blockedUntil?: string | null) {
   }
 
   return isBlockExpired(blockedUntil) ? "Expirado" : formatCountdown(blockedUntil);
+}
+
+function hasUnresolvedBattleBlock(snapshot: CampaignSnapshot, systemId: string) {
+  return (
+    snapshot.conflicts.some((conflict) => conflict.systemId === systemId && conflict.status === "pending") ||
+    snapshot.narrativeAttacks.some((attack) => attack.systemId === systemId && attack.status === "incoming") ||
+    snapshot.battleOperations.some(
+      (operation) =>
+        operation.targetSystemId === systemId &&
+        ["assembling", "moving", "in_battle"].includes(operation.status)
+    ) ||
+    snapshot.movements.some(
+      (movement) =>
+        movement.toSystemId === systemId &&
+        movement.movementType === "attack" &&
+        ["pending_approval", "moving"].includes(movement.status)
+    )
+  );
 }
 
 function BuildingKindIcon({ template }: { template: BuildingTemplate }) {
@@ -874,18 +894,19 @@ function SystemPanel({
   );
   const buildingSlots = system.buildingSlots ?? (system.isCapital ? 6 : 3);
   const buildingSlotsUsed = systemBuildings.length;
+  const hasActiveBattleBlock = system.status === "war" || hasUnresolvedBattleBlock(snapshot, system.id);
   const canBuild =
     system.controllerFactionId === snapshot.currentUser.factionId &&
     system.status === "controlled" &&
     system.systemKind !== "gaseous" &&
     !system.isTemporaryMission &&
-    !isSystemBlockedForMovement(system) &&
+    !hasActiveBattleBlock &&
     buildingSlotsUsed < buildingSlots &&
     (snapshot.currentUser.role === "admin" || snapshot.currentUser.role === "player");
   const canMove =
     ownReadyUnits.length > 0 &&
     system.status !== "war" &&
-    !isSystemBlockedForMovement(system) &&
+    !hasActiveBattleBlock &&
     (snapshot.currentUser.role === "admin" || snapshot.currentUser.role === "player");
   const hasAdjacentEnemySystem = snapshot.systems.some(
     (target) =>
@@ -1082,7 +1103,7 @@ function SystemPanel({
               ))}
             </div>
             {!canBuild && buildingSlotsUsed < buildingSlots ? (
-              <p className="mt-2 text-xs text-slate-500">Solo puedes construir en sistemas propios, controlados y sin bloqueo.</p>
+              <p className="mt-2 text-xs text-slate-500">Solo puedes construir en sistemas propios, controlados y sin batalla activa.</p>
             ) : null}
           </section>
 
@@ -1494,7 +1515,9 @@ function MovementPlanner({
       ? activePathSystemIds.map((id) => systemById.get(id)?.name ?? id).join(" -> ")
       : "Sin destino fijado";
   const destinationSystem = activePathSystemIds.length > 1 ? systemById.get(activePathSystemIds[activePathSystemIds.length - 1]) : null;
-  const destinationIsBlocked = Boolean(destinationSystem && isSystemBlockedForMovement(destinationSystem));
+  const destinationIsBlocked = Boolean(
+    destinationSystem && isSystemBlockedForMovement(destinationSystem, snapshot.currentUser.factionId)
+  );
   const approvalSystems = activePathSystemIds
     .slice(1)
     .map((id) => systemById.get(id))

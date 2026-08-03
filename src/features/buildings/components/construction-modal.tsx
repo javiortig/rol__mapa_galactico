@@ -246,7 +246,7 @@ function getBuildBlockReason(
     return "Sistema no controlado";
   }
 
-  if (system.blockedUntil && new Date(system.blockedUntil).getTime() > Date.now()) {
+  if (hasUnresolvedBattleBlock(snapshot, system.id)) {
     return "Sistema bloqueado";
   }
 
@@ -291,6 +291,24 @@ function getBuildBlockReason(
   }
 
   return null;
+}
+
+function hasUnresolvedBattleBlock(snapshot: CampaignSnapshot, systemId: string) {
+  return (
+    snapshot.conflicts.some((conflict) => conflict.systemId === systemId && conflict.status === "pending") ||
+    snapshot.narrativeAttacks.some((attack) => attack.systemId === systemId && attack.status === "incoming") ||
+    snapshot.battleOperations.some(
+      (operation) =>
+        operation.targetSystemId === systemId &&
+        ["assembling", "moving", "in_battle"].includes(operation.status)
+    ) ||
+    snapshot.movements.some(
+      (movement) =>
+        movement.toSystemId === systemId &&
+        movement.movementType === "attack" &&
+        ["pending_approval", "moving"].includes(movement.status)
+    )
+  );
 }
 
 function getKindLabel(template: BuildingTemplate) {

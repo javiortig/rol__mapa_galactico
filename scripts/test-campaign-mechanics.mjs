@@ -1363,6 +1363,80 @@ async function main() {
   );
   recordCheck("reportes auto", "doble validacion aplica resultado y retira perdedor a aliado seguro");
 
+  const necronVisibleEnemyUnitsAfterReport = await must(
+    "niebla tras reporte",
+    necrones.client
+      .from("campaign_units")
+      .select("id,faction_id,name")
+      .eq("current_system_id", maps.systemBySlug.novem.id)
+      .neq("faction_id", maps.factionBySlug.necrones.id)
+  );
+  assert(
+    necronVisibleEnemyUnitsAfterReport.length === 0,
+    "El perdedor sigue viendo tropas enemigas en el sistema perdido"
+  );
+
+  await must(
+    "recursos Custodes para escudo",
+    service
+      .from("faction_resources")
+      .update({ industrial_material: 200, uridium: 200 })
+      .eq("faction_id", maps.factionBySlug["adeptus-custodes"].id)
+  );
+  const shieldBuildingId = await rpc(
+    custodes.client,
+    "start_building_construction",
+    {
+      system_id: maps.systemBySlug.novem.id,
+      building_template_id: maps.buildingBySlug["barracon-infanteria"].id
+    },
+    "construir en escudo postbatalla"
+  );
+  assert(shieldBuildingId, "No se creo edificio en sistema propio con escudo postbatalla");
+
+  const necronVisibleBuildingsAfterReport = await rpc(
+    necrones.client,
+    "get_visible_system_buildings",
+    {},
+    "edificios ocultos tras perder sistema"
+  );
+  const novemShieldBuildingForNecrons = necronVisibleBuildingsAfterReport.find(
+    (building) => building.id === shieldBuildingId
+  );
+  assert(
+    novemShieldBuildingForNecrons &&
+      !novemShieldBuildingForNecrons.details_visible &&
+      !novemShieldBuildingForNecrons.building_template_id,
+    "El perdedor sigue viendo detalles de edificios del sistema perdido"
+  );
+
+  const postBattleShieldCaptain = await getUnitByName(maps.factionBySlug["adeptus-custodes"].id, "Shield-Captain");
+  await must(
+    "preparar movimiento a escudo",
+    service
+      .from("campaign_units")
+      .update({
+        current_system_id: maps.systemBySlug["kharon-prime"].id,
+        status: "ready",
+        quantity: postBattleShieldCaptain.quantity,
+        wounds_taken: 0
+      })
+      .eq("id", postBattleShieldCaptain.id)
+  );
+  const shieldMovementId = await rpc(
+    custodes.client,
+    "create_movement_order",
+    {
+      unit_selections: [{ unit_id: postBattleShieldCaptain.id, quantity: postBattleShieldCaptain.quantity }],
+      path_system_ids: ["kharon-prime", "helios-drift", "voidmist-basin", "novem"].map(
+        (slug) => maps.systemBySlug[slug].id
+      )
+    },
+    "mover a escudo postbatalla"
+  );
+  assert(shieldMovementId, "No se pudo mover a sistema propio con escudo postbatalla");
+  recordCheck("escudo postbatalla", "perdedor sin vision, ganador construye y mueve en sistema protegido");
+
   console.log(`\nRESULTADO: ${checks.length} checks OK`);
 }
 

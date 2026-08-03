@@ -14,6 +14,7 @@ type FindRouteInput = {
   edges: SystemEdge[];
   originSystemId: string;
   targetSystemId: string;
+  currentFactionId?: string | null;
   edgeDurationSeconds?: number;
 };
 
@@ -22,6 +23,7 @@ export function findCheapestRoute({
   edges,
   originSystemId,
   targetSystemId,
+  currentFactionId,
   edgeDurationSeconds = MOVEMENT_EDGE_DURATION_SECONDS
 }: FindRouteInput): RoutePlan | null {
   if (originSystemId === targetSystemId) {
@@ -36,7 +38,7 @@ export function findCheapestRoute({
   const systemById = new Map(systems.map((system) => [system.id, system]));
   const target = systemById.get(targetSystemId);
 
-  if (!target || target.isTemporaryMission || isSystemBlockedForMovement(target)) {
+  if (!target || target.isTemporaryMission || isSystemBlockedForMovement(target, currentFactionId)) {
     return null;
   }
 
@@ -163,7 +165,7 @@ export function canAppendManualStep(
   return Boolean(getEdgeBetween(edges, lastSystemId, targetSystemId));
 }
 
-export function isSystemBlockedForMovement(system: StarSystem) {
+export function isSystemBlockedForMovement(system: StarSystem, currentFactionId?: string | null) {
   if (system.status === "war") {
     return true;
   }
@@ -172,7 +174,13 @@ export function isSystemBlockedForMovement(system: StarSystem) {
     return false;
   }
 
-  return new Date(system.blockedUntil).getTime() > Date.now();
+  const hasActiveShield = new Date(system.blockedUntil).getTime() > Date.now();
+
+  if (!hasActiveShield) {
+    return false;
+  }
+
+  return !(currentFactionId && system.status === "controlled" && system.controllerFactionId === currentFactionId);
 }
 
 export function getEdgeBetween(edges: SystemEdge[], fromSystemId: string, toSystemId: string) {
