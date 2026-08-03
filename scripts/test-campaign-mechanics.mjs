@@ -1261,6 +1261,108 @@ async function main() {
   assert(unitsStillInWar.length === 0, "Quedan unidades in_war en el sistema desbloqueado");
   recordCheck("admin desbloqueo conflicto", "conflicto desaparece y tropas evacuan a aliado seguro");
 
+  await resetCombatFixture(maps);
+  const autoReportBlockUntil = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
+  const autoReportCustodian = await getUnitByName(maps.factionBySlug["adeptus-custodes"].id, "Custodian Guard");
+  const autoReportWarriors = await getUnitByName(maps.factionBySlug.necrones.id, "Necron Warriors");
+  await must(
+    "preparar sistema reporte auto",
+    service
+      .from("systems")
+      .update({
+        status: "war",
+        controller_faction_id: maps.factionBySlug.necrones.id,
+        blocked_until: autoReportBlockUntil
+      })
+      .eq("id", maps.systemBySlug.novem.id)
+  );
+  await must(
+    "preparar unidades reporte auto",
+    service
+      .from("campaign_units")
+      .update({ current_system_id: maps.systemBySlug.novem.id, status: "in_war", wounds_taken: 0 })
+      .in("id", [autoReportCustodian.id, autoReportWarriors.id])
+  );
+  const autoConflict = await must(
+    "crear conflicto reporte auto",
+    service
+      .from("conflicts")
+      .insert({
+        system_id: maps.systemBySlug.novem.id,
+        attacker_faction_id: maps.factionBySlug["adeptus-custodes"].id,
+        defender_faction_id: maps.factionBySlug.necrones.id,
+        status: "pending",
+        blocked_until: autoReportBlockUntil,
+        notes: "Fixture de informe automatico"
+      })
+      .select("*")
+      .single()
+  );
+  const autoSurvivors = {
+    [autoReportCustodian.id]: autoReportCustodian.quantity,
+    [autoReportWarriors.id]: Math.max(1, autoReportWarriors.quantity - 1)
+  };
+  const autoWounds = {
+    [autoReportCustodian.id]: 0,
+    [autoReportWarriors.id]: 0
+  };
+  await rpc(
+    custodes.client,
+    "submit_battle_report",
+    {
+      conflict_id: autoConflict.id,
+      report_payload: {
+        battle_mode: "tabletop",
+        winner_faction_id: maps.factionBySlug["adeptus-custodes"].id,
+        final_controller_faction_id: maps.factionBySlug["adeptus-custodes"].id,
+        survivors: autoSurvivors,
+        wounds_remaining: autoWounds,
+        post_battle_blocked_until: autoReportBlockUntil,
+        narrative_notes: "Los Custodes aseguran el corredor tras una retirada necrona ordenada."
+      }
+    },
+    "crear informe auto"
+  );
+  await rpc(custodes.client, "validate_battle_report", { target_conflict_id: autoConflict.id }, "validar informe Custodes");
+  const reportAwaitingNecrons = await must(
+    "informe espera segunda validacion",
+    service.from("battle_reports").select("status").eq("conflict_id", autoConflict.id).single()
+  );
+  assert(reportAwaitingNecrons.status === "awaiting_validation", "El informe debia esperar a la faccion defensora");
+  await rpc(necrones.client, "validate_battle_report", { target_conflict_id: autoConflict.id }, "validar informe Necrones");
+  const autoReport = await must(
+    "informe autoconfirmado",
+    service.from("battle_reports").select("status,resolved_at").eq("conflict_id", autoConflict.id).single()
+  );
+  assert(autoReport.status === "auto_confirmed" && autoReport.resolved_at, "El informe no se autoconfirmo tras ambas validaciones");
+  const autoResolvedConflict = await must(
+    "conflicto autoconfirmado",
+    service.from("conflicts").select("status,winner_faction_id").eq("id", autoConflict.id).single()
+  );
+  assert(
+    autoResolvedConflict.status === "resolved" && autoResolvedConflict.winner_faction_id === maps.factionBySlug["adeptus-custodes"].id,
+    "La autoconfirmacion no resolvio el conflicto"
+  );
+  const retreatedWarriors = await must(
+    "perdedor retirado seguro",
+    service.from("campaign_units").select("current_system_id,status,quantity,wounds_taken").eq("id", autoReportWarriors.id).single()
+  );
+  const retreatSystem = await must(
+    "sistema retirada seguro",
+    service.from("systems").select("controller_faction_id,status,blocked_until").eq("id", retreatedWarriors.current_system_id).single()
+  );
+  assert(
+    retreatedWarriors.status === "ready" &&
+      retreatedWarriors.quantity === autoSurvivors[autoReportWarriors.id] &&
+      retreatedWarriors.wounds_taken === 0 &&
+      retreatedWarriors.current_system_id !== maps.systemBySlug.novem.id &&
+      retreatSystem.controller_faction_id === maps.factionBySlug.necrones.id &&
+      retreatSystem.status === "controlled" &&
+      (!retreatSystem.blocked_until || Date.parse(retreatSystem.blocked_until) <= Date.now()),
+    "El perdedor superviviente no se retiro al aliado seguro mas cercano"
+  );
+  recordCheck("reportes auto", "doble validacion aplica resultado y retira perdedor a aliado seguro");
+
   console.log(`\nRESULTADO: ${checks.length} checks OK`);
 }
 

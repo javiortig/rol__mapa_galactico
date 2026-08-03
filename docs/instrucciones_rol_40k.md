@@ -1243,8 +1243,8 @@ Cuando exista un conflicto:
 - Cada edicion crea una nueva revision y borra las validaciones previas.
 - Cada jugador/faccion participante debe validar la revision actual.
 - Si un participante detecta un fallo, edita el informe y todos vuelven a validar.
-- El informe no se considera aceptado hasta que todos los participantes validen.
-- Despues, el admin puede revisar/corregir y confirmar para aplicar el resultado.
+- El informe se aplica automaticamente cuando todos los participantes validan la misma revision.
+- El admin conserva herramientas para corregir o confirmar manualmente casos antiguos/excepcionales.
 - Librar una batalla no genera recursos; no debe haber recursos ganados/perdidos en el informe.
 - Los jugadores no eligen control final ni bloqueo posterior: el control queda en manos del vencedor y el bloqueo estandar es de 14 dias. Solo admin puede corregir esos valores si hace falta.
 
@@ -1264,7 +1264,7 @@ Al aplicar el resultado:
 
 - Las unidades con `0` supervivientes pasan a `destroyed`.
 - Las unidades de la faccion que conserva/controla el sistema quedan `ready` en el sistema.
-- Las unidades supervivientes que pierden el sistema se retiran al sistema controlado mas cercano de su faccion si existe.
+- Las unidades supervivientes que pierden el sistema se retiran automaticamente al sistema aliado mas cercano que no este bloqueado, en guerra ni recibiendo un ataque.
 - Si no hay ruta de retirada valida, quedan en estado `retreat_pending` para que el admin las coloque o resuelva narrativamente.
 
 ### 8.6 Visibilidad del movimiento
@@ -1985,7 +1985,7 @@ Para reportes de batalla:
 - El informe compartido debe incluir todas las unidades `in_war` implicadas.
 - Editar el informe reinicia las validaciones de jugadores.
 - El backend deriva control final y bloqueo posterior para impedir que jugadores alteren esos campos.
-- No aplicar cambios críticos hasta que todos los participantes validen y el admin confirme.
+- No aplicar cambios criticos hasta que todos los participantes validen la misma revision; en ese momento se confirma automaticamente.
 
 Para admin:
 
@@ -2524,8 +2524,8 @@ El flujo vigente es informe compartido:
 
 - `submit_battle_report(conflict_id, report_payload)` crea/edita la revision actual y reinicia `participant_validations`.
 - `validate_battle_report(conflict_id)` marca la revision actual como validada por la faccion del usuario.
-- Cuando todas las facciones participantes han validado, el estado pasa a `players_confirmed`.
-- `admin_confirm_battle_report(conflict_id, report_payload)` permite al admin revisar/corregir y aplicar el resultado final.
+- Cuando todas las facciones participantes han validado, `validate_battle_report()` aplica automaticamente el resultado y deja el informe en `auto_confirmed`.
+- `admin_confirm_battle_report(conflict_id, report_payload)` queda como herramienta de correccion/manual para casos excepcionales.
 - `get_battle_report_required_faction_ids(conflict_id)` deriva las facciones que deben validar usando atacante, defensor, unidades `in_war` y compromisos activos de operacion.
 
 ### 16.16 missions
@@ -2984,9 +2984,9 @@ Evitar collage visual.
 - Las capitales no pueden ser atacadas por jugadores ni por amenazas narrativas. La UI no debe ofrecerlas como destino y el backend debe rechazar cualquier intento de crear ataque, coalicion, conflicto pendiente o ataque narrativo contra una capital.
 - Un ataque puede salir desde cualquier sistema no bloqueado donde la faccion tenga unidades propias listas. Esto incluye sistemas enemigos si el jugador llego alli mediante permiso de paso/estancia.
 - El bloqueo posterior estandar tras aplicar una batalla es de 14 dias.
-- El informe compartido debe estar validado por todos los participantes antes de la confirmacion final.
+- El informe compartido se confirma automaticamente cuando todos los participantes validan la misma revision.
 - Si hay discrepancia, cualquier participante edita el informe y se reinician las validaciones.
-- El admin revisa y confirma para aplicar cambios criticos, y puede corregir control/bloqueo si es necesario.
+- El admin puede corregir control/bloqueo si es necesario.
 - Admin puede poner bloqueo temporal posterior.
 
 ### 20.2 Guerra

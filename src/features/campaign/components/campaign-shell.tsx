@@ -2479,7 +2479,7 @@ function BattleReportModal({
 
               {isAdmin && !allPlayersValidated ? (
                 <p className="text-xs text-amber-100">
-                  El admin podra aplicar el resultado cuando todos los participantes hayan validado la revision actual.
+                  El resultado se aplicara automaticamente cuando todos los participantes validen la revision actual.
                 </p>
               ) : null}
             </div>

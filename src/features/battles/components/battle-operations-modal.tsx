@@ -855,7 +855,7 @@ function NotificationsPanel({
                 <Badge tone={getBattleReportStatusTone(report)}>{getBattleReportStatusLabel(report)}</Badge>
               </div>
               <p className="mt-1 text-xs text-slate-300">
-                Resultado declarado: {winner ?? "sin ganador indicado"}. Esperando confirmacion coincidente o decision admin.
+                Resultado declarado: {winner ?? "sin ganador indicado"}. Esperando validacion de los participantes.
               </p>
               {report.narrativeNotes ? (
                 <p className="mt-1 line-clamp-2 text-xs text-slate-500">{report.narrativeNotes}</p>
@@ -974,7 +974,7 @@ function getBattleReportStatusLabel(report: BattleReport) {
   const labels: Record<BattleReport["status"], string> = {
     draft: "Borrador",
     awaiting_validation: "Pendiente de validar",
-    players_confirmed: "Listo para admin",
+    players_confirmed: "Validado por jugadores",
     submitted: "Enviado",
     auto_confirmed: "Confirmado",
     admin_confirmed: "Resuelto",
