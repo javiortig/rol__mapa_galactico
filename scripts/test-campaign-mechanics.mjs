@@ -1213,11 +1213,16 @@ async function main() {
     "daemonicas mueven defensa tardia"
   );
   await forceArrival(cultMoveId);
+  const boundaryArrival = new Date(Date.now() - 1000).toISOString();
   await must(
-    "hacer daemonicas tarde",
-    service.from("movement_orders").update({ arrival_at: new Date(Date.now() + 300000).toISOString() }).eq("id", daemonMoveId)
+    "hacer daemonicas en limite exacto",
+    service.from("movement_orders").update({ arrival_at: boundaryArrival }).in("id", [daemonMoveId, attackOrderId])
   );
-  await forceArrival(attackOrderId);
+  await must(
+    "sincronizar limite exacto de operacion",
+    service.from("battle_operations").update({ attack_arrival_at: boundaryArrival }).eq("id", operationId)
+  );
+  await rpc(service, "resolve_movement_orders", {}, "resolver ataque con limite exacto");
   const conflict = await must(
     "conflicto generado",
     service.from("conflicts").select("*").eq("battle_operation_id", operationId).single()
@@ -1228,9 +1233,8 @@ async function main() {
     service.from("battle_unit_commitments").select("status,side,role").eq("operation_id", operationId).eq("unit_id", primus.id).single()
   );
   assert(cultCommitment.status === "in_battle" && cultCommitment.side === "defender", "Apoyo defensor llegado a tiempo no entro en batalla");
-  await forceArrival(daemonMoveId);
   const lateDaemon = await must(
-    "daemonicas redirigidas",
+    "daemonicas limite redirigidas",
     service.from("campaign_units").select("current_system_id,status").eq("id", horrors.id).single()
   );
   const daemonHome = await must(
@@ -1241,7 +1245,7 @@ async function main() {
     lateDaemon.status === "ready" && daemonHome.controller_faction_id === maps.factionBySlug["legiones-daemonicas"].id,
     "Apoyo tardio no fue redirigido a aliado seguro"
   );
-  recordCheck("defensa dinamica", "join rechazado, llegada temprana entra, llegada tardia se redirige");
+  recordCheck("defensa dinamica", "join rechazado, llegada temprana entra, llegada exacta al ataque queda fuera");
 
   await rpc(
     admin.client,
@@ -1322,6 +1326,45 @@ async function main() {
       }
     },
     "crear informe auto"
+  );
+  const initialAutoReport = await must(
+    "revision informe inicial",
+    service.from("battle_reports").select("revision").eq("conflict_id", autoConflict.id).single()
+  );
+  await rpc(
+    custodes.client,
+    "submit_battle_report",
+    {
+      conflict_id: autoConflict.id,
+      report_payload: {
+        battle_mode: "tabletop",
+        winner_faction_id: maps.factionBySlug["adeptus-custodes"].id,
+        final_controller_faction_id: maps.factionBySlug["adeptus-custodes"].id,
+        survivors: autoSurvivors,
+        wounds_remaining: autoWounds,
+        expected_revision: initialAutoReport.revision,
+        post_battle_blocked_until: autoReportBlockUntil,
+        narrative_notes: "Los Custodes aseguran el corredor tras una retirada necrona ordenada."
+      }
+    },
+    "editar informe con revision vigente"
+  );
+  await expectError(
+    "rechaza informe con revision obsoleta",
+    necrones.client.rpc("submit_battle_report", {
+      conflict_id: autoConflict.id,
+      report_payload: {
+        battle_mode: "tabletop",
+        winner_faction_id: maps.factionBySlug["adeptus-custodes"].id,
+        final_controller_faction_id: maps.factionBySlug["adeptus-custodes"].id,
+        survivors: autoSurvivors,
+        wounds_remaining: autoWounds,
+        expected_revision: initialAutoReport.revision,
+        post_battle_blocked_until: autoReportBlockUntil,
+        narrative_notes: "Version antigua que no debe pisar el informe compartido."
+      }
+    }),
+    "ha cambiado"
   );
   await rpc(custodes.client, "validate_battle_report", { target_conflict_id: autoConflict.id }, "validar informe Custodes");
   const reportAwaitingNecrons = await must(
@@ -1423,6 +1466,56 @@ async function main() {
       })
       .eq("id", postBattleShieldCaptain.id)
   );
+  const blockedRouteMoveId = await rpc(
+    custodes.client,
+    "create_movement_order",
+    {
+      unit_selections: [{ unit_id: postBattleShieldCaptain.id, quantity: postBattleShieldCaptain.quantity }],
+      path_system_ids: ["kharon-prime", "helios-drift", "voidmist-basin", "novem"].map(
+        (slug) => maps.systemBySlug[slug].id
+      )
+    },
+    "crear movimiento antes de bloqueo intermedio"
+  );
+  await must(
+    "bloquear sistema intermedio",
+    service
+      .from("systems")
+      .update({ status: "war", blocked_until: new Date(Date.now() + 300000).toISOString() })
+      .eq("id", maps.systemBySlug["helios-drift"].id)
+  );
+  await forceArrival(blockedRouteMoveId);
+  const blockedRouteOrder = await must(
+    "orden cancelada por bloqueo intermedio",
+    service.from("movement_orders").select("status,cancellation_reason").eq("id", blockedRouteMoveId).single()
+  );
+  const blockedRouteUnit = await must(
+    "unidad no atraviesa frente bloqueado",
+    service.from("campaign_units").select("current_system_id,status").eq("id", postBattleShieldCaptain.id).single()
+  );
+  assert(
+    blockedRouteOrder.status === "cancelled" &&
+      normalize(blockedRouteOrder.cancellation_reason).includes("ruta quedo bloqueada") &&
+      blockedRouteUnit.status === "ready" &&
+      blockedRouteUnit.current_system_id !== maps.systemBySlug.novem.id,
+    "El movimiento atraveso una ruta bloqueada durante el trayecto"
+  );
+  await must(
+    "restaurar sistema intermedio",
+    service
+      .from("systems")
+      .update({ status: "neutral", blocked_until: null, controller_faction_id: null })
+      .eq("id", maps.systemBySlug["helios-drift"].id)
+  );
+  await must(
+    "repreparar unidad tras bloqueo intermedio",
+    service
+      .from("campaign_units")
+      .update({ current_system_id: maps.systemBySlug["kharon-prime"].id, status: "ready" })
+      .eq("id", postBattleShieldCaptain.id)
+  );
+  recordCheck("rutas bloqueadas en trayecto", "movimiento existente se cancela y no cruza frentes nuevos");
+
   const shieldMovementId = await rpc(
     custodes.client,
     "create_movement_order",

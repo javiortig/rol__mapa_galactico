@@ -2251,6 +2251,7 @@ function BattleReportModal({
     finalControllerFactionId,
     survivors,
     woundsRemaining,
+    expectedRevision: report?.revision ?? 0,
     postBattleBlockedUntil: buildDefaultPostBattleBlockedUntil(),
     narrativeNotes: narrativeNotes.trim() || null
   });

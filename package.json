@@ -29,7 +29,7 @@
     "class-variance-authority": "latest",
     "clsx": "latest",
     "lucide-react": "latest",
-    "next": "latest",
+    "next": "^16.3.0",
     "pixi.js": "latest",
     "react": "latest",
     "react-dom": "latest",
@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "latest",
-    "@tailwindcss/postcss": "latest",
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",

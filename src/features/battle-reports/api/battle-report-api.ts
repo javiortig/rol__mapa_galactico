@@ -7,6 +7,7 @@ export type BattleReportPayload = {
   finalControllerFactionId: string | null;
   survivors: Record<string, number>;
   woundsRemaining: Record<string, number>;
+  expectedRevision?: number | null;
   postBattleBlockedUntil?: string | null;
   narrativeNotes?: string | null;
 };
@@ -26,6 +27,7 @@ export async function submitBattleReport(conflictId: string, payload: BattleRepo
       final_controller_faction_id: payload.finalControllerFactionId,
       survivors: payload.survivors,
       wounds_remaining: payload.woundsRemaining,
+      expected_revision: payload.expectedRevision ?? null,
       post_battle_blocked_until: payload.postBattleBlockedUntil ?? null,
       narrative_notes: payload.narrativeNotes ?? null
     }
@@ -71,6 +73,7 @@ export async function adminConfirmBattleReport(conflictId: string, payload: Batt
       final_controller_faction_id: payload.finalControllerFactionId,
       survivors: payload.survivors,
       wounds_remaining: payload.woundsRemaining,
+      expected_revision: payload.expectedRevision ?? null,
       post_battle_blocked_until: payload.postBattleBlockedUntil ?? null,
       narrative_notes: payload.narrativeNotes ?? null
     }
