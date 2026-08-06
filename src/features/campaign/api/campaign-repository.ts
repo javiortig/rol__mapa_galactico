@@ -250,6 +250,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
         role: profile.role as CampaignSnapshot["currentUser"]["role"],
         factionId: currentFactionId
       },
+      timingMode: settingsResult.data?.timing_mode === "campaign" ? "campaign" : "test",
       resourceTickIntervalHours: settingsResult.data?.resource_tick_interval_hours ?? 24,
       movementEdgeDurationSeconds: Number(settingsResult.data?.movement_edge_duration_seconds ?? 259200),
       attackDurationSeconds: Number(settingsResult.data?.attack_duration_seconds ?? 518400),

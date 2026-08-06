@@ -176,6 +176,7 @@ Estado jugable actual:
 - Construccion planetaria con slots por sistema: 6 en capitales y 3 en el resto.
 - Reclutamiento desde edificios militares activos, no desde un boton global de capital.
 - Reclutamiento usa `unit_templates`, costes, tiempos, cola, edificios compatibles y validacion tecnologica.
+- El admin puede alternar el perfil global de tiempos desde `/admin`: `Testeo` para pruebas cortas y `Campaña` para duraciones reales.
 - Las unidades importadas quedan inicialmente bloqueadas (`is_available = false`) hasta que los arboles tecnologicos por faccion las asignen a nodos concretos.
 - Reabastecimiento completo de unidades danadas desde edificios militares compatibles a mitad del coste completo de la unidad.
 - Cancelar reclutamiento, reabastecimiento o movimiento devuelve el 50% de los recursos gastados, redondeando hacia arriba.
@@ -837,7 +838,7 @@ Visualmente:
 Por ahora:
 
 - Un sistema con batalla pendiente queda bloqueado.
-- La duración estándar del bloqueo inicial de batalla es de 14 días (`conflict_block_duration_minutes = 20160`).
+- La duración estándar del bloqueo inicial de batalla en modo campana es de 14 dias (`conflict_block_duration_minutes = 20160`). En modo test se reduce para pruebas.
 - Durante el bloqueo no puede ser atacado.
 - Puede seguir mostrando su controlador públicamente.
 - El bloqueo puede mantenerse hasta que los jugadores participantes o el admin reporten el resultado.
@@ -1028,7 +1029,10 @@ El coste se paga con Uridium. El coste total de una orden es `coste de ruta * nu
 
 Por ahora no hay riesgos aleatorios en rutas. Algunas rutas simplemente pueden costar mas.
 
-Para test local, la duracion inicial es `3 segundos por arista`.
+Los tiempos se controlan con `campaign_settings.timing_mode` y el RPC admin `admin_set_campaign_timing_mode(target_mode)`.
+
+- `test`: 3 segundos por arista.
+- `campaign`: 3 dias por arista.
 
 ### 8.2 Coste de movimiento
 
@@ -1146,7 +1150,7 @@ Origen: Kharon Prime
 Destino: Helios Drift
 Ruta: Kharon Prime -> Helios Drift
 Coste: 1 Uridium
-Llegada: 3 segundos
+Llegada en modo test: 3 segundos. En modo campana depende del numero de aristas, a 3 dias por arista.
 
 Al llegar:
 - Si es propio: quedará estacionado.
@@ -1286,7 +1290,7 @@ Los jugadores pueden gastar recursos para crear tropas desde edificios militares
 
 El reclutamiento tarda tiempo real, estilo Grepolis.
 
-Para test local, los tiempos de investigacion, construccion, reclutamiento y reabastecimiento son de 3 segundos.
+Para test local, los tiempos de investigacion, construccion, reclutamiento y reabastecimiento son de 3 segundos. En modo campana, tecnologia escala por coste tecnologico, reclutamiento por puntos de unidad, construccion por coste de edificio y reabastecimiento usa la mitad del tiempo de reclutamiento.
 
 Al completarse, las tropas aparecen en el sistema donde está el edificio que inició el reclutamiento.
 
@@ -1469,7 +1473,7 @@ Reglas:
 
 - Solo puede haber una investigación activa por facción.
 - Cada tecnología puede tener coste en Componentes tecnológicos.
-- Cada tecnologia de test dura 3 segundos salvo que se documente lo contrario.
+- Cada tecnologia en modo test dura 3 segundos salvo que se documente lo contrario. En modo campana el backend recalcula el tiempo desde el coste tecnologico.
 - Cada arbol militar especifico `ready` cuesta exactamente 30 Componentes tecnologicos en total.
 - Los nodos de arboles militares solo pueden costar 1, 2 o 3 Componentes tecnologicos.
 - El coste 3 se reserva exclusivamente para el nodo final de las dos ramas mas grandes de cada faccion.
@@ -1494,32 +1498,32 @@ Unidades finales:
 - El arbol Necron tiene 3 ramas: `Falange Dinastica`, `Corte Criptecnica` y `Constructos Eternos`.
 - El arbol Necron es asimetrico: 6 nodos en Falange, 4 en Corte y 5 en Constructos.
 - El arbol Necron no es una cadena lineal: tiene bifurcaciones y convergencias mediante prerequisitos multiples.
-- El arbol Necron tiene 15 nodos activos, todos de 3 segundos, y cubre las 55 plantillas Necron importadas exactamente una vez.
+- El arbol Necron tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 55 plantillas Necron importadas exactamente una vez.
 - Cada nodo Necron desbloquea al menos una unidad que el jugador Necron ha declarado poseer fisicamente.
 - La descripcion de cada nodo Necron debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - `troops-cultos-genestealer-v1` tambien esta `ready`.
 - El arbol del Culto Genestelar tiene 3 ramas: `Red de Insurreccion`, `Sombras del Culto` y `Ascension del Patriarca`.
 - El arbol del Culto Genestelar es asimetrico: 6 nodos en Red, 5 en Sombras y 4 en Ascension.
 - El arbol del Culto Genestelar tiene bifurcaciones entre masas, convoyes, guerrilla, profetas y mutacion, con convergencia final en `Trono del Patriarca`.
-- El arbol del Culto Genestelar tiene 15 nodos activos, todos de 3 segundos, y cubre las 27 plantillas del Culto importadas exactamente una vez.
+- El arbol del Culto Genestelar tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 27 plantillas del Culto importadas exactamente una vez.
 - La descripcion de cada nodo del Culto Genestelar debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - `troops-space-marines-v1` tambien esta `ready`.
 - El arbol de Space Marines tiene 3 ramas: `Doctrina del Capitulo`, `Vanguardia y Asalto` y `Arsenal de Cruzada`.
 - El arbol de Space Marines es asimetrico: 5 nodos en Doctrina, 4 en Vanguardia y 6 en Arsenal.
 - El arbol de Space Marines tiene bifurcaciones entre escuadras de batalla, oficiales, despliegue Phobos, asalto orbital, transportes, dreadnoughts y blindados pesados, con convergencia final en `Reliquias de Cruzada`.
-- El arbol de Space Marines tiene 15 nodos activos, todos de 3 segundos, y cubre las 85 plantillas de Space Marines importadas exactamente una vez.
+- El arbol de Space Marines tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 85 plantillas de Space Marines importadas exactamente una vez.
 - La descripcion de cada nodo de Space Marines debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - `troops-legiones-daemonicas-v1` tambien esta `ready`.
 - El arbol de Legiones Daemonicas tiene 3 ramas: `Hordas del Velo`, `Corte del Cambiante` y `Tronos de la Disformidad`.
 - El arbol de Legiones Daemonicas es asimetrico: 6 nodos en Hordas, 5 en Corte y 4 en Tronos.
 - El arbol de Legiones Daemonicas tiene bifurcaciones entre horrores, llamas, carros, heraldos, escribas, principes demonio y grandes entidades de la Disformidad, con convergencia final en `El Primer Principe`.
-- El arbol de Legiones Daemonicas tiene 15 nodos activos, todos de 3 segundos, y cubre las 19 plantillas de Legiones Daemonicas importadas exactamente una vez.
+- El arbol de Legiones Daemonicas tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 19 plantillas de Legiones Daemonicas importadas exactamente una vez.
 - La descripcion de cada nodo de Legiones Daemonicas debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - `troops-adeptus-custodes-v1` tambien esta `ready`.
 - El arbol de Adeptus Custodes tiene 3 ramas: `Guardia Auramita`, `Camara Anathema` y `Arsenal del Trono`.
 - El arbol de Adeptus Custodes es asimetrico: 5 nodos en Guardia, 4 en Camara y 6 en Arsenal.
 - El arbol de Adeptus Custodes tiene bifurcaciones entre custodios de linea, campeones, exterminadores auricos, Hermanas del Silencio, grav-vehiculos, dreadnoughts, naves, Knights aliados y Titanes, con cierre de poder en `Titanes de Terra`.
-- El arbol de Adeptus Custodes tiene 15 nodos activos, todos de 3 segundos, y cubre las 51 plantillas de Adeptus Custodes importadas exactamente una vez.
+- El arbol de Adeptus Custodes tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 51 plantillas de Adeptus Custodes importadas exactamente una vez.
 - La descripcion de cada nodo de Adeptus Custodes debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - Las cinco facciones objetivo de jugador ya estan `ready`: Legiones Daemonicas, Adeptus Custodes, Space Marines, Cultos Genestealer y Necrones. Aeldari y Agentes del Imperium no forman parte de esta campana final.
 
@@ -1543,7 +1547,7 @@ Regla vigente de arboles tecnologicos:
 - Los arboles militares especificos usan `troops-{faction_slug}-v1`; un jugador solo puede ver e investigar su propio arbol militar.
 - Admin puede inspeccionar el arbol de una faccion desde el selector de la pantalla de tecnologia, pero no inicia investigaciones desde esa vista.
 - `start_technology_research()` rechaza por backend cualquier tecnologia cuyo `tree_key` no sea `common-v1` ni `troops-{slug-de-la-faccion-del-jugador}-v1`.
-- Todas las investigaciones de test duran 3 segundos.
+- Todas las investigaciones en modo test duran 3 segundos.
 - `technology_nodes.implementation_status` puede ser `active`, `planned` o `deprecated`.
 - `technology_prerequisites.prerequisite_group` permite requisitos `OR`: todos los grupos deben cumplirse, pero dentro de un mismo grupo basta una tecnologia desbloqueada.
 - `Asamblea Planetaria` requiere `Maquinaria Belica` o `Criadero de Guerra`.
@@ -1604,7 +1608,7 @@ Reglas:
 
 - Requiere tecnologia `monumentos-gloria`.
 - Coste v1: 44 Material Industrial.
-- Tiempo de construccion de test: 3 segundos.
+- Tiempo de construccion en modo test: 3 segundos.
 - No empieza construido en capitales; debe construirse como cualquier edificio.
 - Al abrirlo muestra reliquias guardadas en ese sistema, Caracteres propios presentes y reliquias equipadas.
 
@@ -2233,13 +2237,18 @@ La cadencia global de producción se puede guardar en una tabla de configuració
 ```sql
 campaign_settings
 - id text primary key default 'default'
+- timing_mode text default 'test' check in ('test', 'campaign')
+- timing_mode_updated_at timestamptz
 - resource_tick_interval_hours integer default 24
-- movement_edge_duration_seconds integer default 3
-- conflict_block_duration_minutes integer default 20160 -- 14 dias
+- movement_edge_duration_seconds integer default 3 en test / 259200 en campana
+- attack_duration_seconds integer default 300 en test / 518400 en campana
+- conflict_block_duration_minutes integer default 60 en test / 20160 en campana
 - last_resource_tick_at timestamptz nullable
 - next_resource_tick_at timestamptz nullable
 - updated_at timestamptz
 ```
+
+`admin_set_campaign_timing_mode('test' | 'campaign')` es la unica entrada de UI para cambiar el perfil de tiempos. Al aplicar un modo tambien actualiza `technology_nodes.research_time_seconds`, `unit_templates.recruitment_time_seconds`, `building_templates.construction_time_seconds` y reescala las colas activas coherentes con ese modo.
 
 ### 16.8 campaign_units
 
@@ -3075,6 +3084,7 @@ Cuando tropas llegan a neutral:
 - El bando atacante no puede sumar refuerzos cuando el ataque ya salio; el defensor si puede traer tropas cercanas si llegan antes del cierre del plantel.
 - `Eventos` es una cronica galactica no accionable. Sustituye al antiguo boton global de Comercio.
 - El admin puede crear eventos manuales desde `/admin` con titulo y contenido.
+- El admin puede cambiar el modo global de tiempos desde `/admin`. No se deben editar tiempos a mano en tablas sueltas salvo correccion excepcional: el RPC central mantiene sincronizados movimientos, ataques, tecnologias, reclutamientos, construcciones y reabastecimientos.
 - Al resolverse una batalla, el backend crea automaticamente un evento breve con sistema, ganador, perdedor y si vencio atacante o defensor.
 - Cuando el admin desbloquea un sistema con conflicto pendiente, el conflicto pasa a `cancelled`, desaparece de pendientes y las tropas `in_war` vuelven al sistema aliado seguro mas cercano. Si no hay sistema seguro, quedan `retreat_pending`.
 

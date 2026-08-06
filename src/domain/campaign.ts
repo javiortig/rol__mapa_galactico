@@ -1,5 +1,7 @@
 export type Role = "admin" | "player" | "spectator";
 
+export type CampaignTimingMode = "test" | "campaign";
+
 export type SystemStatus = "neutral" | "controlled" | "war";
 
 export type UnitStatus = "ready" | "moving" | "in_war" | "destroyed" | "retreat_pending" | "recovering";
@@ -595,6 +597,7 @@ export interface CampaignSnapshot {
     role: Role;
     factionId: string | null;
   };
+  timingMode: CampaignTimingMode;
   resourceTickIntervalHours: number;
   movementEdgeDurationSeconds: number;
   attackDurationSeconds: number;

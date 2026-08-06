@@ -1,5 +1,5 @@
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
-import type { BuildingStatus, NarrativeMissionEnemyUnit, ResourceBundle, UnitStatus } from "@/domain/campaign";
+import type { BuildingStatus, CampaignTimingMode, NarrativeMissionEnemyUnit, ResourceBundle, UnitStatus } from "@/domain/campaign";
 
 type EditableFactionResources = Pick<
   ResourceBundle,
@@ -123,6 +123,20 @@ export async function adminSetCampaignLimits(input: {
   if (error) {
     throw new Error(error.message);
   }
+}
+
+export async function adminSetCampaignTimingMode(mode: CampaignTimingMode) {
+  const supabase = getAdminClient();
+
+  const { data, error } = await supabase.rpc("admin_set_campaign_timing_mode", {
+    target_mode: mode
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as CampaignTimingMode;
 }
 
 export async function adminSetSystemBlock(input: { systemId: string; blockedUntil: string | null }) {

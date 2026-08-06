@@ -2029,6 +2029,7 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
     role: "admin",
     factionId: null
   },
+  timingMode: "test",
   resourceTickIntervalHours: 24,
   movementEdgeDurationSeconds: 3,
   attackDurationSeconds: 300,
