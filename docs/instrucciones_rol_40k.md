@@ -957,7 +957,7 @@ Reglas v1:
 - En sistemas no capitales, los edificios de producción solo pueden construirse si `system_resource_capabilities` permite ese recurso.
 - Construir edificios solo cuesta `Material Industrial`; no consume Suministro, Mineral, Honor, Oro, Uridium ni Componentes tecnológicos.
 - Los edificios pertenecen al sistema mientras no haya conquista militar atacante.
-- Si el atacante conquista un sistema tras resolver una batalla, todos los edificios existentes quedan destruidos sin reembolso y se cancelan sus colas asociadas.
+- Si el atacante conquista un sistema tras resolver una batalla, todos los edificios existentes quedan destruidos sin reembolso y se cancelan las colas de reclutamiento, reabastecimiento y construcción de ese sistema.
 - Si el control cambia por edición admin o evento narrativo sin batalla, el nuevo controlador puede usar los edificios que permanezcan.
 - Los edificios propios pueden destruirse desde su panel. Destruir no devuelve recursos y no se permite si el edificio tiene cola activa de reclutamiento o reabastecimiento. Admin puede destruir edificios desde `/admin`.
 - No hay mejoras de edificios en v1.

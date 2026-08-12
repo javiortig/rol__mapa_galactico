@@ -146,7 +146,7 @@ La producción de recursos funciona con tick diario de backend, no por turno est
 - Las unidades heridas pueden curarse desde edificios militares compatibles a mitad de coste proporcional.
 - La Cámara de Comercio desbloquea el acceso al mercader y comercio estelar.
 - Los edificios propios pueden destruirse sin reembolso; no se puede destruir un edificio con cola activa.
-- Si el atacante conquista un sistema tras resolver una batalla, todos los edificios existentes en ese sistema se destruyen sin reembolso y se cancelan sus colas asociadas.
+- Si el atacante conquista un sistema tras resolver una batalla, todos los edificios existentes se destruyen sin reembolso y se cancelan las colas de reclutamiento, reabastecimiento y construcción de ese sistema.
 - Honor sustituye a Piedra ancestral en UI/reglas; columnas legacy pueden existir solo por compatibilidad.
 - Material Industrial se produce en Planta de Fundición y se usa principalmente para construir.
 

@@ -44,7 +44,9 @@ export function RecruitmentModal({
     [snapshot.currentUser.factionId, snapshot.unitTemplates]
   );
   const selectedTemplate = templates.find((template) => template.id === selectedTemplateId) ?? templates[0] ?? null;
-  const queue = snapshot.recruitmentQueue.filter((item) => item.factionId === snapshot.currentUser.factionId);
+  const queue = snapshot.recruitmentQueue.filter(
+    (item) => item.factionId === snapshot.currentUser.factionId && item.status === "queued"
+  );
   const rpcReady = canUseRecruitmentRpc();
   const selectedTemplateUnlocked = selectedTemplate ? isUnitTemplateUnlocked(snapshot, selectedTemplate) : false;
   const hasResources = selectedTemplate && resources ? canAfford(snapshot, resources, selectedTemplate, quantity) : false;
