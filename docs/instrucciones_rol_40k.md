@@ -956,7 +956,9 @@ Reglas v1:
 - Las capitales pueden construir cualquier edificio si la tecnología está desbloqueada y hay slot.
 - En sistemas no capitales, los edificios de producción solo pueden construirse si `system_resource_capabilities` permite ese recurso.
 - Construir edificios solo cuesta `Material Industrial`; no consume Suministro, Mineral, Honor, Oro, Uridium ni Componentes tecnológicos.
-- Los edificios pertenecen al sistema. Si cambia el controlador, el nuevo controlador puede usar los edificios activos.
+- Los edificios pertenecen al sistema mientras no haya conquista militar atacante.
+- Si el atacante conquista un sistema tras resolver una batalla, todos los edificios existentes quedan destruidos sin reembolso y se cancelan sus colas asociadas.
+- Si el control cambia por edición admin o evento narrativo sin batalla, el nuevo controlador puede usar los edificios que permanezcan.
 - Los edificios propios pueden destruirse desde su panel. Destruir no devuelve recursos y no se permite si el edificio tiene cola activa de reclutamiento o reabastecimiento. Admin puede destruir edificios desde `/admin`.
 - No hay mejoras de edificios en v1.
 
@@ -2988,7 +2990,7 @@ Evitar collage visual.
 - Un sistema puede ser neutral, controlado o en guerra.
 - El controlador es siempre público.
 - El control se ajusta tras el reporte de batalla.
-- Si atacante gana, el sistema puede pasar al atacante.
+- Si atacante gana, el sistema puede pasar al atacante y todos los edificios existentes se destruyen sin reembolso.
 - Si defensor gana, mantiene controlador.
 - Las capitales no pueden ser atacadas por jugadores ni por amenazas narrativas. La UI no debe ofrecerlas como destino y el backend debe rechazar cualquier intento de crear ataque, coalición, conflicto pendiente o ataque narrativo contra una capital.
 - Un ataque puede salir desde cualquier sistema no bloqueado donde la facción tenga unidades propias listas. Esto incluye sistemas enemigos si el jugador llegó allí mediante permiso de paso/estancia.
