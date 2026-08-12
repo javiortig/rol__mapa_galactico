@@ -130,11 +130,11 @@ export function CampaignShell() {
   }, []);
 
   if (isCampaignAuthRequiredError(error)) {
-    return <PrivateCampaignNotice title="Acceso privado" message="Redirigiendo al acceso de campana..." />;
+    return <PrivateCampaignNotice title="Acceso privado" message="Redirigiendo al acceso de campaña..." />;
   }
 
   if (error) {
-    return <PrivateCampaignNotice title="Campana no disponible" message={error.message} />;
+    return <PrivateCampaignNotice title="Campaña no disponible" message={error.message} />;
   }
 
   if (!data) {
@@ -655,7 +655,7 @@ function CommandDock({
           </Button>
           <Button onClick={onOpenTechnology} size="sm" variant="ghost">
             <Cpu size={15} />
-            Tecnologia
+            Tecnología
           </Button>
           <Button onClick={onOpenBattles} size="sm" variant="ghost">
             <Bell size={15} />
@@ -690,7 +690,7 @@ function EventsModal({
       <Panel className="flex h-[var(--app-height)] w-full max-w-4xl flex-col overflow-hidden rounded-none md:h-auto md:max-h-[calc(var(--app-height)-2rem)] md:rounded-lg">
         <header className="flex shrink-0 items-center justify-between gap-3 border-b border-cyan-200/15 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] md:p-4">
           <div>
-            <div className="text-xs uppercase tracking-[0.22em] text-cyan-200/70">Cronica galactica</div>
+            <div className="text-xs uppercase tracking-[0.22em] text-cyan-200/70">Crónica galáctica</div>
             <h2 className="mt-1 text-lg font-semibold text-cyan-50">Eventos</h2>
           </div>
           <Button aria-label="Cerrar eventos" onClick={onClose} size="icon" variant="ghost">
@@ -778,7 +778,7 @@ function GalaxyTooltip({
           <div className="font-semibold text-cyan-50">{system.name}</div>
           <div className="mt-0.5 text-xs text-slate-400">{system.type}</div>
           <div className="mt-1 flex flex-wrap gap-1">
-            {system.isTemporaryMission ? <Badge tone="amber">mision</Badge> : null}
+            {system.isTemporaryMission ? <Badge tone="amber">misión</Badge> : null}
             {system.systemKind === "gaseous" ? <Badge tone="cyan">gaseoso</Badge> : null}
             {!system.isConquerable ? <Badge tone="slate">no conquistable</Badge> : null}
           </div>
@@ -959,7 +959,7 @@ function SystemPanel({
     }
   });
   const handleRetireUnit = (unit: CampaignUnit) => {
-    if (!window.confirm(`Retirar ${unit.name}? Esta accion no devuelve recursos.`)) {
+    if (!window.confirm(`Retirar ${unit.name}? Esta acción no devuelve recursos.`)) {
       return;
     }
 
@@ -977,7 +977,7 @@ function SystemPanel({
               <div className="mb-2 flex items-center gap-2">
                 <Badge tone={tone}>{system.status}</Badge>
                 {system.isCapital ? <Badge tone="amber">capital</Badge> : null}
-                {system.isTemporaryMission ? <Badge tone="amber">mision temporal</Badge> : null}
+                {system.isTemporaryMission ? <Badge tone="amber">misión temporal</Badge> : null}
                 {system.systemKind === "gaseous" ? <Badge tone="cyan">gaseoso</Badge> : null}
                 {!system.isConquerable ? <Badge tone="slate">no conquistable</Badge> : null}
               </div>
@@ -1283,7 +1283,7 @@ function SystemPanel({
         </div>
 
         <div className="grid shrink-0 grid-cols-2 gap-2 border-t border-cyan-200/15 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 sm:grid-cols-4 md:p-5">
-          <Button className="min-w-0 px-2 text-xs sm:text-sm">Ver mision</Button>
+          <Button className="min-w-0 px-2 text-xs sm:text-sm">Ver misión</Button>
           {system.systemKind === "gaseous" ? (
             <Button className="min-w-0 px-2 text-xs sm:text-sm" disabled variant="ghost">
               No edificable
@@ -1530,7 +1530,7 @@ function MovementPlanner({
   const approvalFactionNames = Array.from(
     new Set(
       approvalSystems.map(
-        (system) => snapshot.factions.find((faction) => faction.id === system.controllerFactionId)?.name ?? "Faccion rival"
+        (system) => snapshot.factions.find((faction) => faction.id === system.controllerFactionId)?.name ?? "Facción rival"
       )
     )
   );
@@ -1672,7 +1672,7 @@ function MovementPlanner({
         <div className="mobile-scroll max-h-32 shrink-0">
           {!rpcReady ? (
             <div className="border-t border-amber-300/20 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
-              Supabase no esta configurado.
+              Supabase no está configurado.
             </div>
           ) : null}
           {mutation.error ? (
@@ -1682,7 +1682,7 @@ function MovementPlanner({
           ) : null}
           {destinationIsBlocked ? (
             <div className="border-t border-amber-300/20 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
-              El destino esta bloqueado por una batalla. Puedes atravesarlo, pero no terminar el movimiento alli.
+              El destino está bloqueado por una batalla. Puedes atravesarlo, pero no terminar el movimiento allí.
             </div>
           ) : approvalSystems.length > 0 ? (
             <div className="border-t border-amber-300/20 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
@@ -1788,14 +1788,14 @@ function MovementPlanner({
 
         {!rpcReady ? (
           <div className="mb-3 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
-            Supabase no esta configurado.
+            Supabase no está configurado.
           </div>
         ) : null}
 
         {mutation.error ? <p className="mb-3 text-sm text-rose-200">{mutation.error.message}</p> : null}
         {destinationIsBlocked ? (
           <p className="mb-3 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
-            El destino esta bloqueado por una batalla. Puedes atravesarlo, pero no terminar el movimiento alli.
+            El destino está bloqueado por una batalla. Puedes atravesarlo, pero no terminar el movimiento allí.
           </p>
         ) : approvalSystems.length > 0 ? (
           <p className="mb-3 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
@@ -1878,11 +1878,11 @@ function AttackPlanner({
   const limits = snapshot.battleLimits;
   const ownLimitReason =
     limits && limits.startedAttacks >= limits.maxStartedAttacks
-      ? "Has alcanzado el limite de ataques iniciados en esta ventana."
+      ? "Has alcanzado el límite de ataques iniciados en esta ventana."
       : limits && limits.totalParticipations >= limits.maxTotalParticipations
-        ? "Has alcanzado el maximo de participaciones de la ventana."
+        ? "Has alcanzado el máximo de participaciones de la ventana."
         : limits && limits.activeBattles >= limits.maxActiveBattles
-          ? "Has alcanzado el maximo de batallas activas."
+          ? "Has alcanzado el máximo de batallas activas."
           : null;
   const canConfirm =
     rpcReady &&
@@ -1963,11 +1963,11 @@ function AttackPlanner({
                   <div className="flex items-start justify-between gap-2">
                     <span className="min-w-0 break-words font-medium text-slate-100">{system.name}</span>
                     <Badge className="shrink-0 whitespace-nowrap" tone={system.isTemporaryMission || targetSystemId === system.id ? "rose" : "slate"}>
-                      {system.isTemporaryMission ? "Mision" : "Enemigo"}
+                      {system.isTemporaryMission ? "Misión" : "Enemigo"}
                     </Badge>
                   </div>
                   <div className="mt-1 break-words text-xs text-slate-400">
-                    {system.isTemporaryMission ? "Objetivo narrativo" : faction?.name ?? "Faccion rival"}
+                    {system.isTemporaryMission ? "Objetivo narrativo" : faction?.name ?? "Facción rival"}
                   </div>
                 </button>
               );
@@ -1994,7 +1994,7 @@ function AttackPlanner({
         {attackMode === "coalition" ? (
           <div className="mt-4">
             <div className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">
-              Invitar al punto de reunion
+              Invitar al punto de reunión
             </div>
             <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
               {supportFactions.map((faction) => {
@@ -2019,7 +2019,7 @@ function AttackPlanner({
                   >
                     <div className="break-words font-medium text-slate-100">{faction.name}</div>
                     <div className="mt-1 text-xs text-slate-400">
-                      {selected ? "Recibira invitacion" : "Sin invitar"}
+                      {selected ? "Recibirá invitación" : "Sin invitar"}
                     </div>
                   </button>
                 );
@@ -2031,13 +2031,13 @@ function AttackPlanner({
 
       <aside className="mobile-scroll max-h-[48%] shrink-0 border-t border-cyan-200/15 bg-slate-950/35 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:max-h-none md:min-h-0 md:border-l md:border-t-0 md:pb-4">
         <div className="mb-4 text-sm font-semibold text-cyan-50">
-          {attackMode === "coalition" ? "Preparar coalicion" : "Confirmar ataque"}
+          {attackMode === "coalition" ? "Preparar coalición" : "Confirmar ataque"}
         </div>
         <div className="mb-4 rounded-md border border-rose-300/20 bg-rose-400/10 p-3 text-sm text-rose-50">
           {targetSystem ? (
             <>
               {originSystem.name} {" -> "} {targetSystem.name}
-              <div className="mt-1 text-xs text-rose-100/80">Defensor: {targetFaction?.name ?? "Faccion rival"}</div>
+              <div className="mt-1 text-xs text-rose-100/80">Defensor: {targetFaction?.name ?? "Facción rival"}</div>
             </>
           ) : (
             "Selecciona un objetivo enemigo adyacente."
@@ -2056,7 +2056,7 @@ function AttackPlanner({
             <div className="mb-1 text-xs text-slate-400">Llegada prevista</div>
             <div className="text-xs font-semibold text-cyan-50">
               {attackMode === "coalition"
-                ? "Empieza al lanzar la coalicion"
+                ? "Empieza al lanzar la coalición"
                 : `${formatTravelDuration(snapshot.attackDurationSeconds)} tras confirmar`}
             </div>
           </div>
@@ -2070,13 +2070,13 @@ function AttackPlanner({
 
         {snapshot.attackDurationSeconds < 86400 ? (
           <div className="mb-4 rounded-md border border-amber-300/20 bg-amber-300/10 p-3 text-xs text-amber-100">
-            Tiempo de prueba local. Regla final: movimiento 3 dias por salto y ataque 6 dias.
+            Tiempo de prueba local. Regla final: movimiento 3 días por salto y ataque 6 días.
           </div>
         ) : null}
 
         {limits ? (
           <div className="mb-4 rounded-md border border-cyan-200/15 bg-slate-950/45 p-3 text-xs text-slate-300">
-            <div className="mb-2 font-semibold text-cyan-50">Ventana de campana</div>
+            <div className="mb-2 font-semibold text-cyan-50">Ventana de campaña</div>
             <div>Ataques iniciados: {limits.startedAttacks}/{limits.maxStartedAttacks}</div>
             <div>Ataques recibidos: {limits.receivedAttacks}/{limits.maxReceivedAttacks}</div>
             <div>Participaciones: {limits.totalParticipations}/{limits.maxTotalParticipations}</div>
@@ -2086,7 +2086,7 @@ function AttackPlanner({
 
         {!rpcReady ? (
           <div className="mb-3 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
-            Supabase no esta configurado.
+            Supabase no está configurado.
           </div>
         ) : null}
 
@@ -2100,7 +2100,7 @@ function AttackPlanner({
               ? "Preparando..."
               : "Lanzando..."
             : attackMode === "coalition"
-              ? "Crear punto de reunion"
+              ? "Crear punto de reunión"
               : "Confirmar ataque"}
         </Button>
       </aside>
@@ -2115,7 +2115,7 @@ function getAttackOperationBlockReason(
   currentFactionId: string | null
 ) {
   if (!currentFactionId) {
-    return "Sin faccion activa.";
+    return "Sin facción activa.";
   }
 
   const activeOperations = battleOperations.filter((operation) =>
@@ -2131,7 +2131,7 @@ function getAttackOperationBlockReason(
   }
 
   if (activeOperations.some((operation) => operation.targetSystemId === targetSystemId)) {
-    return "Este sistema ya tiene una operacion activa.";
+    return "Este sistema ya tiene una operación activa.";
   }
 
   if (
@@ -2251,7 +2251,7 @@ function BattleReportModal({
     finalControllerFactionId,
     survivors,
     woundsRemaining,
-    expectedRevision: report?.revision ?? 0,
+    expectedRevisión: report?.revision ?? 0,
     postBattleBlockedUntil: buildDefaultPostBattleBlockedUntil(),
     narrativeNotes: narrativeNotes.trim() || null
   });
@@ -2321,7 +2321,7 @@ function BattleReportModal({
             <div className="mb-4 rounded-md border border-cyan-200/15 bg-slate-950/35 p-3">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge tone={getBattleReportStatusTone(report)}>{getBattleReportStatusLabel(report)}</Badge>
-                {report ? <Badge tone="slate">Revision {report.revision}</Badge> : null}
+                {report ? <Badge tone="slate">Revisión {report.revision}</Badge> : null}
                 <Badge tone={battleMode === "autoresolve" ? "violet" : "cyan"}>
                   {battleMode === "autoresolve" ? "Autoresolver" : "Mesa"}
                 </Badge>
@@ -2346,7 +2346,7 @@ function BattleReportModal({
                       <div>
                         <div className="font-medium text-slate-100">{unit.name}</div>
                         <div className="mt-1 text-xs text-slate-400">
-                          {faction?.name ?? "Faccion"} - {unit.quantity}/{unit.startingQuantity} miniaturas actuales
+                          {faction?.name ?? "Facción"} - {unit.quantity}/{unit.startingQuantity} miniaturas actuales
                         </div>
                       </div>
                       <Badge tone={value === 0 ? "rose" : value < unit.quantity ? "amber" : "cyan"}>
@@ -2460,7 +2460,7 @@ function BattleReportModal({
 
               {!rpcReady ? (
                 <div className="rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
-                  Supabase no esta configurado.
+                  Supabase no está configurado.
                 </div>
               ) : null}
 
@@ -2474,7 +2474,7 @@ function BattleReportModal({
                 onClick={() => saveMutation.mutate()}
                 variant="danger"
               >
-                {saveMutation.isPending ? "Guardando..." : report ? "Guardar edicion" : "Crear informe"}
+                {saveMutation.isPending ? "Guardando..." : report ? "Guardar edición" : "Crear informe"}
               </Button>
 
               {isParticipant ? (
@@ -2503,7 +2503,7 @@ function BattleReportModal({
 
               {isAdmin && !allPlayersValidated ? (
                 <p className="text-xs text-amber-100">
-                  El resultado se aplicara automaticamente cuando todos los participantes validen la revision actual.
+                  El resultado se aplicará automáticamente cuando todos los participantes validen la revisión actual.
                 </p>
               ) : null}
             </div>
@@ -2638,7 +2638,7 @@ function getBattleReportStatusLabel(report: BattleReport | null) {
     awaiting_validation: "Pendiente de validar",
     players_confirmed: "Validado por jugadores",
     submitted: "Enviado",
-    auto_confirmed: "Confirmado automaticamente",
+    auto_confirmed: "Confirmado automáticamente",
     admin_confirmed: "Confirmado por admin",
     disputed: "En disputa",
     rejected: "Rechazado"

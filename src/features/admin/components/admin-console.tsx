@@ -105,9 +105,9 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
   const [timingModeDraft, setTimingModeDraft] = useState<CampaignTimingMode>(snapshot.timingMode);
   const [blockSystemId, setBlockSystemId] = useState(snapshot.systems[0]?.id ?? "");
   const [blockDays, setBlockDays] = useState(14);
-  const [eventTitle, setEventTitle] = useState("Comunicado del sector");
+  const [eventTitle, setEventTitle] = useState("Comúnicado del sector");
   const [eventContent, setEventContent] = useState(
-    "Los canales de astropatas transmiten nuevas ordenes. Todas las facciones deben reajustar sus planes de campana."
+    "Los canales de astrópatas transmiten nuevas órdenes. Todas las facciones deben reajustar sus planes de campaña."
   );
   const [narrativeSystemId, setNarrativeSystemId] = useState(
     snapshot.systems.find((system) => system.systemKind !== "gaseous" && !system.isCapital)?.id ?? ""
@@ -126,7 +126,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
   const [missionFactionId, setMissionFactionId] = useState(snapshot.factions.find((faction) => faction.isNarrative)?.id ?? "");
   const [missionName, setMissionName] = useState("Deriva de guerra");
   const [missionDescription, setMissionDescription] = useState(
-    "Una fuerza narrativa ha aparecido en los limites del sistema. El objetivo exige una respuesta inmediata."
+    "Una fuerza narrativa ha aparecido en los límites del sistema. El objetivo exige una respuesta inmediata."
   );
   const [missionEnemyUnitsVisible, setMissionEnemyUnitsVisible] = useState(true);
   const [missionEnemyUnitsText, setMissionEnemyUnitsText] = useState(
@@ -481,7 +481,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
   };
 
   const getFactionName = (factionId: string) =>
-    snapshot.factions.find((faction) => faction.id === factionId)?.name ?? "Faccion desconocida";
+    snapshot.factions.find((faction) => faction.id === factionId)?.name ?? "Facción desconocida";
 
   return (
     <main className="mobile-scroll h-[var(--app-height)] px-4 py-4 md:px-5 md:py-5">
@@ -489,15 +489,15 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
         <Panel className="p-4 md:p-5">
           <div className="mb-2 flex items-center gap-2">
             <Badge tone="rose">admin global</Badge>
-            <Badge tone="slate">sin faccion de jugador</Badge>
+            <Badge tone="slate">sin facción de jugador</Badge>
           </div>
           <h1 className="text-xl font-semibold text-cyan-50 md:text-2xl">Consola de control absoluto</h1>
           <p className="mt-2 text-sm text-slate-300">
-            Este modo no usa comercio ni arbol tecnologico de jugador. Todas las acciones se aplican a facciones y sistemas objetivo.
+            Este modo no usa comercio ni árbol tecnológico de jugador. Todas las acciones se aplican a facciones y sistemas objetivo.
           </p>
           {!rpcReady ? (
             <p className="mt-3 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
-              Supabase no esta configurado. La consola no puede ejecutar cambios.
+              Supabase no está configurado. La consola no puede ejecutar cambios.
             </p>
           ) : null}
         </Panel>
@@ -539,7 +539,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                 {timingModeDraft === "test" ? <Badge tone="amber">seleccionado</Badge> : null}
               </div>
               <p className="mt-2 text-xs leading-relaxed text-slate-300">
-                Movimiento 3s/arista, ataque 5min, tecnologia, reclutamiento, construccion y reabastecimiento 3s.
+                Movimiento 3s/arista, ataque 5min, tecnología, reclutamiento, construcción y reabastecimiento 3s.
               </p>
             </button>
 
@@ -557,7 +557,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                 {timingModeDraft === "campaign" ? <Badge tone="cyan">seleccionado</Badge> : null}
               </div>
               <p className="mt-2 text-xs leading-relaxed text-slate-300">
-                Movimiento 3 dias/arista, ataque 6 dias, tecnologia por coste y colas segun potencia del objetivo.
+                Movimiento 3 días/arista, ataque 6 días, tecnología por coste y colas según potencia del objetivo.
               </p>
             </button>
           </div>
@@ -572,7 +572,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
               <Megaphone size={16} />
             </span>
             <div>
-              <h2 className="text-base font-semibold text-cyan-50">Crear evento galactico</h2>
+              <h2 className="text-base font-semibold text-cyan-50">Crear evento galáctico</h2>
               <p className="text-xs text-slate-400">Aparecera en el panel Eventos de todos los jugadores.</p>
             </div>
           </div>
@@ -636,7 +636,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                     </option>
                   ))
                 ) : (
-                  <option value="">Sin plantillas para esta faccion</option>
+                  <option value="">Sin plantillas para esta facción</option>
                 )}
               </select>
 
@@ -805,7 +805,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                 <MapPin size={16} />
               </span>
               <div>
-                <h2 className="text-base font-semibold text-cyan-50">Crear mision temporal</h2>
+                <h2 className="text-base font-semibold text-cyan-50">Crear misión temporal</h2>
                 <p className="text-xs text-slate-400">Objetivo narrativo conectado a un sistema del mapa.</p>
               </div>
             </div>
@@ -848,7 +848,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
               <textarea
                 className="min-h-24 resize-y rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm text-cyan-50 outline-none transition placeholder:text-slate-600 focus:border-cyan-200/45"
                 onChange={(event) => setMissionDescription(event.target.value)}
-                placeholder="Descripcion narrativa de la mision."
+                placeholder="Descripción narrativa de la misión."
                 value={missionDescription}
               />
 
@@ -866,7 +866,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
 
               <div className="grid gap-2 sm:grid-cols-2">
                 <label className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-2">
-                  <div className="mb-1 text-[11px] text-slate-400">Dias de vida de la mision</div>
+                  <div className="mb-1 text-[11px] text-slate-400">Días de vida de la misión</div>
                   <input
                     className="w-full rounded-md border border-cyan-200/15 bg-slate-950/50 px-2 py-1.5 text-sm text-cyan-50"
                     min={1}
@@ -894,7 +894,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
               />
 
               <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-xs text-slate-300">
-                <div className="font-semibold text-cyan-50">{missionName.trim() || "Mision temporal"}</div>
+                <div className="font-semibold text-cyan-50">{missionName.trim() || "Misión temporal"}</div>
                 <p className="mt-1">
                   Aparecera cerca de {selectedMissionAnchorSystem?.name ?? "un sistema"} y sera controlada por{" "}
                   {selectedMissionFaction?.name ?? "una amenaza narrativa"}.
@@ -903,7 +903,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                   Tropas manuales registradas: {parsedMissionEnemyUnits.length}. No se crean unidades reales de base de datos.
                 </p>
                 <p className="mt-1 text-slate-400">
-                  Expira en {missionDurationDays} dias
+                  Expira en {missionDurationDays} días
                   {missionExpiresAfterBattle ? " o tras resolver la batalla, lo que ocurra antes." : "."}
                 </p>
               </div>
@@ -920,7 +920,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                 onClick={() => createNarrativeMissionMutation.mutate()}
               >
                 <Send size={16} />
-                {createNarrativeMissionMutation.isPending ? "Creando..." : "Crear mision"}
+                {createNarrativeMissionMutation.isPending ? "Creando..." : "Crear misión"}
               </Button>
 
               {createNarrativeMissionMutation.error ? (
@@ -959,7 +959,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                             <Button
                               disabled={removeTemporaryMissionMutation.isPending}
                               onClick={() => {
-                                if (window.confirm(`Eliminar la mision temporal ${missionSystem.name}?`)) {
+                                if (window.confirm(`Eliminar la misión temporal ${missionSystem.name}?`)) {
                                   removeTemporaryMissionMutation.mutate(missionSystem.id);
                                 }
                               }}
@@ -1055,7 +1055,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                 </div>
               </div>
               <label className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-2">
-                <div className="mb-1 text-[11px] text-slate-400">Duracion del bloqueo en dias</div>
+                <div className="mb-1 text-[11px] text-slate-400">Duración del bloqueo en días</div>
                 <input
                   className="w-full rounded-md border border-cyan-200/15 bg-slate-950/50 px-2 py-1.5 text-sm text-cyan-50"
                   min={1}
@@ -1175,7 +1175,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                             onChange={(event) => updateUnitDraft(unit, { isVisiblePublicly: event.target.checked })}
                             type="checkbox"
                           />
-                          Visible publicamente
+                          Visible públicamente
                         </label>
                         <Button
                           className="mt-3 w-full"
@@ -1277,7 +1277,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                           </select>
                         </label>
                         <label className="text-xs text-slate-400">
-                          Fin construccion
+                          Fin construcción
                           <input
                             className="mt-1 w-full rounded-md border border-cyan-200/15 bg-slate-950/50 px-2 py-1.5 text-sm text-cyan-50"
                             disabled={draft.status !== "constructing"}
@@ -1329,7 +1329,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
             <span className="grid size-8 place-items-center rounded-md border border-cyan-200/20 bg-cyan-300/10 text-cyan-100">
               <SlidersHorizontal size={16} />
             </span>
-            <h2 className="text-base font-semibold text-cyan-50">Limites de campana</h2>
+            <h2 className="text-base font-semibold text-cyan-50">Límites de campaña</h2>
           </div>
 
           <div className="grid gap-4 xl:grid-cols-[1fr_320px]">
@@ -1345,7 +1345,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                 }
               />
               <label className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-2">
-                <div className="mb-1 text-[11px] text-slate-400">Maximo de puntos de ejercito</div>
+                <div className="mb-1 text-[11px] text-slate-400">Máximo de puntos de ejército</div>
                 <input
                   className="w-full rounded-md border border-cyan-200/15 bg-slate-950/50 px-2 py-1.5 text-sm text-cyan-50"
                   min={0}
@@ -1355,13 +1355,13 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                 />
               </label>
               <Button disabled={!rpcReady || setLimitsMutation.isPending} onClick={() => setLimitsMutation.mutate()}>
-                Guardar limites
+                Guardar límites
               </Button>
               {setLimitsMutation.error ? <p className="text-sm text-rose-200">{setLimitsMutation.error.message}</p> : null}
             </div>
 
             <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3">
-              <h3 className="mb-3 text-sm font-semibold text-cyan-50">Puntos usados por faccion</h3>
+              <h3 className="mb-3 text-sm font-semibold text-cyan-50">Puntos usados por facción</h3>
               <div className="space-y-2">
                 {playableFactions.map((faction) => (
                   <div className="flex items-center justify-between gap-3 text-sm" key={faction.id}>

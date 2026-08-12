@@ -1,11 +1,12 @@
 import type { BattleSide, UnitMovementSelection } from "@/domain/campaign";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { fixSpanishText } from "@/lib/spanish-text";
 
 function getClient() {
   const supabase = getSupabaseBrowserClient();
 
   if (!supabase) {
-    throw new Error("Supabase no esta configurado.");
+    throw new Error("Supabase no está configurado.");
   }
 
   return supabase;
@@ -32,7 +33,7 @@ export async function createCoalitionAttackDraft(
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -46,7 +47,7 @@ export async function inviteBattleSupport(operationId: string, factionId: string
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -59,7 +60,7 @@ export async function respondBattleSupportInvitation(operationId: string, decisi
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -77,7 +78,7 @@ export async function joinBattleOperation(
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -89,7 +90,7 @@ export async function launchCoalitionAttack(operationId: string) {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -101,7 +102,7 @@ export async function cancelBattleOperation(operationId: string) {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;

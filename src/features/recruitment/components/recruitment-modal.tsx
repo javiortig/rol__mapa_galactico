@@ -128,7 +128,7 @@ export function RecruitmentModal({
                         </div>
                       </div>
                       <Badge tone={!unlocked ? "violet" : affordable ? "cyan" : "rose"}>
-                        {!unlocked ? "Tecnologia" : template.category}
+                        {!unlocked ? "Tecnología" : template.category}
                       </Badge>
                     </div>
 
@@ -173,7 +173,7 @@ export function RecruitmentModal({
                       {selectedTemplate.category} · {selectedTemplate.points * quantity} pts · {selectedTemplate.defaultQuantity * quantity} miniaturas
                     </div>
                     <div className="mt-1 text-xs text-slate-500">
-                      Ejercito: {currentArmyPoints + selectedPoints}/{snapshot.maxArmyPoints} pts
+                      Ejército: {currentArmyPoints + selectedPoints}/{snapshot.maxArmyPoints} pts
                     </div>
                     <div className="mt-1 text-xs text-slate-500">
                       Tiempo estimado: {formatDuration(selectedDurationSeconds)}
@@ -241,7 +241,7 @@ export function RecruitmentModal({
 
                   {mutation.error ? <p className="text-sm text-rose-200">{mutation.error.message}</p> : null}
                   {selectedTemplateUnlocked && !hasResources ? <p className="text-sm text-rose-200">Recursos insuficientes.</p> : null}
-                  {exceedsArmyLimit ? <p className="text-sm text-rose-200">Supera el limite de puntos de ejercito.</p> : null}
+                  {exceedsArmyLimit ? <p className="text-sm text-rose-200">Supera el límite de puntos de ejército.</p> : null}
                 </div>
               ) : (
                 <p className="mt-3 text-sm text-slate-400">No hay unidades disponibles.</p>

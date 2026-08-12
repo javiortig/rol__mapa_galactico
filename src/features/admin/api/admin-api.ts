@@ -1,5 +1,6 @@
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import type { BuildingStatus, CampaignTimingMode, NarrativeMissionEnemyUnit, ResourceBundle, UnitStatus } from "@/domain/campaign";
+import { fixSpanishText } from "@/lib/spanish-text";
 
 type EditableFactionResources = Pick<
   ResourceBundle,
@@ -15,7 +16,7 @@ function getAdminClient() {
   const supabase = getSupabaseBrowserClient();
 
   if (!supabase) {
-    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+    throw new Error(fixSpanishText("Supabase no está configurado. Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY."));
   }
 
   return supabase;
@@ -39,7 +40,7 @@ export async function adminCreateUnit(input: {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -54,7 +55,7 @@ export async function adminConstructBuilding(input: { systemId: string; building
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -78,7 +79,7 @@ export async function adminSetFactionResources(input: {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 }
 
@@ -99,7 +100,7 @@ export async function adminSetSystemResourceCapabilities(input: {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 }
 
@@ -121,7 +122,7 @@ export async function adminSetCampaignLimits(input: {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 }
 
@@ -133,7 +134,7 @@ export async function adminSetCampaignTimingMode(mode: CampaignTimingMode) {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as CampaignTimingMode;
@@ -148,7 +149,7 @@ export async function adminSetSystemBlock(input: { systemId: string; blockedUnti
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 }
 
@@ -161,7 +162,7 @@ export async function adminCreateCampaignEvent(input: { title: string; content: 
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -183,7 +184,7 @@ export async function adminCreateNarrativeAttack(input: {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -213,7 +214,7 @@ export async function adminCreateNarrativeMission(input: {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -227,7 +228,7 @@ export async function adminRemoveTemporaryMission(systemId: string) {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -247,7 +248,7 @@ export async function adminSetNarrativeControl(input: {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -273,7 +274,7 @@ export async function adminUpdateCampaignUnit(input: {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -297,7 +298,7 @@ export async function adminUpdateSystemBuilding(input: {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -311,7 +312,7 @@ export async function adminDestroySystemBuilding(systemBuildingId: string) {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;

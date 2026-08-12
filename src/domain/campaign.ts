@@ -54,6 +54,7 @@ export type UnitCategory =
   | "Elite"
   | "Vehiculo"
   | "Personaje"
+  | "L\u00ednea de batalla"
   | "Linea de batalla"
   | "Transporte"
   | "Otras hojas de datos"

@@ -16,7 +16,7 @@ export const resourceLabels: Record<ResourceKey, string> = {
   gold: "Oro",
   industrialMaterial: "Material industrial",
   uridium: "Uridium",
-  technology: "Componentes tecnologicos"
+  technology: "Componentes tecnol\u00f3gicos"
 };
 
 const resourceIcons = {

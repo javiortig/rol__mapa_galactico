@@ -134,7 +134,7 @@ export function BattleOperationsModal({
   const supportMutation = useMutation({
     mutationFn: () => {
       if (!supportOperation || !supportRoute) {
-        throw new Error("No existe una ruta valida hasta el punto de reunion.");
+        throw new Error("No existe una ruta valida hasta el punto de reunión.");
       }
 
       return joinBattleOperation(supportOperation.id, selectedSelections, supportRoute.pathSystemIds);
@@ -193,7 +193,7 @@ export function BattleOperationsModal({
               arrivesInTime={arrivesInTime}
               availableUnits={availableUnits}
               destinationName={
-                snapshot.systems.find((system) => system.id === supportDestinationId)?.name ?? "Punto de reunion"
+                snapshot.systems.find((system) => system.id === supportDestinationId)?.name ?? "Punto de reunión"
               }
               error={supportMutation.error?.message ?? null}
               isPending={supportMutation.isPending}
@@ -406,7 +406,7 @@ function OperationCard({
                 .filter((member) => member.side === side)
                 .map((member) => (
                   <Badge key={member.id} tone={member.invitationStatus === "accepted" ? "cyan" : "amber"}>
-                    {snapshot.factions.find((faction) => faction.id === member.factionId)?.name ?? "Faccion"} -{" "}
+                    {snapshot.factions.find((faction) => faction.id === member.factionId)?.name ?? "Facción"} -{" "}
                     {invitationLabel(member)}
                   </Badge>
                 ))}
@@ -424,7 +424,7 @@ function OperationCard({
             <div className="rounded-md border border-slate-400/15 bg-slate-900/35 p-2.5" key={commitment.id}>
               <div className="break-words font-medium text-slate-100">{unit?.name ?? "Unidad comprometida"}</div>
               <div className="mt-1 text-slate-400">
-                {faction?.name ?? "Faccion"} - {commitment.pointsAtCommitment} pts - {commitmentStatusLabel(commitment.status)}
+                {faction?.name ?? "Facción"} - {commitment.pointsAtCommitment} pts - {commitmentStatusLabel(commitment.status)}
               </div>
             </div>
           );
@@ -439,7 +439,7 @@ function OperationCard({
             size="sm"
           >
             <Check size={15} />
-            Aceptar coalicion
+            Aceptar coalición
           </Button>
           <Button
             disabled={actionPending}
@@ -489,11 +489,11 @@ function OperationCard({
       ) : hasAcceptedDefensiveSupport ? (
         <div className="mt-4 rounded-md border border-cyan-200/15 bg-cyan-300/10 p-3 text-xs text-cyan-50">
           Apoyo aceptado. Mueve tus tropas al sistema objetivo antes de la llegada del ataque; las unidades presentes
-          cuando cierre el plantel se sumaran a la defensa.
+          cuando cierre el plantel se sumar\u00e1n a la defensa.
         </div>
       ) : currentMember?.role === "supporter" && currentMember.invitationStatus === "invited" ? (
         <div className="mt-4 rounded-md border border-amber-300/20 bg-amber-300/10 p-3 text-xs text-amber-100">
-          La ventana de esta invitacion ya esta cerrada. Los atacantes no pueden anadir tropas una vez el ataque ha
+          La ventana de esta invitaci\u00f3n ya est\u00e1 cerrada. Los atacantes no pueden a\u00f1adir tropas una vez el ataque ha
           salido; solo el defensor puede traer refuerzos antes de que cierre el plantel.
         </div>
       ) : null}
@@ -505,7 +505,7 @@ function OperationCard({
             onChange={(event) => onChangeInviteFaction(event.target.value)}
             value={inviteFactionId}
           >
-            <option value="">Seleccionar faccion de apoyo</option>
+            <option value="">Seleccionar facción de apoyo</option>
             {eligibleFactions.map((faction) => (
               <option key={faction.id} value={faction.id}>
                 {faction.name}
@@ -525,7 +525,7 @@ function OperationCard({
             size="sm"
           >
             <UserPlus size={15} />
-            {canInviteAttackerStaging ? "Invitar a coalicion" : "Invitar defensa"}
+            {canInviteAttackerStaging ? "Invitar a coalición" : "Invitar defensa"}
           </Button>
         </div>
       ) : null}
@@ -545,7 +545,7 @@ function OperationCard({
                 ? `${pendingAttackerInvites} invitaciones pendientes`
                 : acceptedAttackerSupportersWithoutCommitment > 0
                   ? `${acceptedAttackerSupportersWithoutCommitment} aliados sin listo`
-                  : "Lanzar coalicion"}
+                  : "Lanzar coalición"}
           </Button>
           <Button
             disabled={actionPending}
@@ -553,7 +553,7 @@ function OperationCard({
             size="sm"
             variant="ghost"
           >
-            Cancelar reunion
+            Cancelar reunión
           </Button>
         </div>
       ) : null}
@@ -611,7 +611,7 @@ function SupportComposer({
       <div className="mb-4 flex items-center justify-between gap-3">
         <div>
           <div className="text-xs uppercase text-cyan-200/70">
-            {side === "attacker" ? "Tropas listas para la coalicion" : "Refuerzo defensivo"}
+            {side === "attacker" ? "Tropas listas para la coalición" : "Refuerzo defensivo"}
           </div>
           <h3 className="mt-1 text-lg font-semibold text-cyan-50">{destinationName}</h3>
         </div>
@@ -666,12 +666,12 @@ function SupportComposer({
             ) : null}
             {operation.attackArrivalAt && side === "defender" ? (
               <div className={arrivesInTime ? "mt-2 text-cyan-100" : "mt-2 text-rose-200"}>
-                {arrivesInTime ? "Llegan antes del cierre." : "Llegarian despues del ataque."}
+                {arrivesInTime ? "Llegan antes del cierre." : "Llegarían después del ataque."}
               </div>
             ) : side === "attacker" ? (
               <div className="mt-2 text-amber-100">
                 Estas unidades se comprometeran para el ataque. Cuando todos los aliados aceptados esten listos, el
-                comandante podra lanzar la coalicion.
+                comandante podrá lanzar la coalición.
               </div>
             ) : null}
           </div>
@@ -788,7 +788,7 @@ function NotificationsPanel({
           return (
             <article className="rounded-md border border-amber-300/25 bg-amber-300/10 p-3" key={request.id}>
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="font-medium text-amber-50">{requester?.name ?? "Faccion solicitante"}</span>
+                <span className="font-medium text-amber-50">{requester?.name ?? "Facción solicitante"}</span>
                 <Badge tone="amber">Permiso de paso/estancia</Badge>
               </div>
               <p className="mt-1 text-xs text-amber-50/80">
@@ -797,7 +797,7 @@ function NotificationsPanel({
               <p className="mt-2 break-words text-xs text-slate-300">Ruta: {routeText ?? "No disponible"}</p>
               <p className="mt-1 text-xs text-slate-300">Tu territorio implicado: {traversedText || "No disponible"}</p>
               <p className="mt-1 text-xs text-slate-400">
-                Unidades: {visibleUnits || "Informacion no revelada"}
+                Unidades: {visibleUnits || "Información no revelada"}
               </p>
               <div className="mt-3 grid grid-cols-2 gap-2">
                 <Button
@@ -855,7 +855,7 @@ function NotificationsPanel({
                 <Badge tone={getBattleReportStatusTone(report)}>{getBattleReportStatusLabel(report)}</Badge>
               </div>
               <p className="mt-1 text-xs text-slate-300">
-                Resultado declarado: {winner ?? "sin ganador indicado"}. Esperando validacion de los participantes.
+                Resultado declarado: {winner ?? "sin ganador indicado"}. Esperando validaci\u00f3n de los participantes.
               </p>
               {report.narrativeNotes ? (
                 <p className="mt-1 line-clamp-2 text-xs text-slate-500">{report.narrativeNotes}</p>

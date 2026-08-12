@@ -1,24 +1,24 @@
 import type { CampaignUnit, UnitKeyword } from "@/domain/campaign";
 
 export const unitKeywordLabels: Record<UnitKeyword, string> = {
-  Vehiculo: "Vehiculo",
-  Caracter: "Caracter",
-  Infanteria: "Infanteria",
+  Vehiculo: "Veh\u00edculo",
+  Caracter: "Car\u00e1cter",
+  Infanteria: "Infanter\u00eda",
   Bestia: "Bestia",
   Montado: "Montado",
   Aeronave: "Aeronave",
-  Fortificacion: "Fortificacion"
+  Fortificacion: "Fortificaci\u00f3n"
 };
 
 const characterRanks = [
   "Oficial",
   "Oficial Veterano",
-  "Campeon",
-  "Capitan",
+  "Campe\u00f3n",
+  "Capit\u00e1n",
   "Comandante",
-  "Senor de Guerra",
-  "Alto Senor",
-  "Heroe de Cruzada",
+  "Se\u00f1or de Guerra",
+  "Alto Se\u00f1or",
+  "H\u00e9roe de Cruzada",
   "Leyenda de Guerra",
   "Leyenda del Sector"
 ];

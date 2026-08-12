@@ -1,4 +1,5 @@
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { fixSpanishText } from "@/lib/spanish-text";
 
 export async function recruitUnit(unitTemplateId: string, quantity: number) {
   const supabase = getSupabaseBrowserClient();
@@ -13,7 +14,7 @@ export async function recruitUnit(unitTemplateId: string, quantity: number) {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -23,7 +24,7 @@ export async function recruitUnitAtBuilding(systemBuildingId: string, unitTempla
   const supabase = getSupabaseBrowserClient();
 
   if (!supabase) {
-    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+    throw new Error(fixSpanishText("Supabase no está configurado. Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY."));
   }
 
   const { data, error } = await supabase.rpc("recruit_unit_at_building", {
@@ -33,7 +34,7 @@ export async function recruitUnitAtBuilding(systemBuildingId: string, unitTempla
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -53,7 +54,7 @@ export async function recruitUnitVariantAtBuilding({
   const supabase = getSupabaseBrowserClient();
 
   if (!supabase) {
-    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+    throw new Error(fixSpanishText("Supabase no está configurado. Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY."));
   }
 
   const { data, error } = await supabase.rpc("recruit_unit_variant_at_building", {
@@ -64,7 +65,7 @@ export async function recruitUnitVariantAtBuilding({
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -74,7 +75,7 @@ export async function resupplyUnitAtBuilding(systemBuildingId: string, campaignU
   const supabase = getSupabaseBrowserClient();
 
   if (!supabase) {
-    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+    throw new Error(fixSpanishText("Supabase no está configurado. Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY."));
   }
 
   const { data, error } = await supabase.rpc("resupply_unit_at_building", {
@@ -83,7 +84,7 @@ export async function resupplyUnitAtBuilding(systemBuildingId: string, campaignU
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -93,7 +94,7 @@ export async function cancelRecruitmentQueue(queueId: string) {
   const supabase = getSupabaseBrowserClient();
 
   if (!supabase) {
-    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+    throw new Error(fixSpanishText("Supabase no está configurado. Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY."));
   }
 
   const { data, error } = await supabase.rpc("cancel_recruitment_queue", {
@@ -101,7 +102,7 @@ export async function cancelRecruitmentQueue(queueId: string) {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -111,7 +112,7 @@ export async function cancelUnitRecoveryQueue(queueId: string) {
   const supabase = getSupabaseBrowserClient();
 
   if (!supabase) {
-    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+    throw new Error(fixSpanishText("Supabase no está configurado. Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY."));
   }
 
   const { data, error } = await supabase.rpc("cancel_unit_recovery_queue", {
@@ -119,7 +120,7 @@ export async function cancelUnitRecoveryQueue(queueId: string) {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;

@@ -1492,7 +1492,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 3,
-    notes: "Vehiculo de incursion y reconocimiento rapido.",
+    notes: "Vehículo de incursión y reconocimiento rápido.",
     isAvailable: true
   },
   {
@@ -1679,7 +1679,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 3,
-    notes: "Capitan de la Sombra del Emperador.",
+    notes: "Capitán de la Sombra del Emperador.",
     isAvailable: true
   },
   {
@@ -1696,7 +1696,7 @@ const unitTemplateBase: MockUnitTemplate[] = [
     uridiumCost: 0,
     technologyCost: 0,
     recruitmentTimeSeconds: 3,
-    notes: "Campeon corrupto de resistencia sobrenatural.",
+    notes: "Campeón corrupto de resistencia sobrenatural.",
     isAvailable: true
   }
 ];
@@ -1839,7 +1839,7 @@ const conflicts: CampaignSnapshot["conflicts"] = [];
 const missions: CampaignSnapshot["missions"] = [];
 
 const technologyNodes: CampaignSnapshot["technologyNodes"] = [
-  makeTechnologyNode({ id: "fundacion-planetaria", slug: "fundacion-planetaria", name: "Fundacion Planetaria", description: "Protocolos basicos para levantar la primera infraestructura estable de campana.", branch: "Progreso", tier: 0, positionX: 46, positionY: 48, costTechnology: 0, researchTimeSeconds: 3, iconKey: "foundation", effectSummary: "Permite construir Barracones de Infanteria y Granjas Biologicas.", isStarter: true }),
+  makeTechnologyNode({ id: "fundacion-planetaria", slug: "fundacion-planetaria", name: "Fundacion Planetaria", description: "Protocolos básicos para levantar la primera infraestructura estable de campana.", branch: "Progreso", tier: 0, positionX: 46, positionY: 48, costTechnology: 0, researchTimeSeconds: 3, iconKey: "foundation", effectSummary: "Permite construir Barracones de Infanteria y Granjas Biologicas.", isStarter: true }),
   makeTechnologyNode({ id: "maquinaria-belica", slug: "maquinaria-belica", name: "Maquinaria Belica", description: "Talleres, elevadores y servosistemas para fabricar y mantener vehiculos.", branch: "Progreso", tier: 1, positionX: 36, positionY: 34, costTechnology: 1, researchTimeSeconds: 3, iconKey: "war_machine", effectSummary: "Permite construir Talleres de Guerra.", isStarter: false }),
   makeTechnologyNode({ id: "criadero-guerra", slug: "criadero-guerra", name: "Criadero de Guerra", description: "Jaulas, ritos de control y habitats adaptados para criaturas de guerra.", branch: "Progreso", tier: 1, positionX: 54, positionY: 34, costTechnology: 1, researchTimeSeconds: 3, iconKey: "beast", effectSummary: "Permite construir Nidos de Bestias.", isStarter: false }),
   makeTechnologyNode({ id: "asamblea-planetaria", slug: "asamblea-planetaria", name: "Asamblea Planetaria", description: "Estructura de mando local capaz de sostener oficiales, personajes y estados mayores.", branch: "Progreso", tier: 2, positionX: 45, positionY: 22, costTechnology: 2, researchTimeSeconds: 3, iconKey: "command", effectSummary: "Permite construir Cuarteles de Mando.", isStarter: false }),
@@ -1852,7 +1852,7 @@ const technologyNodes: CampaignSnapshot["technologyNodes"] = [
   makeTechnologyNode({ id: "pactos-mercantiles", slug: "pactos-mercantiles", name: "Pactos Mercantiles", description: "Acuerdos y garantias para atraer camaras de comercio al frente.", branch: "Progreso", tier: 4, positionX: 91, positionY: 40, costTechnology: 1, researchTimeSeconds: 3, iconKey: "commerce", effectSummary: "Permite construir Camaras de Comercio.", isStarter: false }),
   makeTechnologyNode({ id: "contactos-economicos", slug: "contactos-economicos", name: "Contactos Economicos", description: "Red de intermediarios y agentes comerciales con acceso al mercader.", branch: "Progreso", tier: 5, positionX: 96, positionY: 30, costTechnology: 1, researchTimeSeconds: 3, iconKey: "merchant", effectSummary: "Permite comerciar con el Mercader.", isStarter: false }),
   makeTechnologyNode({ id: "tratos-preferentes", slug: "tratos-preferentes", name: "Tratos Preferentes", description: "Credenciales, favores y rutas protegidas que reducen las tasas del mercader.", branch: "Progreso", tier: 6, positionX: 96, positionY: 18, costTechnology: 2, researchTimeSeconds: 3, iconKey: "trade_discount", effectSummary: "Mejora precios del Mercader: compra a 1.5x y venta a 0.75x del valor.", isStarter: false }),
-  makeTechnologyNode({ id: "mercado-galactico", slug: "mercado-galactico", name: "Mercado Galactico", description: "Acceso a tablones de oferta y rutas de intercambio entre jugadores.", branch: "Progreso", tier: 5, positionX: 96, positionY: 52, costTechnology: 1, researchTimeSeconds: 3, iconKey: "market", effectSummary: "Permite usar el Comercio Estelar.", isStarter: false }),
+  makeTechnologyNode({ id: "mercado-galactico", slug: "mercado-galactico", name: "Mercado Galáctico", description: "Acceso a tablones de oferta y rutas de intercambio entre jugadores.", branch: "Progreso", tier: 5, positionX: 96, positionY: 52, costTechnology: 1, researchTimeSeconds: 3, iconKey: "market", effectSummary: "Permite usar el Comercio Estelar.", isStarter: false }),
   makeTechnologyNode({ id: "aranceles-privilegiados", slug: "aranceles-privilegiados", name: "Aranceles Privilegiados", description: "Tratados fiscales que reducen la comision del comercio estelar.", branch: "Progreso", tier: 6, positionX: 96, positionY: 64, costTechnology: 2, researchTimeSeconds: 3, iconKey: "tariff", effectSummary: "Reduce tu comision de Comercio Estelar al 10%, minimo 1 oro.", isStarter: false }),
   makeTechnologyNode({ id: "oficina-inteligencia", slug: "oficina-inteligencia", name: "Oficina de Inteligencia", description: "Primer nucleo burocratico para futuras operaciones de espionaje.", branch: "Inteligencia", tier: 1, positionX: 18, positionY: 58, costTechnology: 0, researchTimeSeconds: 3, iconKey: "intelligence", effectSummary: "Proximamente: desbloqueara Nexos de Inteligencia.", isStarter: false, implementationStatus: "planned" }),
   makeTechnologyNode({ id: "celulas-informacion", slug: "celulas-informacion", name: "Celulas de Informacion", description: "Redes discretas de observadores, informadores y escuchas.", branch: "Inteligencia", tier: 2, positionX: 14, positionY: 70, costTechnology: 2, researchTimeSeconds: 3, iconKey: "cells", effectSummary: "Proximamente: produccion de espionaje y Antenas de Reconocimiento.", isStarter: false, implementationStatus: "planned" }),
@@ -1860,14 +1860,14 @@ const technologyNodes: CampaignSnapshot["technologyNodes"] = [
   makeTechnologyNode({ id: "doble-agente", slug: "doble-agente", name: "Doble Agente", description: "Contramedidas para detectar redes enemigas y operaciones infiltradas.", branch: "Inteligencia", tier: 3, positionX: 18, positionY: 86, costTechnology: 1, researchTimeSeconds: 3, iconKey: "agent", effectSummary: "Proximamente: probabilidad de detectar espionaje enemigo.", isStarter: false, implementationStatus: "planned" }),
   makeTechnologyNode({ id: "tecnologia-sar", slug: "tecnologia-sar", name: "Tecnologia SAR", description: "Lectura de largo alcance para reconocimiento y triangulacion avanzada.", branch: "Inteligencia", tier: 3, positionX: 28, positionY: 82, costTechnology: 1, researchTimeSeconds: 3, iconKey: "radar", effectSummary: "Proximamente: duplicara alcance de Antenas de Reconocimiento.", isStarter: false, implementationStatus: "planned" }),
   ...troopTechnologyNodes,
-  makeTechnologyNode({ id: "entrenamiento-linea", slug: "entrenamiento-linea", name: "Entrenamiento de linea", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Mando militar", tier: 0, positionX: 22, positionY: 32, costTechnology: 0, researchTimeSeconds: 3, iconKey: "infantry", effectSummary: "Obsoleto.", isStarter: true, implementationStatus: "deprecated" }),
-  makeTechnologyNode({ id: "logistica-frente", slug: "logistica-frente", name: "Logistica de frente", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Mando militar", tier: 1, positionX: 10, positionY: 22, costTechnology: 4, researchTimeSeconds: 3, iconKey: "supply", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
-  makeTechnologyNode({ id: "cadenas-mando", slug: "cadenas-mando", name: "Cadenas de mando", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Mando militar", tier: 1, positionX: 25, positionY: 18, costTechnology: 4, researchTimeSeconds: 3, iconKey: "command", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
-  makeTechnologyNode({ id: "veteranos-guerra", slug: "veteranos-guerra", name: "Veteranos de guerra", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Infanteria y elite", tier: 1, positionX: 30, positionY: 42, costTechnology: 4, researchTimeSeconds: 3, iconKey: "elite", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
-  makeTechnologyNode({ id: "especializacion-elite", slug: "especializacion-elite", name: "Especializacion de elite", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Infanteria y elite", tier: 2, positionX: 18, positionY: 48, costTechnology: 8, researchTimeSeconds: 3, iconKey: "elite", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
-  makeTechnologyNode({ id: "motores-guerra", slug: "motores-guerra", name: "Motores de guerra", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Blindados y maquinas", tier: 2, positionX: 42, positionY: 15, costTechnology: 8, researchTimeSeconds: 3, iconKey: "vehicle", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
-  makeTechnologyNode({ id: "blindaje-reforzado", slug: "blindaje-reforzado", name: "Blindaje reforzado", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Blindados y maquinas", tier: 3, positionX: 55, positionY: 16, costTechnology: 12, researchTimeSeconds: 3, iconKey: "vehicle", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
-  makeTechnologyNode({ id: "matrices-eficiencia", slug: "matrices-eficiencia", name: "Matrices de eficiencia", description: "Nodo militar comun legacy sustituido por arboles de tropas por faccion.", branch: "Arqueotecnologia", tier: 3, positionX: 36, positionY: 62, costTechnology: 12, researchTimeSeconds: 3, iconKey: "matrix", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" })
+  makeTechnologyNode({ id: "entrenamiento-linea", slug: "entrenamiento-linea", name: "Entrenamiento de linea", description: "Nodo militar común legacy sustituido por árboles de tropas por facción.", branch: "Mando militar", tier: 0, positionX: 22, positionY: 32, costTechnology: 0, researchTimeSeconds: 3, iconKey: "infantry", effectSummary: "Obsoleto.", isStarter: true, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "logistica-frente", slug: "logistica-frente", name: "Logistica de frente", description: "Nodo militar común legacy sustituido por árboles de tropas por facción.", branch: "Mando militar", tier: 1, positionX: 10, positionY: 22, costTechnology: 4, researchTimeSeconds: 3, iconKey: "supply", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "cadenas-mando", slug: "cadenas-mando", name: "Cadenas de mando", description: "Nodo militar común legacy sustituido por árboles de tropas por facción.", branch: "Mando militar", tier: 1, positionX: 25, positionY: 18, costTechnology: 4, researchTimeSeconds: 3, iconKey: "command", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "veteranos-guerra", slug: "veteranos-guerra", name: "Veteranos de guerra", description: "Nodo militar común legacy sustituido por árboles de tropas por facción.", branch: "Infanteria y elite", tier: 1, positionX: 30, positionY: 42, costTechnology: 4, researchTimeSeconds: 3, iconKey: "elite", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "especializacion-elite", slug: "especializacion-elite", name: "Especializacion de elite", description: "Nodo militar común legacy sustituido por árboles de tropas por facción.", branch: "Infanteria y elite", tier: 2, positionX: 18, positionY: 48, costTechnology: 8, researchTimeSeconds: 3, iconKey: "elite", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "motores-guerra", slug: "motores-guerra", name: "Motores de guerra", description: "Nodo militar común legacy sustituido por árboles de tropas por facción.", branch: "Blindados y maquinas", tier: 2, positionX: 42, positionY: 15, costTechnology: 8, researchTimeSeconds: 3, iconKey: "vehicle", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "blindaje-reforzado", slug: "blindaje-reforzado", name: "Blindaje reforzado", description: "Nodo militar común legacy sustituido por árboles de tropas por facción.", branch: "Blindados y maquinas", tier: 3, positionX: 55, positionY: 16, costTechnology: 12, researchTimeSeconds: 3, iconKey: "vehicle", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" }),
+  makeTechnologyNode({ id: "matrices-eficiencia", slug: "matrices-eficiencia", name: "Matrices de eficiencia", description: "Nodo militar común legacy sustituido por árboles de tropas por facción.", branch: "Arqueotecnologia", tier: 3, positionX: 36, positionY: 62, costTechnology: 12, researchTimeSeconds: 3, iconKey: "matrix", effectSummary: "Obsoleto.", isStarter: false, implementationStatus: "deprecated" })
 ];
 
 const prerequisiteRows = [
@@ -2129,7 +2129,7 @@ function makeMockCharacterUnit(
     isVisiblePublicly: false,
     parentUnitId: null,
     destroyedAt: null,
-    rank: "Campeon",
+    rank: "Campeón",
     enhancementText: null,
     notes: null
   };

@@ -1,10 +1,11 @@
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { fixSpanishText } from "@/lib/spanish-text";
 
 function getRelicClient() {
   const supabase = getSupabaseBrowserClient();
 
   if (!supabase) {
-    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+    throw new Error(fixSpanishText("Supabase no está configurado. Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY."));
   }
 
   return supabase;
@@ -20,7 +21,7 @@ export async function equipRelicToCharacter(relicId: string, characterUnitId: st
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -35,7 +36,7 @@ export async function unequipRelicFromCharacter(relicId: string, systemBuildingI
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;

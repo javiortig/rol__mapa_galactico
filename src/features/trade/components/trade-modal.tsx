@@ -148,7 +148,7 @@ function MerchantPanel({ snapshot }: { snapshot: CampaignSnapshot }) {
       <section className="min-w-0">
         {!rpcReady ? (
           <div className="mb-4 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
-            Supabase no esta configurado. Puedes revisar precios, pero no comerciar.
+            Supabase no está configurado. Puedes revisar precios, pero no comerciar.
           </div>
         ) : null}
 
@@ -278,7 +278,7 @@ function StellarTradePanel({ snapshot }: { snapshot: CampaignSnapshot }) {
       <aside className="rounded-lg border border-cyan-200/15 bg-slate-950/38 p-4">
         <h3 className="text-lg font-semibold text-cyan-50">Publicar oferta</h3>
         <p className="mt-2 text-sm leading-6 text-slate-300">
-          Las ofertas son recurso contra oro. Tu comision actual es del {feePercent}% en oro, minimo 1.
+          Las ofertas son recurso contra oro. Tu comisión actual es del {feePercent}% en oro, mínimo 1.
         </p>
 
         <ResourceStrip className="mt-4" resources={resources} />
@@ -311,7 +311,7 @@ function StellarTradePanel({ snapshot }: { snapshot: CampaignSnapshot }) {
         <NumberField label="Oro ofertado" onChange={setGoldAmount} value={goldAmount} />
 
         <div className="mt-4 rounded-md border border-amber-200/15 bg-amber-300/8 p-3 text-sm text-amber-50">
-          Comision por jugador: <ResourceAmount resource="gold" value={feeGold} />
+          Comisión por jugador: <ResourceAmount resource="gold" value={feeGold} />
         </div>
 
         <div className="mt-3 rounded-md border border-cyan-200/15 bg-slate-950/45 p-3 text-sm text-slate-200">
@@ -321,7 +321,7 @@ function StellarTradePanel({ snapshot }: { snapshot: CampaignSnapshot }) {
 
         {!rpcReady ? (
           <div className="mt-3 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
-            Supabase no esta configurado.
+            Supabase no está configurado.
           </div>
         ) : null}
 
@@ -404,7 +404,7 @@ function TradeOfferCard({
         <div>
           <div className="inline-flex items-center gap-2 text-sm font-medium text-slate-100">
             <span className="size-2 rounded-full" style={{ backgroundColor: creator?.color ?? "#94a3b8" }} />
-            {creator?.name ?? "Faccion"}
+            {creator?.name ?? "Facción"}
           </div>
           <div className="mt-1 text-xs text-slate-400">
             {offer.offerType === "buy" ? "Quiere comprar" : "Quiere vender"}
@@ -427,7 +427,7 @@ function TradeOfferCard({
       </div>
 
       <div className="mt-3 rounded-md border border-amber-200/15 bg-amber-300/8 p-3 text-xs text-amber-50">
-        {isOwn ? "Comision reservada" : "Tu comision"}:{" "}
+        {isOwn ? "Comisión reservada" : "Tu comisión"}:{" "}
         <ResourceAmount className="text-amber-50" resource="gold" value={isOwn ? offer.feeGold : acceptFee} />
       </div>
 

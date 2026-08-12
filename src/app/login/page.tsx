@@ -53,7 +53,7 @@ export default function LoginPage() {
     const supabase = getSupabaseBrowserClient();
 
     if (!supabase) {
-      setError("Supabase no esta configurado para esta campana.");
+      setError("Supabase no está configurado para esta campaña.");
       return;
     }
 
@@ -95,7 +95,7 @@ export default function LoginPage() {
             <ShieldCheck size={20} />
           </div>
           <div>
-            <h1 className="text-xl font-semibold">Acceso de campana</h1>
+            <h1 className="text-xl font-semibold">Acceso de campaña</h1>
             <p className="text-sm text-slate-300">Acceso privado con Supabase Auth.</p>
           </div>
         </div>

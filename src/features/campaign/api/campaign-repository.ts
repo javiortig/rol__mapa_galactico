@@ -46,19 +46,20 @@ import {
   isCampaignSessionExpired,
   isStaleSupabaseRefreshTokenError
 } from "@/lib/supabase/client";
+import { fixOptionalSpanishText, fixSpanishText } from "@/lib/spanish-text";
 import { mockCampaignSnapshot } from "@/mocks/campaign-data";
 
 type DbRow = Record<string, unknown>;
 
 export class CampaignAuthRequiredError extends Error {
-  constructor(message = "Necesitas iniciar sesion para acceder a la campana.") {
+  constructor(message = "Necesitas iniciar sesi\u00f3n para acceder a la campa\u00f1a.") {
     super(message);
     this.name = "CampaignAuthRequiredError";
   }
 }
 
 export class CampaignDataUnavailableError extends Error {
-  constructor(message = "No se pudo cargar la campana desde Supabase.") {
+  constructor(message = "No se pudo cargar la campa\u00f1a desde Supabase.") {
     super(message);
     this.name = "CampaignDataUnavailableError";
   }
@@ -79,7 +80,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
   const allowMockFallback = canUseMockFallback();
 
   if (!supabase) {
-    return getFallbackSnapshotOrThrow(allowMockFallback, "Supabase no esta configurado.");
+    return getFallbackSnapshotOrThrow(allowMockFallback, "Supabase no está configurado.");
   }
 
   try {
@@ -88,7 +89,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return getFallbackSnapshotOrThrow(allowMockFallback, "Necesitas iniciar sesion para acceder a la campana.", "auth");
+      return getFallbackSnapshotOrThrow(allowMockFallback, "Necesitas iniciar sesi\u00f3n para acceder a la campa\u00f1a.", "auth");
     }
 
     if (isCampaignSessionExpired()) {
@@ -189,7 +190,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
     const profile = profileResult.data as DbRow | null;
 
     if (!profile) {
-      return getFallbackSnapshotOrThrow(allowMockFallback, "Tu usuario no tiene perfil de campana configurado.");
+      return getFallbackSnapshotOrThrow(allowMockFallback, "Tu usuario no tiene perfil de campa\u00f1a configurado.");
     }
 
     const playerFactions = getRows(playerFactionsResult, "player_factions");
@@ -201,7 +202,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       : assignedFactionId ?? ((factionRows[0]?.id as string | undefined) ?? null);
 
     if (!isAdminUser && !currentFactionId) {
-      return getFallbackSnapshotOrThrow(allowMockFallback, "Tu usuario no tiene faccion asignada.");
+      return getFallbackSnapshotOrThrow(allowMockFallback, "Tu usuario no tiene facci\u00f3n asignada.");
     }
 
     const productionBySystem = new Map(
@@ -337,11 +338,11 @@ function canUseMockFallback() {
 
 function getFallbackSnapshotOrThrow(
   allowMockFallback: boolean,
-  message = "No se pudo cargar la campana desde Supabase.",
+  message = "No se pudo cargar la campa\u00f1a desde Supabase.",
   kind: "auth" | "data" = "data"
 ) {
   if (allowMockFallback) {
-    return mockCampaignSnapshot;
+    return getNormalizedMockCampaignSnapshot();
   }
 
   if (kind === "auth") {
@@ -349,6 +350,105 @@ function getFallbackSnapshotOrThrow(
   }
 
   throw new CampaignDataUnavailableError(message);
+}
+
+let normalizedMockCampaignSnapshot: CampaignSnapshot | null = null;
+
+function getNormalizedMockCampaignSnapshot(): CampaignSnapshot {
+  if (normalizedMockCampaignSnapshot) {
+    return normalizedMockCampaignSnapshot;
+  }
+
+  normalizedMockCampaignSnapshot = {
+    ...mockCampaignSnapshot,
+    factions: mockCampaignSnapshot.factions.map((faction) => ({
+      ...faction,
+      name: fixSpanishText(faction.name)
+    })),
+    systems: mockCampaignSnapshot.systems.map((system) => ({
+      ...system,
+      name: fixSpanishText(system.name),
+      type: fixSpanishText(system.type),
+      publicDescription: fixSpanishText(system.publicDescription),
+      secretAdminNotes: fixOptionalSpanishText(system.secretAdminNotes),
+      missionEnemyUnits: system.missionEnemyUnits?.map((unit) => ({
+        ...unit,
+        name: fixSpanishText(unit.name),
+        details: fixOptionalSpanishText(unit.details)
+      })),
+      specialObjects: system.specialObjects?.map((object) => ({
+        ...object,
+        name: fixSpanishText(object.name)
+      }))
+    })),
+    units: mockCampaignSnapshot.units.map((unit) => ({
+      ...unit,
+      name: fixSpanishText(unit.name),
+      category: fixSpanishText(unit.category) as CampaignUnit["category"],
+      rank: fixOptionalSpanishText(unit.rank),
+      enhancementText: fixOptionalSpanishText(unit.enhancementText),
+      notes: fixOptionalSpanishText(unit.notes)
+    })),
+    movements: mockCampaignSnapshot.movements.map((movement) => ({
+      ...movement,
+      cancellationReason: fixOptionalSpanishText(movement.cancellationReason)
+    })),
+    passageRequests: mockCampaignSnapshot.passageRequests.map((request) => ({
+      ...request,
+      responseReason: fixOptionalSpanishText(request.responseReason)
+    })),
+    unitTemplates: mockCampaignSnapshot.unitTemplates.map((template) => ({
+      ...template,
+      category: fixSpanishText(template.category) as UnitCategory,
+      notes: fixOptionalSpanishText(template.notes)
+    })),
+    technologyNodes: mockCampaignSnapshot.technologyNodes.map((node) => ({
+      ...node,
+      name: fixSpanishText(node.name),
+      description: fixSpanishText(node.description),
+      branch: fixSpanishText(node.branch),
+      effectSummary: fixOptionalSpanishText(node.effectSummary)
+    })),
+    buildingTemplates: mockCampaignSnapshot.buildingTemplates.map((template) => ({
+      ...template,
+      name: fixSpanishText(template.name),
+      category: fixSpanishText(template.category),
+      description: fixSpanishText(template.description)
+    })),
+    relics: mockCampaignSnapshot.relics.map((relic) => ({
+      ...relic,
+      name: fixSpanishText(relic.name),
+      description: fixSpanishText(relic.description),
+      effectText: fixOptionalSpanishText(relic.effectText)
+    })),
+    conflicts: mockCampaignSnapshot.conflicts.map((conflict) => ({
+      ...conflict,
+      notes: fixOptionalSpanishText(conflict.notes)
+    })),
+    battleReports: mockCampaignSnapshot.battleReports.map((report) => ({
+      ...report,
+      narrativeNotes: fixOptionalSpanishText(report.narrativeNotes)
+    })),
+    narrativeAttacks: mockCampaignSnapshot.narrativeAttacks.map((attack) => ({
+      ...attack,
+      description: fixSpanishText(attack.description)
+    })),
+    missions: mockCampaignSnapshot.missions.map((mission) => ({
+      ...mission,
+      title: fixSpanishText(mission.title),
+      narrativeDescription: fixSpanishText(mission.narrativeDescription),
+      objectives: fixSpanishText(mission.objectives),
+      specialRules: fixSpanishText(mission.specialRules),
+      victoryConditions: fixSpanishText(mission.victoryConditions)
+    })),
+    campaignEvents: mockCampaignSnapshot.campaignEvents.map((event) => ({
+      ...event,
+      title: fixSpanishText(event.title),
+      content: fixSpanishText(event.content)
+    }))
+  };
+
+  return normalizedMockCampaignSnapshot;
 }
 
 function getRows(result: { data: unknown; error: unknown }, label: string): DbRow[] {
@@ -379,7 +479,7 @@ function mapFaction(row: Record<string, unknown>): Faction {
   return {
     id: row.id as string,
     slug: (row.slug as string | null) ?? null,
-    name: row.name as string,
+    name: fixSpanishText(row.name as string),
     color: row.color as string,
     emblemUrl: (row.emblem_url as string | null) ?? null,
     capitalSystemId: (row.capital_system_id as string | null) ?? null,
@@ -394,7 +494,7 @@ function mapSystem(
 ): StarSystem {
   return {
     id: row.id as string,
-    name: row.name as string,
+    name: fixSpanishText(row.name as string),
     x: Number(row.x),
     y: Number(row.y),
     size: Number(row.size ?? 1),
@@ -405,12 +505,12 @@ function mapSystem(
       row.allows_shared_occupation === null || row.allows_shared_occupation === undefined
         ? false
         : Boolean(row.allows_shared_occupation),
-    type: row.type as string,
+    type: fixSpanishText(row.type as string),
     status: row.status as StarSystem["status"],
     controllerFactionId: (row.controller_faction_id as string | null) ?? null,
     blockedUntil: (row.blocked_until as string | null) ?? null,
-    publicDescription: (row.public_description as string | null) ?? "",
-    secretAdminNotes: (row.secret_admin_notes as string | null) ?? null,
+    publicDescription: fixOptionalSpanishText((row.public_description as string | null) ?? "") ?? "",
+    secretAdminNotes: fixOptionalSpanishText((row.secret_admin_notes as string | null) ?? null),
     missionId: (row.mission_id as string | null) ?? null,
     isCapital: Boolean(row.is_capital),
     buildingSlots: Number(row.building_slots ?? (row.is_capital ? 6 : 3)),
@@ -435,7 +535,7 @@ function mapNarrativeMissionEnemyUnits(value: unknown): NarrativeMissionEnemyUni
   return value
     .map<NarrativeMissionEnemyUnit | null>((item, index) => {
       if (typeof item === "string") {
-        return { id: `manual-${index + 1}`, name: item, details: null };
+        return { id: `manual-${index + 1}`, name: fixSpanishText(item), details: null };
       }
 
       if (!item || typeof item !== "object") {
@@ -443,7 +543,7 @@ function mapNarrativeMissionEnemyUnits(value: unknown): NarrativeMissionEnemyUni
       }
 
       const raw = item as Record<string, unknown>;
-      const name = String(raw.name ?? "").trim();
+      const name = fixSpanishText(String(raw.name ?? "").trim());
 
       if (!name) {
         return null;
@@ -452,7 +552,7 @@ function mapNarrativeMissionEnemyUnits(value: unknown): NarrativeMissionEnemyUni
       return {
         id: String(raw.id ?? `manual-${index + 1}`),
         name,
-        details: raw.details === null || raw.details === undefined ? null : String(raw.details)
+        details: raw.details === null || raw.details === undefined ? null : fixSpanishText(String(raw.details))
       };
     })
     .filter((item): item is NarrativeMissionEnemyUnit => Boolean(item));
@@ -510,10 +610,10 @@ function mapCampaignUnit(row: Record<string, unknown>): CampaignUnit {
   return {
     id: row.id as string,
     factionId: row.faction_id as string,
-    name: row.name as string,
+    name: fixSpanishText(row.name as string),
     currentSystemId: (row.current_system_id as string | null) ?? null,
     status: row.status as CampaignUnit["status"],
-    category: row.category as CampaignUnit["category"],
+    category: fixSpanishText(row.category as string) as CampaignUnit["category"],
     unitType: mapUnitType(row.unit_type ?? row.category),
     unitKeywords: mapUnitKeywords(row.unit_keywords, row.unit_type ?? row.category),
     points: Number(row.points ?? 0),
@@ -525,9 +625,9 @@ function mapCampaignUnit(row: Record<string, unknown>): CampaignUnit {
     parentUnitId: (row.parent_unit_id as string | null) ?? null,
     destroyedAt: (row.destroyed_at as string | null) ?? null,
     unitTemplateId: (row.unit_template_id as string | null) ?? null,
-    rank: (row.rank as string | null) ?? null,
-    enhancementText: (row.enhancement_text as string | null) ?? null,
-    notes: (row.notes as string | null) ?? null,
+    rank: fixOptionalSpanishText((row.rank as string | null) ?? null),
+    enhancementText: fixOptionalSpanishText((row.enhancement_text as string | null) ?? null),
+    notes: fixOptionalSpanishText((row.notes as string | null) ?? null),
     selectedModelOptionId: (row.selected_model_option_id as string | null) ?? null,
     selectedWargearPoints: Number(row.selected_wargear_points ?? 0),
     selectedWargearOptions: mapWargearSelections(row.selected_wargear_options),
@@ -566,7 +666,7 @@ function mapMovement(row: Record<string, unknown>, movementUnits: UnitMovementSe
     arrivalAt: (row.arrival_at as string | null) ?? null,
     status: row.status as MovementOrder["status"],
     cancelledAt: (row.cancelled_at as string | null) ?? null,
-    cancellationReason: (row.cancellation_reason as string | null) ?? null,
+    cancellationReason: fixOptionalSpanishText((row.cancellation_reason as string | null) ?? null),
     resolvedAt: (row.resolved_at as string | null) ?? null
   };
 }
@@ -578,7 +678,7 @@ function mapPassageRequest(row: Record<string, unknown>): MovementPassageRequest
     responderFactionId: row.responder_faction_id as string,
     traversedSystemIds: Array.isArray(row.traversed_system_ids) ? (row.traversed_system_ids as string[]) : [],
     status: row.status as MovementPassageRequest["status"],
-    responseReason: (row.response_reason as string | null) ?? null,
+    responseReason: fixOptionalSpanishText((row.response_reason as string | null) ?? null),
     respondedByUserId: (row.responded_by_user_id as string | null) ?? null,
     respondedAt: (row.responded_at as string | null) ?? null,
     createdAt: row.created_at as string
@@ -673,7 +773,7 @@ function mapUnitTemplate(
     id: row.id as string,
     factionId: row.faction_id as string,
     name: row.name as string,
-    category: row.category as UnitCategory,
+    category: fixSpanishText(row.category as string) as UnitCategory,
     unitType: mapUnitType(row.unit_type ?? row.category),
     unitKeywords: mapUnitKeywords(row.unit_keywords, row.unit_type ?? row.category),
     points: Number(row.points ?? 0),
@@ -688,7 +788,7 @@ function mapUnitTemplate(
     technologyCost: Number(row.technology_cost ?? 0),
     recruitmentTimeSeconds: Number(row.recruitment_time_seconds ?? 0),
     recruitmentBuildingType: (row.recruitment_building_type as string | null) ?? null,
-    notes: (row.notes as string | null) ?? null,
+    notes: fixOptionalSpanishText((row.notes as string | null) ?? null),
     isAvailable: Boolean(row.is_available),
     requiredTechnologyNodeId: (row.required_technology_node_id as string | null) ?? null,
     sourceSection: (row.source_section as string | null) ?? null,
@@ -778,16 +878,16 @@ function mapTechnologyNode(row: Record<string, unknown>): TechnologyNode {
     id: row.id as string,
     slug: row.slug as string,
     treeKey: row.tree_key as string,
-    name: row.name as string,
-    description: row.description as string,
-    branch: row.branch as string,
+    name: fixSpanishText(row.name as string),
+    description: fixSpanishText(row.description as string),
+    branch: fixSpanishText(row.branch as string),
     tier: Number(row.tier ?? 0),
     positionX: Number(row.position_x ?? 0),
     positionY: Number(row.position_y ?? 0),
     costTechnology: Number(row.cost_technology ?? 0),
     researchTimeSeconds: Number(row.research_time_seconds ?? 0),
     iconKey: (row.icon_key as string | null) ?? null,
-    effectSummary: (row.effect_summary as string | null) ?? null,
+    effectSummary: fixOptionalSpanishText((row.effect_summary as string | null) ?? null),
     isStarter: Boolean(row.is_starter),
     implementationStatus:
       row.implementation_status === "planned" || row.implementation_status === "deprecated"
@@ -828,9 +928,9 @@ function mapBuildingTemplate(row: Record<string, unknown>): BuildingTemplate {
   return {
     id: row.id as string,
     slug: (row.slug as string | null) ?? (row.id as string),
-    name: row.name as string,
-    category: row.category as string,
-    description: row.description as string,
+    name: fixSpanishText(row.name as string),
+    category: fixSpanishText(row.category as string),
+    description: fixSpanishText(row.description as string),
     buildingKind: row.building_kind as BuildingTemplate["buildingKind"],
     supplyCost: Number(row.supply_cost ?? 0),
     mineralsCost: Number(row.minerals_cost ?? 0),
@@ -932,9 +1032,9 @@ function mapCampaignRelic(row: Record<string, unknown>): CampaignRelic {
     factionId: (row.faction_id as string | null) ?? null,
     systemId: (row.system_id as string | null) ?? null,
     equippedUnitId: (row.equipped_unit_id as string | null) ?? null,
-    name: row.name as string,
-    description: row.description as string,
-    effectText: (row.effect_text as string | null) ?? null,
+    name: fixSpanishText(row.name as string),
+    description: fixSpanishText(row.description as string),
+    effectText: fixOptionalSpanishText((row.effect_text as string | null) ?? null),
     iconKey: (row.icon_key as string | null) ?? null,
     rarity:
       row.rarity === "rare" || row.rarity === "epic" || row.rarity === "legendary"
@@ -956,7 +1056,7 @@ function mapConflict(row: Record<string, unknown>): Conflict {
     status: row.status as Conflict["status"],
     winnerFactionId: (row.winner_faction_id as string | null) ?? null,
     blockedUntil: (row.blocked_until as string | null) ?? null,
-    notes: (row.notes as string | null) ?? null
+    notes: fixOptionalSpanishText((row.notes as string | null) ?? null)
   };
 }
 
@@ -965,7 +1065,7 @@ function mapNarrativeAttack(row: Record<string, unknown>): NarrativeAttack {
     id: row.id as string,
     systemId: row.system_id as string,
     narrativeFactionId: row.narrative_faction_id as string,
-    description: row.description as string,
+    description: fixSpanishText(row.description as string),
     arrivalAt: row.arrival_at as string,
     status: row.status as NarrativeAttack["status"],
     conflictId: (row.conflict_id as string | null) ?? null,
@@ -991,7 +1091,6 @@ function mapUnitType(value: unknown): UnitType {
   if (
     normalized === "vehicle" ||
     normalized === "vehiculo" ||
-    normalized === "vehÃ­culo" ||
     normalized === "vehículo" ||
     normalized === "superpesado"
   ) {
@@ -1102,7 +1201,7 @@ function mapBattleReport(row: Record<string, unknown>): BattleReport {
     casualties: mapNumberRecord(row.casualties),
     survivors: mapNumberRecord(row.survivors),
     woundsRemaining: mapNumberRecord(row.wounds_remaining),
-    narrativeNotes: (row.narrative_notes as string | null) ?? null,
+    narrativeNotes: fixOptionalSpanishText((row.narrative_notes as string | null) ?? null),
     updatedAt: (row.updated_at as string | null) ?? null
   };
 }
@@ -1166,11 +1265,11 @@ function mapMission(row: Record<string, unknown>): Mission {
   return {
     id: row.id as string,
     systemId: row.system_id as string,
-    title: row.title as string,
-    narrativeDescription: row.narrative_description as string,
-    objectives: row.objectives as string,
-    specialRules: row.special_rules as string,
-    victoryConditions: row.victory_conditions as string,
+    title: fixSpanishText(row.title as string),
+    narrativeDescription: fixSpanishText(row.narrative_description as string),
+    objectives: fixSpanishText(row.objectives as string),
+    specialRules: fixSpanishText(row.special_rules as string),
+    victoryConditions: fixSpanishText(row.victory_conditions as string),
     mapImageUrl: (row.map_image_url as string | null) ?? null
   };
 }
@@ -1179,8 +1278,8 @@ function mapCampaignEvent(row: Record<string, unknown>): CampaignEvent {
   return {
     id: row.id as string,
     slug: row.slug as string,
-    title: row.title as string,
-    content: row.content as string,
+    title: fixSpanishText(row.title as string),
+    content: fixSpanishText(row.content as string),
     eventType: row.event_type as CampaignEvent["eventType"],
     systemId: (row.system_id as string | null) ?? null,
     conflictId: (row.conflict_id as string | null) ?? null,
@@ -1194,7 +1293,7 @@ function mapSpecialObject(row: Record<string, unknown>): SystemSpecialObject & {
   return {
     id: row.id as string,
     systemId: row.system_id as string,
-    name: row.name as string,
+    name: fixSpanishText(row.name as string),
     type: row.type as SystemSpecialObject["type"],
     isPublic: Boolean(row.is_public)
   };

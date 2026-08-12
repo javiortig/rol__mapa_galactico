@@ -1,5 +1,6 @@
 import type { BattleResolutionMode } from "@/domain/campaign";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { fixSpanishText } from "@/lib/spanish-text";
 
 export type BattleReportPayload = {
   battleMode: BattleResolutionMode;
@@ -16,7 +17,7 @@ export async function submitBattleReport(conflictId: string, payload: BattleRepo
   const supabase = getSupabaseBrowserClient();
 
   if (!supabase) {
-    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+    throw new Error(fixSpanishText("Supabase no está configurado. Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY."));
   }
 
   const { data, error } = await supabase.rpc("submit_battle_report", {
@@ -34,7 +35,7 @@ export async function submitBattleReport(conflictId: string, payload: BattleRepo
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -44,7 +45,7 @@ export async function validateBattleReport(conflictId: string) {
   const supabase = getSupabaseBrowserClient();
 
   if (!supabase) {
-    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+    throw new Error(fixSpanishText("Supabase no está configurado. Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY."));
   }
 
   const { data, error } = await supabase.rpc("validate_battle_report", {
@@ -52,7 +53,7 @@ export async function validateBattleReport(conflictId: string) {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -62,7 +63,7 @@ export async function adminConfirmBattleReport(conflictId: string, payload: Batt
   const supabase = getSupabaseBrowserClient();
 
   if (!supabase) {
-    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+    throw new Error(fixSpanishText("Supabase no está configurado. Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY."));
   }
 
   const { error } = await supabase.rpc("admin_confirm_battle_report", {
@@ -80,7 +81,7 @@ export async function adminConfirmBattleReport(conflictId: string, payload: Batt
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 }
 

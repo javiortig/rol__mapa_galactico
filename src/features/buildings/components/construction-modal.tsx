@@ -71,13 +71,13 @@ export function ConstructionModal({
         <div className="shrink-0 border-b border-cyan-200/15 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] md:p-5">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <div className="text-xs uppercase tracking-[0.24em] text-cyan-200/70">Construccion planetaria</div>
+              <div className="text-xs uppercase tracking-[0.24em] text-cyan-200/70">Construcción planetaria</div>
               <h2 className="mt-1 text-2xl font-semibold text-cyan-50">{system.name}</h2>
               <p className="mt-1 text-sm text-slate-400">
                 Slots usados: {systemBuildings.length}/{buildingSlots}
               </p>
             </div>
-            <Button aria-label="Cerrar construccion" onClick={onClose} size="icon" variant="ghost">
+            <Button aria-label="Cerrar construcción" onClick={onClose} size="icon" variant="ghost">
               <X size={18} />
             </Button>
           </div>
@@ -89,7 +89,7 @@ export function ConstructionModal({
 
             {!rpcReady ? (
               <div className="mb-4 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
-                Supabase no esta configurado. Puedes revisar edificios, pero no construir.
+                Supabase no está configurado. Puedes revisar edificios, pero no construir.
               </div>
             ) : null}
 
@@ -124,7 +124,7 @@ export function ConstructionModal({
 
                     {template.producedResourceKey ? (
                       <div className="mb-3 rounded border border-cyan-200/10 bg-cyan-400/5 px-2 py-1.5 text-xs text-cyan-50">
-                        Produccion en este sistema:{" "}
+                        Producción en este sistema:{" "}
                         <ResourceAmount resource={template.producedResourceKey} value={effectiveProduction} />
                       </div>
                     ) : null}
@@ -178,7 +178,7 @@ export function ConstructionModal({
 
                 {selectedTemplate.producedResourceKey ? (
                   <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-sm text-slate-200">
-                    Produccion diaria:{" "}
+                    Producción diaria:{" "}
                     <ResourceAmount
                       resource={selectedTemplate.producedResourceKey}
                       value={getEffectiveProductionAmount(snapshot, system.id, selectedTemplate)}
@@ -266,7 +266,7 @@ function getBuildBlockReason(
       : null;
 
     if (requiredTechnology?.implementationStatus === "planned") {
-      return "Proximamente";
+      return "Próximamente";
     }
 
     return `Requiere ${getRequiredTechnologyName(snapshot, template.requiredTechnologyNodeId)}`;
@@ -316,7 +316,7 @@ function getKindLabel(template: BuildingTemplate) {
     recruitment: "Militar",
     commerce: "Comercio",
     intelligence: "Intel",
-    production: "Produccion",
+    production: "Producción",
     relic: "Reliquias"
   };
 

@@ -1,4 +1,5 @@
 import type { BuildingTemplate, CampaignSnapshot, ResourceKey, TechnologyNode, UnitCategory, UnitTemplate } from "@/domain/campaign";
+import { normalizeSpanishTextKey } from "@/lib/spanish-text";
 
 export type DerivedTechnologyStatus = "locked" | "planned" | "available" | "researching" | "unlocked";
 
@@ -57,7 +58,7 @@ export function getRequiredTechnologyName(snapshot: CampaignSnapshot, technology
     return null;
   }
 
-  return snapshot.technologyNodes.find((node) => node.id === technologyNodeId)?.name ?? "Tecnologia requerida";
+  return snapshot.technologyNodes.find((node) => node.id === technologyNodeId)?.name ?? "Tecnolog\u00eda requerida";
 }
 
 export function getActiveTechnologyResearch(snapshot: CampaignSnapshot, factionId = snapshot.currentUser.factionId) {
@@ -273,7 +274,7 @@ function getUnlockedEffects(snapshot: CampaignSnapshot, effectType: string) {
 
 function matchesCategory(rawCategory: unknown, category: UnitCategory) {
   const target = typeof rawCategory === "string" ? rawCategory : "all";
-  return target === "all" || target === category;
+  return target === "all" || normalizeSpanishTextKey(target) === normalizeSpanishTextKey(category);
 }
 
 function matchesResource(rawResource: unknown, resource: ResourceKey) {

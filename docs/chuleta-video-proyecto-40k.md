@@ -1,7 +1,7 @@
 ---
 title: "Chuleta Para Explicar El Proyecto"
 subtitle: "Mapa Galactico Rol 40K"
-author: "Guion rapido para video y onboarding tecnico"
+author: "Guion rápido para video y onboarding técnico"
 date: "2026-06-11"
 lang: es
 geometry: margin=15mm
@@ -9,26 +9,26 @@ fontsize: 10pt
 colorlinks: true
 ---
 
-# 1. Que Es Este Proyecto
+# 1. Qué Es Este Proyecto
 
-**Idea en una frase:** una app web para gestionar una campana de Warhammer 40K en tiempo real, con mapa galactico, facciones, recursos, unidades, edificios, tecnologia, comercio y reportes de batalla.
+**Idea en una frase:** una app web para gestionar una campaña de Warhammer 40K en tiempo real, con mapa galáctico, facciones, recursos, unidades, edificios, tecnología, comercio y reportes de batalla.
 
 **Puntos clave para decir en el video:**
 
-- No es un simulador automatico de combate.
+- No es un simulador automático de combate.
 - Las batallas se juegan fuera de la app, en mesa o en la vida real.
-- La app gestiona el estado persistente de la campana.
+- La app gestiona el estado persistente de la campaña.
 - Todo lo importante lo valida el backend.
-- La interfaz esta pensada como videojuego tactico: mapa primero, paneles, colas, tiempos y recursos.
+- La interfaz está pensada como videojuego táctico: mapa primero, paneles, colas, tiempos y recursos.
 
-**Que ensenar en pantalla:**
+**Qué enseñar en pantalla:**
 
 - Login.
-- Mapa galactico.
+- Mapa galáctico.
 - Panel de un sistema.
 - Recursos superiores.
 - Edificios.
-- Tecnologia.
+- Tecnología.
 - Comercio.
 
 \newpage
@@ -40,7 +40,7 @@ colorlinks: true
 - Next.js + React + TypeScript.
 - Tailwind CSS.
 - Componentes UI locales.
-- PixiJS para el mapa galactico.
+- PixiJS para el mapa galáctico.
 - Zustand para estado local de UI/mapa.
 - TanStack Query para estado de servidor.
 
@@ -69,13 +69,13 @@ instrucciones_rol_40k.md
 
 \newpage
 
-# 3. Como Arrancar En Local
+# 3. Cómo Arrancar En Local
 
 **Requisitos**
 
 - Docker Desktop instalado y abierto.
 - Node.js instalado.
-- Estar en la raiz del proyecto.
+- Estar en la raíz del proyecto.
 
 ```bash
 cd "c:\Users\soyun\Desktop\rol 40k"
@@ -135,7 +135,7 @@ Rutas Next.js: home, login y admin.
 src/domain
 ```
 
-Tipos centrales de campana. Si una entidad cambia, normalmente empieza aqui.
+Tipos centrales de campaña. Si una entidad cambia, normalmente empieza aquí.
 
 ```text
 src/features
@@ -146,8 +146,8 @@ Cada feature tiene su carpeta:
 - `campaign`: shell principal, snapshot, paneles generales.
 - `galaxy-map`: mapa PixiJS.
 - `movement`: rutas, pathfinding y RPC de movimiento.
-- `buildings`: construccion, edificios, reclutamiento y reabastecimiento.
-- `technology`: arbol tecnologico.
+- `buildings`: construcción, edificios, reclutamiento y reabastecimiento.
+- `technology`: árbol tecnológico.
 - `trade`: mercader y comercio estelar.
 - `battle-reports`: reportes de batalla.
 - `admin`: herramientas admin.
@@ -168,7 +168,7 @@ Fallback visual de desarrollo. No es fuente de verdad.
 supabase
 ```
 
-Migraciones, seed, configuracion local y cron de produccion.
+Migraciones, seed, configuración local y cron de producción.
 
 \newpage
 
@@ -196,7 +196,7 @@ Este archivo:
 
 **Mutaciones**
 
-El frontend no modifica tablas criticas directamente. Llama RPCs:
+El frontend no modifica tablas críticas directamente. Llama RPCs:
 
 ```text
 create_movement_order(...)
@@ -223,27 +223,27 @@ queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] })
 
 **Tiempo real**
 
-- No hay turnos estrategicos.
-- Movimiento, reclutamiento, construccion, tecnologia y bloqueos funcionan con timestamps.
+- No hay turnos estratégicos.
+- Movimiento, reclutamiento, construcción, tecnología y bloqueos funcionan con timestamps.
 - Los resolvers backend completan colas vencidas.
 
 **Unidades**
 
 - Las unidades son `campaign_units`.
-- No hay ejercitos abstractos como entidad jugable principal.
+- No hay ejércitos abstractos como entidad jugable principal.
 - Cada unidad tiene:
   - miniaturas actuales: `quantity`;
-  - tamano completo: `startingQuantity`;
+  - tamaño completo: `startingQuantity`;
   - heridas agregadas: `woundsTaken`;
   - estado: `ready`, `moving`, `in_war`, `recovering`, etc.
 - Las unidades no se dividen al mover.
 
 **Movimiento**
 
-- Seleccionas sistema.
+- Selecciónas sistema.
 - Pulsas mover.
-- Seleccionas unidades completas.
-- Trazas ruta optima o manual.
+- Selecciónas unidades completas.
+- Trazas ruta óptima o manual.
 - Pagas Uridium.
 - Puedes cancelar movimiento con 50% de reembolso.
 
@@ -252,12 +252,12 @@ queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] })
 - Se juegan fuera de la app.
 - El sistema queda bloqueado.
 - Se reportan supervivientes y heridas.
-- Si reportes coinciden, se resuelve automaticamente.
+- Si reportes coinciden, se resuelve automáticamente.
 - Si no, decide admin.
 
 \newpage
 
-# 7. Recursos, Edificios Y Produccion
+# 7. Recursos, Edificios Y Producción
 
 **Recursos visibles**
 
@@ -268,9 +268,9 @@ queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] })
 - Material Industrial.
 - Uridium.
 
-**Componentes tecnologicos**
+**Componentes tecnológicos**
 
-- Solo se ven dentro del arbol tecnologico.
+- Solo se ven dentro del árbol tecnológico.
 - No se producen en planetas.
 
 **Edificios**
@@ -279,7 +279,7 @@ queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] })
 - Capitales: 6 slots.
 - Resto: 3 slots.
 - No se puede construir mas de un edificio del mismo tipo por planeta.
-- Produccion diaria viene de edificios activos.
+- Producción diaria viene de edificios activos.
 
 **Edificios militares**
 
@@ -299,16 +299,16 @@ Desde ellos se recluta y se reabastecen unidades compatibles.
 
 \newpage
 
-# 8. Comercio Y Tecnologia
+# 8. Comercio Y Tecnología
 
 **Comercio**
 
-Requiere Camara de Comercio activa.
+Requiere Cámara de Comercio activa.
 
 **Mercader**
 
 - Compra/vende suministro, mineral, material industrial y Uridium.
-- No comercia Honor ni componentes tecnologicos.
+- No comercia Honor ni componentes tecnológicos.
 - Vende al doble.
 - Compra a mitad de valor.
 
@@ -325,12 +325,12 @@ Requiere Camara de Comercio activa.
 - Aceptar oferta solo valida coste del aceptante.
 - Cancelar oferta devuelve reserva.
 
-**Tecnologia**
+**Tecnología**
 
-- Arbol comun `common-v1`.
-- Progreso independiente por faccion.
+- Árbol común `common-v1`.
+- Progreso independiente por facción.
 - Desbloquea unidades, edificios y bonos.
-- Solo una investigacion activa por faccion.
+- Solo una investigación activa por facción.
 
 \newpage
 
@@ -346,7 +346,7 @@ supabase/production-cron.sql
 
 **Regla de oro:** si cambia el esquema, crear una migracion nueva.
 
-**No editar produccion a mano salvo urgencia.**
+**No editar producción a mano salvo urgencia.**
 
 **Seed**
 
@@ -360,7 +360,7 @@ supabase/production-cron.sql
 - unidades;
 - movimientos;
 - conflictos;
-- tecnologias;
+- tecnologías;
 - ofertas de comercio demo.
 
 **Supabase Studio**
@@ -373,8 +373,8 @@ http://127.0.0.1:54323
 
 **Cuando cambiar seed**
 
-- Si cambia el estado inicial de campana.
-- Si se anaden nuevas facciones, sistemas o plantillas.
+- Si cambia el estado inicial de campaña.
+- Si se añaden nuevas facciones, sistemas o plantillas.
 - Si una feature necesita datos demo.
 
 \newpage
@@ -391,7 +391,7 @@ git checkout -b feature/nombre-corto
 
 **Durante el desarrollo**
 
-- Mantener cambios pequenos y coherentes.
+- Mantener cambios pequeños y coherentes.
 - Si se toca backend, crear migracion.
 - Si se toca contrato de datos, actualizar tipos y mapper.
 - Si se toca gameplay, actualizar `instrucciones_rol_40k.md`.
@@ -428,7 +428,7 @@ Crear PR hacia `main`.
 **Si cambio UI**
 
 - Revisar desktop.
-- Revisar movil.
+- Revisar móvil.
 - Revisar iPhone Safari si hay paneles o scroll.
 - Evitar modales anidados raros.
 
@@ -465,10 +465,10 @@ npm run build
 
 # 12. Guion Rapido Para El Video
 
-1. "Este proyecto es una campana 40K persistente en tiempo real."
+1. "Este proyecto es una campaña 40K persistente en tiempo real."
 2. "La app no resuelve combates; registra mapa, recursos, tropas y resultados."
-3. "El frontend esta en Next/React y el backend en Supabase/Postgres."
-4. "El mapa usa PixiJS y se alimenta de un snapshot de campana."
+3. "El frontend está en Next/React y el backend en Supabase/Postgres."
+4. "El mapa usa PixiJS y se alimenta de un snapshot de campaña."
 5. "Toda mutacion importante va por RPC, no por updates directos."
 6. "Las features viven separadas en `src/features`."
 7. "La base se controla con migraciones y seed."
@@ -478,5 +478,5 @@ npm run build
 
 **Cierre recomendado**
 
-"La prioridad al colaborar aqui es no romper el contrato entre reglas de campana, base de datos y UI. Si cambia una regla, debe cambiar backend, frontend, seed y documentacion juntos."
+"La prioridad al colaborar aquí es no romper el contrato entre reglas de campaña, base de datos y UI. Si cambia una regla, debe cambiar backend, frontend, seed y documentacion juntos."
 

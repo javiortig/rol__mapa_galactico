@@ -82,11 +82,11 @@ Si aparece un error de refresh token después de resetear Supabase, entrar de nu
 
 ---
 
-## Publicacion web de esta version
+## Publicación web de esta versión
 
-La primera publicacion se hara como campana privada en **Vercel + Supabase Cloud**, usando inicialmente la URL generada por Vercel.
+La primera publicación se hará como campaña privada en **Vercel + Supabase Cloud**, usando inicialmente la URL generada por Vercel.
 
-Flujo de publicacion:
+Flujo de publicación:
 
 ```bash
 npm run deploy:check
@@ -94,7 +94,7 @@ npx supabase link
 npm run db:push:prod
 ```
 
-Despues de aplicar migraciones y seed en Supabase Cloud:
+Después de aplicar migraciones y seed en Supabase Cloud:
 
 - Sembrar usuarios con `npm run db:seed:users` usando `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` del proyecto cloud.
 - Ejecutar el archivo `supabase/production-cron.sql` en el SQL Editor de Supabase Cloud.
@@ -116,7 +116,7 @@ $env:SUPABASE_SERVICE_ROLE_KEY="..."
 npm run db:seed:users
 ```
 
-En produccion `NEXT_PUBLIC_ALLOW_MOCK_FALLBACK=false` es obligatorio para que la web no muestre datos mock si Supabase falla o si no hay sesion.
+En producción `NEXT_PUBLIC_ALLOW_MOCK_FALLBACK=false` es obligatorio para que la web no muestre datos mock si Supabase falla o si no hay sesión.
 
 Configurar en Supabase Auth:
 
@@ -124,104 +124,104 @@ Configurar en Supabase Auth:
 - Redirect URL de desarrollo: `http://localhost:3000/**`.
 - Redirect URL de previews Vercel si se usan ramas de preview.
 
-La version movil debe ser completamente utilizable: mapa tactil, panel de sistema como hoja inferior, barra de mando inferior, modales a pantalla completa y controles sin depender de hover.
+La versión móvil debe ser completamente utilizable: mapa táctil, panel de sistema como hoja inferior, barra de mando inferior, modales a pantalla completa y controles sin depender de hover.
 
-Navegacion movil actual:
+Navegación móvil actual:
 
-- La campana entra en modo mapa primero: no hay sistema seleccionado al cargar.
+- La campaña entra en modo mapa primero: no hay sistema seleccionado al cargar.
 - Tocar una estrella abre la hoja del sistema; cerrar con X vuelve al mapa libre.
-- La barra de recursos superior debe caber completa, con icono y numero compacto para los 6 recursos visibles: Suministro, Mineral, Honor, Oro, Material Industrial y Uridium.
-- El movimiento movil funciona en dos fases: seleccion de unidades desde el sistema y trazado de ruta en el mapa.
+- La barra de recursos superior debe caber completa, con icono y número compacto para los 6 recursos visibles: Suministro, Mineral, Honor, Oro, Material Industrial y Uridium.
+- El movimiento móvil funciona en dos fases: selección de unidades desde el sistema y trazado de ruta en el mapa.
 - Al trazar ruta, el panel de sistema se cierra y queda una barra inferior con coste de Uridium, tiempo, cancelar, deshacer, reiniciar y confirmar.
-- Tecnologia abre una constelacion radial simple a pantalla completa con nucleo central de faccion, circulos pequenos con iconos Lucide y ramas desde el centro; no abre con nodo seleccionado y tocar un nodo abre el detalle como drawer inferior.
-- Reclutamiento, reportes, movimiento y tecnologia usan paneles con scroll tactil real compatible con iPhone Safari y Android Chrome.
-- Cualquier cambio de UI movil debe probarse en iPhone Safari y Android Chrome, verificando que los paneles scrollean hasta el final y que los botones principales no quedan bajo las barras del navegador.
+- Tecnología abre una constelación radial simple a pantalla completa con núcleo central de facción, círculos pequeños con iconos Lucide y ramas desde el centro; no abre con nodo seleccionado y tocar un nodo abre el detalle como drawer inferior.
+- Reclutamiento, reportes, movimiento y tecnología usan paneles con scroll táctil real compatible con iPhone Safari y Android Chrome.
+- Cualquier cambio de UI móvil debe probarse en iPhone Safari y Android Chrome, verificando que los paneles scrollean hasta el final y que los botones principales no quedan bajo las barras del navegador.
 
 ---
 
 ## Estado actual implementado para agentes IA
 
-Ultima auditoria del documento: 2026-06-10. Esta seccion consolida el estado actual para que otro agente pueda orientarse rapido.
+Última auditoría del documento: 2026-06-10. Esta sección consolida el estado actual para que otro agente pueda orientarse rápido.
 
-Estado tecnico actual:
+Estado técnico actual:
 
 - Proyecto Next.js + React + TypeScript con App Router.
-- Mapa galactico WebGL en PixiJS.
+- Mapa galáctico WebGL en PixiJS.
 - UI con Tailwind CSS y componentes locales.
 - Estado local de mapa/UI con Zustand.
 - Server state con TanStack Query.
 - Backend autoritativo en Supabase/Postgres/Auth/RLS/RPC.
-- Supabase local para desarrollo y Supabase Cloud + Vercel para produccion.
-- Mocks siguen existiendo como fallback de desarrollo, pero produccion debe usar `NEXT_PUBLIC_ALLOW_MOCK_FALLBACK=false`.
+- Supabase local para desarrollo y Supabase Cloud + Vercel para producción.
+- Mocks siguen existiendo como fallback de desarrollo, pero producción debe usar `NEXT_PUBLIC_ALLOW_MOCK_FALLBACK=false`.
 
 Estado jugable actual:
 
-- Campana en tiempo real, sin turnos estrategicos.
-- Facciones jugables finales importadas desde `data/11th40kPoints.txt`: Legiones Daemonicas, Cultos Genestealer, Space Marines, Adeptus Custodes y Necrones.
+- Campaña en tiempo real, sin turnos estratégicos.
+- Facciones jugables finales importadas desde `data/11th40kPoints.txt`: Legiones Daemónicas, Cultos Genestealer, Space Marines, Adeptus Custodes y Necrones.
 - Facciones narrativas de administrador: Orcos y Tiranidos. No tienen capital, usuario de jugador, recursos ni tropas iniciales; se usan para incursiones, control narrativo y misiones temporales.
-- Agentes del Imperium, Aeldari y Astra Militarum no forman parte de esta campana final.
-- `Astra Militarum` ya no es faccion jugable; `Adeptus Custodes` ocupa su hueco de campana en `kharon-prime`.
-- El catalogo final de unidades se genera con `npm run units:generate`; importa 333 hojas de unidad reales de 11a edicion y valida que cada bloque coincide con `NUMBER OF UNITS`.
-- Los costes variables oficiales MFM de 11a edicion se generan con `npm run units:generate-options` desde `https://mfm.warhammer-community.com/en/` y se guardan en `data/11th-unit-cost-options.json`. Este archivo anade tamanos legales, recargos por copia y extras pagados sin modificar `data/11th40kPoints.txt`.
-- El balance de costes y produccion vive en `data/balance/faction-balance.json`; se audita con `docs/generated/faction-balance-report.md` y se valida con `npm run balance:validate`.
-- Capital + adyacente neutral suman 16 puntos/dia potenciales en recursos de reclutamiento; Material Industrial y Uridium tienen economia separada. Solo `nexus-aster` y `goregate` tienen Oro natural.
-- Los arboles de tropas por faccion se definen de forma declarativa en `data/technology/faction-troop-trees.json` y se validan con `npm run tech:validate-troops`.
-- Produccion diaria por tick temporal configurable, calculada desde edificios activos.
-- Movimiento, reclutamiento e investigacion funcionan por timestamps y resolvers backend/lazy processing.
-- Unidades jugables son `campaign_units`, no ejercitos abstractos.
+- Agentes del Imperium, Aeldari y Astra Militarum no forman parte de esta campaña final.
+- `Astra Militarum` ya no es facción jugable; `Adeptus Custodes` ocupa su hueco de campaña en `kharon-prime`.
+- El catálogo final de unidades se genera con `npm run units:generate`; importa 333 hojas de unidad reales de 11.ª edición y valida que cada bloque coincide con `NUMBER OF UNITS`.
+- Los costes variables oficiales MFM de 11.ª edición se generan con `npm run units:generate-options` desde `https://mfm.warhammer-community.com/en/` y se guardan en `data/11th-unit-cost-options.json`. Este archivo anade tamaños legales, recargos por copia y extras pagados sin modificar `data/11th40kPoints.txt`.
+- El balance de costes y producción vive en `data/balance/faction-balance.json`; se audita con `docs/generated/faction-balance-report.md` y se valida con `npm run balance:validate`.
+- Capital + adyacente neutral suman 16 puntos/día potenciales en recursos de reclutamiento; Material Industrial y Uridium tienen economía separada. Solo `nexus-aster` y `goregate` tienen Oro natural.
+- Los árboles de tropas por facción se definen de forma declarativa en `data/technology/faction-troop-trees.json` y se validan con `npm run tech:validate-troops`.
+- Producción diaria por tick temporal configurable, calculada desde edificios activos.
+- Movimiento, reclutamiento e investigación funcionan por timestamps y resolvers backend/lazy processing.
+- Unidades jugables son `campaign_units`, no ejércitos abstractos.
 - Las unidades tienen miniaturas actuales, miniaturas iniciales y heridas agregadas; no pueden separarse al mover.
-- Las unidades tienen hasta dos `unit_keywords` Warhammer en espanol: `Infanteria`, `Caracter`, `Vehiculo`, `Bestia`, `Montado`, `Aeronave` o `Fortificacion`; `unit_type` queda como legacy tecnico.
+- Las unidades tienen hasta dos `unit_keywords` Warhammer en espanol: `Infanteria`, `Caracter`, `Vehiculo`, `Bestia`, `Montado`, `Aeronave` o `Fortificacion`; `unit_type` queda como legacy técnico.
 - Las unidades con keyword `Caracter` usan `experience` como nivel directo `1..10`, con rangos militares y slots de reliquia por nivel.
-- Las reliquias v1 son narrativas: se guardan en Santuarios de Reliquias, se equipan a Caracteres veteranos y no aplican bonos automaticos.
-- Construccion planetaria con slots por sistema: 6 en capitales y 3 en el resto.
-- Reclutamiento desde edificios militares activos, no desde un boton global de capital.
-- Reclutamiento usa `unit_templates`, costes, tiempos, cola, edificios compatibles y validacion tecnologica.
+- Las reliquias v1 son narrativas: se guardan en Santuarios de Reliquias, se equipan a Caracteres veteranos y no aplican bonos automáticos.
+- Construcción planetaria con slots por sistema: 6 en capitales y 3 en el resto.
+- Reclutamiento desde edificios militares activos, no desde un botón global de capital.
+- Reclutamiento usa `unit_templates`, costes, tiempos, cola, edificios compatibles y validación tecnológica.
 - El admin puede alternar el perfil global de tiempos desde `/admin`: `Testeo` para pruebas cortas y `Campaña` para duraciones reales.
-- Las unidades importadas quedan inicialmente bloqueadas (`is_available = false`) hasta que los arboles tecnologicos por faccion las asignen a nodos concretos.
-- Reabastecimiento completo de unidades danadas desde edificios militares compatibles a mitad del coste completo de la unidad.
+- Las unidades importadas quedan inicialmente bloqueadas (`is_available = false`) hasta que los árboles tecnológicos por facción las asignen a nodos concretos.
+- Reabastecimiento completo de unidades dañadas desde edificios militares compatibles a mitad del coste completo de la unidad.
 - Cancelar reclutamiento, reabastecimiento o movimiento devuelve el 50% de los recursos gastados, redondeando hacia arriba.
-- Arbol tecnologico comun `common-v1` con progreso independiente por faccion. Incluye rama `Progreso` funcional, rama `Inteligencia` visible pero bloqueada como contenido futuro y tecnologias comunes.
-- Los arboles militares especificos usan la convencion `troops-{faction_slug}-v1`. Cada jugador solo ve/investiga `common-v1` y el arbol militar de su faccion; admin puede inspeccionar facciones desde el selector del arbol.
-- Las facciones objetivo para arboles de tropas son Legiones Daemonicas, Adeptus Custodes, Space Marines, Cultos Genestealer y Necrones.
+- Árbol tecnológico común `common-v1` con progreso independiente por facción. Incluye rama `Progreso` funcional, rama `Inteligencia` visible pero bloqueada como contenido futuro y tecnologías comunes.
+- Los árboles militares específicos usan la convención `troops-{faction_slug}-v1`. Cada jugador solo ve/investiga `common-v1` y el árbol militar de su facción; admin puede inspeccionar facciones desde el selector del árbol.
+- Las facciones objetivo para árboles de tropas son Legiones Daemónicas, Adeptus Custodes, Space Marines, Cultos Genestealer y Necrones.
 - Oro es un recurso principal visible en la barra superior y se usa sobre todo para comercio.
-- Material Industrial es un recurso visible y comerciable usado principalmente para construccion.
-- Componentes tecnologicos son un recurso especial del arbol tecnologico; no aparecen en la barra superior y no se producen en planetas ni por edificios de produccion.
+- Material Industrial es un recurso visible y comerciable usado principalmente para construcción.
+- Componentes tecnológicos son un recurso especial del árbol tecnológico; no aparecen en la barra superior y no se producen en planetas ni por edificios de producción.
 - Honor sustituye a Piedra ancestral como recurso especial visible; las columnas SQL legacy `ancestral_stone` pueden existir temporalmente solo por compatibilidad de migraciones.
-- El panel de mando operativo tiene entrada `Eventos`, no `Comercio` ni `Recursos`; Comercio se abre desde una `Camara de Comercio` activa.
-- El boton `Operaciones` abre avisos pendientes: permisos de paso/estancia, batallas pendientes y reportes pendientes, con contador de disponibilidad de batalla de la ventana vigente de 33 dias.
+- El panel de mando operativo tiene entrada `Eventos`, no `Comercio` ni `Recursos`; Comercio se abre desde una `Cámara de Comercio` activa.
+- El botón `Operaciones` abre avisos pendientes: permisos de paso/estancia, batallas pendientes y reportes pendientes, con contador de disponibilidad de batalla de la ventana vigente de 33 días.
 - Batallas se juegan fuera de la app; la web gestiona conflicto, bloqueo, reportes, supervivientes, heridas restantes y control final.
-- Facciones narrativas de admin: `Orcos` y `Tiranidos` son amenazas no jugables (`is_narrative = true`), sin capital, usuarios, recursos ni tropas iniciales. Desde `/admin`, el admin puede programar incursiones narrativas con descripcion publica y dias hasta llegada, darles control inmediato de sistemas conquistables o crear misiones temporales atacables.
-- Comercio estelar usa reserva de recursos: publicar una oferta inmoviliza el recurso/oro y su comision; al aceptar solo se valida el coste del aceptante.
+- Facciones narrativas de admin: `Orcos` y `Tiranidos` son amenazas no jugables (`is_narrative = true`), sin capital, usuarios, recursos ni tropas iniciales. Desde `/admin`, el admin puede programar incursiones narrativas con descripción pública y días hasta llegada, darles control inmediato de sistemas conquistables o crear misiones temporales atacables.
+- Comercio estelar usa reserva de recursos: publicar una oferta inmoviliza el recurso/oro y su comisión; al aceptar solo se valida el coste del aceptante.
 - Sistemas gaseosos compartidos: `Nexus Aster` y `Ashen Road` son no conquistables, no generan batalla al llegar y permiten coexistencia de facciones.
 
 Estado visual actual:
 
 - El mapa inicial tiene 30 sistemas, capitales en bordes del grafo, territorios iniciales contiguos, movimientos iniciales y 3 conflictos de prueba.
-- Las aristas no muestran numeros por defecto; el coste de Uridium aparece en el flujo de movimiento.
-- Si una arista no esta bloqueada y une dos sistemas controlados por la misma faccion, se colorea con el color de esa faccion.
-- La animacion direccional de aristas se reserva solo para movimientos reales visibles para el usuario o admin.
-- Capitales no tienen animacion ni marcador especial en el mapa; se distinguen en datos y panel.
-- Sistemas con `specialObjects` publicos muestran un pequeno diamante/marcador bajo la estrella.
-- La barra superior de recursos esta centrada y compacta; en movil muestra icono + numero.
+- Las aristas no muestran números por defecto; el coste de Uridium aparece en el flujo de movimiento.
+- Si una arista no está bloqueada y une dos sistemas controlados por la misma facción, se colorea con el color de esa facción.
+- La animación direccional de aristas se reserva solo para movimientos reales visibles para el usuario o admin.
+- Capitales no tienen animación ni marcador especial en el mapa; se distinguen en datos y panel.
+- Sistemas con `specialObjects` públicos muestran un pequeño diamante/marcador bajo la estrella.
+- La barra superior de recursos está centrada y compacta; en móvil muestra icono + número.
 
-Estado movil actual:
+Estado móvil actual:
 
-- En movil la experiencia es mapa primero.
+- En móvil la experiencia es mapa primero.
 - El panel de sistema no se abre al cargar; se abre solo al tocar una estrella.
-- Al tocar una estrella en movil se aplica un bloqueo tactil muy corto para evitar tap fantasma/click-through sobre botones del panel recien abierto.
-- El dock inferior se oculta cuando hay panel de sistema, movimiento, reclutamiento, tecnologia o reporte abierto.
+- Al tocar una estrella en móvil se aplica un bloqueo táctil muy corto para evitar tap fantasma/click-through sobre botones del panel recién abierto.
+- El dock inferior se oculta cuando hay panel de sistema, movimiento, reclutamiento, tecnología o reporte abierto.
 - La app usa `--app-height` calculado con `visualViewport` para Safari iOS.
-- Paneles largos usan scroll tactil real mediante clase `mobile-scroll`.
-- El arbol tecnologico usa una constelacion radial simple con nucleo central de faccion, ramas desde el centro, circulos pequenos con iconos Lucide, sin nodo seleccionado al abrir y con scroll nativo para mantener fluidez.
+- Paneles largos usan scroll táctil real mediante clase `mobile-scroll`.
+- El árbol tecnológico usa una constelación radial simple con núcleo central de facción, ramas desde el centro, círculos pequeños con iconos Lucide, sin nodo seleccionado al abrir y con scroll nativo para mantener fluidez.
 
 Archivos clave actuales:
 
 - `src/features/campaign/components/campaign-shell.tsx`: shell principal, recursos, panel sistema, movimiento y reportes.
 - `src/features/galaxy-map/components/galaxy-map.tsx`: render PixiJS del mapa, rutas, sistemas, marcadores, movimientos y efectos.
-- `src/features/buildings/components/construction-modal.tsx`: construccion de edificios.
-- `src/features/buildings/components/building-action-modal.tsx`: acciones de edificio, reclutamiento, curacion, cola y placeholders.
+- `src/features/buildings/components/construction-modal.tsx`: construcción de edificios.
+- `src/features/buildings/components/building-action-modal.tsx`: acciónes de edificio, reclutamiento, curación, cola y placeholders.
 - `src/features/recruitment/components/recruitment-modal.tsx`: componente legacy/fallback; el flujo principal actual recluta desde edificios.
-- `src/features/technology/components/technology-tree-modal.tsx`: constelacion tecnologica radial simple con nucleo visual de faccion y ramas de investigacion.
+- `src/features/technology/components/technology-tree-modal.tsx`: constelación tecnológica radial simple con núcleo visual de facción y ramas de investigación.
 - `src/lib/use-media-query.ts`: media queries cliente y `useViewportHeightCssVar`.
 - `supabase/migrations`: esquema/RLS/RPCs.
 - `supabase/seed.sql`: estado inicial jugable.
@@ -236,7 +236,7 @@ npm run lint
 npm run build
 ```
 
-Para cambios moviles, probar ademas en Android Chrome e iPhone Safari. En iPhone hay que validar especificamente scroll hasta el final en sistema, reclutamiento, movimiento, reportes y tecnologia.
+Para cambios móviles, probar además en Android Chrome e iPhone Safari. En iPhone hay que validar específicamente scroll hasta el final en sistema, reclutamiento, movimiento, reportes y tecnología.
 
 ---
 
@@ -279,17 +279,17 @@ Crear una aplicación web privada con:
    - Material Industrial.
    - Uridium.
    - Componentes tecnológicos.
-7. **Produccion de recursos por edificios activos en sistemas controlados.**
+7. **Producción de recursos por edificios activos en sistemas controlados.**
 8. **Movimiento de tropas entre sistemas.**
-9. **Construccion de edificios con slots y cola temporizada.**
+9. **Construcción de edificios con slots y cola temporizada.**
 10. **Reclutamiento de tropas desde edificios militares con cola temporizada estilo Grepolis.**
 11. **Tropas reclutadas aparecen en el sistema del edificio.**
-12. **Arbol tecnologico por faccion**, con desbloqueo de unidades, edificios y bonos.
-13. **Misiones narrativas asociadas a sistemas**, con imagen del mapa de mision y explicacion.
+12. **Árbol tecnológico por facción**, con desbloqueo de unidades, edificios y bonos.
+13. **Misiones narrativas asociadas a sistemas**, con imagen del mapa de misión y explicacion.
 14. **Niebla de guerra para tropas y movimientos.**
 15. **Panel de admin para resolver resultados, editar mapas, recursos, tropas, experiencia y bloqueos.**
-16. **Backend autoritativo**: las reglas criticas nunca deben depender solo del frontend.
-17. **Cronos gestionados por backend** para produccion, construccion, movimiento, reclutamiento, curacion e investigacion.
+16. **Backend autoritativo**: las reglas críticas nunca deben depender solo del frontend.
+17. **Cronos gestionados por backend** para producción, construcción, movimiento, reclutamiento, curación e investigación.
 
 ---
 
@@ -429,7 +429,7 @@ Los sistemas NO se representarán como planetas grandes. Se representarán como 
 #### Capital
 
 - En el mapa se representa visualmente como cualquier otro sistema controlado.
-- La condicion de capital se mantiene en datos y paneles para reclutamiento, pero no debe anadir animaciones, iconos o marcadores especiales sobre el nodo.
+- La condición de capital se mantiene en datos y paneles para reclutamiento, pero no debe añadir animaciones, iconos o marcadores especiales sobre el nodo.
 
 #### Sistema en guerra
 
@@ -449,7 +449,7 @@ Los sistemas NO se representarán como planetas grandes. Se representarán como 
 - Icono pequeño flotante.
 - Brillo diferenciado, por ejemplo violeta para Honor o dorado/violeta para reliquia.
 
-Nota implementada: en el mapa actual, si un sistema tiene algun `specialObjects` publico, PixiJS dibuja un pequeno diamante bajo la estrella. Ese diamante significa objeto especial, reliquia, anomalia o punto narrativo publico; no representa control, capital, bloqueo ni tropas.
+Nota implementada: en el mapa actual, si un sistema tiene algún `specialObjects` público, PixiJS dibuja un pequeño diamante bajo la estrella. Ese diamante significa objeto especial, reliquia, anomalía o punto narrativo público; no representa control, capital, bloqueo ni tropas.
 
 ### 3.4 Rutas/aristas
 
@@ -459,14 +459,14 @@ Las rutas entre sistemas se dibujan con PixiJS:
 
 - Línea azul/cian tenue.
 - Ligero glow.
-- Si la ruta no esta bloqueada y une dos sistemas controlados por la misma faccion, se dibuja con el color de esa faccion.
-- El color de bloqueo siempre tiene prioridad sobre el color de faccion.
+- Si la ruta no está bloqueada y une dos sistemas controlados por la misma facción, se dibuja con el color de esa facción.
+- El color de bloqueo siempre tiene prioridad sobre el color de facción.
 
 #### Ruta de mayor coste
 
 - Mantiene el mismo grosor base que el resto de rutas.
-- No muestra numeros de coste de forma permanente.
-- El coste de Uridium aparece solo cuando el jugador esta preparando un movimiento o inspecciona la ruta desde una UI especifica.
+- No muestra números de coste de forma permanente.
+- El coste de Uridium aparece solo cuando el jugador está preparando un movimiento o inspecciona la ruta desde una UI especifica.
 
 #### Ruta bloqueada por evento
 
@@ -482,24 +482,24 @@ Las rutas entre sistemas se dibujan con PixiJS:
 
 - Pequeña partícula, icono o marcador viajando de origen a destino.
 - Solo visible para el jugador dueño de la tropa y admin, salvo que más adelante haya espionaje.
-- La animacion direccional se reserva exclusivamente para `movement_orders` reales en estado `moving` que el usuario tenga permiso de ver.
+- La animación direccional se reserva exclusivamente para `movement_orders` reales en estado `moving` que el usuario tenga permiso de ver.
 
 ### 3.5 Estado inicial del mapa
 
-El seed local inicial debe representar una campana viva, no un reparto aleatorio:
+El seed local inicial debe representar una campaña viva, no un reparto aleatorio:
 
 - El mapa empieza con 30 sistemas.
-- Cada faccion tiene capital en un borde dificil de alcanzar del grafo.
-- Cada faccion controla 3 sistemas contiguos: capital, retaguardia y frontera.
+- Cada facción tiene capital en un borde difícil de alcanzar del grafo.
+- Cada facción controla 3 sistemas contiguos: capital, retaguardia y frontera.
 - El centro del grafo permanece neutral y disputado.
 - Existen corredores reconocibles desde cada capital hacia el centro.
 - Hay 3 conflictos iniciales en sistemas neutrales fronterizos:
   - Orcos contra Guardia Imperial en `azur-trench`.
   - Guardia de la Muerte contra Necrones en `ossuary-reach`.
   - Sombra del Emperador contra Culto Genestelar en `saint-veil`.
-- Los sistemas con conflicto inicial estan en estado `war`, bloqueados y pendientes de reporte de batalla fisica.
-- Cada faccion empieza con unidades en capital, unidades de frontera, fuerza movil y presencia en el conflicto que le corresponde.
-- Las ordenes de movimiento iniciales son visibles solo para la faccion propietaria y para admin.
+- Los sistemas con conflicto inicial están en estado `war`, bloqueados y pendientes de reporte de batalla fisica.
+- Cada facción empieza con unidades en capital, unidades de frontera, fuerza móvil y presencia en el conflicto que le corresponde.
+- Las órdenes de movimiento iniciales son visibles solo para la facción propietaria y para admin.
 
 ---
 
@@ -608,12 +608,12 @@ El panel de sistema debe mostrar la capacidad natural diaria del sistema desde `
 
 ### 4.3.1 Balance de producción inicial
 
-El mapa final usa capacidades explícitas, no generación determinista. El objetivo de apertura es que cada jugador pueda alcanzar un segundo sistema garantizado sin romper el equilibrio económico:
+El mapa final usa capacidades explícitas, no generación determinista. El objetivo de apertura es que cada jugador pueda alcanzar un segúndo sistema garantizado sin romper el equilibrio económico:
 
 - Cada jugador empieza controlando solo su capital.
-- El sistema adyacente directo empieza neutral y aporta parte de la economia inicial cuando se conquista, pero no empieza con edificios construidos.
+- El sistema adyacente directo empieza neutral y aporta parte de la economía inicial cuando se conquista, pero no empieza con edificios construidos.
 - Capital + adyacente suman `16 puntos/día` potenciales solo en recursos de reclutamiento: Suministro, Mineral, Honor y Oro.
-- Material Industrial y Uridium no cuentan para ese calculo de puntos Warhammer.
+- Material Industrial y Uridium no cuentan para ese cálculo de puntos Warhammer.
 - Capital y adyacente no tienen capacidad natural de Oro.
 - Las capitales tienen `5 Material Industrial/día` de capacidad natural y `0 Uridium/día`.
 - Los sistemas adyacentes tienen `0 Material Industrial/día` y `0.3 Uridium/día`.
@@ -671,7 +671,7 @@ Reglas de valor económico:
 
 #### Mercader
 
-El comercio no aparece como boton global del panel de mando operativo. Se abre al seleccionar una `Camara de Comercio` activa en un sistema propio.
+El comercio no aparece como botón global del panel de mando operativo. Se abre al seleccionar una `Cámara de Comercio` activa en un sistema propio.
 
 Al abrir comercio desde el edificio, la pestaña por defecto es `Mercader`.
 
@@ -681,7 +681,7 @@ El mercader:
 - Permite comprar y vender `supply`, `minerals`, `industrialMaterial` y `uridium`.
 - No comercia Honor ni Componentes tecnológicos.
 - Requiere que la facción tenga al menos una `Cámara de Comercio` activa.
-- Requiere tecnologia `Contactos Economicos` para operar.
+- Requiere tecnología `Contactos Económicos` para operar.
 - Vende recursos al doble de su valor por defecto.
 - Compra recursos a mitad de precio por defecto, redondeando hacia arriba.
 - Con `Tratos Preferentes`, vende a 1.5x y compra a 0.75x del valor.
@@ -703,17 +703,17 @@ El comercio entre jugadores usa ofertas abiertas de recurso contra Oro:
 - No se comercia Oro como recurso objetivo; Oro es la moneda.
 - No se comercian Honor ni Componentes tecnológicos.
 - Requiere que la facción tenga al menos una `Cámara de Comercio` activa.
-- Requiere tecnologia `Mercado Galactico`.
+- Requiere tecnología `Mercado Galactico`.
 - Cada transacción cobra una comisión del 30% del Oro de la oferta, redondeada hacia arriba.
 - Cada jugador paga su propia comisión en Oro.
-- Con `Aranceles Privilegiados`, la comision propia baja al 10%, minimo 1 Oro.
+- Con `Aranceles Privilegiados`, la comisión propia baja al 10%, mínimo 1 Oro.
 
 Regla vigente: el comercio estelar reserva recursos al publicar.
 
 - Oferta de compra: el creador reserva `gold_amount + fee_gold`.
 - Oferta de venta: el creador reserva `resource_amount` y `fee_gold`.
 - Al cancelar una oferta propia abierta, se devuelve toda la reserva.
-- Al aceptar, el aceptante paga su coste y su propia comision; el creador no vuelve a validar recursos porque ya los tenia reservados.
+- Al aceptar, el aceptante paga su coste y su propia comisión; el creador no vuelve a validar recursos porque ya los tenia reservados.
 - Cualquier texto anterior que diga que las ofertas no reservan recursos queda obsoleto.
 
 Texto legacy obsoleto: antes las ofertas no reservaban recursos; ya no debe implementarse asi.
@@ -838,7 +838,7 @@ Visualmente:
 Por ahora:
 
 - Un sistema con batalla pendiente queda bloqueado.
-- La duración estándar del bloqueo inicial de batalla en modo campana es de 14 dias (`conflict_block_duration_minutes = 20160`). En modo test se reduce para pruebas.
+- La duración estándar del bloqueo inicial de batalla en modo campaña es de 14 días (`conflict_block_duration_minutes = 20160`). En modo test se reduce para pruebas.
 - Durante el bloqueo no puede ser atacado.
 - Puede seguir mostrando su controlador públicamente.
 - El bloqueo puede mantenerse hasta que los jugadores participantes o el admin reporten el resultado.
@@ -916,7 +916,7 @@ El jugador puede ver:
 - Tropas propias estacionadas.
 - Ejércitos propios en el sistema.
 - Posibles movimientos.
-- Acciones disponibles.
+- Acciónes disponibles.
 - Si hay construcción/reclutamiento relacionado.
 
 ### 7.3 Si el sistema es enemigo
@@ -982,7 +982,7 @@ Catálogo inicial:
 
 El seed actual empieza sin edificios construidos en ningún sistema. Los slots existen desde el inicio, pero cada facción debe construir sus edificios.
 
-Costes actuales de construccion, todos pagados solo con Material Industrial:
+Costes actuales de construcción, todos pagados solo con Material Industrial:
 
 | Edificio | Coste |
 |---|---:|
@@ -1019,20 +1019,20 @@ Los iconos propios de edificios quedan pendientes para una iteración posterior;
 
 Los jugadores mueven unidades Warhammer concretas, no destacamentos abstractos.
 
-Una orden de movimiento puede incluir una o varias unidades propias que esten `ready`, pertenezcan a la misma faccion y esten en el mismo sistema de origen.
+Una orden de movimiento puede incluir una o varias unidades propias que esten `ready`, pertenezcan a la misma facción y esten en el mismo sistema de origen.
 
-Cada fila de `campaign_units` representa una unidad Warhammer persistente e indivisible. El campo `quantity` representa cuantas miniaturas actuales quedan vivas en esa unidad, `starting_quantity` representa su tamano completo y `wounds_taken` representa heridas agregadas en miniaturas supervivientes. Por ejemplo, una unidad de `Boyz` puede empezar como `10/10`, quedar `6/10` y `2 heridas` tras una batalla, pero no puede separarse en grupos hijos para moverse por otra ruta.
+Cada fila de `campaign_units` representa una unidad Warhammer persistente e indivisible. El campo `quantity` representa cuántas miniaturas actuales quedan vivas en esa unidad, `starting_quantity` representa su tamaño completo y `wounds_taken` representa heridas agregadas en miniaturas supervivientes. Por ejemplo, una unidad de `Boyz` puede empezar como `10/10`, quedar `6/10` y `2 heridas` tras una batalla, pero no puede separarse en grupos hijos para moverse por otra ruta.
 
-Cada unidad movible es una unidad real de faccion importada desde `data/11th40kPoints.txt`, por ejemplo `Custodian Guard`, `Shield-Captain`, `Caladius Grav-tank`, `Necron Warriors`, `Guardian Defenders`, `Intercessor Squad`, `Pink Horrors` o `Imperial Navy Breachers`.
+Cada unidad movible es una unidad real de facción importada desde `data/11th40kPoints.txt`, por ejemplo `Custodian Guard`, `Shield-Captain`, `Caladius Grav-tank`, `Necron Warriors`, `Guardian Defenders`, `Intercessor Squad`, `Pink Horrors` o `Imperial Navy Breachers`.
 
-El coste se paga con Uridium. El coste total de una orden es `coste de ruta * numero de unidades seleccionadas`; mover tres unidades por una ruta de coste 1 gasta 3 Uridium.
+El coste se paga con Uridium. El coste total de una orden es `coste de ruta * número de unidades seleccionadas`; mover tres unidades por una ruta de coste 1 gasta 3 Uridium.
 
 Por ahora no hay riesgos aleatorios en rutas. Algunas rutas simplemente pueden costar mas.
 
 Los tiempos se controlan con `campaign_settings.timing_mode` y el RPC admin `admin_set_campaign_timing_mode(target_mode)`.
 
 - `test`: 3 segundos por arista.
-- `campaign`: 3 dias por arista.
+- `campaign`: 3 días por arista.
 
 ### 8.2 Coste de movimiento
 
@@ -1053,14 +1053,14 @@ Ejemplos:
 | Ruta complicada | 3 Uridium |
 | Ruta bloqueada | No disponible |
 
-Cancelacion de movimiento:
+Cancelación de movimiento:
 
 - RPC: `cancel_movement_order(order_id)`.
-- Solo puede cancelar el propietario de la faccion o un admin.
+- Solo puede cancelar el propietario de la facción o un admin.
 - Solo se puede cancelar si la orden sigue en estado `moving` y `arrival_at` no ha vencido.
 - Al cancelar, las unidades vuelven completas al sistema de origen en estado `ready`.
 - Se devuelve el 50% del `uridium_cost`, redondeado hacia arriba.
-- El UI debe mostrar el reembolso previsto antes de confirmar la cancelacion.
+- El UI debe mostrar el reembolso previsto antes de confirmar la cancelación.
 
 ### 8.3 Flujo de interfaz para mover tropas
 
@@ -1101,16 +1101,16 @@ Selecciona unidades:
 [ ] Caladius Grav-tank - 1/1 miniaturas - 215 pts
 ```
 
-Primera version:
+Primera versión:
 
-- Seleccion multiple de unidades Warhammer concretas.
-- Cada unidad se selecciona completa; no se pueden mover miniaturas sueltas.
-- El panel debe mostrar el coste real total multiplicando el coste base de la ruta por el numero de unidades seleccionadas.
+- Selección multiple de unidades Warhammer concretas.
+- Cada unidad se seleccióna completa; no se pueden mover miniaturas sueltas.
+- El panel debe mostrar el coste real total multiplicando el coste base de la ruta por el número de unidades seleccionadas.
 - El backend rechaza cualquier `unit_selection.quantity` distinto al `campaign_units.quantity` actual.
 - Las filas `parent_unit_id` pueden existir como legacy, pero no se crean nuevas unidades hijas en el flujo actual.
 - Todas deben estar en el sistema origen.
 - Todas deben estar `ready`.
-- La accion de fusionar/reorganizar unidades queda oculta porque el sistema actual no crea separaciones futuras.
+- La acción de fusionar/reorganizar unidades queda oculta porque el sistema actual no crea separaciones futuras.
 
 #### Paso 3: seleccionar ruta
 
@@ -1122,9 +1122,9 @@ Al elegir una o mas unidades, el mapa entra en modo movimiento:
 - Muestra candado sobre sistemas bloqueados.
 - Muestra coste de Uridium en hover.
 - Muestra aviso si no hay Uridium suficiente.
-- Permite ruta optima y ruta manual.
+- Permite ruta óptima y ruta manual.
 
-Modo ruta optima:
+Modo ruta óptima:
 
 - Hover sobre destino dibuja la ruta mas barata por Dijkstra.
 - El coste total y tiempo estimado se muestran en la UI.
@@ -1150,12 +1150,12 @@ Origen: Kharon Prime
 Destino: Helios Drift
 Ruta: Kharon Prime -> Helios Drift
 Coste: 1 Uridium
-Llegada en modo test: 3 segundos. En modo campana depende del numero de aristas, a 3 dias por arista.
+Llegada en modo test: 3 segundos. En modo campaña depende del número de aristas, a 3 días por arista.
 
 Al llegar:
 - Si es propio: quedará estacionado.
 - Si es neutral: podrá iniciar conflicto/conquista.
-- Si es de otro jugador y se uso `Mover`: queda pendiente de permiso de paso/estancia del propietario. Si acepta, las tropas pueden atravesarlo o quedarse alli sin iniciar batalla.
+- Si es de otro jugador y se uso `Mover`: queda pendiente de permiso de paso/estancia del propietario. Si acepta, las tropas pueden atravesarlo o quedarse allí sin iniciar batalla.
 - Si se quiere combatir contra un sistema enemigo, debe usarse `Atacar`.
 
 [Confirmar movimiento]
@@ -1166,18 +1166,18 @@ Al llegar:
 
 El backend debe comprobar:
 
-- El usuario pertenece a la faccion.
+- El usuario pertenece a la facción.
 - Las unidades existen.
-- Las unidades pertenecen a la faccion.
-- Las unidades estan en el sistema origen.
-- Las unidades estan `ready`.
-- Las unidades no estan moviendose ni bloqueadas en guerra.
+- Las unidades pertenecen a la facción.
+- Las unidades están en el sistema origen.
+- Las unidades están `ready`.
+- Las unidades no están moviendose ni bloqueadas en guerra.
 - Todos los sistemas de la ruta existen.
 - La ruta es continua por aristas existentes.
-- Las aristas de la ruta no estan bloqueadas.
-- El sistema destino no esta en guerra ni bloqueado.
-- Si la ruta atraviesa o termina en sistemas controlados por otra faccion jugable, crea `movement_passage_requests` para cada propietario afectado y deja la orden en `pending_approval`.
-- La faccion tiene suficiente Uridium.
+- Las aristas de la ruta no están bloqueadas.
+- El sistema destino no está en guerra ni bloqueado.
+- Si la ruta atraviesa o termina en sistemas controlados por otra facción jugable, crea `movement_passage_requests` para cada propietario afectado y deja la orden en `pending_approval`.
+- La facción tiene suficiente Uridium.
 - El coste calculado por backend coincide.
 - No hay otra orden contradictoria.
 
@@ -1219,16 +1219,16 @@ Cuando `now() >= arrival_at`, backend procesa la llegada.
 - Queda bloqueado mientras haya batalla pendiente.
 - Se crea conflicto.
 - Las unidades atacantes quedan `in_war`.
-- Las unidades defensoras presentes en el sistema que estaban `ready` tambien pasan a `in_war`.
+- Las unidades defensoras presentes en el sistema que estaban `ready` también pasan a `in_war`.
 - Los participantes juegan la batalla en la vida real.
 - Los jugadores participantes o el admin reportan el resultado.
 
 ### 8.4.1 Coaliciones y refuerzos defensivos
 
-- La coalicion atacante solo puede reunirse antes de lanzar el ataque.
-- Durante esa fase previa (`battle_operations.status = assembling`), las facciones atacantes invitadas pueden mover tropas hasta el sistema de origen de la coalicion.
-- Cuando el ataque sale y pasa a `battle_operations.status = moving`, el bando atacante queda cerrado: no puede anadir tropas ni mover refuerzos hacia el conflicto.
-- Mientras el ataque esta en camino, el defensor puede invitar apoyos defensivos cercanos.
+- La coalición atacante solo puede reunirse antes de lanzar el ataque.
+- Durante esa fase previa (`battle_operations.status = assembling`), las facciones atacantes invitadas pueden mover tropas hasta el sistema de origen de la coalición.
+- Cuando el ataque sale y pasa a `battle_operations.status = moving`, el bando atacante queda cerrado: no puede añadir tropas ni mover refuerzos hacia el conflicto.
+- Mientras el ataque está en camino, el defensor puede invitar apoyos defensivos cercanos.
 - Los apoyos defensivos se validan contra `attack_arrival_at`: si `now() + duracion_ruta > attack_arrival_at`, el backend rechaza la orden.
 - Cuando el ataque llega, el plantel se congela. Los defensores tardios se cancelan y el conflicto queda pendiente de reporte.
 - Tras resolver la batalla, los apoyos supervivientes vuelven a su sistema de origen mediante `battle_return`; si el origen ya no es seguro o propio, quedan en `return_pending`.
@@ -1241,34 +1241,34 @@ Cuando exista un conflicto:
 
 - La batalla se juega fuera de la aplicación.
 - El informe debe indicar si fue `Jugada en mesa` o `Autoresolver`.
-- Existe un unico informe compartido por conflicto, visible para todos los participantes.
-- En batallas con coalicion o apoyos, participantes incluye tambien las facciones con unidades comprometidas activas en la batalla.
+- Existe un único informe compartido por conflicto, visible para todos los participantes.
+- En batallas con coalición o apoyos, participantes incluye también las facciones con unidades comprometidas activas en la batalla.
 - Cualquier jugador participante puede rellenar o editar el informe completo.
-- Cada edicion crea una nueva revision y borra las validaciones previas.
-- Cada jugador/faccion participante debe validar la revision actual.
+- Cada edición crea una nueva revision y borra las validaciónes previas.
+- Cada jugador/facción participante debe validar la revision actual.
 - Si un participante detecta un fallo, edita el informe y todos vuelven a validar.
-- El informe se aplica automaticamente cuando todos los participantes validan la misma revision.
+- El informe se aplica automáticamente cuando todos los participantes validan la misma revision.
 - El admin conserva herramientas para corregir o confirmar manualmente casos antiguos/excepcionales.
 - Librar una batalla no genera recursos; no debe haber recursos ganados/perdidos en el informe.
-- Los jugadores no eligen control final ni bloqueo posterior: el control queda en manos del vencedor y el bloqueo estandar es de 14 dias. Solo admin puede corregir esos valores si hace falta.
+- Los jugadores no eligen control final ni bloqueo posterior: el control queda en manos del vencedor y el bloqueo estándar es de 14 días. Solo admin puede corregir esos valores si hace falta.
 
 El reporte debe permitir registrar:
 
-- Modo de resolucion: mesa o autoresolver.
+- Modo de resolución: mesa o autoresolver.
 - Facción ganadora.
 - Empate o resultado sin ganador si procede.
 - Supervivientes por unidad, expresados como miniaturas restantes.
 - Bajas calculadas por backend a partir de los supervivientes reportados.
 - Heridas restantes por unidad superviviente.
-- Control final del sistema, derivado automaticamente del vencedor.
+- Control final del sistema, derivado automáticamente del vencedor.
 - Notas narrativas.
-- Duracion de bloqueo posterior: 14 dias por defecto, corregible por admin.
+- Duracion de bloqueo posterior: 14 días por defecto, corregible por admin.
 
 Al aplicar el resultado:
 
 - Las unidades con `0` supervivientes pasan a `destroyed`.
-- Las unidades de la faccion que conserva/controla el sistema quedan `ready` en el sistema.
-- Las unidades supervivientes que pierden el sistema se retiran automaticamente al sistema aliado mas cercano que no este bloqueado, en guerra ni recibiendo un ataque.
+- Las unidades de la facción que conserva/controla el sistema quedan `ready` en el sistema.
+- Las unidades supervivientes que pierden el sistema se retiran automáticamente al sistema aliado más cercano que no está bloqueado, en guerra ni recibiendo un ataque.
 - Si no hay ruta de retirada valida, quedan en estado `retreat_pending` para que el admin las coloque o resuelva narrativamente.
 
 ### 8.6 Visibilidad del movimiento
@@ -1290,7 +1290,7 @@ Los jugadores pueden gastar recursos para crear tropas desde edificios militares
 
 El reclutamiento tarda tiempo real, estilo Grepolis.
 
-Para test local, los tiempos de investigacion, construccion, reclutamiento y reabastecimiento son de 3 segundos. En modo campana, tecnologia escala por coste tecnologico, reclutamiento por puntos de unidad, construccion por coste de edificio y reabastecimiento usa la mitad del tiempo de reclutamiento.
+Para test local, los tiempos de investigación, construcción, reclutamiento y reabastecimiento son de 3 segundos. En modo campaña, tecnología escala por coste tecnológico, reclutamiento por puntos de unidad, construcción por coste de edificio y reabastecimiento usa la mitad del tiempo de reclutamiento.
 
 Al completarse, las tropas aparecen en el sistema donde está el edificio que inició el reclutamiento.
 
@@ -1314,7 +1314,7 @@ El panel del edificio militar muestra:
 
 - Recursos actuales.
 - Lista de unidades disponibles para ese edificio.
-- Selector de tamano legal de unidad si MFM define varias opciones.
+- Selector de tamaño legal de unidad si MFM define varias opciones.
 - Selector de extras de equipo pagados si MFM define wargear con coste.
 - Coste.
 - Puntos finales de la variante elegida.
@@ -1354,7 +1354,7 @@ Cada unidad debe tener:
 - Requisitos opcionales.
 - Edificio/categoría de reclutamiento compatible.
 - `recruitment_building_type` opcional para forzar un edificio concreto aunque la categoría general coincida. Las unidades `[Crucible]` usan `camara-leyendas`.
-- `unit_keywords` funcionales, maximo 2 por unidad:
+- `unit_keywords` funcionales, máximo 2 por unidad:
   - `Infanteria`
   - `Caracter`
   - `Vehiculo`
@@ -1370,15 +1370,15 @@ Cada unidad debe tener:
   - Otro.
 - Notas.
 
-`unit_keywords` se usa para validaciones nuevas como reliquias, Caracteres y futuros efectos. `unit_type` queda como campo legacy/derivado y `category` se mantiene como etiqueta visible y compatibilidad con datos anteriores.
+`unit_keywords` se usa para validaciónes nuevas como reliquias, Caracteres y futuros efectos. `unit_type` queda como campo legacy/derivado y `category` se mantiene como etiqueta visible y compatibilidad con datos anteriores.
 
-En el catalogo final importado desde `data/11th40kPoints.txt`, `category` se deriva de la linea `CharN`, de keywords reales BSData como `Battleline`/`Dedicated Transport` y de si la unidad viene de una fuente aliada. Se normaliza a: `Personaje`, `Linea de batalla`, `Transporte`, `Otras hojas de datos` o `Aliada`.
+En el catálogo final importado desde `data/11th40kPoints.txt`, `category` se deriva de la linea `CharN`, de keywords reales BSData como `Battleline`/`Dedicated Transport` y de si la unidad viene de una fuente aliada. Se normaliza a: `Personaje`, `Linea de batalla`, `Transporte`, `Otras hojas de datos` o `Aliada`.
 
-Las etiquetas funcionales de unidad (`unit_keywords`) se cruzan con datos estructurados de BSData/wh40k-10e durante `npm run units:generate`. BSData se usa solo para tipos/keywords; los puntos y miniaturas vienen siempre de `data/11th40kPoints.txt`. El importador guarda hasta dos etiquetas reales relevantes para el rol, normalizadas al espanol: `Infanteria`, `Caracter`, `Vehiculo`, `Bestia`, `Montado`, `Aeronave` y `Fortificacion`. Ejemplos validos: `Infanteria + Caracter`, `Vehiculo + Aeronave`, `Vehiculo + Caracter`. El informe `docs/generated/40k-unit-import-report.md` debe quedar con `Hojas de unidad importadas: 333`, `Adeptus Custodes: 51`, `Astra Militarum: 0`, `Unidades con keywords reales cruzadas: 333` y `Fallback heuristico: 0`.
+Las etiquetas funcionales de unidad (`unit_keywords`) se cruzan con datos estructurados de BSData/wh40k-10e durante `npm run units:generate`. BSData se usa solo para tipos/keywords; los puntos y miniaturas vienen siempre de `data/11th40kPoints.txt`. El importador guarda hasta dos etiquetas reales relevantes para el rol, normalizadas al espanol: `Infanteria`, `Caracter`, `Vehiculo`, `Bestia`, `Montado`, `Aeronave` y `Fortificacion`. Ejemplos válidos: `Infanteria + Caracter`, `Vehiculo + Aeronave`, `Vehiculo + Caracter`. El informe `docs/generated/40k-unit-import-report.md` debe quedar con `Hojas de unidad importadas: 333`, `Adeptus Custodes: 51`, `Astra Militarum: 0`, `Unidades con keywords reales cruzadas: 333` y `Fallback heuristico: 0`.
 
 Las unidades se pagan solo con Suministro vital, Mineral, Honor y Oro. Material Industrial queda reservado para construcción y Uridium queda reservado para movimiento/comercio, no para generar tropas.
 
-`data/11th40kPoints.txt` es la lista base aportada por el jugador y no se sobrescribe. `data/11th-unit-cost-options.json` es la capa adicional oficial MFM: registra tamanos legales, recargos por copia y extras pagados, por ejemplo `Twin Arachnus Heavy Blaze Cannon +15 pts`. El frontend muestra estas opciones al reclutar y el backend recalcula puntos y recursos en `recruit_unit_variant_at_building(...)`.
+`data/11th40kPoints.txt` es la lista base aportada por el jugador y no se sobrescribe. `data/11th-unit-cost-options.json` es la capa adicional oficial MFM: registra tamaños legales, recargos por copia y extras pagados, por ejemplo `Twin Arachnus Heavy Blaze Cannon +15 pts`. El frontend muestra estas opciones al reclutar y el backend recalcula puntos y recursos en `recruit_unit_variant_at_building(...)`.
 
 ### 9.4 Al reclutar
 
@@ -1391,7 +1391,7 @@ El backend valida:
 - Sistema controlado por la facción.
 - Categoría compatible con el edificio o `recruitment_building_type` concreto si la plantilla lo define.
 - Requisitos tecnológicos cumplidos.
-- Tamano de unidad permitido por MFM si existe `unit_template_model_options`.
+- Tamaño de unidad permitido por MFM si existe `unit_template_model_options`.
 - Opciones de equipo permitidas por MFM si existe `unit_template_wargear_options`.
 - No se exceden reglas de campaña si existen.
 - Coste correcto.
@@ -1429,7 +1429,7 @@ Regla vigente:
 - El reporte confirmado indica miniaturas supervivientes y heridas restantes por unidad.
 - Backend actualiza `campaign_units.quantity` y `campaign_units.wounds_taken`.
 - Si `quantity = 0`, la unidad pasa a `destroyed` y `wounds_taken = 0`.
-- Validacion: `wounds_taken <= quantity * unit_templates.wounds_per_model`.
+- Validación: `wounds_taken <= quantity * unit_templates.wounds_per_model`.
 - Las unidades son indivisibles: las miniaturas no se separan ni para movimiento ni para reabastecimiento.
 - `resupply_unit_at_building(system_building_id, campaign_unit_id)` reabastece una unidad completa desde un edificio militar compatible.
 - El reabastecimiento exige unidad propia `ready`, mismo sistema que el edificio, edificio activo compatible y `quantity < starting_quantity` o `wounds_taken > 0`.
@@ -1443,7 +1443,7 @@ Si una unidad sufre bajas en batalla:
 - Texto legacy obsoleto: el reporte confirmado debe indicar miniaturas supervivientes y heridas restantes por unidad.
 - Backend actualiza `campaign_units.quantity`.
 - Si `quantity` queda en `0`, la unidad pasa a `destroyed` y conserva `destroyed_at`.
-- Texto legacy obsoleto: las unidades danadas se reabastecen completas desde edificios militares compatibles.
+- Texto legacy obsoleto: las unidades dañadas se reabastecen completas desde edificios militares compatibles.
 
 Curación v1:
 
@@ -1458,7 +1458,7 @@ Curación v1:
 
 El reclutamiento está conectado al árbol tecnológico.
 
-V1 usa un arbol comun `common-v1` para todas las facciones y arboles militares especificos por faccion con convencion `troops-{faction_slug}-v1`. Cada faccion tiene progreso independiente.
+V1 usa un árbol común `common-v1` para todas las facciones y árboles militares específicos por facción con convención `troops-{faction_slug}-v1`. Cada facción tiene progreso independiente.
 
 Estados de una tecnología:
 
@@ -1473,10 +1473,10 @@ Reglas:
 
 - Solo puede haber una investigación activa por facción.
 - Cada tecnología puede tener coste en Componentes tecnológicos.
-- Cada tecnologia en modo test dura 3 segundos salvo que se documente lo contrario. En modo campana el backend recalcula el tiempo desde el coste tecnologico.
-- Cada arbol militar especifico `ready` cuesta exactamente 30 Componentes tecnologicos en total.
-- Los nodos de arboles militares solo pueden costar 1, 2 o 3 Componentes tecnologicos.
-- El coste 3 se reserva exclusivamente para el nodo final de las dos ramas mas grandes de cada faccion.
+- Cada tecnología en modo test dura 3 segundos salvo que se documente lo contrario. En modo campaña el backend recalcula el tiempo desde el coste tecnológico.
+- Cada árbol militar especifico `ready` cuesta exactamente 30 Componentes tecnológicos en total.
+- Los nodos de árboles militares solo pueden costar 1, 2 o 3 Componentes tecnológicos.
+- El coste 3 se reserva exclusivamente para el nodo final de las dos ramas más grandes de cada facción.
 - Los requisitos se definen como prerequisitos entre nodos.
 - Al completarse una investigación, el nodo pasa a `unlocked`.
 - `resolve_technology_research()` completa investigaciones vencidas.
@@ -1484,92 +1484,92 @@ Reglas:
 
 Efectos v1:
 
-- `unlock_unit_template`: una tecnologia permite reclutar plantillas de unidad asociadas mediante `unit_templates.required_technology_node_id`.
-- `unlock_building_template`: permite construir plantillas de edificio asociadas si la faccion tiene la tecnologia desbloqueada.
+- `unlock_unit_template`: una tecnología permite reclutar plantillas de unidad asociadas mediante `unit_templates.required_technology_node_id`.
+- `unlock_building_template`: permite construir plantillas de edificio asociadas si la facción tiene la tecnología desbloqueada.
 - `recruitment_cost_discount`: reduce costes de reclutamiento por recurso y categoría.
 - `recruitment_time_discount`: reduce tiempo de reclutamiento por categoría.
 
 Unidades finales:
 
-- El catalogo final viene de `data/11th40kPoints.txt`.
+- El catálogo final viene de `data/11th40kPoints.txt`.
 - Las unidades finales permanecen bloqueadas hasta asignarse a nodos de `troops-{faction_slug}-v1`.
-- El validador `npm run tech:validate-troops` comprueba que, cuando un arbol pase a `ready`, tenga 3 ramas, 15 nodos y todas sus unidades asignadas exactamente una vez.
-- Estado actual de arboles de tropas: `troops-necrones-v1` es el primer arbol militar `ready`.
-- El arbol Necron tiene 3 ramas: `Falange Dinastica`, `Corte Criptecnica` y `Constructos Eternos`.
-- El arbol Necron es asimetrico: 6 nodos en Falange, 4 en Corte y 5 en Constructos.
-- El arbol Necron no es una cadena lineal: tiene bifurcaciones y convergencias mediante prerequisitos multiples.
-- El arbol Necron tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 55 plantillas Necron importadas exactamente una vez.
+- El validador `npm run tech:validate-troops` comprueba que, cuando un árbol pase a `ready`, tenga 3 ramas, 15 nodos y todas sus unidades asignadas exactamente una vez.
+- Estado actual de árboles de tropas: `troops-necrones-v1` es el primer árbol militar `ready`.
+- El árbol Necron tiene 3 ramas: `Falange Dinastica`, `Corte Criptecnica` y `Constructos Eternos`.
+- El árbol Necron es asimetrico: 6 nodos en Falange, 4 en Corte y 5 en Constructos.
+- El árbol Necron no es una cadena lineal: tiene bifurcaciones y convergencias mediante prerequisitos múltiples.
+- El árbol Necron tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 55 plantillas Necron importadas exactamente una vez.
 - Cada nodo Necron desbloquea al menos una unidad que el jugador Necron ha declarado poseer fisicamente.
-- La descripcion de cada nodo Necron debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
-- `troops-cultos-genestealer-v1` tambien esta `ready`.
-- El arbol del Culto Genestelar tiene 3 ramas: `Red de Insurreccion`, `Sombras del Culto` y `Ascension del Patriarca`.
-- El arbol del Culto Genestelar es asimetrico: 6 nodos en Red, 5 en Sombras y 4 en Ascension.
-- El arbol del Culto Genestelar tiene bifurcaciones entre masas, convoyes, guerrilla, profetas y mutacion, con convergencia final en `Trono del Patriarca`.
-- El arbol del Culto Genestelar tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 27 plantillas del Culto importadas exactamente una vez.
-- La descripcion de cada nodo del Culto Genestelar debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
-- `troops-space-marines-v1` tambien esta `ready`.
-- El arbol de Space Marines tiene 3 ramas: `Doctrina del Capitulo`, `Vanguardia y Asalto` y `Arsenal de Cruzada`.
-- El arbol de Space Marines es asimetrico: 5 nodos en Doctrina, 4 en Vanguardia y 6 en Arsenal.
-- El arbol de Space Marines tiene bifurcaciones entre escuadras de batalla, oficiales, despliegue Phobos, asalto orbital, transportes, dreadnoughts y blindados pesados, con convergencia final en `Reliquias de Cruzada`.
-- El arbol de Space Marines tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 85 plantillas de Space Marines importadas exactamente una vez.
-- La descripcion de cada nodo de Space Marines debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
-- `troops-legiones-daemonicas-v1` tambien esta `ready`.
-- El arbol de Legiones Daemonicas tiene 3 ramas: `Hordas del Velo`, `Corte del Cambiante` y `Tronos de la Disformidad`.
-- El arbol de Legiones Daemonicas es asimetrico: 6 nodos en Hordas, 5 en Corte y 4 en Tronos.
-- El arbol de Legiones Daemonicas tiene bifurcaciones entre horrores, llamas, carros, heraldos, escribas, principes demonio y grandes entidades de la Disformidad, con convergencia final en `El Primer Principe`.
-- El arbol de Legiones Daemonicas tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 19 plantillas de Legiones Daemonicas importadas exactamente una vez.
-- La descripcion de cada nodo de Legiones Daemonicas debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
-- `troops-adeptus-custodes-v1` tambien esta `ready`.
-- El arbol de Adeptus Custodes tiene 3 ramas: `Guardia Auramita`, `Camara Anathema` y `Arsenal del Trono`.
-- El arbol de Adeptus Custodes es asimetrico: 5 nodos en Guardia, 4 en Camara y 6 en Arsenal.
-- El arbol de Adeptus Custodes tiene bifurcaciones entre custodios de linea, campeones, exterminadores auricos, Hermanas del Silencio, grav-vehiculos, dreadnoughts, naves, Knights aliados y Titanes, con cierre de poder en `Titanes de Terra`.
-- El arbol de Adeptus Custodes tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 51 plantillas de Adeptus Custodes importadas exactamente una vez.
-- La descripcion de cada nodo de Adeptus Custodes debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
-- Las cinco facciones objetivo de jugador ya estan `ready`: Legiones Daemonicas, Adeptus Custodes, Space Marines, Cultos Genestealer y Necrones. Aeldari y Agentes del Imperium no forman parte de esta campana final.
+- La descripción de cada nodo Necron debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
+- `troops-cultos-genestealer-v1` también está `ready`.
+- El árbol del Culto Genestelar tiene 3 ramas: `Red de Insurreccion`, `Sombras del Culto` y `Ascension del Patriarca`.
+- El árbol del Culto Genestelar es asimetrico: 6 nodos en Red, 5 en Sombras y 4 en Ascension.
+- El árbol del Culto Genestelar tiene bifurcaciones entre masas, convoyes, guerrilla, profetas y mutacion, con convergencia final en `Trono del Patriarca`.
+- El árbol del Culto Genestelar tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 27 plantillas del Culto importadas exactamente una vez.
+- La descripción de cada nodo del Culto Genestelar debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
+- `troops-space-marines-v1` también está `ready`.
+- El árbol de Space Marines tiene 3 ramas: `Doctrina del Capitulo`, `Vanguardia y Asalto` y `Arsenal de Cruzada`.
+- El árbol de Space Marines es asimetrico: 5 nodos en Doctrina, 4 en Vanguardia y 6 en Arsenal.
+- El árbol de Space Marines tiene bifurcaciones entre escuadras de batalla, oficiales, despliegue Phobos, asalto orbital, transportes, dreadnoughts y blindados pesados, con convergencia final en `Reliquias de Cruzada`.
+- El árbol de Space Marines tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 85 plantillas de Space Marines importadas exactamente una vez.
+- La descripción de cada nodo de Space Marines debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
+- `troops-legiones-daemonicas-v1` también está `ready`.
+- El árbol de Legiones Daemónicas tiene 3 ramas: `Hordas del Velo`, `Corte del Cambiante` y `Tronos de la Disformidad`.
+- El árbol de Legiones Daemónicas es asimetrico: 6 nodos en Hordas, 5 en Corte y 4 en Tronos.
+- El árbol de Legiones Daemónicas tiene bifurcaciones entre horrores, llamas, carros, heraldos, escribas, principes demonio y grandes entidades de la Disformidad, con convergencia final en `El Primer Principe`.
+- El árbol de Legiones Daemónicas tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 19 plantillas de Legiones Daemónicas importadas exactamente una vez.
+- La descripción de cada nodo de Legiones Daemónicas debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
+- `troops-adeptus-custodes-v1` también está `ready`.
+- El árbol de Adeptus Custodes tiene 3 ramas: `Guardia Auramita`, `Cámara Anathema` y `Arsenal del Trono`.
+- El árbol de Adeptus Custodes es asimetrico: 5 nodos en Guardia, 4 en Cámara y 6 en Arsenal.
+- El árbol de Adeptus Custodes tiene bifurcaciones entre custodios de linea, campeones, exterminadores auricos, Hermanas del Silencio, grav-vehiculos, dreadnoughts, naves, Knights aliados y Titanes, con cierre de poder en `Titanes de Terra`.
+- El árbol de Adeptus Custodes tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 51 plantillas de Adeptus Custodes importadas exactamente una vez.
+- La descripción de cada nodo de Adeptus Custodes debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
+- Las cinco facciones objetivo de jugador ya están `ready`: Legiones Daemónicas, Adeptus Custodes, Space Marines, Cultos Genestealer y Necrones. Aeldari y Agentes del Imperium no forman parte de esta campaña final.
 
 La pantalla de tecnología debe sentirse como interfaz de videojuego:
 
-- Modal grande, casi a pantalla completa.
+- Modal grande, casí a pantalla completa.
 - Fondo espacial táctico oscuro.
 - Árbol tipo constelación tecnológica, no tabla lineal.
-- Nodos circulares pequenos basados en iconos vectoriales Lucide.
-- Los PNG de `public/tech-icons/common-v1/{slug}.png` quedan como assets disponibles, pero no se usan en la vista principal del arbol para evitar lag.
+- Nodos circulares pequeños basados en iconos vectoriales Lucide.
+- Los PNG de `public/tech-icons/common-v1/{slug}.png` quedan como assets disponibles, pero no se usan en la vista principal del árbol para evitar lag.
 - Conectores curvos simples tipo rutas estelares, sin filtros pesados.
-- El arbol no muestra nombres en hover; el nombre y detalle aparecen solo al seleccionar un nodo.
+- El árbol no muestra nombres en hover; el nombre y detalle aparecen solo al seleccionar un nodo.
 - Estados visuales claros.
 - Panel lateral con descripción, coste, tiempo, requisitos y efectos.
 - Botón `Tecnología` en el dock de mando.
 
-Regla vigente de arboles tecnologicos:
+Regla vigente de árboles tecnológicos:
 
-- La descripcion anterior de ramas antiguas queda obsoleta donde choque con esta lista.
-- `common-v1` tiene rama `Progreso` funcional, rama `Inteligencia` visible pero bloqueada como `planned`, y tecnologias comunes de soporte.
-- Los arboles militares especificos usan `troops-{faction_slug}-v1`; un jugador solo puede ver e investigar su propio arbol militar.
-- Admin puede inspeccionar el arbol de una faccion desde el selector de la pantalla de tecnologia, pero no inicia investigaciones desde esa vista.
-- `start_technology_research()` rechaza por backend cualquier tecnologia cuyo `tree_key` no sea `common-v1` ni `troops-{slug-de-la-faccion-del-jugador}-v1`.
+- La descripción anterior de ramas antiguas queda obsoleta donde choque con esta lista.
+- `common-v1` tiene rama `Progreso` funcional, rama `Inteligencia` visible pero bloqueada como `planned`, y tecnologías comunes de soporte.
+- Los árboles militares específicos usan `troops-{faction_slug}-v1`; un jugador solo puede ver e investigar su propio árbol militar.
+- Admin puede inspeccionar el árbol de una facción desde el selector de la pantalla de tecnología, pero no inicia investigaciones desde esa vista.
+- `start_technology_research()` rechaza por backend cualquier tecnología cuyo `tree_key` no sea `common-v1` ni `troops-{slug-de-la-faccion-del-jugador}-v1`.
 - Todas las investigaciones en modo test duran 3 segundos.
 - `technology_nodes.implementation_status` puede ser `active`, `planned` o `deprecated`.
-- `technology_prerequisites.prerequisite_group` permite requisitos `OR`: todos los grupos deben cumplirse, pero dentro de un mismo grupo basta una tecnologia desbloqueada.
-- `Asamblea Planetaria` requiere `Maquinaria Belica` o `Criadero de Guerra`.
-- `La Fiebre del Oro` requiere Cristalizacion de Combustible Cuantico, Extraccion Subterranea y Monumentos a la Gloria.
+- `technology_prerequisites.prerequisite_group` permite requisitos `OR`: todos los grupos deben cumplirse, pero dentro de un mismo grupo basta una tecnología desbloqueada.
+- `Asamblea Planetaria` requiere `Maquínaria Belica` o `Criadero de Guerra`.
+- `La Fiebre del Oro` requiere Cristalizacion de Combustible Cuantico, Extracción Subterranea y Monumentos a la Gloria.
 - `fundacion-planetaria` desbloquea Barracon de Infanteria y Granja Biologica.
-- `maquinaria-belica` desbloquea Taller de Guerra.
+- `maquínaria-belica` desbloquea Taller de Guerra.
 - `criadero-guerra` desbloquea Nido de Bestias.
 - `asamblea-planetaria` desbloquea Cuartel de Mando.
-- `camara-leyendas` depende de Asamblea Planetaria y desbloqueara Cámara de Leyendas para unidades `[Crucible]`, pero su `implementation_status` es `planned`, asi que no puede investigarse ni construirse por ahora.
-- `procesado-metalurgico` desbloquea Planta de Fundicion.
+- `camara-leyendas` depende de Asamblea Planetaria y desbloqueara Cámara de Leyendas para unidades `[Crucible]`, pero su `implementation_status` es `planned`, así que no puede investigarse ni construirse por ahora.
+- `procesado-metalurgico` desbloquea Planta de Fundición.
 - `cristalizacion-combustible-cuantico` desbloquea Refineria de Iridium.
 - `extraccion-subterranea` desbloquea Complejo Minero.
 - `monumentos-gloria` desbloquea Monumento y Santuario de Reliquias.
 - `fiebre-oro` desbloquea Mina de Oro.
-- `pactos-mercantiles` desbloquea Camara de Comercio.
-- `contactos-economicos` desbloquea el Mercader.
+- `pactos-mercantiles` desbloquea Cámara de Comercio.
+- `contactos-económicos` desbloquea el Mercader.
 - `tratos-preferentes` mejora precios del Mercader.
 - `mercado-galactico` desbloquea Comercio Estelar.
-- `aranceles-privilegiados` baja la comision propia de Comercio Estelar al 10%, minimo 1 Oro.
-- La pantalla abre como constelacion radial simple con nucleo central de faccion, ramas saliendo desde el centro y sin nodo seleccionado por defecto.
+- `aranceles-privilegiados` baja la comisión propia de Comercio Estelar al 10%, mínimo 1 Oro.
+- La pantalla abre como constelación radial simple con núcleo central de facción, ramas saliendo desde el centro y sin nodo seleccionado por defecto.
 - No hay zoom ni pan custom: la navegacion usa scroll nativo para ser fluida en desktop, Android e iPhone Safari.
-- Los nodos usan iconos Lucide simples en circulos pequenos para evitar el coste de decodificar PNGs pesados dentro del arbol.
+- Los nodos usan iconos Lucide simples en círculos pequeños para evitar el coste de decodificar PNGs pesados dentro del árbol.
 
 ---
 
@@ -1585,12 +1585,12 @@ Las unidades que no tienen keyword `Caracter` pueden seguir teniendo `rank`, `en
 |---:|---|
 | 1 | Oficial |
 | 2 | Oficial Veterano |
-| 3 | Campeon |
-| 4 | Capitan |
+| 3 | Campeón |
+| 4 | Capitán |
 | 5 | Comandante |
-| 6 | Senor de Guerra |
-| 7 | Alto Senor |
-| 8 | Heroe de Cruzada |
+| 6 | Señor de Guerra |
+| 7 | Alto Señor |
+| 8 | Héroe de Cruzada |
 | 9 | Leyenda de Guerra |
 | 10 | Leyenda del Sector |
 
@@ -1606,9 +1606,9 @@ El `Santuario de Reliquias` es un edificio `building_kind = relic`.
 
 Reglas:
 
-- Requiere tecnologia `monumentos-gloria`.
+- Requiere tecnología `monumentos-gloria`.
 - Coste v1: 44 Material Industrial.
-- Tiempo de construccion en modo test: 3 segundos.
+- Tiempo de construcción en modo test: 3 segundos.
 - No empieza construido en capitales; debe construirse como cualquier edificio.
 - Al abrirlo muestra reliquias guardadas en ese sistema, Caracteres propios presentes y reliquias equipadas.
 
@@ -1620,12 +1620,12 @@ RPC principal:
 equip_relic_to_character(relic_id, character_unit_id, system_building_id)
 ```
 
-Validaciones:
+Validaciónes:
 
-- Usuario autenticado y miembro de la faccion de la reliquia, o admin.
+- Usuario autenticado y miembro de la facción de la reliquia, o admin.
 - Santuario activo y propio.
 - Reliquia propia almacenada en el sistema del Santuario.
-- Caracter propio, vivo, `ready`, en el mismo sistema.
+- Carácter propio, vivo, `ready`, en el mismo sistema.
 - Debe tener keyword `Caracter`.
 - Nivel suficiente y slot libre.
 
@@ -1644,11 +1644,11 @@ RPC principal:
 unequip_relic_from_character(relic_id, system_building_id)
 ```
 
-Validaciones:
+Validaciónes:
 
 - Santuario activo y propio.
-- La reliquia esta equipada en un Caracter propio.
-- El Caracter esta `ready` en el mismo sistema del Santuario.
+- La reliquia está equipada en un Carácter propio.
+- El Carácter está `ready` en el mismo sistema del Santuario.
 
 Al desequipar:
 
@@ -1656,7 +1656,7 @@ Al desequipar:
 - `equipped_unit_id` y `equipped_at` pasan a `null`.
 - Se registra log `relic_unequipped`.
 
-Las reliquias v1 son narrativas: muestran descripcion y texto de efecto, pero no aplican modificadores automaticos a combate, movimiento, reclutamiento ni economia.
+Las reliquias v1 son narrativas: muestran descripción y texto de efecto, pero no aplican modificadores automáticos a combate, movimiento, reclutamiento ni economía.
 
 ### 10.5 Admin
 
@@ -1664,7 +1664,7 @@ El admin puede:
 
 - Ajustar nivel `experience` de Caracteres entre 1 y 10.
 - Cambiar nombre narrativo, rango textual si hace falta, enhancement y notas.
-- Mover reliquias o editar su estado desde base de datos si hay que corregir una situacion de campana.
+- Mover reliquias o editar su estado desde base de datos si hay que corregir una situacion de campaña.
 
 ---
 
@@ -1691,7 +1691,7 @@ Cada misión debe tener:
 - Tamaño recomendado de batalla.
 - Objetivos.
 - Reglas especiales.
-- Condiciones de victoria.
+- Condiciónes de victoria.
 - Recompensa si aplica.
 - Notas del admin.
 
@@ -1737,24 +1737,24 @@ Siempre visible:
 Suministro vital: 120 | Mineral: 85 | Honor: 8 | Oro: 30 | Material Industrial: 80 | Uridium: 3.0
 ```
 
-Debe tener iconos bonitos. La version implementada muestra: Suministro vital, Mineral, Honor, Oro, Material Industrial y Uridium. Los Componentes tecnologicos solo se ven dentro del panel de Tecnologia.
+Debe tener iconos bonitos. La versión implementada muestra: Suministro vital, Mineral, Honor, Oro, Material Industrial y Uridium. Los Componentes tecnológicos solo se ven dentro del panel de Tecnología.
 
 ### 12.2 Panel de comercio
 
-El comercio no aparece como boton global del panel de mando operativo. Se abre desde el edificio `Camara de Comercio`.
+El comercio no aparece como botón global del panel de mando operativo. Se abre desde el edificio `Cámara de Comercio`.
 
 Al abrir comercio:
 
-- La pestana por defecto es `Mercader`.
-- La segunda pestana es `Comercio estelar`.
+- La pestána por defecto es `Mercader`.
+- La segúnda pestána es `Comercio estelar`.
 
 Mercader:
 
 - Avatar en `icons/resources/merchant1.png`.
 - Compra y venta de Suministro, Mineral, Material Industrial y Uridium usando Oro.
-- No comercia Honor ni Componentes tecnologicos.
-- Requiere al menos una Camara de Comercio activa de la faccion.
-- Requiere `Contactos Economicos`.
+- No comercia Honor ni Componentes tecnológicos.
+- Requiere al menos una Cámara de Comercio activa de la facción.
+- Requiere `Contactos Económicos`.
 - Vende al doble de valor por defecto.
 - Compra a mitad de valor por defecto, redondeando hacia arriba.
 - `Tratos Preferentes` mejora precios: compra a 1.5x y venta a 0.75x.
@@ -1765,12 +1765,12 @@ Comercio estelar:
 - Aceptar ofertas de otras facciones.
 - Cancelar ofertas propias.
 - Solo se comercian Suministro, Mineral, Material Industrial y Uridium.
-- No se comercian Honor ni Componentes tecnologicos.
-- Requiere al menos una Camara de Comercio activa de la faccion.
+- No se comercian Honor ni Componentes tecnológicos.
+- Requiere al menos una Cámara de Comercio activa de la facción.
 - Requiere `Mercado Galactico`.
-- Cada transaccion cobra una comision en Oro del 30%, redondeada hacia arriba, a cada jugador por separado.
-- `Aranceles Privilegiados` reduce la comision propia al 10%, minimo 1 Oro.
-- Publicar una oferta reserva inmediatamente los recursos/oro comprometidos y la comision del creador.
+- Cada transacción cobra una comisión en Oro del 30%, redondeada hacia arriba, a cada jugador por separado.
+- `Aranceles Privilegiados` reduce la comisión propia al 10%, mínimo 1 Oro.
+- Publicar una oferta reserva inmediatamente los recursos/oro comprometidos y la comisión del creador.
 - Cancelar una oferta devuelve la reserva completa.
 
 El bloque antiguo de panel detallado de recursos queda solo como referencia historica y no debe implementarse como vista principal:
@@ -1788,7 +1788,7 @@ Honor: 8
 Producción activa: depende de edificios construidos.
 
 Material Industrial: 80
-Produccion diaria: segun capacidad planetaria explotada por edificios activos
+Producción diaria: según capacidad planetaria explotada por edificios activos
 
 Uridium: 3.0
 Producción activa: 0.3/día en adyacente si hay Refinería de Iridium activa.
@@ -1820,7 +1820,7 @@ No confiar en el frontend.
 
 La cadencia de producción debe ser configurable por admin y gestionada por backend.
 
-Nota actual de v1: aunque este bloque historico hable de sistemas, la regla vigente es que `resolve_resource_ticks()` suma produccion desde edificios activos en sistemas controlados. `system_production` es una proyeccion visible derivada, no la fuente de verdad manual.
+Nota actual de v1: aunque este bloque historico hable de sistemas, la regla vigente es que `resolve_resource_ticks()` suma producción desde edificios activos en sistemas controlados. `system_production` es una proyeccion visible derivada, no la fuente de verdad manual.
 
 ---
 
@@ -1866,7 +1866,7 @@ Puede:
 - Reclutar y curar unidades desde edificios compatibles.
 - Equipar o desequipar reliquias propias en Caracteres desde un Santuario propio.
 - Investigar tecnologías disponibles.
-- Comerciar con el mercader si tiene Camara de Comercio activa.
+- Comerciar con el mercader si tiene Cámara de Comercio activa.
 - Crear, aceptar y cancelar ofertas propias de comercio estelar.
 - Mover tropas propias.
 - Ver misiones públicas.
@@ -1933,7 +1933,7 @@ admin_create_or_update_mission(...)
 
 `recruit_unit(unit_template_id, quantity)` existe solo como RPC legacy temporal y debe devolver error claro: "El reclutamiento ahora requiere seleccionar un edificio activo".
 
-### 14.3 Validaciones mínimas
+### 14.3 Validaciónes mínimas
 
 Para movimiento:
 
@@ -1967,15 +1967,15 @@ Para tecnología:
 
 Para comercio:
 
-- FacciÃ³n correcta.
+- Facción correcta.
 - Recurso comerciable: Suministro, Mineral, Material Industrial o Uridium.
-- Honor y Componentes tecnologicos no comerciables.
-- Camara de Comercio activa para la faccion.
-- `Contactos Economicos` para Mercader.
+- Honor y Componentes tecnológicos no comerciables.
+- Cámara de Comercio activa para la facción.
+- `Contactos Económicos` para Mercader.
 - `Mercado Galactico` para Comercio Estelar.
 - Oro suficiente para compras y comisiones.
 - Recursos suficientes para ventas.
-- Comision calculada por backend: 30% por defecto, 10% minimo 1 Oro con `Aranceles Privilegiados`.
+- Comisión calculada por backend: 30% por defecto, 10% mínimo 1 Oro con `Aranceles Privilegiados`.
 - Aceptacion atomica: se revalidan recursos antes de aplicar transferencia.
 - Un jugador no puede aceptar su propia oferta.
 
@@ -1987,9 +1987,9 @@ Para reportes de batalla:
 - Ganador válido entre facciones participantes, neutral o resultado narrativo permitido por admin.
 - Bajas/supervivientes coherentes con tropas implicadas.
 - El informe compartido debe incluir todas las unidades `in_war` implicadas.
-- Editar el informe reinicia las validaciones de jugadores.
+- Editar el informe reinicia las validaciónes de jugadores.
 - El backend deriva control final y bloqueo posterior para impedir que jugadores alteren esos campos.
-- No aplicar cambios criticos hasta que todos los participantes validen la misma revision; en ese momento se confirma automaticamente.
+- No aplicar cambios criticos hasta que todos los participantes validen la misma revision; en ese momento se confirma automáticamente.
 
 Para admin:
 
@@ -1998,7 +1998,7 @@ Para admin:
 
 ### 14.4 Logs
 
-Registrar acciones importantes:
+Registrar acciónes importantes:
 
 - Movimiento creado.
 - Movimiento completado.
@@ -2041,7 +2041,7 @@ Registrar acciones importantes:
 Usar combinación de:
 
 1. Supabase Realtime para cambios.
-2. Refetch con TanStack Query tras acciones.
+2. Refetch con TanStack Query tras acciónes.
 3. Cron backend para completar tiempos y ticks de recursos.
 4. Lazy processing al cargar pantallas importantes.
 
@@ -2066,7 +2066,7 @@ Este es un esquema inicial. Puede adaptarse.
 
 ### 16.0 Contrato vigente de construcciones y recursos
 
-La version actual añade el sistema de edificios en `supabase/migrations/0009_buildings_honor_industrial_material.sql`.
+La versión actual añade el sistema de edificios en `supabase/migrations/0009_buildings_honor_industrial_material.sql`.
 
 Recursos vigentes en frontend:
 
@@ -2089,14 +2089,14 @@ industrialMaterial
 uridium
 ```
 
-`technology` solo se muestra dentro del arbol tecnologico. `honor` no es comerciable. `ancestral_stone` y `ancestral_stone_cost` son columnas legacy temporales para compatibilidad y no deben usarse como contrato nuevo.
+`technology` solo se muestra dentro del árbol tecnológico. `honor` no es comerciable. `ancestral_stone` y `ancestral_stone_cost` son columnas legacy temporales para compatibilidad y no deben usarse como contrato nuevo.
 
 Tablas nuevas/vigentes:
 
-- `system_resource_capabilities`: recursos que un sistema no capital puede explotar mediante edificios de produccion.
-- `building_templates`: catalogo de edificios con coste, tipo, duracion, tecnologia requerida, recurso producido y categorias reclutables.
-- `system_buildings`: edificios construidos/en construccion por sistema.
-- `unit_recovery_queue`: cola de curacion de miniaturas.
+- `system_resource_capabilities`: recursos que un sistema no capital puede explotar mediante edificios de producción.
+- `building_templates`: catálogo de edificios con coste, tipo, duracion, tecnología requerida, recurso producido y categorias reclutables.
+- `system_buildings`: edificios construidos/en construcción por sistema.
+- `unit_recovery_queue`: cola de curación de miniaturas.
 
 Campos nuevos principales:
 
@@ -2111,7 +2111,7 @@ Campos nuevos principales:
 - `recruitment_queue.system_building_id`.
 - `recruitment_queue.origin_system_id`.
 
-Produccion:
+Producción:
 
 - `system_buildings` activos son la fuente de verdad.
 - `system_production` es una proyeccion derivada para UI/consultas.
@@ -2240,15 +2240,15 @@ campaign_settings
 - timing_mode text default 'test' check in ('test', 'campaign')
 - timing_mode_updated_at timestamptz
 - resource_tick_interval_hours integer default 24
-- movement_edge_duration_seconds integer default 3 en test / 259200 en campana
-- attack_duration_seconds integer default 300 en test / 518400 en campana
-- conflict_block_duration_minutes integer default 60 en test / 20160 en campana
+- movement_edge_duration_seconds integer default 3 en test / 259200 en campaña
+- attack_duration_seconds integer default 300 en test / 518400 en campaña
+- conflict_block_duration_minutes integer default 60 en test / 20160 en campaña
 - last_resource_tick_at timestamptz nullable
 - next_resource_tick_at timestamptz nullable
 - updated_at timestamptz
 ```
 
-`admin_set_campaign_timing_mode('test' | 'campaign')` es la unica entrada de UI para cambiar el perfil de tiempos. Al aplicar un modo tambien actualiza `technology_nodes.research_time_seconds`, `unit_templates.recruitment_time_seconds`, `building_templates.construction_time_seconds` y reescala las colas activas coherentes con ese modo.
+`admin_set_campaign_timing_mode('test' | 'campaign')` es la única entrada de UI para cambiar el perfil de tiempos. Al aplicar un modo también actualiza `technology_nodes.research_time_seconds`, `unit_templates.recruitment_time_seconds`, `building_templates.construction_time_seconds` y reescala las colas activas coherentes con ese modo.
 
 ### 16.8 campaign_units
 
@@ -2264,7 +2264,7 @@ campaign_units
 - unit_keywords text[] check max 2 in ('Vehiculo', 'Caracter', 'Infanteria', 'Bestia', 'Montado', 'Aeronave', 'Fortificacion')
 - points integer
 - quantity integer default 1 -- miniaturas actuales
-- starting_quantity integer default 1 -- tamano completo de la unidad
+- starting_quantity integer default 1 -- tamaño completo de la unidad
 - wounds_taken integer default 0 -- heridas agregadas en miniaturas supervivientes
 - parent_unit_id uuid nullable references campaign_units(id) -- legacy, no se crean hijos nuevos
 - destroyed_at timestamptz nullable
@@ -2279,7 +2279,7 @@ campaign_units
 - updated_at timestamptz
 ```
 
-Cada fila representa una unidad Warhammer concreta movible en el mapa. Las unidades son indivisibles: no se separan miniaturas al mover y no se crean nuevas filas hijas en el flujo actual. La validacion de heridas es `wounds_taken <= quantity * unit_templates.wounds_per_model`.
+Cada fila representa una unidad Warhammer concreta movible en el mapa. Las unidades son indivisibles: no se separan miniaturas al mover y no se crean nuevas filas hijas en el flujo actual. La validación de heridas es `wounds_taken <= quantity * unit_templates.wounds_per_model`.
 
 `unit_keywords` es el campo funcional para reglas nuevas. Puede tener 1 o 2 valores y siempre usa nombres en espanol sin acento: `Vehiculo`, `Caracter`, `Infanteria`, `Bestia`, `Montado`, `Aeronave`, `Fortificacion`.
 
@@ -2325,7 +2325,7 @@ unit_templates
 - is_available boolean default true
 - source_section text nullable
 - source_faction_name text nullable
-- is_allied_unit boolean default false
+- is_allíed_unit boolean default false
 ```
 
 ### 16.10.1 technology_nodes
@@ -2384,7 +2384,7 @@ technology_effects
 - created_at timestamptz
 ```
 
-Los efectos se consultan al calcular acciones. No se copian como datos permanentes en la facción salvo que una regla futura lo necesite.
+Los efectos se consultan al calcular acciónes. No se copian como datos permanentes en la facción salvo que una regla futura lo necesite.
 
 ### 16.10.5 building_templates
 
@@ -2400,12 +2400,12 @@ building_templates
 - minerals_cost integer
 - honor_cost integer
 - gold_cost integer
-- industrial_material_cost integer -- unico coste funcional de construccion
+- industrial_material_cost integer -- único coste funcional de construcción
 - uridium_cost integer
 - technology_cost integer
 - construction_time_seconds integer
 - produced_resource_key text nullable
-- produced_amount integer -- legado/metadata; la produccion real usa system_resource_capabilities
+- produced_amount integer -- legado/metadata; la producción real usa system_resource_capabilities
 - allowed_unit_categories text[]
 - required_technology_node_id uuid nullable references technology_nodes(id)
 - icon_key text nullable
@@ -2413,7 +2413,7 @@ building_templates
 - created_at timestamptz
 ```
 
-La construccion ya esta implementada. El arbol tecnologico desbloquea `building_templates`, y `start_building_construction()` valida tecnologia, slots, duplicados, control del sistema, bloqueo y capacidades de recurso.
+La construcción ya está implementada. El árbol tecnológico desbloquea `building_templates`, y `start_building_construction()` valida tecnología, slots, duplicados, control del sistema, bloqueo y capacidades de recurso.
 
 ### 16.11 recruitment_queue
 
@@ -2465,7 +2465,7 @@ trade_offers
 - Ofertas abiertas nuevas deben tener `is_reserved = true`.
 - Compra: reserva `gold_amount + fee_gold`.
 - Venta: reserva `resource_amount` y `fee_gold`.
-- Aceptar oferta aplica transferencia usando la reserva del creador y valida solo el pago/comision del aceptante.
+- Aceptar oferta aplica transferencia usando la reserva del creador y valida solo el pago/comisión del aceptante.
 - Cancelar oferta devuelve toda la reserva del creador.
 
 ### 16.13 movement_orders
@@ -2532,10 +2532,10 @@ battle_reports
 El flujo vigente es informe compartido:
 
 - `submit_battle_report(conflict_id, report_payload)` crea/edita la revision actual y reinicia `participant_validations`.
-- `validate_battle_report(conflict_id)` marca la revision actual como validada por la faccion del usuario.
-- Cuando todas las facciones participantes han validado, `validate_battle_report()` aplica automaticamente el resultado y deja el informe en `auto_confirmed`.
-- `admin_confirm_battle_report(conflict_id, report_payload)` queda como herramienta de correccion/manual para casos excepcionales.
-- `get_battle_report_required_faction_ids(conflict_id)` deriva las facciones que deben validar usando atacante, defensor, unidades `in_war` y compromisos activos de operacion.
+- `validate_battle_report(conflict_id)` marca la revision actual como validada por la facción del usuario.
+- Cuando todas las facciones participantes han validado, `validate_battle_report()` aplica automáticamente el resultado y deja el informe en `auto_confirmed`.
+- `admin_confirm_battle_report(conflict_id, report_payload)` queda como herramienta de corrección/manual para casos excepcionales.
+- `get_battle_report_required_faction_ids(conflict_id)` deriva las facciones que deben validar usando atacante, defensor, unidades `in_war` y compromisos activos de operación.
 
 ### 16.16 missions
 
@@ -2612,27 +2612,27 @@ campaign_logs
 
 ### 16.19 Implementacion local real
 
-El proyecto debe poder ejecutarse contra una base Supabase/Postgres local equivalente a produccion para que el despliegue cloud sea sencillo.
+El proyecto debe poder ejecutarse contra una base Supabase/Postgres local equivalente a producción para que el despliegue cloud sea sencillo.
 
 Backend local:
 
 - Supabase CLI como dependencia de desarrollo del proyecto.
 - Docker como runtime local.
-- Configuracion en `supabase/config.toml`.
+- Configuración en `supabase/config.toml`.
 - Migraciones en `supabase/migrations`.
-- Seed de campana en `supabase/seed.sql`.
+- Seed de campaña en `supabase/seed.sql`.
 - Usuarios locales mediante script con service role.
 
 El seed local inicial representa el estado jugable de prueba:
 
 - 30 sistemas con capitales en los bordes del grafo.
-- 3 sistemas contiguos controlados por cada faccion.
+- 3 sistemas contiguos controlados por cada facción.
 - 3 conflictos iniciales en sistemas neutrales fronterizos.
-- Unidades iniciales por faccion: capital, frontera, movimiento y conflicto.
-- 6 ordenes de movimiento activas, una por faccion.
-- Sin reportes de batalla precargados; los conflictos esperan resultados reales o resolucion admin.
+- Unidades iniciales por facción: capital, frontera, movimiento y conflicto.
+- 6 órdenes de movimiento activas, una por facción.
+- Sin reportes de batalla precargados; los conflictos esperan resultados reales o resolución admin.
 
-Puertos locales estandar:
+Puertos locales estándar:
 
 ```text
 API: http://127.0.0.1:54321
@@ -2663,7 +2663,7 @@ necrones@rol40k.local / rol40k-local-123
 
 Orcos y Tiranidos se gestionan desde la cuenta admin como facciones narrativas.
 
-Las entidades principales mantienen UUID como clave primaria real y anaden `slug` unico para seeds reproducibles:
+Las entidades principales mantienen UUID como clave primaria real y añaden `slug` único para seeds reproducibles:
 
 - `factions.slug`
 - `systems.slug`
@@ -2672,15 +2672,15 @@ Las entidades principales mantienen UUID como clave primaria real y anaden `slug
 - `unit_templates.slug`
 - `conflicts.slug`
 
-La aplicacion carga Supabase si hay `.env.local` y una sesion autenticada. Si Supabase no esta configurado o no hay sesion, usa los mocks como fallback visual de desarrollo.
+La aplicación carga Supabase si hay `.env.local` y una sesión autenticada. Si Supabase no está configurado o no hay sesión, usa los mocks como fallback visual de desarrollo.
 
 RLS local:
 
-- Datos publicos del mapa visibles para `anon` y `authenticated`.
-- Recursos, unidades, colas y movimientos visibles solo para miembros de faccion o admin.
+- Datos públicos del mapa visibles para `anon` y `authenticated`.
+- Recursos, unidades, colas y movimientos visibles solo para miembros de facción o admin.
 - Admin con acceso total.
 - Jugadores sin escritura directa sobre recursos, tropas o control territorial.
-- Mutaciones criticas solo mediante RPC segura.
+- Mutaciones críticas solo mediante RPC segura.
 
 Funciones implementadas para backend autoritativo:
 
@@ -2777,12 +2777,12 @@ Muestra:
 - Estado visual: bloqueada, disponible, investigando, desbloqueada.
 - Botón para iniciar investigación mediante RPC segura.
 
-Comportamiento implementado actual del arbol:
+Comportamiento implementado actual del árbol:
 
-- El arbol se abre como constelacion radial simple desde un nucleo visual de faccion.
-- No debe abrir con ningun nodo seleccionado por defecto; el usuario decide que nodo consultar.
+- El árbol se abre como constelación radial simple desde un núcleo visual de facción.
+- No debe abrir con ningún nodo seleccionado por defecto; el usuario decide que nodo consultar.
 - No usa controles de zoom ni pan custom; usa scroll nativo e iconos vectoriales simples para evitar lag y mantener respuesta inmediata.
-- En movil el detalle del nodo se abre como drawer/panel inferior con scroll tactil real y boton de investigar accesible.
+- En móvil el detalle del nodo se abre como drawer/panel inferior con scroll táctil real y botón de investigar accesible.
 
 ### 17.5 Panel de comercio
 
@@ -2790,12 +2790,12 @@ Muestra:
 
 - Mercader con avatar.
 - Compra/venta de Suministro, Mineral, Material Industrial y Uridium contra Oro.
-- Bloqueo si la faccion no tiene Camara de Comercio activa.
+- Bloqueo si la facción no tiene Cámara de Comercio activa.
 - Comercio estelar entre jugadores.
 - Creacion de ofertas de compra/venta.
 - Listado de ofertas abiertas.
-- Aceptar o cancelar ofertas segun permisos.
-- Comision de Oro visible.
+- Aceptar o cancelar ofertas según permisos.
+- Comisión de Oro visible.
 
 El listado antiguo de recursos detallados queda obsoleto:
 
@@ -2990,11 +2990,11 @@ Evitar collage visual.
 - El control se ajusta tras el reporte de batalla.
 - Si atacante gana, el sistema puede pasar al atacante.
 - Si defensor gana, mantiene controlador.
-- Las capitales no pueden ser atacadas por jugadores ni por amenazas narrativas. La UI no debe ofrecerlas como destino y el backend debe rechazar cualquier intento de crear ataque, coalicion, conflicto pendiente o ataque narrativo contra una capital.
-- Un ataque puede salir desde cualquier sistema no bloqueado donde la faccion tenga unidades propias listas. Esto incluye sistemas enemigos si el jugador llego alli mediante permiso de paso/estancia.
-- El bloqueo posterior estandar tras aplicar una batalla es de 14 dias.
-- El informe compartido se confirma automaticamente cuando todos los participantes validan la misma revision.
-- Si hay discrepancia, cualquier participante edita el informe y se reinician las validaciones.
+- Las capitales no pueden ser atacadas por jugadores ni por amenazas narrativas. La UI no debe ofrecerlas como destino y el backend debe rechazar cualquier intento de crear ataque, coalición, conflicto pendiente o ataque narrativo contra una capital.
+- Un ataque puede salir desde cualquier sistema no bloqueado donde la facción tenga unidades propias listas. Esto incluye sistemas enemigos si el jugador llegó allí mediante permiso de paso/estancia.
+- El bloqueo posterior estándar tras aplicar una batalla es de 14 días.
+- El informe compartido se confirma automáticamente cuando todos los participantes validan la misma revision.
+- Si hay discrepancia, cualquier participante edita el informe y se reinician las validaciónes.
 - El admin puede corregir control/bloqueo si es necesario.
 - Admin puede poner bloqueo temporal posterior.
 
@@ -3034,59 +3034,59 @@ Cuando tropas llegan a neutral:
 ### 20.6 Incursiones narrativas de admin
 
 - `Orcos` y `Tiranidos` son facciones de rol controladas por admin.
-- No aparecen en login, arboles tecnologicos, comercio, recursos ni limites de facciones jugables.
+- No aparecen en login, árboles tecnológicos, comercio, recursos ni límites de facciones jugables.
 - El admin puede programar un ataque narrativo contra un sistema normal no gaseoso desde `/admin`.
-- El admin escribe una descripcion publica y elige cuantos dias tarda en llegar.
+- El admin escribe una descripción pública y elige cuántos días tarda en llegar.
 - Mientras no llega, se guarda como `narrative_attacks.status = incoming` y el panel del sistema lo muestra como `Amenaza entrante`, sin bloquear todavia el sistema.
-- `resolve_narrative_attacks()` convierte ataques vencidos en `conflicts` pendientes: pone el sistema en `war`, aplica bloqueo de batalla de 14 dias y copia la descripcion a `conflicts.notes`.
-- Los jugadores ven esa descripcion en el panel del sistema como `Amenaza narrativa` cuando el conflicto ya existe.
-- El admin tambien puede dar control inmediato de un sistema conquistable a una amenaza narrativa para representar invasion, horda o infestacion sin batalla automatizada.
+- `resolve_narrative_attacks()` convierte ataques vencidos en `conflicts` pendientes: pone el sistema en `war`, aplica bloqueo de batalla de 14 días y copia la descripción a `conflicts.notes`.
+- Los jugadores ven esa descripción en el panel del sistema como `Amenaza narrativa` cuando el conflicto ya existe.
+- El admin también puede dar control inmediato de un sistema conquistable a una amenaza narrativa para representar invasión, horda o infestación sin batalla automatizada.
 
 ### 20.7 Misiones temporales de admin
 
 - El admin puede crear misiones temporales desde `/admin`.
-- Una mision temporal aparece como un sistema especial del mapa con `systems.is_temporary_mission = true`.
-- Siempre esta controlada por una faccion narrativa: `Orcos` o `Tiranidos`.
+- Una misión temporal aparece como un sistema especial del mapa con `systems.is_temporary_mission = true`.
+- Siempre está controlada por una facción narrativa: `Orcos` o `Tiranidos`.
 - El admin elige:
   - sistema normal de anclaje,
   - nombre del sistema temporal,
-  - descripcion narrativa,
-  - faccion narrativa ocupante,
+  - descripción narrativa,
+  - facción narrativa ocupante,
   - si las tropas enemigas son visibles,
   - lista manual de tropas enemigas si quiere mostrarlas,
-  - cuantos dias existe la mision,
-  - si la mision desaparece automaticamente al resolver la batalla.
-- El backend coloca el sistema temporal cerca del sistema de anclaje y crea una unica arista hacia ese anclaje.
+  - cuántos días existe la misión,
+  - si la misión desaparece automáticamente al resolver la batalla.
+- El backend coloca el sistema temporal cerca del sistema de anclaje y crea una única arista hacia ese anclaje.
 - La posicion se calcula buscando candidatos alrededor del anclaje y puntuando distancia a sistemas, distancia a aristas existentes, distancia de la nueva arista a otros sistemas y distancia de la nueva arista a otras aristas. El objetivo es que el marcador temporal no colisione visualmente con nodos, rutas ni otros elementos del mapa.
-- Los jugadores pueden lanzar ataque individual o de coalicion contra estos sistemas si tienen un sistema propio adyacente.
-- Las misiones no se usan como rutas logisticas normales: el movimiento normal no puede terminar en una mision temporal ni usarla como tramo intermedio.
+- Los jugadores pueden lanzar ataque individual o de coalición contra estos sistemas si tienen un sistema propio adyacente.
+- Las misiones no se usan como rutas logísticas normales: el movimiento normal no puede terminar en una misión temporal ni usarla como tramo intermedio.
 - Si las tropas enemigas no son visibles, `get_visible_systems()` redactor devuelve la lista manual vacia para jugadores.
-- Si son visibles, se muestran en el panel del sistema dentro de `Enemigas` con estilo similar a las unidades reales, pero no son `campaign_units` y no participan en heridas, costes ni movimiento automatico.
-- La ficha narrativa usa la tabla `missions`; el marcador tactico y la niebla de tropas viven en columnas de `systems`.
-- Una mision temporal activa tiene `temporary_mission_status = active`.
+- Si son visibles, se muestran en el panel del sistema dentro de `Enemigas` con estilo similar a las unidades reales, pero no son `campaign_units` y no participan en heridas, costes ni movimiento automático.
+- La ficha narrativa usa la tabla `missions`; el marcador táctico y la niebla de tropas viven en columnas de `systems`.
+- Una misión temporal activa tiene `temporary_mission_status = active`.
 - `resolve_temporary_missions()` cierra misiones cuya `mission_expires_at` ya ha vencido y las marca como `expired`.
-- Si `mission_expires_after_battle = true`, un trigger sobre `conflicts` cierra la mision al pasar el conflicto a `resolved` y la marca como `completed`.
-- El admin puede eliminar misiones temporales activas desde `/admin`; esto llama a `admin_remove_temporary_mission()` y marca la mision como `removed`.
-- Cualquier cierre de mision temporal ejecuta `cleanup_temporary_mission()`:
-  - cancela movimientos, operaciones de coalicion, conflictos pendientes y amenazas narrativas entrantes asociadas a la mision,
-  - oculta la mision de `get_visible_systems()` porque ya no esta activa,
-  - evacua cada unidad de jugador presente o en camino hacia el sistema propio mas cercano que este controlado, no sea gaseoso, no este bloqueado, no tenga conflicto pendiente, no tenga ataque narrativo entrante y no este recibiendo ataque normal o de coalicion,
+- Si `mission_expires_after_battle = true`, un trigger sobre `conflicts` cierra la misión al pasar el conflicto a `resolved` y la marca como `completed`.
+- El admin puede eliminar misiones temporales activas desde `/admin`; esto llama a `admin_remove_temporary_mission()` y marca la misión como `removed`.
+- Cualquier cierre de misión temporal ejecuta `cleanup_temporary_mission()`:
+  - cancela movimientos, operaciones de coalición, conflictos pendientes y amenazas narrativas entrantes asociadas a la misión,
+  - oculta la misión de `get_visible_systems()` porque ya no está activa,
+  - evacua cada unidad de jugador presente o en camino hacia el sistema propio más cercano que está controlado, no sea gaseoso, no está bloqueado, no tenga conflicto pendiente, no tenga ataque narrativo entrante y no está recibiendo ataque normal o de coalición,
   - si no hay sistema seguro, deja la unidad en `retreat_pending` y `current_system_id = null` para que admin la resuelva narrativamente.
 
-### 20.8 Operaciones, permisos y eventos
+### 20.8 Operaciónes, permisos y eventos
 
-- `Operaciones` es el panel de avisos accionables del jugador.
-- En la parte superior muestra la disponibilidad de batalla de la ventana vigente: ataques disponibles, defensas disponibles y total disponible. Los cupos se recargan cada 33 dias. La regla vigente es maximo 3 participaciones por ventana segun backend, sin poder consumirlas todas como atacante o todas como defensor.
-- Muestra `movement_passage_requests` pendientes para permitir o rechazar que otra faccion atraviese sistemas propios o termine el movimiento dentro de ellos.
+- `Operaciones` es el panel de avisos acciónables del jugador.
+- En la parte superior muestra la disponibilidad de batalla de la ventana vigente: ataques disponibles, defensas disponibles y total disponible. Los cupos se recargan cada 33 días. La regla vigente es máximo 3 participaciones por ventana según backend, sin poder consumirlas todas como atacante o todas como defensor.
+- Muestra `movement_passage_requests` pendientes para permitir o rechazar que otra facción atraviese sistemas propios o termine el movimiento dentro de ellos.
 - Si se rechaza un permiso de paso/estancia, el movimiento se cancela y se aplican las reglas de reembolso de movimiento.
-- Muestra batallas pendientes en las que la faccion participa como atacante o defensor.
-- Muestra reportes de batalla pendientes de confirmacion o discrepantes relacionados con la faccion.
-- El bando atacante no puede sumar refuerzos cuando el ataque ya salio; el defensor si puede traer tropas cercanas si llegan antes del cierre del plantel.
-- `Eventos` es una cronica galactica no accionable. Sustituye al antiguo boton global de Comercio.
+- Muestra batallas pendientes en las que la facción participa como atacante o defensor.
+- Muestra reportes de batalla pendientes de confirmacion o discrepantes relacionados con la facción.
+- El bando atacante no puede sumar refuerzos cuando el ataque ya salio; el defensor sí puede traer tropas cercanas si llegan antes del cierre del plantel.
+- `Eventos` es una cronica galáctica no acciónable. Sustituye al antiguo botón global de Comercio.
 - El admin puede crear eventos manuales desde `/admin` con titulo y contenido.
-- El admin puede cambiar el modo global de tiempos desde `/admin`. No se deben editar tiempos a mano en tablas sueltas salvo correccion excepcional: el RPC central mantiene sincronizados movimientos, ataques, tecnologias, reclutamientos, construcciones y reabastecimientos.
-- Al resolverse una batalla, el backend crea automaticamente un evento breve con sistema, ganador, perdedor y si vencio atacante o defensor.
-- Cuando el admin desbloquea un sistema con conflicto pendiente, el conflicto pasa a `cancelled`, desaparece de pendientes y las tropas `in_war` vuelven al sistema aliado seguro mas cercano. Si no hay sistema seguro, quedan `retreat_pending`.
+- El admin puede cambiar el modo global de tiempos desde `/admin`. No se deben editar tiempos a mano en tablas sueltas salvo corrección excepcional: el RPC central mantiene sincronizados movimientos, ataques, tecnologías, reclutamientos, construcciones y reabastecimientos.
+- Al resolverse una batalla, el backend crea automáticamente un evento breve con sistema, ganador, perdedor y si vencio atacante o defensor.
+- Cuando el admin desbloquea un sistema con conflicto pendiente, el conflicto pasa a `cancelled`, desaparece de pendientes y las tropas `in_war` vuelven al sistema aliado seguro más cercano. Si no hay sistema seguro, quedan `retreat_pending`.
 
 ---
 
@@ -3131,9 +3131,9 @@ Sin login todavía.
 
 - Barra superior.
 - Oro como recurso visible.
-- Eventos en el panel de mando operativo y Comercio abierto desde Camara de Comercio.
+- Eventos en el panel de mando operativo y Comercio abierto desde Cámara de Comercio.
 - Mercader con compra/venta contra Oro.
-- Comercio estelar entre jugadores con ofertas y comision.
+- Comercio estelar entre jugadores con ofertas y comisión.
 - Producción diaria por tick backend de 24h.
 - Cron/lazy processing de recursos.
 - Admin puede configurar cadencia de producción.
@@ -3151,7 +3151,7 @@ Sin login todavía.
 
 ### Fase 5.5: Árbol tecnológico
 
-- Componentes tecnologicos como recurso especial del arbol.
+- Componentes tecnológicos como recurso especial del árbol.
 - Tabla de nodos, prerequisitos, progreso por facción y efectos.
 - Pantalla visual de árbol tecnológico.
 - `start_technology_research()`.
@@ -3292,7 +3292,7 @@ unlocked
 La aplicación debe priorizar:
 
 1. Claridad de interfaz.
-2. Seguridad de acciones.
+2. Seguridad de acciónes.
 3. Coherencia visual.
 4. Fluidez del mapa.
 5. Simplicidad administrativa.
@@ -3327,13 +3327,13 @@ Construir una aplicación web privada de campaña Warhammer 40K con:
   - Material Industrial,
   - Uridium,
   - Componentes tecnológicos.
-- Produccion diaria por edificios activos mediante tick backend de 24h.
-- Construccion planetaria con slots, costes y cola.
+- Producción diaria por edificios activos mediante tick backend de 24h.
+- Construcción planetaria con slots, costes y cola.
 - Edificios de sistemas enemigos ocultos por niebla de guerra: el jugador ve slot ocupado, no el edificio concreto.
 - Reclutamiento temporizado desde edificios militares.
 - Curacion de miniaturas heridas desde edificios militares.
-- Comercio ligado a Camara de Comercio.
-- Arbol tecnologico con desbloqueo de unidades, edificios y bonos.
+- Comercio ligado a Cámara de Comercio.
+- Árbol tecnológico con desbloqueo de unidades, edificios y bonos.
 - Movimiento temporizado.
 - Reportes de batalla por jugadores/admin.
 - Sistemas bloqueados mientras haya batalla pendiente.

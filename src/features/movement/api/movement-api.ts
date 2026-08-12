@@ -1,11 +1,12 @@
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import type { UnitMovementSelection } from "@/domain/campaign";
+import { fixSpanishText } from "@/lib/spanish-text";
 
 export async function createMovementOrder(unitSelections: UnitMovementSelection[], pathSystemIds: string[]) {
   const supabase = getSupabaseBrowserClient();
 
   if (!supabase) {
-    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+    throw new Error(fixSpanishText("Supabase no está configurado. Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY."));
   }
 
   const { data, error } = await supabase.rpc("create_movement_order", {
@@ -17,7 +18,7 @@ export async function createMovementOrder(unitSelections: UnitMovementSelection[
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -31,7 +32,7 @@ export async function createAttackOrder(
   const supabase = getSupabaseBrowserClient();
 
   if (!supabase) {
-    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+    throw new Error(fixSpanishText("Supabase no está configurado. Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY."));
   }
 
   const { data, error } = await supabase.rpc("create_attack_order", {
@@ -44,7 +45,7 @@ export async function createAttackOrder(
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -58,7 +59,7 @@ export async function respondMovementPassageRequest(
   const supabase = getSupabaseBrowserClient();
 
   if (!supabase) {
-    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+    throw new Error(fixSpanishText("Supabase no está configurado. Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY."));
   }
 
   const { data, error } = await supabase.rpc("respond_movement_passage_request", {
@@ -68,7 +69,7 @@ export async function respondMovementPassageRequest(
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;
@@ -78,7 +79,7 @@ export async function cancelMovementOrder(orderId: string) {
   const supabase = getSupabaseBrowserClient();
 
   if (!supabase) {
-    throw new Error("Supabase no esta configurado. Anade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+    throw new Error(fixSpanishText("Supabase no está configurado. Añade NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY."));
   }
 
   const { data, error } = await supabase.rpc("cancel_movement_order", {
@@ -86,7 +87,7 @@ export async function cancelMovementOrder(orderId: string) {
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw new Error(fixSpanishText(error.message));
   }
 
   return data as string;

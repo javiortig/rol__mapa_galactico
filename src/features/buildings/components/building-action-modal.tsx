@@ -27,6 +27,7 @@ import {
 } from "@/features/technology/lib/technology-state";
 import { getFactionArmyPoints } from "@/features/units/lib/army-points";
 import { getCharacterLevel, getCharacterRank, getCharacterRelicSlots, isCharacterUnit } from "@/features/units/lib/character-ranks";
+import { normalizeSpanishTextKey } from "@/lib/spanish-text";
 import { formatCountdown } from "@/lib/time";
 import type {
   BuildingTemplate,
@@ -75,7 +76,7 @@ export function BuildingActionModal({
   }
 
   const handleDestroy = () => {
-    if (!window.confirm(`Destruir ${template.name}? Esta accion no devuelve recursos.`)) {
+    if (!window.confirm(`Destruir ${template.name}? Esta acci\u00f3n no devuelve recursos.`)) {
       return;
     }
 
@@ -143,9 +144,9 @@ function CommerceBuildingView({ onOpenTrade }: { onOpenTrade: () => void }) {
         <div className="mx-auto mb-4 grid size-14 place-items-center rounded-md border border-amber-300/30 bg-amber-300/10 text-amber-100">
           <HandCoins size={26} />
         </div>
-        <h3 className="text-xl font-semibold text-cyan-50">Camara de Comercio</h3>
+        <h3 className="text-xl font-semibold text-cyan-50">Cámara de Comercio</h3>
         <p className="mt-2 max-w-md text-sm leading-6 text-slate-300">
-          Acceso al mercader y al comercio estelar de la campana.
+          Acceso al mercader y al comercio estelar de la campaña.
         </p>
         <Button className="mt-5 w-full" onClick={onOpenTrade}>
           Abrir comercio
@@ -162,7 +163,7 @@ function ConstructingBuildingView({ building }: { building: SystemBuilding }) {
         <div className="mx-auto mb-4 grid size-14 place-items-center rounded-md border border-amber-300/30 bg-amber-300/10 text-amber-100">
           <Building2 size={26} />
         </div>
-        <h3 className="text-xl font-semibold text-cyan-50">Construccion en marcha</h3>
+        <h3 className="text-xl font-semibold text-cyan-50">Construcción en marcha</h3>
         <p className="mt-2 text-sm text-slate-300">
           Disponible en {building.finishesAt ? formatCountdown(building.finishesAt) : "breve"}.
         </p>
@@ -383,7 +384,7 @@ function RecruitTab({
             })
           ) : (
             <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-4 text-sm text-slate-400">
-              Este edificio no tiene unidades disponibles para tu faccion.
+              Este edificio no tiene unidades disponibles para tu facción.
             </div>
           )}
         </div>
@@ -401,7 +402,7 @@ function RecruitTab({
                 Tiempo: {formatDuration(getRecruitmentDuration(snapshot, selectedTemplate, 1))}
               </p>
               <p className="mt-2 text-xs text-slate-400">
-                Ejercito: {currentArmyPoints + selectedPoints}/{snapshot.maxArmyPoints} pts
+                Ejército: {currentArmyPoints + selectedPoints}/{snapshot.maxArmyPoints} pts
               </p>
               {selectedModelOption?.copyFrom && selectedModelOption.copyFrom > 1 ? (
                 <p className="mt-1 text-xs text-amber-100">
@@ -499,7 +500,7 @@ function RecruitTab({
 
             {exceedsArmyLimit ? (
               <div className="rounded-md border border-rose-300/25 bg-rose-400/10 p-3 text-sm text-rose-100">
-                Supera el limite de {snapshot.maxArmyPoints} puntos de ejercito.
+                Supera el límite de {snapshot.maxArmyPoints} puntos de ejército.
               </div>
             ) : null}
 
@@ -554,7 +555,7 @@ function HealTab({
         (unit.quantity < unit.startingQuantity || unit.woundsTaken > 0) &&
         (unitTemplate
           ? canUseTemplateAtBuilding(unitTemplate, template.slug, template.allowedUnitCategories)
-          : template.allowedUnitCategories.includes(unit.category))
+          : categoryMatches(template.allowedUnitCategories, unit.category))
       );
     }
   );
@@ -631,7 +632,7 @@ function HealTab({
                 {selectedUnit.quantity}/{selectedUnit.startingQuantity} miniaturas · {selectedUnit.woundsTaken} heridas
               </p>
               <p className="mt-2 text-xs leading-5 text-slate-500">
-                Recupera la unidad completa: miniaturas al maximo y heridas a 0.
+                Recupera la unidad completa: miniaturas al máximo y heridas a 0.
               </p>
             </div>
 
@@ -939,7 +940,7 @@ function RelicSanctuaryView({ snapshot, building }: { snapshot: CampaignSnapshot
 
           {!rpcReady ? (
             <div className="rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
-              Supabase no esta configurado.
+              Supabase no está configurado.
             </div>
           ) : null}
 
@@ -1015,13 +1016,13 @@ function ProductionBuildingView({
         <div className="mx-auto mb-4 grid size-14 place-items-center rounded-md border border-cyan-300/30 bg-cyan-400/10 text-cyan-100">
           <Activity size={26} />
         </div>
-        <h3 className="text-xl font-semibold text-cyan-50">Produccion activa</h3>
+        <h3 className="text-xl font-semibold text-cyan-50">Producción activa</h3>
         {template.producedResourceKey ? (
           <p className="mt-2 text-sm text-slate-300">
-            Extrae <ResourceAmount resource={template.producedResourceKey} value={effectiveProduction} /> al dia en este sistema.
+            Extrae <ResourceAmount resource={template.producedResourceKey} value={effectiveProduction} /> al día en este sistema.
           </p>
         ) : (
-          <p className="mt-2 text-sm text-slate-300">Este edificio no tiene produccion configurada.</p>
+          <p className="mt-2 text-sm text-slate-300">Este edificio no tiene producción configurada.</p>
         )}
       </div>
     </div>
@@ -1282,7 +1283,12 @@ function canUseTemplateAtBuilding(unitTemplate: UnitTemplate, buildingSlug: stri
     return unitTemplate.recruitmentBuildingType === buildingSlug;
   }
 
-  return allowedUnitCategories.includes(unitTemplate.category);
+  return categoryMatches(allowedUnitCategories, unitTemplate.category);
+}
+
+function categoryMatches(allowedUnitCategories: string[], category: string) {
+  const normalizedCategory = normalizeSpanishTextKey(category);
+  return allowedUnitCategories.some((allowedCategory) => normalizeSpanishTextKey(allowedCategory) === normalizedCategory);
 }
 
 function getResupplyCosts(template: UnitTemplate, unit: CampaignUnit): Partial<Record<ResourceKey, number>> {

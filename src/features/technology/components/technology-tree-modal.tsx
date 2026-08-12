@@ -99,7 +99,7 @@ const branchOrder = [
   "Corte del Cambiante",
   "Tronos de la Disformidad",
   "Guardia Auramita",
-  "Camara Anathema",
+  "Cámara Anathema",
   "Arsenal del Trono",
   "Doctrina del Capitulo",
   "Vanguardia y Asalto",
@@ -126,7 +126,7 @@ const branchConfigs: Record<string, BranchConfig> = {
   "Infanteria y elite": {
     angle: -122,
     color: "#fb7185",
-    label: "Infanteria",
+    label: "Infanter\u00eda",
     mutedColor: "rgba(251,113,133,0.13)",
     startRadius: 196,
     tierGap: 92
@@ -134,7 +134,7 @@ const branchConfigs: Record<string, BranchConfig> = {
   "Blindados y maquinas": {
     angle: 56,
     color: "#fb923c",
-    label: "Maquinas",
+    label: "M\u00e1quinas",
     mutedColor: "rgba(251,146,60,0.14)",
     startRadius: 190,
     tierGap: 88
@@ -187,7 +187,7 @@ const branchConfigs: Record<string, BranchConfig> = {
     startRadius: 224,
     tierGap: 98
   },
-  "Camara Anathema": {
+  "Cámara Anathema": {
     angle: 38,
     color: "#e5e7eb",
     label: "Anathema",
@@ -360,15 +360,15 @@ export function TechnologyTreeModal({
       <Panel className="flex h-[var(--app-height)] w-full max-w-none flex-col overflow-hidden rounded-none border-cyan-200/16 shadow-[0_0_48px_rgba(8,145,178,0.14)] md:h-[96vh] md:w-[98vw] md:rounded-lg">
         <header className="flex items-center justify-between gap-4 border-b border-cyan-200/12 bg-slate-950/78 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] md:px-5 md:py-4">
           <div className="min-w-0">
-            <div className="text-xs uppercase tracking-[0.24em] text-cyan-200/70">Arbol tecnologico</div>
+            <div className="text-xs uppercase tracking-[0.24em] text-cyan-200/70">Árbol tecnológico</div>
             <h2 className="mt-1 text-xl font-semibold text-cyan-50 md:text-2xl">
-              {inspectionFaction?.name ?? "Campana"}
+              {inspectionFaction?.name ?? "Campaña"}
             </h2>
           </div>
           <div className="flex min-w-0 items-center gap-3">
             {snapshot.currentUser.role === "admin" ? (
               <select
-                aria-label="Inspeccionar faccion"
+                aria-label="Inspeccionar facción"
                 className="max-w-[9rem] rounded-md border border-cyan-200/15 bg-slate-950/70 px-2 py-2 text-xs text-cyan-50 outline-none transition focus:border-cyan-200/50 md:max-w-[13rem] md:px-3 md:text-sm"
                 onChange={(event) => {
                   setSelectedAdminFactionId(event.target.value);
@@ -386,7 +386,7 @@ export function TechnologyTreeModal({
             <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 px-3 py-2">
               <ResourceAmount resource="technology" value={currentResources?.technology ?? 0} />
             </div>
-            <Button aria-label="Cerrar tecnologia" onClick={handleClose} size="icon" variant="ghost">
+            <Button aria-label="Cerrar tecnología" onClick={handleClose} size="icon" variant="ghost">
               <X size={18} />
             </Button>
           </div>
@@ -692,9 +692,9 @@ function TechnologyDetailsPanel({
     return (
       <aside className="mobile-scroll border-t border-cyan-200/15 bg-slate-950/55 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-4 md:p-5 xl:border-l xl:border-t-0">
         <div className="rounded-md border border-cyan-200/15 bg-slate-950/42 p-4">
-          <div className="text-sm font-semibold text-cyan-50">Selecciona una tecnologia</div>
+          <div className="text-sm font-semibold text-cyan-50">Selecciona una tecnología</div>
           <p className="mt-2 text-sm leading-6 text-slate-400">
-            La constelacion parte del nucleo de tu faccion. Toca un circulo para consultar requisitos, coste y efecto.
+            La constelación parte del núcleo de tu facción. Toca un círculo para consultar requisitos, coste y efecto.
           </p>
         </div>
       </aside>
@@ -727,7 +727,7 @@ function TechnologyDetailsPanel({
             <Badge tone={getStatusTone(status)}>{getStatusLabel(status)}</Badge>
             <h3 className="mt-3 text-2xl font-semibold leading-tight text-cyan-50">{node.name}</h3>
             <div className="mt-2 text-xs uppercase tracking-[0.18em]" style={{ color: style.color }}>
-              {node.branch}
+              {style.label}
             </div>
           </div>
           {onCloseNode ? (
@@ -771,7 +771,7 @@ function TechnologyDetailsPanel({
 
       {status === "planned" ? (
         <div className="mb-4 rounded-md border border-slate-400/25 bg-slate-400/10 p-3 text-sm text-slate-200">
-          Proximamente.
+          Próximamente.
         </div>
       ) : null}
 
@@ -790,7 +790,7 @@ function TechnologyDetailsPanel({
               <div className="rounded-md border border-cyan-200/12 bg-slate-950/32 p-3" key={group.group}>
                 {group.nodes.length > 1 ? (
                   <div className="mb-2 text-[11px] uppercase tracking-[0.16em] text-cyan-200/60">
-                    Cualquiera de estas tecnologias
+                    Cualquiera de estas tecnologías
                   </div>
                 ) : null}
                 <div className="space-y-2">
@@ -815,7 +815,7 @@ function TechnologyDetailsPanel({
 
       {!rpcReady ? (
         <div className="mb-3 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
-          Supabase no esta configurado.
+          Supabase no está configurado.
         </div>
       ) : null}
 
@@ -829,7 +829,7 @@ function TechnologyDetailsPanel({
 
       <Button className="sticky bottom-0 w-full" disabled={!canResearch} onClick={() => onResearch(node)}>
         <Sparkles size={16} />
-        {status === "planned" ? "Proximamente" : pending ? "Iniciando..." : "Investigar"}
+        {status === "planned" ? "Próximamente" : pending ? "Iniciando..." : "Investigar"}
       </Button>
     </aside>
   );
@@ -1132,7 +1132,7 @@ function getTechnologyIcon(node: TechnologyNode): LucideIcon {
 function getStatusLabel(status: DerivedTechnologyStatus) {
   const labels: Record<DerivedTechnologyStatus, string> = {
     locked: "Bloqueada",
-    planned: "Proximamente",
+    planned: "Próximamente",
     available: "Disponible",
     researching: "Investigando",
     unlocked: "Desbloqueada"
