@@ -81,8 +81,8 @@ type BranchRay = {
   labelY: number;
 };
 
-const boardWidth = 1540;
-const boardHeight = 980;
+const boardWidth = 1680;
+const boardHeight = 1100;
 const corePoint = { x: boardWidth / 2, y: boardHeight / 2 };
 const coreSize = 150;
 const dynamicBranchPalette = ["#67e8f9", "#facc15", "#fb7185", "#fb923c", "#c084fc", "#94a3b8", "#34d399", "#f472b6"];
@@ -185,7 +185,7 @@ const branchConfigs: Record<string, BranchConfig> = {
     label: "Guardia",
     mutedColor: "rgba(250,204,21,0.13)",
     startRadius: 224,
-    tierGap: 98
+    tierGap: 108
   },
   "Cámara Anathema": {
     angle: 38,
@@ -193,7 +193,7 @@ const branchConfigs: Record<string, BranchConfig> = {
     label: "Anathema",
     mutedColor: "rgba(229,231,235,0.12)",
     startRadius: 226,
-    tierGap: 98
+    tierGap: 108
   },
   "Arsenal del Trono": {
     angle: 142,
@@ -201,7 +201,7 @@ const branchConfigs: Record<string, BranchConfig> = {
     label: "Arsenal",
     mutedColor: "rgba(251,146,60,0.13)",
     startRadius: 226,
-    tierGap: 98
+    tierGap: 108
   },
   "Falange Dinastica": {
     angle: -38,
@@ -446,7 +446,7 @@ const RadialTechnologyBoard = memo(function RadialTechnologyBoard({
       className="min-h-0 overflow-auto overscroll-contain bg-[radial-gradient(circle_at_50%_50%,rgba(34,211,238,0.11),transparent_19rem),radial-gradient(circle_at_20%_72%,rgba(192,132,252,0.06),transparent_16rem),linear-gradient(180deg,rgba(2,6,23,0.99),rgba(8,13,31,0.99))] [-webkit-overflow-scrolling:touch] [touch-action:pan-x_pan-y]"
       ref={viewportRef}
     >
-      <div className="relative h-[980px] w-[1540px]">
+      <div className="relative h-[1100px] w-[1680px]">
         <ConstellationBackdrop />
         <BranchRays rays={layout.rays} />
         <TechnologyConnections layout={layout} statusByNodeId={statusByNodeId} />

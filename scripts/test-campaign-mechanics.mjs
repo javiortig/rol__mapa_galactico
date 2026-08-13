@@ -339,6 +339,17 @@ async function resetCombatFixture(maps) {
   }
 
   await must(
+    "limpiar escudos fixture",
+    service
+      .from("systems")
+      .update({ blocked_until: null })
+      .in(
+        "id",
+        resetSystems.map(([slug]) => maps.systemBySlug[slug].id)
+      )
+  );
+
+  await must(
     "ruta fixture coalicion",
     service.from("system_edges").upsert({
       id: "00000000-0000-0000-0000-000000000054",
@@ -501,10 +512,10 @@ async function main() {
   const battleLimits = await rpc(custodes.client, "get_battle_limit_summary", {}, "limites batalla ventana");
   const battleWindowMs = Date.parse(battleLimits.month_end) - Date.parse(battleLimits.month_start);
   assert(
-    Math.abs(battleWindowMs - 33 * 24 * 60 * 60 * 1000) < 1000,
-    `La ventana de operaciones debe ser 33 dias, recibida ${battleWindowMs / 86400000} dias`
+    Math.abs(battleWindowMs - 35 * 24 * 60 * 60 * 1000) < 1000,
+    `La ventana de operaciones debe ser 35 dias, recibida ${battleWindowMs / 86400000} dias`
   );
-  recordCheck("ventana operaciones", "cupos de batalla se recargan cada 33 dias");
+  recordCheck("ventana operaciones", "cupos de batalla se recargan cada 35 dias");
 
   await rpc(
     admin.client,
@@ -593,6 +604,24 @@ async function main() {
     "El descuento de Uridium no coincide con unidades movidas"
   );
   await forceArrival(unitCostMoveId);
+  const conqueredNeutralShield = await must(
+    "escudo conquista neutral",
+    service
+      .from("systems")
+      .select("status,controller_faction_id,blocked_until")
+      .eq("id", maps.systemBySlug["helios-drift"].id)
+      .single()
+  );
+  assert(conqueredNeutralShield.status === "controlled", "Helios debia quedar conquistado tras el movimiento");
+  assert(
+    conqueredNeutralShield.controller_faction_id === maps.factionBySlug["adeptus-custodes"].id,
+    "Helios debia quedar bajo control Custodes"
+  );
+  assert(
+    conqueredNeutralShield.blocked_until && Date.parse(conqueredNeutralShield.blocked_until) > Date.now(),
+    "La conquista neutral debe activar el escudo de proteccion"
+  );
+  recordCheck("escudo conquista neutral", "conquistar neutral aplica proteccion temporal");
   recordCheck("movimiento coste por unidad", `ruta ${kharonHeliosEdge.uridium_cost} x 2 unidades`);
 
   await must(

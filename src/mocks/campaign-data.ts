@@ -707,7 +707,7 @@ const resources: CampaignSnapshot["resources"] = [
     gold: 0,
     industrialMaterial: 150,
     uridium: 10,
-    technology: 16,
+    technology: 8,
     updatedAt: new Date(now).toISOString()
   },
   {
@@ -718,7 +718,7 @@ const resources: CampaignSnapshot["resources"] = [
     gold: 0,
     industrialMaterial: 150,
     uridium: 10,
-    technology: 16,
+    technology: 8,
     updatedAt: new Date(now).toISOString()
   },
   {
@@ -729,7 +729,7 @@ const resources: CampaignSnapshot["resources"] = [
     gold: 0,
     industrialMaterial: 150,
     uridium: 10,
-    technology: 16,
+    technology: 8,
     updatedAt: new Date(now).toISOString()
   },
   {
@@ -740,7 +740,7 @@ const resources: CampaignSnapshot["resources"] = [
     gold: 0,
     industrialMaterial: 150,
     uridium: 10,
-    technology: 16,
+    technology: 8,
     updatedAt: new Date(now).toISOString()
   },
   {
@@ -751,7 +751,7 @@ const resources: CampaignSnapshot["resources"] = [
     gold: 0,
     industrialMaterial: 150,
     uridium: 10,
-    technology: 16,
+    technology: 8,
     updatedAt: new Date(now).toISOString()
   }
 ];

@@ -3,14 +3,14 @@
   "source": {
     "kind": "mfm",
     "url": "https://mfm.warhammer-community.com/en",
-    "fetchedAt": "2026-08-01T17:05:46.554Z",
+    "fetchedAt": "2026-08-13T00:58:04.829Z",
     "note": "MFM oficial 11th edition. No se usa BSData/wh40k-10e como fuente de puntos, tamanos ni opciones."
   },
   "summary": {
-    "providedUnits": 333,
-    "matchedUnits": 312,
+    "providedUnits": 347,
+    "matchedUnits": 326,
     "unmatchedUnits": 21,
-    "variableUnits": 155,
+    "variableUnits": 161,
     "conflicts": 150
   },
   "units": [
@@ -47,7 +47,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -83,7 +83,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -119,7 +119,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -155,7 +155,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -181,10 +181,7 @@
             "label": "1"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -198,10 +195,7 @@
             "label": "2+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -221,7 +215,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -242,7 +236,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -278,7 +272,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -314,7 +308,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -335,7 +329,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -371,7 +365,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -407,7 +401,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -443,7 +437,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -469,10 +463,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -482,7 +473,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -518,7 +509,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -554,7 +545,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -590,7 +581,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -626,7 +617,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -662,7 +653,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -698,7 +689,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -758,7 +749,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -818,7 +809,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -844,10 +835,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 20
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -857,7 +845,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -917,7 +905,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -953,7 +941,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -974,7 +962,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1024,7 +1012,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1074,7 +1062,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1110,7 +1098,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1146,7 +1134,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1182,7 +1170,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1208,10 +1196,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 5
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -1221,7 +1206,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1271,7 +1256,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1321,7 +1306,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1357,7 +1342,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1454,7 +1439,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1518,7 +1503,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1554,7 +1539,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1651,7 +1636,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1687,7 +1672,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1713,10 +1698,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -1730,10 +1712,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -1753,7 +1732,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1803,7 +1782,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1839,7 +1818,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -1907,10 +1886,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -1966,10 +1942,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -2016,7 +1989,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -2070,10 +2043,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -2115,10 +2085,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -2156,7 +2123,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -2206,7 +2173,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -2266,7 +2233,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -2302,7 +2269,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -2362,7 +2329,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -2459,7 +2426,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -2519,7 +2486,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -2616,7 +2583,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -2642,10 +2609,7 @@
             "label": "1"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 20
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -2659,10 +2623,7 @@
             "label": "2+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 20
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -2682,7 +2643,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -2779,7 +2740,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -2829,7 +2790,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -2889,7 +2850,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/necrons",
         "pageSlug": "necrons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -2925,7 +2886,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -2961,7 +2922,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -2997,7 +2958,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3033,7 +2994,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3054,7 +3015,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3075,7 +3036,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3111,7 +3072,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3147,7 +3108,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3173,10 +3134,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -3186,7 +3144,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3212,10 +3170,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -3225,7 +3180,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3251,10 +3206,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 20
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -3268,10 +3220,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 25
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -3291,7 +3240,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3327,7 +3276,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3363,7 +3312,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3399,7 +3348,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3435,7 +3384,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3471,7 +3420,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3521,7 +3470,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3571,7 +3520,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3592,7 +3541,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/chaos-daemons",
         "pageSlug": "chaos-daemons",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3628,7 +3577,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3664,7 +3613,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3685,7 +3634,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3706,7 +3655,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3732,10 +3681,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -3745,7 +3691,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3781,7 +3727,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3817,7 +3763,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3853,7 +3799,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3889,7 +3835,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3925,7 +3871,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3946,7 +3892,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -3982,7 +3928,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4018,7 +3964,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4054,7 +4000,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4090,7 +4036,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4126,7 +4072,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4162,7 +4108,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4212,7 +4158,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4262,7 +4208,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4298,7 +4244,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4334,7 +4280,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4370,7 +4316,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4406,7 +4352,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4432,10 +4378,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -15
-          }
+          "change": null
         }
       ],
       "wargearOptions": [
@@ -4454,7 +4397,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4480,10 +4423,7 @@
             "label": "1-3"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -4517,7 +4457,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4567,7 +4507,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4593,10 +4533,7 @@
             "label": "1-3"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -4630,7 +4567,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4666,7 +4603,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4692,10 +4629,7 @@
             "label": "1-3"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -4738,7 +4672,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4774,7 +4708,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4810,7 +4744,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4846,7 +4780,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4882,7 +4816,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4908,10 +4842,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -4921,7 +4852,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4947,10 +4878,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -4960,7 +4888,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -4986,10 +4914,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -15
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -4999,7 +4924,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5020,7 +4945,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5041,7 +4966,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5067,10 +4992,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -5080,7 +5002,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5116,7 +5038,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5142,10 +5064,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -5
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -5155,7 +5074,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5181,10 +5100,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -5194,7 +5110,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5230,7 +5146,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5251,7 +5167,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5287,7 +5203,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5323,7 +5239,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5359,7 +5275,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5395,7 +5311,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5431,7 +5347,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5457,10 +5373,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -5470,7 +5383,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5491,7 +5404,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5527,7 +5440,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5563,7 +5476,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5599,7 +5512,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5635,7 +5548,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5685,7 +5598,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5721,7 +5634,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5757,7 +5670,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5783,10 +5696,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -5
-          }
+          "change": null
         },
         {
           "models": 10,
@@ -5800,10 +5710,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -5813,7 +5720,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5839,10 +5746,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 10,
@@ -5856,10 +5760,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -20
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -5869,7 +5770,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5905,7 +5806,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -5965,7 +5866,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6015,7 +5916,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6065,7 +5966,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6101,7 +6002,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6198,7 +6099,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6234,7 +6135,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6270,7 +6171,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6320,7 +6221,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6380,7 +6281,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6416,7 +6317,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6466,7 +6367,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6502,7 +6403,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6538,7 +6439,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6564,10 +6465,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -5
-          }
+          "change": null
         },
         {
           "models": 6,
@@ -6581,10 +6479,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -6594,7 +6489,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6620,10 +6515,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -5
-          }
+          "change": null
         },
         {
           "models": 6,
@@ -6647,7 +6539,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6673,10 +6565,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 4,
@@ -6690,10 +6579,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -20
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -6703,7 +6589,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6753,7 +6639,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6779,10 +6665,7 @@
             "label": "1-3"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -6816,7 +6699,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6866,7 +6749,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -6892,10 +6775,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -5
-          }
+          "change": null
         },
         {
           "models": 10,
@@ -6923,10 +6803,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -5
-          }
+          "change": null
         },
         {
           "models": 10,
@@ -6969,7 +6846,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7047,7 +6924,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7083,7 +6960,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7119,7 +6996,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7169,7 +7046,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7209,10 +7086,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -7222,7 +7096,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7272,7 +7146,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7298,10 +7172,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         },
         {
           "models": 2,
@@ -7325,7 +7196,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7351,10 +7222,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 10,
@@ -7382,10 +7250,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -5
-          }
+          "change": null
         },
         {
           "models": 10,
@@ -7399,10 +7264,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 5
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -7431,7 +7293,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7457,10 +7319,7 @@
             "label": "1-3"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -7494,7 +7353,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7534,10 +7393,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -7547,7 +7403,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7583,7 +7439,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7619,7 +7475,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7645,10 +7501,7 @@
             "label": "1"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -30
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -7662,10 +7515,7 @@
             "label": "2+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -30
-          }
+          "change": null
         }
       ],
       "wargearOptions": [
@@ -7694,7 +7544,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7720,10 +7570,7 @@
             "label": "1"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -25
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -7737,10 +7584,7 @@
             "label": "2+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -25
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -7760,7 +7604,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7796,7 +7640,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/aeldari",
         "pageSlug": "aeldari",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7856,7 +7700,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7892,7 +7736,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7928,7 +7772,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -7964,7 +7808,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8000,7 +7844,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8021,7 +7865,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8042,7 +7886,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8078,7 +7922,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8114,7 +7958,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8150,7 +7994,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8186,7 +8030,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8222,7 +8066,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8258,7 +8102,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8294,7 +8138,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8354,7 +8198,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8390,7 +8234,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8411,7 +8255,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8461,7 +8305,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8501,10 +8345,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -8514,7 +8355,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8554,10 +8395,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -8567,7 +8405,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8593,10 +8431,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 10,
@@ -8610,10 +8445,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -20
-          }
+          "change": null
         },
         {
           "models": 5,
@@ -8627,10 +8459,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 10,
@@ -8644,10 +8473,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -20
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -8676,7 +8502,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8759,7 +8585,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8785,10 +8611,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -5
-          }
+          "change": null
         },
         {
           "models": 10,
@@ -8802,10 +8625,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 9,
@@ -8833,10 +8653,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -5
-          }
+          "change": null
         },
         {
           "models": 10,
@@ -8850,10 +8667,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 9,
@@ -8905,7 +8719,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8965,7 +8779,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -8991,10 +8805,7 @@
             "label": "1-3"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -9028,7 +8839,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9068,10 +8879,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 5,
@@ -9099,10 +8907,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -9131,7 +8936,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9157,10 +8962,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -5
-          }
+          "change": null
         },
         {
           "models": 10,
@@ -9188,10 +8990,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -5
-          }
+          "change": null
         },
         {
           "models": 10,
@@ -9234,7 +9033,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/genestealer-cults",
         "pageSlug": "genestealer-cults",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9270,7 +9069,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9306,7 +9105,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9327,7 +9126,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9363,7 +9162,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9399,7 +9198,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9435,7 +9234,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9471,7 +9270,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9507,7 +9306,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9543,7 +9342,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9579,7 +9378,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9600,7 +9399,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9636,7 +9435,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9672,7 +9471,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9708,7 +9507,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9744,7 +9543,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9780,7 +9579,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9806,10 +9605,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -9843,7 +9639,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9879,7 +9675,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9915,7 +9711,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9936,7 +9732,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -9972,7 +9768,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10008,7 +9804,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10044,7 +9840,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10070,10 +9866,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -10083,7 +9876,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10119,7 +9912,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10140,7 +9933,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10190,7 +9983,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10240,7 +10033,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10290,7 +10083,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10326,7 +10119,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10352,10 +10145,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 6,
@@ -10369,10 +10159,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -15
-          }
+          "change": null
         },
         {
           "models": 3,
@@ -10386,10 +10173,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 6,
@@ -10403,10 +10187,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -15
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -10435,7 +10216,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10532,7 +10313,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10592,7 +10373,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10652,7 +10433,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10749,7 +10530,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10809,7 +10590,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10859,7 +10640,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10918,7 +10699,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -10954,7 +10735,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -11014,7 +10795,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -11064,7 +10845,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -11100,7 +10881,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -11126,10 +10907,7 @@
             "label": "1-3"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -11163,7 +10941,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -11199,7 +10977,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -11296,7 +11074,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -11346,7 +11124,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -11406,7 +11184,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -11466,7 +11244,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -11526,7 +11304,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -11562,7 +11340,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -11612,7 +11390,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -11638,10 +11416,7 @@
             "label": "1-3"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -11675,7 +11450,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -11701,10 +11476,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 5
-          }
+          "change": null
         },
         {
           "models": 6,
@@ -11718,10 +11490,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         },
         {
           "models": 3,
@@ -11735,10 +11504,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 5
-          }
+          "change": null
         },
         {
           "models": 6,
@@ -11752,10 +11518,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -11784,7 +11547,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -11881,7 +11644,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -11921,10 +11684,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -11934,7 +11694,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -12031,7 +11791,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -12067,7 +11827,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -12103,7 +11863,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -12163,7 +11923,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -12223,7 +11983,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -12283,7 +12043,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -12333,7 +12093,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -12393,7 +12153,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -12453,7 +12213,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -12479,10 +12239,7 @@
             "label": "1-3"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -12516,7 +12273,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -12585,7 +12342,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -12635,7 +12392,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -12695,7 +12452,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -12721,10 +12478,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 15
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -12738,10 +12492,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 15
-          }
+          "change": null
         }
       ],
       "wargearOptions": [
@@ -12770,7 +12521,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -12796,10 +12547,7 @@
             "label": "1-3"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -12833,7 +12581,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -12930,7 +12678,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -12970,10 +12718,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -12983,7 +12728,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13043,7 +12788,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13069,10 +12814,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -13086,10 +12828,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -13109,7 +12848,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13169,7 +12908,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13205,7 +12944,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13265,7 +13004,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13301,7 +13040,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13327,10 +13066,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -13340,7 +13076,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13399,7 +13135,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13449,7 +13185,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13485,7 +13221,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13511,10 +13247,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 5
-          }
+          "change": null
         },
         {
           "models": 10,
@@ -13528,10 +13261,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         },
         {
           "models": 5,
@@ -13545,10 +13275,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 5
-          }
+          "change": null
         },
         {
           "models": 10,
@@ -13562,10 +13289,7 @@
             "label": "3+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -13594,7 +13318,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13654,7 +13378,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13714,7 +13438,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13740,10 +13464,7 @@
             "label": "default"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -13753,7 +13474,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13813,7 +13534,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13834,7 +13555,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13855,7 +13576,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13891,7 +13612,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13912,7 +13633,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13948,7 +13669,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -13984,7 +13705,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -14020,7 +13741,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -14056,7 +13777,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -14092,7 +13813,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -14189,7 +13910,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -14267,7 +13988,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -14293,10 +14014,7 @@
             "label": "1-3"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -14330,7 +14048,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -14351,7 +14069,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -14411,7 +14129,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -14480,7 +14198,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -14540,7 +14258,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -14600,7 +14318,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -14660,7 +14378,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -14720,7 +14438,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -14746,10 +14464,7 @@
             "label": "1"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 5,
@@ -14763,10 +14478,7 @@
             "label": "1"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 4,
@@ -14780,10 +14492,7 @@
             "label": "2+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 5,
@@ -14797,10 +14506,7 @@
             "label": "2+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -14829,7 +14535,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -14889,7 +14595,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -14925,7 +14631,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -15003,7 +14709,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -15039,7 +14745,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -15099,7 +14805,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -15125,10 +14831,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -10
-          }
+          "change": null
         },
         {
           "models": 6,
@@ -15142,10 +14845,7 @@
             "label": "1-2"
           },
           "source": "mfm",
-          "change": {
-            "direction": "down",
-            "amount": -20
-          }
+          "change": null
         },
         {
           "models": 3,
@@ -15211,7 +14911,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -15271,7 +14971,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -15331,7 +15031,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -15409,7 +15109,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -15487,7 +15187,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
         "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -15547,7 +15247,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -15607,7 +15307,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -15643,7 +15343,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -15703,7 +15403,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -15724,7 +15424,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -15760,7 +15460,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -15820,7 +15520,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -15846,10 +15546,7 @@
             "label": "1"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 25
-          }
+          "change": null
         },
         {
           "models": 1,
@@ -15863,10 +15560,7 @@
             "label": "2+"
           },
           "source": "mfm",
-          "change": {
-            "direction": "up",
-            "amount": 30
-          }
+          "change": null
         }
       ],
       "wargearOptions": [],
@@ -15886,7 +15580,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -15955,7 +15649,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -16015,7 +15709,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -16075,7 +15769,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -16135,7 +15829,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -16195,7 +15889,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -16255,7 +15949,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -16315,7 +16009,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -16375,7 +16069,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -16411,7 +16105,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -16447,7 +16141,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/titan-legions",
         "pageSlug": "titan-legions",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     },
     {
@@ -16483,7 +16177,635 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/titan-legions",
         "pageSlug": "titan-legions",
-        "fetchedAt": "2026-08-01T17:05:46.554Z"
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
+      }
+    },
+    {
+      "factionSlug": "cultos-genestealer",
+      "factionName": "Cultos Genestealer",
+      "unitSlug": "winged-hive-tyrant",
+      "name": "Winged Hive Tyrant",
+      "mfmName": "WINGED HIVE TYRANT",
+      "provided": {
+        "models": 1,
+        "points": 185
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 185,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/tyranids",
+        "pageSlug": "tyranids",
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
+      }
+    },
+    {
+      "factionSlug": "cultos-genestealer",
+      "factionName": "Cultos Genestealer",
+      "unitSlug": "winged-tyranid-prime",
+      "name": "Winged Tyranid Prime",
+      "mfmName": "WINGED TYRANID PRIME",
+      "provided": {
+        "models": 1,
+        "points": 65
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 65,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/tyranids",
+        "pageSlug": "tyranids",
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
+      }
+    },
+    {
+      "factionSlug": "cultos-genestealer",
+      "factionName": "Cultos Genestealer",
+      "unitSlug": "deathleaper",
+      "name": "Deathleaper",
+      "mfmName": "DEATHLEAPER",
+      "provided": {
+        "models": 1,
+        "points": 80
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 80,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/tyranids",
+        "pageSlug": "tyranids",
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
+      }
+    },
+    {
+      "factionSlug": "cultos-genestealer",
+      "factionName": "Cultos Genestealer",
+      "unitSlug": "gargoyles",
+      "name": "Gargoyles",
+      "mfmName": "GARGOYLES",
+      "provided": {
+        "models": 10,
+        "points": 80
+      },
+      "modelOptions": [
+        {
+          "models": 10,
+          "minModels": 10,
+          "maxModels": 10,
+          "label": "10 models",
+          "points": 80,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 20,
+          "minModels": 20,
+          "maxModels": 20,
+          "label": "20 models",
+          "points": 155,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/tyranids",
+        "pageSlug": "tyranids",
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
+      }
+    },
+    {
+      "factionSlug": "cultos-genestealer",
+      "factionName": "Cultos Genestealer",
+      "unitSlug": "hyperadapted-raveners",
+      "name": "Hyperadapted Raveners",
+      "mfmName": "HYPERADAPTED RAVENERS",
+      "provided": {
+        "models": 5,
+        "points": 165
+      },
+      "modelOptions": [
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 165,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 175,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 10,
+          "resultingPoints": 175,
+          "minModels": 5,
+          "maxModels": 5,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/tyranids",
+        "pageSlug": "tyranids",
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
+      }
+    },
+    {
+      "factionSlug": "cultos-genestealer",
+      "factionName": "Cultos Genestealer",
+      "unitSlug": "lictor",
+      "name": "Lictor",
+      "mfmName": "LICTOR",
+      "provided": {
+        "models": 1,
+        "points": 60
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 60,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/tyranids",
+        "pageSlug": "tyranids",
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
+      }
+    },
+    {
+      "factionSlug": "cultos-genestealer",
+      "factionName": "Cultos Genestealer",
+      "unitSlug": "mawloc",
+      "name": "Mawloc",
+      "mfmName": "MAWLOC",
+      "provided": {
+        "models": 1,
+        "points": 135
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 135,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/tyranids",
+        "pageSlug": "tyranids",
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
+      }
+    },
+    {
+      "factionSlug": "cultos-genestealer",
+      "factionName": "Cultos Genestealer",
+      "unitSlug": "neurolictor",
+      "name": "Neurolictor",
+      "mfmName": "NEUROLICTOR",
+      "provided": {
+        "models": 1,
+        "points": 80
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 80,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 90,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 10,
+          "resultingPoints": 90,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/tyranids",
+        "pageSlug": "tyranids",
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
+      }
+    },
+    {
+      "factionSlug": "cultos-genestealer",
+      "factionName": "Cultos Genestealer",
+      "unitSlug": "parasite-of-mortrex",
+      "name": "Parasite of Mortrex",
+      "mfmName": "PARASITE OF MORTREX",
+      "provided": {
+        "models": 1,
+        "points": 70
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 70,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/tyranids",
+        "pageSlug": "tyranids",
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
+      }
+    },
+    {
+      "factionSlug": "cultos-genestealer",
+      "factionName": "Cultos Genestealer",
+      "unitSlug": "raveners",
+      "name": "Raveners",
+      "mfmName": "RAVENERS",
+      "provided": {
+        "models": 5,
+        "points": 125
+      },
+      "modelOptions": [
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 125,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 135,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 10,
+          "resultingPoints": 135,
+          "minModels": 5,
+          "maxModels": 5,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/tyranids",
+        "pageSlug": "tyranids",
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
+      }
+    },
+    {
+      "factionSlug": "cultos-genestealer",
+      "factionName": "Cultos Genestealer",
+      "unitSlug": "trygon",
+      "name": "Trygon",
+      "mfmName": "TRYGON",
+      "provided": {
+        "models": 1,
+        "points": 140
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 140,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/tyranids",
+        "pageSlug": "tyranids",
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
+      }
+    },
+    {
+      "factionSlug": "cultos-genestealer",
+      "factionName": "Cultos Genestealer",
+      "unitSlug": "tyrannocyte",
+      "name": "Tyrannocyte",
+      "mfmName": "TYRANNOCYTE",
+      "provided": {
+        "models": 1,
+        "points": 80
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 80,
+          "copyRange": {
+            "from": 1,
+            "to": 3,
+            "label": "1-3"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 90,
+          "copyRange": {
+            "from": 4,
+            "to": null,
+            "label": "4+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 4,
+          "points": 10,
+          "resultingPoints": 90,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/tyranids",
+        "pageSlug": "tyranids",
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
+      }
+    },
+    {
+      "factionSlug": "cultos-genestealer",
+      "factionName": "Cultos Genestealer",
+      "unitSlug": "von-ryans-leapers",
+      "name": "Von Ryan's Leapers",
+      "mfmName": "VON RYAN’S LEAPERS",
+      "provided": {
+        "models": 3,
+        "points": 55
+      },
+      "modelOptions": [
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 55,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 6,
+          "minModels": 6,
+          "maxModels": 6,
+          "label": "6 models",
+          "points": 105,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/tyranids",
+        "pageSlug": "tyranids",
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
+      }
+    },
+    {
+      "factionSlug": "cultos-genestealer",
+      "factionName": "Cultos Genestealer",
+      "unitSlug": "the-red-terror",
+      "name": "The Red Terror",
+      "mfmName": "THE RED TERROR",
+      "provided": {
+        "models": 1,
+        "points": 130
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 130,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/tyranids",
+        "pageSlug": "tyranids",
+        "fetchedAt": "2026-08-13T00:58:04.829Z"
       }
     }
   ]

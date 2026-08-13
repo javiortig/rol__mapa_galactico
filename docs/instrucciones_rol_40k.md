@@ -161,7 +161,7 @@ Estado jugable actual:
 - Facciones narrativas de administrador: Orcos y Tiranidos. No tienen capital, usuario de jugador, recursos ni tropas iniciales; se usan para incursiones, control narrativo y misiones temporales.
 - Agentes del Imperium, Aeldari y Astra Militarum no forman parte de esta campaña final.
 - `Astra Militarum` ya no es facción jugable; `Adeptus Custodes` ocupa su hueco de campaña en `kharon-prime`.
-- El catálogo final de unidades se genera con `npm run units:generate`; importa 333 hojas de unidad reales de 11.ª edición y valida que cada bloque coincide con `NUMBER OF UNITS`.
+- El catálogo final de unidades se genera con `npm run units:generate`; importa 347 hojas de unidad de 11.ª edición: 333 desde `data/11th40kPoints.txt` y 14 organismos tiránidos de `Final Day` para Cultos Genestealer desde `data/11th-final-day-tyranids.json`.
 - Los costes variables oficiales MFM de 11.ª edición se generan con `npm run units:generate-options` desde `https://mfm.warhammer-community.com/en/` y se guardan en `data/11th-unit-cost-options.json`. Este archivo anade tamaños legales, recargos por copia y extras pagados sin modificar `data/11th40kPoints.txt`.
 - El balance de costes y producción vive en `data/balance/faction-balance.json`; se audita con `docs/generated/faction-balance-report.md` y se valida con `npm run balance:validate`.
 - Capital + adyacente neutral suman 16 puntos/día potenciales en recursos de reclutamiento; Material Industrial y Uridium tienen economía separada. Solo `nexus-aster` y `goregate` tienen Oro natural.
@@ -188,7 +188,7 @@ Estado jugable actual:
 - Componentes tecnológicos son un recurso especial del árbol tecnológico; no aparecen en la barra superior y no se producen en planetas ni por edificios de producción.
 - Honor sustituye a Piedra ancestral como recurso especial visible; las columnas SQL legacy `ancestral_stone` pueden existir temporalmente solo por compatibilidad de migraciones.
 - El panel de mando operativo tiene entrada `Eventos`, no `Comercio` ni `Recursos`; Comercio se abre desde una `Cámara de Comercio` activa.
-- El botón `Operaciones` abre avisos pendientes: permisos de paso/estancia, batallas pendientes y reportes pendientes, con contador de disponibilidad de batalla de la ventana vigente de 33 días.
+- El botón `Operaciones` abre avisos pendientes: permisos de paso/estancia, batallas pendientes y reportes pendientes, con contador de disponibilidad de batalla de la ventana vigente de 35 días.
 - Batallas se juegan fuera de la app; la web gestiona conflicto, bloqueo, reportes, supervivientes, heridas restantes y control final.
 - Facciones narrativas de admin: `Orcos` y `Tiranidos` son amenazas no jugables (`is_narrative = true`), sin capital, usuarios, recursos ni tropas iniciales. Desde `/admin`, el admin puede programar incursiones narrativas con descripción pública y días hasta llegada, darles control inmediato de sistemas conquistables o crear misiones temporales atacables.
 - Comercio estelar usa reserva de recursos: publicar una oferta inmoviliza el recurso/oro y su comisión; al aceptar solo se valida el coste del aceptante.
@@ -1385,7 +1385,7 @@ Cada unidad debe tener:
 
 En el catálogo final importado desde `data/11th40kPoints.txt`, `category` se deriva de la linea `CharN`, de keywords reales BSData como `Battleline`/`Dedicated Transport` y de si la unidad viene de una fuente aliada. Se normaliza a: `Personaje`, `Linea de batalla`, `Transporte`, `Otras hojas de datos` o `Aliada`.
 
-Las etiquetas funcionales de unidad (`unit_keywords`) se cruzan con datos estructurados de BSData/wh40k-10e durante `npm run units:generate`. BSData se usa solo para tipos/keywords; los puntos y miniaturas vienen siempre de `data/11th40kPoints.txt`. El importador guarda hasta dos etiquetas reales relevantes para el rol, normalizadas al espanol: `Infanteria`, `Caracter`, `Vehiculo`, `Bestia`, `Montado`, `Aeronave` y `Fortificacion`. Ejemplos válidos: `Infanteria + Caracter`, `Vehiculo + Aeronave`, `Vehiculo + Caracter`. El informe `docs/generated/40k-unit-import-report.md` debe quedar con `Hojas de unidad importadas: 333`, `Adeptus Custodes: 51`, `Astra Militarum: 0`, `Unidades con keywords reales cruzadas: 333` y `Fallback heuristico: 0`.
+Las etiquetas funcionales de unidad (`unit_keywords`) se cruzan con datos estructurados durante `npm run units:generate`. BSData se usa solo para tipos/keywords; los puntos y miniaturas vienen de `data/11th40kPoints.txt` y, para el añadido `Final Day`, de `data/11th-final-day-tyranids.json` con puntos MFM oficiales. El importador guarda hasta dos etiquetas reales relevantes para el rol, normalizadas al español: `Infanteria`, `Caracter`, `Vehiculo`, `Bestia`, `Montado`, `Aeronave` y `Fortificacion`. Ejemplos válidos: `Infanteria + Caracter`, `Vehiculo + Aeronave`, `Vehiculo + Caracter`. El informe `docs/generated/40k-unit-import-report.md` debe quedar con `Hojas de unidad importadas: 347`, `Adeptus Custodes: 51`, `Astra Militarum: 0`, `Unidades con keywords reales cruzadas: 347` y `Fallback heuristico: 0`.
 
 Las unidades se pagan solo con Suministro vital, Mineral, Honor y Oro. Material Industrial queda reservado para construcción y Uridium queda reservado para movimiento/comercio, no para generar tropas.
 
@@ -1514,9 +1514,10 @@ Unidades finales:
 - La descripción de cada nodo Necron debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - `troops-cultos-genestealer-v1` también está `ready`.
 - El árbol del Culto Genestelar tiene 3 ramas: `Red de Insurreccion`, `Sombras del Culto` y `Ascension del Patriarca`.
-- El árbol del Culto Genestelar es asimetrico: 6 nodos en Red, 5 en Sombras y 4 en Ascension.
-- El árbol del Culto Genestelar tiene bifurcaciones entre masas, convoyes, guerrilla, profetas y mutacion, con convergencia final en `Trono del Patriarca`.
-- El árbol del Culto Genestelar tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 27 plantillas del Culto importadas exactamente una vez.
+- El árbol del Culto Genestelar reparte 15 nodos en tres ramas: Red de Insurreccion, Sombras del Culto y Ascension del Patriarca.
+- El árbol del Culto Genestelar tiene bifurcaciones entre masas, convoyes, guerrilla, profetas, mutación y monstruosidad sináptica, con convergencia final en `El Dia Final`.
+- El árbol del Culto Genestelar tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 41 plantillas asignadas a la facción: 27 propias del Culto y 14 organismos tiránidos permitidos por `Final Day`.
+- El nodo final `culto-dia-final` representa el destacamento `Final Day`: desbloquea unidades tiránidas `Vanguard Invader` permitidas para Cultos Genestealer. Quedan excluidos Aircraft, Broodlord y Genestealers.
 - La descripción de cada nodo del Culto Genestelar debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - `troops-space-marines-v1` también está `ready`.
 - El árbol de Space Marines tiene 3 ramas: `Doctrina del Capitulo`, `Vanguardia y Asalto` y `Arsenal de Cruzada`.
@@ -3087,7 +3088,7 @@ Cuando tropas llegan a neutral:
 ### 20.8 Operaciónes, permisos y eventos
 
 - `Operaciones` es el panel de avisos acciónables del jugador.
-- En la parte superior muestra la disponibilidad de batalla de la ventana vigente: ataques disponibles, defensas disponibles y total disponible. Los cupos se recargan cada 33 días. La regla vigente es máximo 3 participaciones por ventana según backend, sin poder consumirlas todas como atacante o todas como defensor.
+- En la parte superior muestra la disponibilidad de batalla de la ventana vigente: ataques disponibles, defensas disponibles y total disponible. Los cupos se recargan cada 35 días. La regla vigente es máximo 3 participaciones por ventana según backend, sin poder consumirlas todas como atacante o todas como defensor.
 - Muestra `movement_passage_requests` pendientes para permitir o rechazar que otra facción atraviese sistemas propios o termine el movimiento dentro de ellos.
 - Si se rechaza un permiso de paso/estancia, el movimiento se cancela y se aplican las reglas de reembolso de movimiento.
 - Muestra batallas pendientes en las que la facción participa como atacante o defensor.

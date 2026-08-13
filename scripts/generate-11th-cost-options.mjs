@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 
 const SOURCE_PATH = "data/11th40kPoints.txt";
+const FINAL_DAY_TYRANIDS_PATH = "data/11th-final-day-tyranids.json";
 const OUTPUT_PATH = "data/11th-unit-cost-options.json";
 const REPORT_PATH = "docs/generated/11th-unit-cost-options-report.md";
 const SEED_PATH = "supabase/seed.sql";
@@ -61,7 +62,10 @@ const SOURCE_NOTE =
 
 async function main() {
   const fetchedAt = new Date().toISOString();
-  const providedUnits = parseProvidedCatalog(readFileSync(SOURCE_PATH, "utf8"));
+  const providedUnits = [
+    ...parseProvidedCatalog(readFileSync(SOURCE_PATH, "utf8")),
+    ...parseFinalDayTyranidCatalog(readJson(FINAL_DAY_TYRANIDS_PATH))
+  ];
   const factionGroups = groupBy(providedUnits, (unit) => unit.factionSlug);
   const primaryMfmByFaction = new Map();
   const mfmSourcesBySlug = new Map();
@@ -84,7 +88,9 @@ async function main() {
   const conflicts = [];
 
   for (const provided of providedUnits) {
-    const primaryMfm = primaryMfmByFaction.get(provided.factionSlug);
+    const primaryMfm = provided.preferredMfmSlug
+      ? await loadMfmSource(mfmSourcesBySlug, provided.preferredMfmSlug, provided.factionName)
+      : primaryMfmByFaction.get(provided.factionSlug);
     const matchKey = resolveMatchKey(provided);
     const primaryMatch = primaryMfm?.unitsByName.get(matchKey);
     const fallbackMatch = primaryMatch
@@ -205,6 +211,20 @@ function parseProvidedCatalog(text) {
   }
 
   return units;
+}
+
+function parseFinalDayTyranidCatalog(finalDay) {
+  return (finalDay.units ?? []).map((unit) => ({
+    factionSlug: finalDay.factionSlug,
+    factionName: finalDay.factionName,
+    factionSourceName: finalDay.sourceFactionName,
+    unitSlug: unit.unitSlug ?? slugify(unit.name),
+    name: unit.name,
+    rawName: unit.name,
+    models: Number(unit.defaultQuantity),
+    points: Number(unit.points),
+    preferredMfmSlug: finalDay.mfmSlug
+  }));
 }
 
 async function fetchMfmIndexSlugs() {
@@ -922,6 +942,10 @@ function summarizeModifiers(modifiers) {
 function writeText(path, content) {
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, content, "utf8");
+}
+
+function readJson(path) {
+  return JSON.parse(readFileSync(path, "utf8"));
 }
 
 function sql(value) {

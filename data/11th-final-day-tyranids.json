@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "ruleName": "Final Day",
+    "ruleSummary": "Genestealer Cults can include Tyranids Vanguard Invader units, excluding Aircraft, Broodlord and Genestealers.",
+    "ruleUrl": "https://www.newrecruit.eu/wiki/wh40k-11e/warhammer-40%2C000-11th-edition/library---tyranids/cb2f-554e-1162-75d5/final-day",
+    "pointsUrl": "https://mfm.warhammer-community.com/en/tyranids",
+    "keywordSource": "BSData/wh40k-11e Tyranids",
+    "checkedAt": "2026-08-13"
+  },
+  "factionSlug": "cultos-genestealer",
+  "factionName": "Cultos Genestealer",
+  "sourceFactionName": "Xenos - Tyranids",
+  "sourceSection": "FINAL DAY TYRANIDS",
+  "isAlliedUnit": true,
+  "mfmSlug": "tyranids",
+  "units": [
+    {
+      "name": "Winged Hive Tyrant",
+      "unitSlug": "winged-hive-tyrant",
+      "defaultQuantity": 1,
+      "points": 185,
+      "category": "Aliada",
+      "unitKeywords": ["Bestia", "Caracter"]
+    },
+    {
+      "name": "Winged Tyranid Prime",
+      "unitSlug": "winged-tyranid-prime",
+      "defaultQuantity": 1,
+      "points": 65,
+      "category": "Aliada",
+      "unitKeywords": ["Infanteria", "Caracter"]
+    },
+    {
+      "name": "Deathleaper",
+      "unitSlug": "deathleaper",
+      "defaultQuantity": 1,
+      "points": 80,
+      "category": "Aliada",
+      "unitKeywords": ["Infanteria", "Caracter"]
+    },
+    {
+      "name": "Gargoyles",
+      "unitSlug": "gargoyles",
+      "defaultQuantity": 10,
+      "points": 80,
+      "category": "Aliada",
+      "unitKeywords": ["Infanteria"]
+    },
+    {
+      "name": "Hyperadapted Raveners",
+      "unitSlug": "hyperadapted-raveners",
+      "defaultQuantity": 5,
+      "points": 165,
+      "category": "Aliada",
+      "unitKeywords": ["Infanteria", "Caracter"]
+    },
+    {
+      "name": "Lictor",
+      "unitSlug": "lictor",
+      "defaultQuantity": 1,
+      "points": 60,
+      "category": "Aliada",
+      "unitKeywords": ["Infanteria"]
+    },
+    {
+      "name": "Mawloc",
+      "unitSlug": "mawloc",
+      "defaultQuantity": 1,
+      "points": 135,
+      "category": "Aliada",
+      "unitKeywords": ["Bestia"]
+    },
+    {
+      "name": "Neurolictor",
+      "unitSlug": "neurolictor",
+      "defaultQuantity": 1,
+      "points": 80,
+      "category": "Aliada",
+      "unitKeywords": ["Infanteria"]
+    },
+    {
+      "name": "Parasite of Mortrex",
+      "unitSlug": "parasite-of-mortrex",
+      "defaultQuantity": 1,
+      "points": 70,
+      "category": "Aliada",
+      "unitKeywords": ["Infanteria", "Caracter"]
+    },
+    {
+      "name": "Raveners",
+      "unitSlug": "raveners",
+      "defaultQuantity": 5,
+      "points": 125,
+      "category": "Aliada",
+      "unitKeywords": ["Infanteria"]
+    },
+    {
+      "name": "Trygon",
+      "unitSlug": "trygon",
+      "defaultQuantity": 1,
+      "points": 140,
+      "category": "Aliada",
+      "unitKeywords": ["Bestia"]
+    },
+    {
+      "name": "Tyrannocyte",
+      "unitSlug": "tyrannocyte",
+      "defaultQuantity": 1,
+      "points": 80,
+      "category": "Aliada",
+      "unitKeywords": ["Bestia"]
+    },
+    {
+      "name": "Von Ryan's Leapers",
+      "unitSlug": "von-ryans-leapers",
+      "defaultQuantity": 3,
+      "points": 55,
+      "category": "Aliada",
+      "unitKeywords": ["Infanteria"]
+    },
+    {
+      "name": "The Red Terror",
+      "unitSlug": "the-red-terror",
+      "defaultQuantity": 1,
+      "points": 130,
+      "category": "Aliada",
+      "unitKeywords": ["Bestia", "Caracter"]
+    }
+  ],
+  "excludedUnits": [
+    "Broodlord",
+    "Genestealers",
+    "Hive Crone",
+    "Harpy"
+  ]
+}

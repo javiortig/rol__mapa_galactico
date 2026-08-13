@@ -357,7 +357,7 @@
         },
         {
           "slug": "camara-anathema",
-          "name": "Camara Anathema",
+          "name": "Cámara Anathema",
           "description": "Hermanas del Silencio, mandos nulos, transporte Psykana y auxiliares juramentados."
         },
         {
@@ -1095,17 +1095,17 @@
         {
           "slug": "red-insurreccion",
           "name": "Red de Insurreccion",
-          "description": "Cohortes mineras, iconos de revuelta, convoyes industriales y mando abierto del Dia de la Ascension."
+          "description": "Celulas mineras, iconos, promethio, convoyes y blindaje industrial para tomar el planeta desde abajo."
         },
         {
           "slug": "sombras-culto",
           "name": "Sombras del Culto",
-          "description": "Voces, asesinos, saboteadores, guerrillas y profetas que preparan el alzamiento desde dentro."
+          "description": "Vox clandestinos, asesinos, saboteadores, guerrillas y mando insurreccional de la cuarta generacion."
         },
         {
           "slug": "ascension-patriarca",
           "name": "Ascension del Patriarca",
-          "description": "Mutaciones, pureza genestealer, aberraciones y la autoridad biologica del Patriarca."
+          "description": "Mutacion sagrada, pureza genestealer, musculo aberrante y la llegada del Dia Final."
         }
       ],
       "nodes": [
@@ -1196,7 +1196,7 @@
           "tier": 4,
           "positionX": 1,
           "positionY": 1,
-          "costTechnology": 2,
+          "costTechnology": 3,
           "researchTimeSeconds": 30,
           "iconKey": "cult_rockgrinder",
           "effectSummary": "Desbloquea: Goliath Rockgrinder.",
@@ -1208,32 +1208,9 @@
           ]
         },
         {
-          "slug": "culto-mando-insurreccional",
-          "name": "Mando Insurreccional",
-          "description": "El culto coordina celulas abiertas, reservas dormidas y golpes sincronizados de conquista planetaria. Desbloquea: Primus, Nexos y Cult Insurrectionist [Crucible].",
-          "branchSlug": "red-insurreccion",
-          "tier": 4,
-          "positionX": 1,
-          "positionY": 3,
-          "costTechnology": 3,
-          "researchTimeSeconds": 30,
-          "iconKey": "cult_command",
-          "effectSummary": "Desbloquea: Primus, Nexos, Cult Insurrectionist [Crucible].",
-          "prerequisiteSlugs": [
-            "culto-iconos-alzamiento",
-            "culto-vox-cuarta-generacion",
-            "asamblea-planetaria"
-          ],
-          "unitTemplateSlugs": [
-            "unit-cultos-genestealer-primus",
-            "unit-cultos-genestealer-nexos",
-            "unit-cultos-genestealer-cult-insurrectionist-crucible"
-          ]
-        },
-        {
           "slug": "culto-vox-cuarta-generacion",
           "name": "Vox de Cuarta Generacion",
-          "description": "Predicadores, psiquicos y transmisores clandestinos convierten rumores de colmena en mandato sagrado. Desbloquea: Clamavus, Magus.",
+          "description": "Predicadores, psiquicos y transmisores clandestinos convierten rumores de colmena en mandato sagrado. Desbloquea: Clamavus y Magus.",
           "branchSlug": "sombras-culto",
           "tier": 1,
           "positionX": 2,
@@ -1315,22 +1292,25 @@
         {
           "slug": "culto-profetas-dia-ascension",
           "name": "Profetas del Dia de la Ascension",
-          "description": "Voces bendecidas y mentes sinapticas anuncian el momento exacto en que la ciudad debe caer. Desbloquea: Benefictus y Voice of the Patriarch [Crucible].",
+          "description": "Voces bendecidas, coordinadores y mentes sinapticas anuncian el momento exacto en que la ciudad debe caer. Desbloquea: Primus, Nexos, Benefictus, Voice of the Patriarch [Crucible] y Cult Insurrectionist [Crucible].",
           "branchSlug": "sombras-culto",
           "tier": 4,
           "positionX": 2,
           "positionY": 2,
-          "costTechnology": 3,
+          "costTechnology": 2,
           "researchTimeSeconds": 30,
           "iconKey": "cult_prophet",
-          "effectSummary": "Desbloquea: Benefictus, Voice of the Patriarch [Crucible].",
+          "effectSummary": "Desbloquea: Primus, Nexos, Benefictus, Voice of the Patriarch [Crucible], Cult Insurrectionist [Crucible].",
           "prerequisiteSlugs": [
             "culto-guerrilla-crucible",
-            "culto-mando-insurreccional"
+            "culto-cuchillos-bajo-ciudad"
           ],
           "unitTemplateSlugs": [
+            "unit-cultos-genestealer-primus",
+            "unit-cultos-genestealer-nexos",
             "unit-cultos-genestealer-benefictus",
-            "unit-cultos-genestealer-voice-of-the-patriarch-crucible"
+            "unit-cultos-genestealer-voice-of-the-patriarch-crucible",
+            "unit-cultos-genestealer-cult-insurrectionist-crucible"
           ]
         },
         {
@@ -1396,7 +1376,7 @@
         {
           "slug": "culto-trono-patriarca",
           "name": "Trono del Patriarca",
-          "description": "La progenie, los profetas y los aberrantes reconocen una unica voluntad sinaptica al final del alzamiento. Desbloquea: Patriarch.",
+          "description": "La progenie y los aberrantes reconocen una unica voluntad sinaptica al final del alzamiento. Desbloquea: Patriarch.",
           "branchSlug": "ascension-patriarca",
           "tier": 3,
           "positionX": 3,
@@ -1407,11 +1387,43 @@
           "effectSummary": "Desbloquea: Patriarch.",
           "prerequisiteSlugs": [
             "culto-pureza-genetica",
-            "culto-musculo-aberrante",
-            "culto-profetas-dia-ascension"
+            "culto-musculo-aberrante"
           ],
           "unitTemplateSlugs": [
             "unit-cultos-genestealer-patriarch"
+          ]
+        },
+        {
+          "slug": "culto-dia-final",
+          "name": "El Dia Final",
+          "description": "La se?al del Patriarca abre paso a organismos de vanguardia tiranidos. Desbloquea: Winged Hive Tyrant, Winged Tyranid Prime, Deathleaper, Gargoyles, Hyperadapted Raveners, Lictor, Mawloc, Neurolictor, Parasite of Mortrex, Raveners, Trygon, Tyrannocyte, Von Ryan's Leapers y The Red Terror.",
+          "branchSlug": "ascension-patriarca",
+          "tier": 5,
+          "positionX": 3,
+          "positionY": 2,
+          "costTechnology": 3,
+          "researchTimeSeconds": 30,
+          "iconKey": "cult_final_day",
+          "effectSummary": "Desbloquea: Winged Hive Tyrant, Winged Tyranid Prime, Deathleaper, Gargoyles, Hyperadapted Raveners, Lictor, Mawloc, Neurolictor, Parasite of Mortrex, Raveners, Trygon, Tyrannocyte, Von Ryan's Leapers y The Red Terror.",
+          "prerequisiteSlugs": [
+            "culto-trono-patriarca",
+            "culto-profetas-dia-ascension"
+          ],
+          "unitTemplateSlugs": [
+            "unit-cultos-genestealer-winged-hive-tyrant",
+            "unit-cultos-genestealer-winged-tyranid-prime",
+            "unit-cultos-genestealer-deathleaper",
+            "unit-cultos-genestealer-gargoyles",
+            "unit-cultos-genestealer-hyperadapted-raveners",
+            "unit-cultos-genestealer-lictor",
+            "unit-cultos-genestealer-mawloc",
+            "unit-cultos-genestealer-neurolictor",
+            "unit-cultos-genestealer-parasite-of-mortrex",
+            "unit-cultos-genestealer-raveners",
+            "unit-cultos-genestealer-trygon",
+            "unit-cultos-genestealer-tyrannocyte",
+            "unit-cultos-genestealer-von-ryans-leapers",
+            "unit-cultos-genestealer-the-red-terror"
           ]
         }
       ]

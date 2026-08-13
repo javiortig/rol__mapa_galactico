@@ -1,15 +1,15 @@
 # Informe de opciones y puntos variables 11th
 
-Generado: 2026-08-01T17:05:46.554Z
+Generado: 2026-08-13T00:58:04.829Z
 Fuente primaria: https://mfm.warhammer-community.com/en
 
 > MFM oficial 11th edition. No se usa BSData/wh40k-10e como fuente de puntos, tamanos ni opciones.
 
 ## Resumen
 
-- Unidades del TXT base: 333
-- Unidades cruzadas con MFM: 312
-- Unidades con tamanos/opciones/thresholds: 155
+- Unidades del TXT base: 347
+- Unidades cruzadas con MFM: 326
+- Unidades con tamanos/opciones/thresholds: 161
 - Conflictos de puntos con el TXT base: 150
 - Unidades no encontradas: 21
 
@@ -20,7 +20,7 @@ Fuente primaria: https://mfm.warhammer-community.com/en
   - Necrones: https://mfm.warhammer-community.com/en/necrons (64 entradas MFM)
   - Legiones Daemonicas: https://mfm.warhammer-community.com/en/chaos-daemons (62 entradas MFM)
   - Agentes del Imperium: https://mfm.warhammer-community.com/en/imperial-agents (34 entradas MFM)
-  - Aeldari: https://mfm.warhammer-community.com/en/aeldari (87 entradas MFM)
+  - Aeldari: https://mfm.warhammer-community.com/en/aeldari (91 entradas MFM)
   - Cultos Genestealer: https://mfm.warhammer-community.com/en/genestealer-cults (33 entradas MFM)
   - Space Marines: https://mfm.warhammer-community.com/en/space-marines (126 entradas MFM)
   - Adeptus Custodes: https://mfm.warhammer-community.com/en/adeptus-custodes (40 entradas MFM)
@@ -189,6 +189,12 @@ Fuente primaria: https://mfm.warhammer-community.com/en
 | Adeptus Custodes | Knight Preceptor | 1 modelos / 365 pts | 1m: 365, 1m 3+: 380 | - | 3+ 1m: +15 |
 | Adeptus Custodes | Knight Valiant | 1 modelos / 410 pts | 1m: 400, 1m 3+: 415 | - | 3+ 1m: +15 |
 | Adeptus Custodes | Knight Warden | 1 modelos / 375 pts | 1m: 375, 1m 3+: 390 | - | 3+ 1m: +15 |
+| Cultos Genestealer | Gargoyles | 10 modelos / 80 pts | 10m: 80, 20m: 155 | - | - |
+| Cultos Genestealer | Hyperadapted Raveners | 5 modelos / 165 pts | 5m: 165, 5m 3+: 175 | - | 3+ 5m: +10 |
+| Cultos Genestealer | Neurolictor | 1 modelos / 80 pts | 1m: 80, 1m 3+: 90 | - | 3+ 1m: +10 |
+| Cultos Genestealer | Raveners | 5 modelos / 125 pts | 5m: 125, 5m 3+: 135 | - | 3+ 5m: +10 |
+| Cultos Genestealer | Tyrannocyte | 1 modelos / 80 pts | 1m: 80, 1m 4+: 90 | - | 4+ 1m: +10 |
+| Cultos Genestealer | Von Ryan's Leapers | 3 modelos / 55 pts | 3m: 55, 6m: 105 | - | - |
 
 ## Conflictos con el TXT aportado
 

@@ -18,7 +18,7 @@ Generado por `npm run units:generate`.
 | Faccion | Unidades | Unidades con oro | Puntos catalogo | Suministro | Mineral | Honor | Oro |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | adeptus-custodes | 51 | 20/20 (39%) | 16160 | 3727 | 4084 | 557 | 296 |
-| cultos-genestealer | 27 | 11/11 (41%) | 1910 | 982 | 219 | 82 | 16 |
+| cultos-genestealer | 41 | 16/16 (39%) | 3360 | 1661 | 337 | 165 | 40 |
 | legiones-daemonicas | 19 | 8/8 (42%) | 2655 | 1210 | 220 | 166 | 35 |
 | necrones | 55 | 22/22 (40%) | 7575 | 2604 | 1383 | 326 | 115 |
 | space-marines | 85 | 34/34 (40%) | 10785 | 4067 | 2454 | 232 | 130 |
@@ -57,4 +57,4 @@ Generado por `npm run units:generate`.
 
 - Unidades con conversion de puntos invalida: 0.
 - Unidades con Material Industrial o Uridium: 0.
-- Facciones importadas desde catalogo: 7.
+- Facciones importadas desde catalogo: 8.

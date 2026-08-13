@@ -8,6 +8,7 @@ import {
 } from "./lib/campaign-balance.mjs";
 
 const SOURCE_PATH = "data/11th40kPoints.txt";
+const FINAL_DAY_TYRANIDS_PATH = "data/11th-final-day-tyranids.json";
 const SEED_PATH = "supabase/seed.sql";
 const MOCK_PATH = "src/mocks/generated/40k-unit-templates.ts";
 const REPORT_PATH = "docs/generated/40k-unit-import-report.md";
@@ -319,7 +320,63 @@ function parseCatalog(text, keywordSource) {
     throw new Error(`Faltan cruces BSData para:\n${missingKeywordMatches.map((line) => `- ${line}`).join("\n")}`);
   }
 
+  appendFinalDayTyranidUnits(units, factionSummaries, keywordMatches);
+
   return { units, factionSummaries, keywordSource, keywordMatches, missingKeywordMatches };
+}
+
+function appendFinalDayTyranidUnits(units, factionSummaries, keywordMatches) {
+  const finalDay = readJson(FINAL_DAY_TYRANIDS_PATH);
+  const addedUnits = [];
+  let pointsForFaction = 0;
+
+  for (const entry of finalDay.units ?? []) {
+    const unitKeywords = sortUnitKeywords(entry.unitKeywords ?? []);
+    if (unitKeywords.length === 0 || unitKeywords.length > 2) {
+      throw new Error(`Final Day ${entry.name}: debe tener 1 o 2 keywords validas.`);
+    }
+
+    const slug = uniqueSlug(units, `unit-${finalDay.factionSlug}-${entry.unitSlug ?? slugify(entry.name)}`);
+    const points = Number(entry.points);
+    const defaultQuantity = Number(entry.defaultQuantity);
+
+    if (!Number.isFinite(points) || points <= 0 || !Number.isFinite(defaultQuantity) || defaultQuantity <= 0) {
+      throw new Error(`Final Day ${entry.name}: puntos o miniaturas invalidas.`);
+    }
+
+    const unit = {
+      slug,
+      factionSlug: finalDay.factionSlug,
+      sourceFactionName: finalDay.sourceFactionName,
+      name: entry.name,
+      sourceSection: finalDay.sourceSection,
+      isAlliedUnit: Boolean(finalDay.isAlliedUnit),
+      category: entry.category ?? "Aliada",
+      unitKeywords,
+      unitType: legacyUnitType(unitKeywords),
+      points,
+      defaultQuantity,
+      woundsPerModel: inferWoundsPerModel(entry.name, unitKeywords),
+      recruitmentBuildingType: recruitmentBuildingType(entry.name, unitKeywords),
+      ...emptyCosts(points),
+      notes: `Unidad aliada Final Day importada desde ${FINAL_DAY_TYRANIDS_PATH}.`,
+      isAvailable: false
+    };
+
+    units.push(unit);
+    addedUnits.push(unit);
+    pointsForFaction += points;
+    keywordMatches.push(`Final Day Tyranids: ${entry.name} -> ${unitKeywords.join(", ")} (BSData/wh40k-11e)`);
+  }
+
+  factionSummaries.push({
+    sourceFactionName: `${finalDay.factionName} - ${finalDay.sourceSection}`,
+    slug: finalDay.factionSlug,
+    expectedUnits: addedUnits.length,
+    importedUnits: addedUnits.length,
+    totalPoints: pointsForFaction,
+    importedPoints: pointsForFaction
+  });
 }
 
 function extractRequired(text, regex, label) {
