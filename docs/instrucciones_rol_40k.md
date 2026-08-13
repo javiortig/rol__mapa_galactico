@@ -69,7 +69,7 @@ Usuarios locales de prueba:
 
 ```text
 admin@rol40k.local / Admin2000
-legiones-daemonicas@rol40k.local / demonio1997
+legiones-daemonicas@rol40k.local / pollito
 cultos-genestealer@rol40k.local / tattoosummum
 space-marines@rol40k.local / Sombra97
 adeptus-custodes@rol40k.local / Penedorado
@@ -634,7 +634,7 @@ Tabla vigente de capital + adyacente:
 
 | Facción | Capital | Capacidad capital | Adyacente neutral | Capacidad adyacente | Total reclutamiento |
 |---|---|---:|---|---:|---:|
-| Legiones Daemónicas | La Espiral de Tzeentch | 7 Suministro, 1 Honor, 5 Material Industrial | Drusus | 2 Suministro, 1 Mineral, 0.3 Uridium | 16 pts/día |
+| Legiones Daemónicas | Fasciata | 7 Suministro, 1 Honor, 5 Material Industrial | Drusus | 2 Suministro, 1 Mineral, 0.3 Uridium | 16 pts/día |
 | Sombra del Emperador | Obscura Primus | 3 Mineral, 1 Honor, 5 Material Industrial | Lyra Terminus | 5 Suministro, 0.3 Uridium | 16 pts/día |
 | Necrones | Necronpolis | 4 Mineral, 1 Honor, 5 Material Industrial | Novem | 3 Suministro, 0.3 Uridium | 16 pts/día |
 | Adeptus Custodes | Santa Terra | 3 Mineral, 1 Honor, 5 Material Industrial | Helios Drift | 5 Suministro, 0.3 Uridium | 16 pts/día |
@@ -2672,7 +2672,7 @@ Usuarios locales de prueba:
 
 ```text
 admin@rol40k.local / Admin2000
-legiones-daemonicas@rol40k.local / demonio1997
+legiones-daemonicas@rol40k.local / pollito
 cultos-genestealer@rol40k.local / tattoosummum
 space-marines@rol40k.local / Sombra97
 adeptus-custodes@rol40k.local / Penedorado

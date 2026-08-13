@@ -80,7 +80,7 @@ async function login(slug) {
     "space-marines": "Sombra97",
     "cultos-genestealer": "tattoosummum",
     necrones: "necron1996",
-    "legiones-daemonicas": "demonio1997"
+    "legiones-daemonicas": "pollito"
   };
   const password = passwords[slug];
 

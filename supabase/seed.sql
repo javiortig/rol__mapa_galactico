@@ -70,7 +70,7 @@ insert into public.systems (
   id, slug, name, x, y, size, star_class, type, status, controller_faction_id, blocked_until, public_description, is_capital
 )
 values
-  (public.seed_uuid('system', 'mordax'), 'mordax', 'La Espiral de Tzeentch', 90, 150, 1.18, 'red', 'Capital corrupta', 'controlled', public.seed_uuid('faction', 'legiones-daemonicas'), null, 'Mundo industrial desgarrado por senales disformes.', true),
+  (public.seed_uuid('system', 'mordax'), 'mordax', 'Fasciata', 90, 150, 1.18, 'red', 'Capital corrupta', 'controlled', public.seed_uuid('faction', 'legiones-daemonicas'), null, 'Mundo industrial desgarrado por senales disformes.', true),
   (public.seed_uuid('system', 'drusus'), 'drusus', 'Drusus', 230, 190, 0.86, 'orange', 'Bastion menor neutral', 'neutral', null, null, 'Fortaleza abandonada en una ruta alta hacia los fuegos centrales.', false),
   (public.seed_uuid('system', 'sa-cea-gate'), 'sa-cea-gate', 'Obscura Primus', 910, 150, 1.2, 'white', 'Capital orbital', 'controlled', public.seed_uuid('faction', 'space-marines'), null, 'Estacion de paso con matrices de navegacion de largo alcance.', true),
   (public.seed_uuid('system', 'lyra-terminus'), 'lyra-terminus', 'Lyra Terminus', 770, 190, 0.88, 'blue', 'Puerto externo neutral', 'neutral', null, null, 'Puerto orbital sin mando estable, demasiado cercano al frente para ser ignorado.', false),

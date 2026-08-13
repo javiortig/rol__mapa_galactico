@@ -14,7 +14,7 @@ const users = [
   },
   {
     email: "legiones-daemonicas@rol40k.local",
-    password: "demonio1997",
+    password: "pollito",
     displayName: "Heraldo de las Legiones",
     role: "player",
     factionSlug: "legiones-daemonicas"

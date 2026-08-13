@@ -112,7 +112,7 @@ DB: postgresql://postgres:postgres@127.0.0.1:54322/postgres
 
 ```text
 admin@rol40k.local / Admin2000
-legiones-daemonicas@rol40k.local / demonio1997
+legiones-daemonicas@rol40k.local / pollito
 cultos-genestealer@rol40k.local / tattoosummum
 space-marines@rol40k.local / Sombra97
 adeptus-custodes@rol40k.local / Penedorado

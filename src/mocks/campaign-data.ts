@@ -249,7 +249,7 @@ const baseSystems: BaseSystem[] = [
   },
   {
     id: "mordax",
-    name: "La Espiral de Tzeentch",
+    name: "Fasciata",
     x: 150,
     y: 780,
     size: 1.18,
