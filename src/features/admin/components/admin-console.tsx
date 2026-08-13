@@ -48,7 +48,6 @@ import {
 import { getFactionArmyPoints } from "@/features/units/lib/army-points";
 import type {
   CampaignSnapshot,
-  CampaignTimingMode,
   CampaignUnit,
   NarrativeMissionEnemyUnit,
   ResourceBundle,
@@ -102,7 +101,6 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
   const [capabilityDraftBySystemId, setCapabilityDraftBySystemId] = useState<Record<string, EditableSystemCapabilities>>({});
   const [limitDraft, setLimitDraft] = useState<EditableFactionResources>(snapshot.resourceCaps);
   const [maxArmyPointsDraft, setMaxArmyPointsDraft] = useState(snapshot.maxArmyPoints);
-  const [timingModeDraft, setTimingModeDraft] = useState<CampaignTimingMode>(snapshot.timingMode);
   const [blockSystemId, setBlockSystemId] = useState(snapshot.systems[0]?.id ?? "");
   const [blockDays, setBlockDays] = useState(14);
   const [eventTitle, setEventTitle] = useState("Comúnicado del sector");
@@ -309,7 +307,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
   });
 
   const setTimingModeMutation = useMutation({
-    mutationFn: () => adminSetCampaignTimingMode(timingModeDraft),
+    mutationFn: () => adminSetCampaignTimingMode("campaign"),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
     }
@@ -509,57 +507,31 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                 <TimerReset size={16} />
               </span>
               <div>
-                <h2 className="text-base font-semibold text-cyan-50">Modo de tiempos</h2>
+                <h2 className="text-base font-semibold text-cyan-50">Tiempos de campaña</h2>
                 <p className="text-xs text-slate-400">
-                  Modo actual: <span className="font-semibold text-cyan-100">{snapshot.timingMode === "test" ? "Testeo" : "Campaña"}</span>
+                  Estado actual:{" "}
+                  <span className="font-semibold text-cyan-100">
+                    {snapshot.timingMode === "campaign" ? "Campaña activa" : "Pendiente de activar"}
+                  </span>
                 </p>
               </div>
             </div>
             <Button
-              disabled={!rpcReady || setTimingModeMutation.isPending || timingModeDraft === snapshot.timingMode}
+              disabled={!rpcReady || setTimingModeMutation.isPending}
               onClick={() => setTimingModeMutation.mutate()}
             >
               <TimerReset size={16} />
-              {setTimingModeMutation.isPending ? "Aplicando..." : "Aplicar modo"}
+              {setTimingModeMutation.isPending ? "Aplicando..." : "Reaplicar campaña"}
             </Button>
           </div>
 
-          <div className="grid gap-3 lg:grid-cols-2">
-            <button
-              className={`rounded-md border p-3 text-left transition ${
-                timingModeDraft === "test"
-                  ? "border-amber-200/60 bg-amber-300/15 text-amber-50"
-                  : "border-cyan-200/15 bg-slate-950/35 text-slate-300 hover:border-cyan-200/35"
-              }`}
-              onClick={() => setTimingModeDraft("test")}
-              type="button"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-sm font-semibold">Testeo</span>
-                {timingModeDraft === "test" ? <Badge tone="amber">seleccionado</Badge> : null}
-              </div>
-              <p className="mt-2 text-xs leading-relaxed text-slate-300">
-                Movimiento 3s/arista, ataque 5min, tecnología, reclutamiento, construcción y reabastecimiento 3s.
-              </p>
-            </button>
-
-            <button
-              className={`rounded-md border p-3 text-left transition ${
-                timingModeDraft === "campaign"
-                  ? "border-cyan-200/60 bg-cyan-300/15 text-cyan-50"
-                  : "border-cyan-200/15 bg-slate-950/35 text-slate-300 hover:border-cyan-200/35"
-              }`}
-              onClick={() => setTimingModeDraft("campaign")}
-              type="button"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-sm font-semibold">Campaña</span>
-                {timingModeDraft === "campaign" ? <Badge tone="cyan">seleccionado</Badge> : null}
-              </div>
-              <p className="mt-2 text-xs leading-relaxed text-slate-300">
-                Movimiento 3 días/arista, ataque 6 días, tecnología por coste y colas según potencia del objetivo.
-              </p>
-            </button>
+          <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-sm text-slate-300">
+            <div className="grid gap-2 md:grid-cols-2">
+              <span>Movimiento: 3 días por arista.</span>
+              <span>Ataques: 7 días hasta la batalla.</span>
+              <span>Producción: tick diario.</span>
+              <span>Construcción, tecnología y reclutamiento: tiempos reales de campaña.</span>
+            </div>
           </div>
           {setTimingModeMutation.error ? (
             <p className="mt-3 text-sm text-rose-200">{setTimingModeMutation.error.message}</p>
@@ -573,14 +545,14 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
             </span>
             <div>
               <h2 className="text-base font-semibold text-cyan-50">Crear evento galáctico</h2>
-              <p className="text-xs text-slate-400">Aparecera en el panel Eventos de todos los jugadores.</p>
+              <p className="text-xs text-slate-400">Aparecerá en el panel Eventos de todos los jugadores.</p>
             </div>
           </div>
           <div className="grid gap-3 md:grid-cols-[minmax(0,260px)_1fr_auto]">
             <input
               className="rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm text-cyan-50 outline-none"
               onChange={(event) => setEventTitle(event.target.value)}
-              placeholder="Titulo"
+              placeholder="Título"
               value={eventTitle}
             />
             <textarea

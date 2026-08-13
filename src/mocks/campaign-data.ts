@@ -707,7 +707,7 @@ const resources: CampaignSnapshot["resources"] = [
     gold: 0,
     industrialMaterial: 150,
     uridium: 10,
-    technology: 8,
+    technology: 6,
     updatedAt: new Date(now).toISOString()
   },
   {
@@ -718,7 +718,7 @@ const resources: CampaignSnapshot["resources"] = [
     gold: 0,
     industrialMaterial: 150,
     uridium: 10,
-    technology: 8,
+    technology: 6,
     updatedAt: new Date(now).toISOString()
   },
   {
@@ -729,7 +729,7 @@ const resources: CampaignSnapshot["resources"] = [
     gold: 0,
     industrialMaterial: 150,
     uridium: 10,
-    technology: 8,
+    technology: 6,
     updatedAt: new Date(now).toISOString()
   },
   {
@@ -740,7 +740,7 @@ const resources: CampaignSnapshot["resources"] = [
     gold: 0,
     industrialMaterial: 150,
     uridium: 10,
-    technology: 8,
+    technology: 6,
     updatedAt: new Date(now).toISOString()
   },
   {
@@ -751,7 +751,7 @@ const resources: CampaignSnapshot["resources"] = [
     gold: 0,
     industrialMaterial: 150,
     uridium: 10,
-    technology: 8,
+    technology: 6,
     updatedAt: new Date(now).toISOString()
   }
 ];
@@ -1939,21 +1939,21 @@ const technologyEffects: CampaignSnapshot["technologyEffects"] = [
 ].concat(troopTechnologyEffects);
 
 const buildingTemplates: CampaignSnapshot["buildingTemplates"] = [
-  makeBuildingTemplate({ id: "barracon-infanteria", name: "Barracon de Infanteria", category: "Reclutamiento", description: "Centro de instruccion para tropas de linea y cuadros veteranos.", buildingKind: "recruitment", industrialMaterialCost: 20, constructionTimeSeconds: 3, allowedUnitCategories: ["Infanteria", "Elite"], requiredTechnologyNodeId: "fundacion-planetaria", iconKey: "infantry_barracks" }),
-  makeBuildingTemplate({ id: "cuartel-mando", name: "Cuartel de Mando", category: "Reclutamiento", description: "Instalacion de oficiales, heroes y personajes de mando.", buildingKind: "recruitment", industrialMaterialCost: 42, constructionTimeSeconds: 3, allowedUnitCategories: ["Personaje"], requiredTechnologyNodeId: "asamblea-planetaria", iconKey: "command_quarters" }),
-  makeBuildingTemplate({ id: "camara-leyendas", name: "Camara de Leyendas", category: "Reclutamiento", description: "Camara sellada para reclutar unidades [Crucible] cuando su tecnologia deje de estar bloqueada.", buildingKind: "recruitment", industrialMaterialCost: 56, constructionTimeSeconds: 3, allowedUnitCategories: ["Personaje", "Linea de batalla", "Transporte", "Otras hojas de datos", "Aliada", "Infanteria", "Elite", "Vehiculo", "Monstruo", "Hoja de datos", "Otro", "Superpesado"], requiredTechnologyNodeId: "camara-leyendas", iconKey: "legend_chamber" }),
-  makeBuildingTemplate({ id: "taller-guerra", name: "Taller de Guerra", category: "Reclutamiento", description: "Bahias de reparacion y ensamblaje de vehiculos.", buildingKind: "recruitment", industrialMaterialCost: 38, constructionTimeSeconds: 3, allowedUnitCategories: ["Vehiculo"], requiredTechnologyNodeId: "maquinaria-belica", iconKey: "war_workshop" }),
-  makeBuildingTemplate({ id: "nido-bestias", name: "Nido de Bestias", category: "Reclutamiento", description: "Jaulas y rituales de control para monstruos de guerra.", buildingKind: "recruitment", industrialMaterialCost: 38, constructionTimeSeconds: 3, allowedUnitCategories: ["Monstruo"], requiredTechnologyNodeId: "criadero-guerra", iconKey: "beast_lair" }),
-  makeBuildingTemplate({ id: "camara-comercio", name: "Camara de Comercio", category: "Comercio", description: "Mercado orbital y punto de contacto con rutas mercantes.", buildingKind: "commerce", industrialMaterialCost: 30, constructionTimeSeconds: 3, requiredTechnologyNodeId: "pactos-mercantiles", iconKey: "commerce" }),
-  makeBuildingTemplate({ id: "nexo-inteligencia", name: "Nexo de Inteligencia", category: "Inteligencia", description: "Centro de analisis para operaciones de espionaje futuras.", buildingKind: "intelligence", industrialMaterialCost: 38, constructionTimeSeconds: 3, requiredTechnologyNodeId: "oficina-inteligencia", iconKey: "intelligence" }),
-  makeBuildingTemplate({ id: "antenas-reconocimiento", name: "Antenas de Reconocimiento", category: "Inteligencia", description: "Matrices de escucha y auspex de largo alcance.", buildingKind: "intelligence", industrialMaterialCost: 30, constructionTimeSeconds: 3, requiredTechnologyNodeId: "celulas-informacion", iconKey: "recon" }),
-  makeBuildingTemplate({ id: "granja-biologica", name: "Granja Biologica", category: "Produccion", description: "Complejos de biomasa y cultivos adaptados al frente.", buildingKind: "production", industrialMaterialCost: 20, constructionTimeSeconds: 3, producedResourceKey: "supply", producedAmount: 0, requiredTechnologyNodeId: "fundacion-planetaria", iconKey: "biofarm" }),
-  makeBuildingTemplate({ id: "complejo-minero", name: "Complejo Minero", category: "Produccion", description: "Pozos, excavadoras y refinerias de mineral bruto.", buildingKind: "production", industrialMaterialCost: 20, constructionTimeSeconds: 3, producedResourceKey: "minerals", producedAmount: 0, requiredTechnologyNodeId: "extraccion-subterranea", iconKey: "mine" }),
-  makeBuildingTemplate({ id: "refineria-iridium", name: "Refineria de Iridium", category: "Produccion", description: "Planta especializada para estabilizar cristales de salto.", buildingKind: "production", industrialMaterialCost: 26, constructionTimeSeconds: 3, producedResourceKey: "uridium", producedAmount: 0, requiredTechnologyNodeId: "cristalizacion-combustible-cuantico", iconKey: "iridium_refinery" }),
-  makeBuildingTemplate({ id: "mina-oro", name: "Mina de Oro", category: "Produccion", description: "Extraccion de metales preciosos para rutas comerciales.", buildingKind: "production", industrialMaterialCost: 34, constructionTimeSeconds: 3, producedResourceKey: "gold", producedAmount: 0, requiredTechnologyNodeId: "fiebre-oro", iconKey: "gold_mine" }),
-  makeBuildingTemplate({ id: "planta-fundicion", name: "Planta de Fundicion", category: "Produccion", description: "Produce Material Industrial para nuevas construcciones.", buildingKind: "production", industrialMaterialCost: 20, constructionTimeSeconds: 3, producedResourceKey: "industrialMaterial", producedAmount: 0, requiredTechnologyNodeId: "procesado-metalurgico", iconKey: "foundry" }),
-  makeBuildingTemplate({ id: "monumento", name: "Monumento", category: "Produccion", description: "Estructura ceremonial que transforma gloria local en Honor.", buildingKind: "production", industrialMaterialCost: 24, constructionTimeSeconds: 3, producedResourceKey: "honor", producedAmount: 0, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "monument" }),
-  makeBuildingTemplate({ id: "santuario-reliquias", name: "Santuario de Reliquias", category: "Reliquias", description: "Camara sellada donde se custodian reliquias narrativas y se equipan a Caracteres veteranos.", buildingKind: "relic", industrialMaterialCost: 44, constructionTimeSeconds: 3, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "relic_sanctuary" })
+  makeBuildingTemplate({ id: "barracon-infanteria", name: "Barracon de Infanteria", category: "Reclutamiento", description: "Centro de instruccion para tropas de linea y cuadros veteranos.", buildingKind: "recruitment", industrialMaterialCost: 20, constructionTimeSeconds: 86400, allowedUnitCategories: ["Infanteria", "Elite"], requiredTechnologyNodeId: "fundacion-planetaria", iconKey: "infantry_barracks" }),
+  makeBuildingTemplate({ id: "cuartel-mando", name: "Cuartel de Mando", category: "Reclutamiento", description: "Instalacion de oficiales, heroes y personajes de mando.", buildingKind: "recruitment", industrialMaterialCost: 42, constructionTimeSeconds: 259200, allowedUnitCategories: ["Personaje"], requiredTechnologyNodeId: "asamblea-planetaria", iconKey: "command_quarters" }),
+  makeBuildingTemplate({ id: "camara-leyendas", name: "Camara de Leyendas", category: "Reclutamiento", description: "Camara sellada para reclutar unidades [Crucible] cuando su tecnologia deje de estar bloqueada.", buildingKind: "recruitment", industrialMaterialCost: 56, constructionTimeSeconds: 259200, allowedUnitCategories: ["Personaje", "Linea de batalla", "Transporte", "Otras hojas de datos", "Aliada", "Infanteria", "Elite", "Vehiculo", "Monstruo", "Hoja de datos", "Otro", "Superpesado"], requiredTechnologyNodeId: "camara-leyendas", iconKey: "legend_chamber" }),
+  makeBuildingTemplate({ id: "taller-guerra", name: "Taller de Guerra", category: "Reclutamiento", description: "Bahias de reparacion y ensamblaje de vehiculos.", buildingKind: "recruitment", industrialMaterialCost: 38, constructionTimeSeconds: 259200, allowedUnitCategories: ["Vehiculo"], requiredTechnologyNodeId: "maquinaria-belica", iconKey: "war_workshop" }),
+  makeBuildingTemplate({ id: "nido-bestias", name: "Nido de Bestias", category: "Reclutamiento", description: "Jaulas y rituales de control para monstruos de guerra.", buildingKind: "recruitment", industrialMaterialCost: 38, constructionTimeSeconds: 259200, allowedUnitCategories: ["Monstruo"], requiredTechnologyNodeId: "criadero-guerra", iconKey: "beast_lair" }),
+  makeBuildingTemplate({ id: "camara-comercio", name: "Camara de Comercio", category: "Comercio", description: "Mercado orbital y punto de contacto con rutas mercantes.", buildingKind: "commerce", industrialMaterialCost: 30, constructionTimeSeconds: 172800, requiredTechnologyNodeId: "pactos-mercantiles", iconKey: "commerce" }),
+  makeBuildingTemplate({ id: "nexo-inteligencia", name: "Nexo de Inteligencia", category: "Inteligencia", description: "Centro de analisis para operaciones de espionaje futuras.", buildingKind: "intelligence", industrialMaterialCost: 38, constructionTimeSeconds: 259200, requiredTechnologyNodeId: "oficina-inteligencia", iconKey: "intelligence" }),
+  makeBuildingTemplate({ id: "antenas-reconocimiento", name: "Antenas de Reconocimiento", category: "Inteligencia", description: "Matrices de escucha y auspex de largo alcance.", buildingKind: "intelligence", industrialMaterialCost: 30, constructionTimeSeconds: 172800, requiredTechnologyNodeId: "celulas-informacion", iconKey: "recon" }),
+  makeBuildingTemplate({ id: "granja-biologica", name: "Granja Biologica", category: "Produccion", description: "Complejos de biomasa y cultivos adaptados al frente.", buildingKind: "production", industrialMaterialCost: 20, constructionTimeSeconds: 86400, producedResourceKey: "supply", producedAmount: 0, requiredTechnologyNodeId: "fundacion-planetaria", iconKey: "biofarm" }),
+  makeBuildingTemplate({ id: "complejo-minero", name: "Complejo Minero", category: "Produccion", description: "Pozos, excavadoras y refinerias de mineral bruto.", buildingKind: "production", industrialMaterialCost: 20, constructionTimeSeconds: 86400, producedResourceKey: "minerals", producedAmount: 0, requiredTechnologyNodeId: "extraccion-subterranea", iconKey: "mine" }),
+  makeBuildingTemplate({ id: "refineria-iridium", name: "Refineria de Iridium", category: "Produccion", description: "Planta especializada para estabilizar cristales de salto.", buildingKind: "production", industrialMaterialCost: 26, constructionTimeSeconds: 172800, producedResourceKey: "uridium", producedAmount: 0, requiredTechnologyNodeId: "cristalizacion-combustible-cuantico", iconKey: "iridium_refinery" }),
+  makeBuildingTemplate({ id: "mina-oro", name: "Mina de Oro", category: "Produccion", description: "Extraccion de metales preciosos para rutas comerciales.", buildingKind: "production", industrialMaterialCost: 34, constructionTimeSeconds: 172800, producedResourceKey: "gold", producedAmount: 0, requiredTechnologyNodeId: "fiebre-oro", iconKey: "gold_mine" }),
+  makeBuildingTemplate({ id: "planta-fundicion", name: "Planta de Fundicion", category: "Produccion", description: "Produce Material Industrial para nuevas construcciones.", buildingKind: "production", industrialMaterialCost: 20, constructionTimeSeconds: 86400, producedResourceKey: "industrialMaterial", producedAmount: 0, requiredTechnologyNodeId: "procesado-metalurgico", iconKey: "foundry" }),
+  makeBuildingTemplate({ id: "monumento", name: "Monumento", category: "Produccion", description: "Estructura ceremonial que transforma gloria local en Honor.", buildingKind: "production", industrialMaterialCost: 24, constructionTimeSeconds: 172800, producedResourceKey: "honor", producedAmount: 0, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "monument" }),
+  makeBuildingTemplate({ id: "santuario-reliquias", name: "Santuario de Reliquias", category: "Reliquias", description: "Camara sellada donde se custodian reliquias narrativas y se equipan a Caracteres veteranos.", buildingKind: "relic", industrialMaterialCost: 44, constructionTimeSeconds: 259200, requiredTechnologyNodeId: "monumentos-gloria", iconKey: "relic_sanctuary" })
 ];
 
 type ProductionResourceKey = Exclude<CampaignSnapshot["systemResourceCapabilities"][number]["resourceKey"], "technology">;
@@ -2029,10 +2029,10 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
     role: "admin",
     factionId: null
   },
-  timingMode: "test",
+  timingMode: "campaign",
   resourceTickIntervalHours: 24,
-  movementEdgeDurationSeconds: 3,
-  attackDurationSeconds: 300,
+  movementEdgeDurationSeconds: 259200,
+  attackDurationSeconds: 604800,
   nextResourceTickAt: inHours(24),
   resourceCaps: {
     supply: 500,

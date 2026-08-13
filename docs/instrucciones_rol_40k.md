@@ -176,7 +176,7 @@ Estado jugable actual:
 - Construcción planetaria con slots por sistema: 6 en capitales y 3 en el resto.
 - Reclutamiento desde edificios militares activos, no desde un botón global de capital.
 - Reclutamiento usa `unit_templates`, costes, tiempos, cola, edificios compatibles y validación tecnológica.
-- El admin puede alternar el perfil global de tiempos desde `/admin`: `Testeo` para pruebas cortas y `Campaña` para duraciones reales.
+- La campaña real arranca en modo `campaign`; desde `/admin` solo se puede reaplicar el perfil de tiempos de campaña.
 - Las unidades importadas quedan inicialmente bloqueadas (`is_available = false`) hasta que los árboles tecnológicos por facción las asignen a nodos concretos.
 - Reabastecimiento completo de unidades dañadas desde edificios militares compatibles a mitad del coste completo de la unidad.
 - Cancelar reclutamiento, reabastecimiento o movimiento devuelve el 50% de los recursos gastados, redondeando hacia arriba.
@@ -847,7 +847,7 @@ Visualmente:
 Por ahora:
 
 - Un sistema con batalla pendiente queda bloqueado.
-- La duración estándar del bloqueo inicial de batalla en modo campaña es de 14 días (`conflict_block_duration_minutes = 20160`). En modo test se reduce para pruebas.
+- La duración estándar del bloqueo inicial de batalla en modo campaña es de 14 días (`conflict_block_duration_minutes = 20160`).
 - Durante el bloqueo no puede ser atacado.
 - Puede seguir mostrando su controlador públicamente.
 - El bloqueo puede mantenerse hasta que los jugadores participantes o el admin reporten el resultado.
@@ -1042,8 +1042,7 @@ Por ahora no hay riesgos aleatorios en rutas. Algunas rutas simplemente pueden c
 
 Los tiempos se controlan con `campaign_settings.timing_mode` y el RPC admin `admin_set_campaign_timing_mode(target_mode)`.
 
-- `test`: 3 segundos por arista.
-- `campaign`: 3 días por arista.
+- `campaign`: 3 días por arista. No existe selector público para otros perfiles de tiempo en la campaña real.
 
 Tecnologías en modo campaña:
 
@@ -1166,7 +1165,7 @@ Origen: Kharon Prime
 Destino: Helios Drift
 Ruta: Kharon Prime -> Helios Drift
 Coste: 1 Uridium
-Llegada en modo test: 3 segundos. En modo campaña depende del número de aristas, a 3 días por arista.
+En modo campaña la llegada depende del número de aristas, a 3 días por arista.
 
 Al llegar:
 - Si es propio: quedará estacionado.
@@ -1307,7 +1306,7 @@ Los jugadores pueden gastar recursos para crear tropas desde edificios militares
 
 El reclutamiento tarda tiempo real, estilo Grepolis.
 
-Para test local, los tiempos de investigación, construcción, reclutamiento y reabastecimiento son de 3 segundos. En modo campaña, la rama común `Progreso` tarda 30 minutos para coste 0, 2 horas para coste 1 y 6 horas para coste 2; el resto de tecnología escala por coste tecnológico. Reclutamiento escala por puntos de unidad, construcción por coste de edificio y reabastecimiento usa la mitad del tiempo de reclutamiento.
+En modo campaña, la rama común `Progreso` tarda 30 minutos para coste 0, 2 horas para coste 1 y 6 horas para coste 2; el resto de tecnología escala por coste tecnológico. Reclutamiento escala por puntos de unidad, construcción por coste de edificio y reabastecimiento usa la mitad del tiempo de reclutamiento.
 
 Al completarse, las tropas aparecen en el sistema donde está el edificio que inició el reclutamiento.
 
@@ -1490,7 +1489,7 @@ Reglas:
 
 - Solo puede haber una investigación activa por facción.
 - Cada tecnología puede tener coste en Componentes tecnológicos.
-- Cada tecnología en modo test dura 3 segundos salvo que se documente lo contrario. En modo campaña, la rama común `Progreso` usa 30 minutos, 2 horas o 6 horas para costes 0, 1 y 2; el resto del árbol se recalcula desde el coste tecnológico.
+- En modo campaña, la rama común `Progreso` usa 30 minutos, 2 horas o 6 horas para costes 0, 1 y 2; el resto del árbol se recalcula desde el coste tecnológico.
 - Cada árbol militar especifico `ready` cuesta exactamente 30 Componentes tecnológicos en total.
 - Los nodos de árboles militares solo pueden costar 1, 2 o 3 Componentes tecnológicos.
 - El coste 3 se reserva exclusivamente para el nodo final de las dos ramas más grandes de cada facción.
@@ -1515,33 +1514,33 @@ Unidades finales:
 - El árbol Necron tiene 3 ramas: `Falange Dinastica`, `Corte Criptecnica` y `Constructos Eternos`.
 - El árbol Necron es asimetrico: 6 nodos en Falange, 4 en Corte y 5 en Constructos.
 - El árbol Necron no es una cadena lineal: tiene bifurcaciones y convergencias mediante prerequisitos múltiples.
-- El árbol Necron tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 55 plantillas Necron importadas exactamente una vez.
+- El árbol Necron tiene 15 nodos activos y cubre las 55 plantillas Necron importadas exactamente una vez.
 - Cada nodo Necron desbloquea al menos una unidad que el jugador Necron ha declarado poseer fisicamente.
 - La descripción de cada nodo Necron debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - `troops-cultos-genestealer-v1` también está `ready`.
 - El árbol del Culto Genestelar tiene 3 ramas: `Red de Insurreccion`, `Sombras del Culto` y `Ascension del Patriarca`.
 - El árbol del Culto Genestelar reparte 15 nodos en tres ramas: Red de Insurreccion, Sombras del Culto y Ascension del Patriarca.
 - El árbol del Culto Genestelar tiene bifurcaciones entre masas, convoyes, guerrilla, profetas, mutación y monstruosidad sináptica, con convergencia final en `El Dia Final`.
-- El árbol del Culto Genestelar tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 41 plantillas asignadas a la facción: 27 propias del Culto y 14 organismos tiránidos permitidos por `Final Day`.
+- El árbol del Culto Genestelar tiene 15 nodos activos y cubre las 41 plantillas asignadas a la facción: 27 propias del Culto y 14 organismos tiránidos permitidos por `Final Day`.
 - El nodo final `culto-dia-final` representa el destacamento `Final Day`: desbloquea unidades tiránidas `Vanguard Invader` permitidas para Cultos Genestealer. Quedan excluidos Aircraft, Broodlord y Genestealers.
 - La descripción de cada nodo del Culto Genestelar debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - `troops-space-marines-v1` también está `ready`.
 - El árbol de Space Marines tiene 3 ramas: `Doctrina del Capitulo`, `Vanguardia y Asalto` y `Arsenal de Cruzada`.
 - El árbol de Space Marines es asimetrico: 5 nodos en Doctrina, 4 en Vanguardia y 6 en Arsenal.
 - El árbol de Space Marines tiene bifurcaciones entre escuadras de batalla, oficiales, despliegue Phobos, asalto orbital, transportes, dreadnoughts y blindados pesados, con convergencia final en `Reliquias de Cruzada`.
-- El árbol de Space Marines tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 85 plantillas de Space Marines importadas exactamente una vez.
+- El árbol de Space Marines tiene 15 nodos activos y cubre las 85 plantillas de Space Marines importadas exactamente una vez.
 - La descripción de cada nodo de Space Marines debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - `troops-legiones-daemonicas-v1` también está `ready`.
 - El árbol de Legiones Daemónicas tiene 3 ramas: `Hordas del Velo`, `Corte del Cambiante` y `Tronos de la Disformidad`.
 - El árbol de Legiones Daemónicas es asimetrico: 6 nodos en Hordas, 5 en Corte y 4 en Tronos.
 - El árbol de Legiones Daemónicas tiene bifurcaciones entre horrores, llamas, carros, heraldos, escribas, principes demonio y grandes entidades de la Disformidad, con convergencia final en `El Primer Principe`.
-- El árbol de Legiones Daemónicas tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 19 plantillas de Legiones Daemónicas importadas exactamente una vez.
+- El árbol de Legiones Daemónicas tiene 15 nodos activos y cubre las 19 plantillas de Legiones Daemónicas importadas exactamente una vez.
 - La descripción de cada nodo de Legiones Daemónicas debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - `troops-adeptus-custodes-v1` también está `ready`.
 - El árbol de Adeptus Custodes tiene 3 ramas: `Guardia Auramita`, `Cámara Anathema` y `Arsenal del Trono`.
 - El árbol de Adeptus Custodes es asimetrico: 5 nodos en Guardia, 4 en Cámara y 6 en Arsenal.
 - El árbol de Adeptus Custodes tiene bifurcaciones entre custodios de linea, campeones, exterminadores auricos, Hermanas del Silencio, grav-vehiculos, dreadnoughts, naves, Knights aliados y Titanes, con cierre de poder en `Titanes de Terra`.
-- El árbol de Adeptus Custodes tiene 15 nodos activos, todos de 3 segundos en modo test, y cubre las 51 plantillas de Adeptus Custodes importadas exactamente una vez.
+- El árbol de Adeptus Custodes tiene 15 nodos activos y cubre las 51 plantillas de Adeptus Custodes importadas exactamente una vez.
 - La descripción de cada nodo de Adeptus Custodes debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - Las cinco facciones objetivo de jugador ya están `ready`: Legiones Daemónicas, Adeptus Custodes, Space Marines, Cultos Genestealer y Necrones. Aeldari y Agentes del Imperium no forman parte de esta campaña final.
 
@@ -1565,7 +1564,7 @@ Regla vigente de árboles tecnológicos:
 - Los árboles militares específicos usan `troops-{faction_slug}-v1`; un jugador solo puede ver e investigar su propio árbol militar.
 - Admin puede inspeccionar el árbol de una facción desde el selector de la pantalla de tecnología, pero no inicia investigaciones desde esa vista.
 - `start_technology_research()` rechaza por backend cualquier tecnología cuyo `tree_key` no sea `common-v1` ni `troops-{slug-de-la-faccion-del-jugador}-v1`.
-- Todas las investigaciones en modo test duran 3 segundos.
+- Las investigaciones usan tiempos reales de campaña.
 - `technology_nodes.implementation_status` puede ser `active`, `planned` o `deprecated`.
 - `technology_prerequisites.prerequisite_group` permite requisitos `OR`: todos los grupos deben cumplirse, pero dentro de un mismo grupo basta una tecnología desbloqueada.
 - `Asamblea Planetaria` requiere `Maquínaria Belica` o `Criadero de Guerra`.
@@ -1626,7 +1625,7 @@ Reglas:
 
 - Requiere tecnología `monumentos-gloria`.
 - Coste v1: 44 Material Industrial.
-- Tiempo de construcción en modo test: 3 segundos.
+- Tiempo de construcción en campaña: según coste de Material Industrial del edificio.
 - No empieza construido en capitales; debe construirse como cualquier edificio.
 - Al abrirlo muestra reliquias guardadas en ese sistema, Caracteres propios presentes y reliquias equipadas.
 
@@ -2255,18 +2254,18 @@ La cadencia global de producción se puede guardar en una tabla de configuració
 ```sql
 campaign_settings
 - id text primary key default 'default'
-- timing_mode text default 'test' check in ('test', 'campaign')
+- timing_mode text default 'campaign' check in ('test', 'campaign')
 - timing_mode_updated_at timestamptz
 - resource_tick_interval_hours integer default 24
-- movement_edge_duration_seconds integer default 3 en test / 259200 en campaña
-- attack_duration_seconds integer default 300 en test / 518400 en campaña
-- conflict_block_duration_minutes integer default 60 en test / 20160 en campaña
+- movement_edge_duration_seconds integer default 259200 en campaña
+- attack_duration_seconds integer default 604800 en campaña
+- conflict_block_duration_minutes integer default 20160 en campaña
 - last_resource_tick_at timestamptz nullable
 - next_resource_tick_at timestamptz nullable
 - updated_at timestamptz
 ```
 
-`admin_set_campaign_timing_mode('test' | 'campaign')` es la única entrada de UI para cambiar el perfil de tiempos. Al aplicar un modo también actualiza `technology_nodes.research_time_seconds`, `unit_templates.recruitment_time_seconds`, `building_templates.construction_time_seconds` y reescala las colas activas coherentes con ese modo.
+`admin_set_campaign_timing_mode('campaign')` reaplica el perfil real de campaña. Al aplicarlo también actualiza `technology_nodes.research_time_seconds`, `unit_templates.recruitment_time_seconds`, `building_templates.construction_time_seconds` y reescala las colas activas coherentes con ese modo.
 
 ### 16.8 campaign_units
 

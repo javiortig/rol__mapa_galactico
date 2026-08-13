@@ -461,21 +461,10 @@ async function main() {
     "campaign_settings",
     service.from("campaign_settings").select("*").eq("id", "default").single()
   );
-  assert(settings.timing_mode === "test", `Modo esperado test, recibido ${settings.timing_mode}`);
-  assert(settings.resource_tick_interval_hours === 1, `Tick test esperado 1h, recibido ${settings.resource_tick_interval_hours}`);
-  assert(settings.movement_edge_duration_seconds === 3, `Movimiento esperado 3s/arista, recibido ${settings.movement_edge_duration_seconds}`);
-  assert(settings.attack_duration_seconds === 300, `Ataque esperado 300s, recibido ${settings.attack_duration_seconds}`);
-  recordCheck("timers de test", "movimiento 3s/arista y ataque 5min");
-
-  await rpc(admin.client, "admin_set_campaign_timing_mode", { target_mode: "campaign" }, "activar modo campana");
-  const campaignSettings = await must(
-    "campaign_settings campana",
-    service.from("campaign_settings").select("*").eq("id", "default").single()
-  );
-  assert(campaignSettings.timing_mode === "campaign", `Modo campana no aplicado: ${campaignSettings.timing_mode}`);
-  assert(campaignSettings.resource_tick_interval_hours === 24, `Tick campana esperado 24h, recibido ${campaignSettings.resource_tick_interval_hours}`);
-  assert(campaignSettings.movement_edge_duration_seconds === 259200, `Movimiento campana esperado 259200s, recibido ${campaignSettings.movement_edge_duration_seconds}`);
-  assert(campaignSettings.attack_duration_seconds === 518400, `Ataque campana esperado 518400s, recibido ${campaignSettings.attack_duration_seconds}`);
+  assert(settings.timing_mode === "campaign", `Modo esperado campaign, recibido ${settings.timing_mode}`);
+  assert(settings.resource_tick_interval_hours === 24, `Tick campana esperado 24h, recibido ${settings.resource_tick_interval_hours}`);
+  assert(settings.movement_edge_duration_seconds === 259200, `Movimiento campana esperado 259200s, recibido ${settings.movement_edge_duration_seconds}`);
+  assert(settings.attack_duration_seconds === 604800, `Ataque campana esperado 604800s, recibido ${settings.attack_duration_seconds}`);
   const campaignTimers = await Promise.all([
     service.from("technology_nodes").select("research_time_seconds").gt("research_time_seconds", 3).limit(1).maybeSingle(),
     service.from("unit_templates").select("recruitment_time_seconds").gt("recruitment_time_seconds", 3).limit(1).maybeSingle(),
@@ -487,27 +476,7 @@ async function main() {
     return { technology: technology.data, units: units.data, buildings: buildings.data };
   });
   assert(campaignTimers.technology && campaignTimers.units && campaignTimers.buildings, "Modo campana no escalo tecnologias, unidades o edificios");
-
-  await rpc(admin.client, "admin_set_campaign_timing_mode", { target_mode: "test" }, "reactivar modo test");
-  const restoredSettings = await must(
-    "campaign_settings test restaurado",
-    service.from("campaign_settings").select("*").eq("id", "default").single()
-  );
-  assert(restoredSettings.timing_mode === "test", `Modo test no restaurado: ${restoredSettings.timing_mode}`);
-  assert(restoredSettings.movement_edge_duration_seconds === 3, `Movimiento test restaurado esperado 3s, recibido ${restoredSettings.movement_edge_duration_seconds}`);
-  assert(restoredSettings.attack_duration_seconds === 300, `Ataque test restaurado esperado 300s, recibido ${restoredSettings.attack_duration_seconds}`);
-  const fastTimerCounts = await Promise.all([
-    service.from("technology_nodes").select("id", { count: "exact", head: true }).neq("research_time_seconds", 3),
-    service.from("unit_templates").select("id", { count: "exact", head: true }).neq("recruitment_time_seconds", 3),
-    service.from("building_templates").select("id", { count: "exact", head: true }).neq("construction_time_seconds", 3)
-  ]).then(([technology, units, buildings]) => {
-    if (technology.error) throw technology.error;
-    if (units.error) throw units.error;
-    if (buildings.error) throw buildings.error;
-    return { technology: technology.count ?? 0, units: units.count ?? 0, buildings: buildings.count ?? 0 };
-  });
-  assert(fastTimerCounts.technology === 0 && fastTimerCounts.units === 0 && fastTimerCounts.buildings === 0, "Modo test no devolvio todas las colas base a 3s");
-  recordCheck("modo test/campana", "admin alterna perfiles y restaura tiempos cortos");
+  recordCheck("modo campana", "tick diario, movimiento 3 dias/arista y ataque 7 dias");
 
   const battleLimits = await rpc(custodes.client, "get_battle_limit_summary", {}, "limites batalla ventana");
   const battleWindowMs = Date.parse(battleLimits.month_end) - Date.parse(battleLimits.month_start);
@@ -1267,8 +1236,11 @@ async function main() {
     "orden ataque",
     service.from("movement_orders").select("status,duration_seconds,arrival_at").eq("id", attackOrderId).single()
   );
-  assert(attackOrder.status === "moving" && attackOrder.duration_seconds === 300, `Ataque debia durar 300s, recibido ${attackOrder.duration_seconds}`);
-  recordCheck("coalicion atacante", "aceptar -> mover al origen -> marcar listo -> lanzar 5min");
+  assert(
+    attackOrder.status === "moving" && attackOrder.duration_seconds === 604800,
+    `Ataque debia durar 604800s, recibido ${attackOrder.duration_seconds}`
+  );
+  recordCheck("coalicion atacante", "aceptar -> mover al origen -> marcar listo -> lanzar 7 dias");
 
   await expectError(
     "bloqueo ataque duplicado mismo objetivo",

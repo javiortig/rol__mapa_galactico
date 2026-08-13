@@ -254,7 +254,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       timingMode: settingsResult.data?.timing_mode === "campaign" ? "campaign" : "test",
       resourceTickIntervalHours: settingsResult.data?.resource_tick_interval_hours ?? 24,
       movementEdgeDurationSeconds: Number(settingsResult.data?.movement_edge_duration_seconds ?? 259200),
-      attackDurationSeconds: Number(settingsResult.data?.attack_duration_seconds ?? 518400),
+      attackDurationSeconds: Number(settingsResult.data?.attack_duration_seconds ?? 604800),
       nextResourceTickAt: settingsResult.data?.next_resource_tick_at ?? new Date().toISOString(),
       resourceCaps: mapResourceCaps(settingsResult.data ?? {}),
       maxArmyPoints: Number(settingsResult.data?.max_army_points ?? 1000),

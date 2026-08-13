@@ -687,6 +687,13 @@ function emptyCosts(points) {
   };
 }
 
+function campaignRecruitmentTimeSeconds(points) {
+  if (points <= 90) return 86400;
+  if (points <= 180) return 172800;
+  if (points <= 300) return 259200;
+  return 345600;
+}
+
 function inferWoundsPerModel(name, unitKeywords) {
   const lower = name.toLowerCase();
   if (unitKeywords.includes("Fortificacion")) return 12;
@@ -739,7 +746,7 @@ function slugify(value) {
 function buildUnitTemplateSql(units) {
   const values = units
     .map((unit) => {
-      return `    (${sql(unit.slug)}, ${sql(unit.factionSlug)}, ${sql(unit.name)}, ${sql(unit.category)}, ${sql(unit.unitType)}, ${sqlArray(unit.unitKeywords)}, ${unit.points}, ${unit.defaultQuantity}, ${unit.woundsPerModel}, ${unit.supplyCost}, ${unit.mineralsCost}, 0, ${unit.honorCost}, ${unit.goldCost}, 0, 0, 0, 3, ${sql(unit.recruitmentBuildingType)}, ${sql(unit.notes)}, false, null, ${sql(unit.sourceSection)}, ${sql(unit.sourceFactionName)}, ${unit.isAlliedUnit})`;
+      return `    (${sql(unit.slug)}, ${sql(unit.factionSlug)}, ${sql(unit.name)}, ${sql(unit.category)}, ${sql(unit.unitType)}, ${sqlArray(unit.unitKeywords)}, ${unit.points}, ${unit.defaultQuantity}, ${unit.woundsPerModel}, ${unit.supplyCost}, ${unit.mineralsCost}, 0, ${unit.honorCost}, ${unit.goldCost}, 0, 0, 0, ${campaignRecruitmentTimeSeconds(unit.points)}, ${sql(unit.recruitmentBuildingType)}, ${sql(unit.notes)}, false, null, ${sql(unit.sourceSection)}, ${sql(unit.sourceFactionName)}, ${unit.isAlliedUnit})`;
     })
     .join(",\n");
 
@@ -920,7 +927,7 @@ function buildMockFile(units) {
     industrialMaterialCost: 0,
     uridiumCost: 0,
     technologyCost: 0,
-    recruitmentTimeSeconds: 3,
+    recruitmentTimeSeconds: campaignRecruitmentTimeSeconds(unit.points),
     recruitmentBuildingType: unit.recruitmentBuildingType,
     notes: unit.notes,
     isAvailable: false,

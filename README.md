@@ -173,7 +173,7 @@ Antes de desplegar frontend que lea estos campos, aplica migraciones Supabase in
 - `Mover` solo puede terminar en sistema propio o neutral. Si la ruta cruza sistemas controlados por rivales, queda en `pending_approval` y crea una fila en `movement_passage_requests` por facción propietaria atravesada.
 - Las unidades seleccionadas quedan con estado `moving` mientras el movimiento está viajando o pendiente de permiso, por lo que no pueden reutilizarse en otra acción.
 - Los permisos de paso se responden desde `Reportes`. Una aceptación inicia el movimiento solo cuando todas las facciones afectadas han aceptado; un rechazo cancela el movimiento y devuelve unidades y Uridium.
-- `Atacar` permite cualquier origen no bloqueado donde tengas unidades propias listas, incluido territorio de otro jugador si te dejo entrar, destino enemigo y adyacencia directa. El ataque viaja exactamente 6 días calculados en Supabase y al llegar crea un conflicto pendiente sin resolver combate automáticamente.
+- `Atacar` permite cualquier origen no bloqueado donde tengas unidades propias listas, incluido territorio de otro jugador si te dejó entrar, destino enemigo y adyacencia directa. El ataque viaja exactamente 7 días calculados en Supabase y al llegar crea un conflicto pendiente sin resolver combate automáticamente.
 - Las capitales no son objetivos atacables. La UI las oculta como destino y Supabase rechaza ataques normales, coaliciones, conflictos pendientes y amenazas narrativas contra capitales.
 - Los límites de batalla se validan en servidor y se recargan cada 35 días: máximo 3 participaciones por ventana, máximo 2 ataques iniciados, máximo 2 ataques recibidos y máximo 3 batallas activas simultáneas.
 - `resolve_movement_orders()` sigue siendo el resolver temporal central. Es idempotente para ataques porque vincula el conflicto generado con `movement_order_id`.
@@ -190,7 +190,7 @@ Antes de desplegar frontend que lea estos campos, aplica migraciones Supabase in
 - El defensor sí puede invitar apoyos mientras el ataque está en camino. Supabase calcula la ruta con el tiempo restante real y rechaza cualquier fuerza cuya llegada supere `attack_arrival_at`.
 - Al llegar el ataque se congela el plantel. El sistema queda en guerra y ningún movimiento posterior puede terminar allí, aunque una ruta normal sí puede atravesarlo como sistema intermedio.
 - Las unidades de apoyo conservan su planeta de origen. Tras resolver la batalla, los supervivientes regresan mediante una orden `battle_return`; si el origen ya no pertenece a su facción quedan en `return_pending`.
-- El admin puede alternar desde `/admin` entre `Testeo` y `Campaña`. `Testeo` usa movimiento 3s/arista, ataque 5min y colas de tecnología/reclutamiento/construcción/reabastecimiento de 3s. `Campaña` usa movimiento 3 días/arista, ataque 6 días, producción diaria, rama `Progreso` a 30min/2h/6h según coste 0/1/2, resto de tecnología por coste, reclutamiento por potencia de unidad y construcción por coste de edificio.
+- El modo activo es `Campaña`: movimiento 3 días por arista, ataques 7 días hasta la batalla, producción diaria, rama `Progreso` a 30 min/2 h/6 h según coste 0/1/2, reclutamiento por potencia de unidad y construcción por coste de edificio.
 - Prueba integral local: `npm run db:test:coalitions` después de `npm run db:reset` y `npm run db:seed:users`.
 
 ## Uso móvil v1
