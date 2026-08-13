@@ -2747,7 +2747,7 @@ function getBattleReportStatusTone(report: BattleReport | null) {
 }
 
 function formatUnitStrength(unit: CampaignUnit) {
-  return `${unit.quantity}/${unit.startingQuantity} miniaturas - ${unit.woundsTaken} heridas - ${getCurrentUnitPoints(unit)} pts`;
+  return `${unit.quantity}/${unit.startingQuantity} miniaturas - ${unit.woundsTaken} heridas - ${getUnitRosterPoints(unit)} pts de ficha`;
 }
 
 function getUnitWoundsPerModel(snapshot: CampaignSnapshot, unit: CampaignUnit) {
@@ -2758,12 +2758,12 @@ function buildDefaultPostBattleBlockedUntil() {
   return new Date(Date.now() + defaultPostBattleBlockDays * 24 * 60 * 60 * 1000).toISOString();
 }
 
-function getCurrentUnitPoints(unit: CampaignUnit) {
+function getUnitRosterPoints(unit: CampaignUnit) {
   if (unit.quantity <= 0) {
     return 0;
   }
 
-  return Math.max(1, Math.ceil((unit.points * unit.quantity) / Math.max(unit.startingQuantity, 1)));
+  return Math.max(0, unit.points);
 }
 
 function getUnitStatusLabel(status: CampaignUnit["status"]) {

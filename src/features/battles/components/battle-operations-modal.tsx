@@ -403,7 +403,7 @@ function OperationCard({
         </div>
         <div className="shrink-0 text-left text-xs text-slate-400 sm:text-right">
           <div>{commitments.length} unidades comprometidas</div>
-          <div>{commitments.reduce((total, item) => total + item.pointsAtCommitment, 0)} pts actuales</div>
+          <div>{commitments.reduce((total, item) => total + item.pointsAtCommitment, 0)} pts de ficha</div>
         </div>
       </div>
 
