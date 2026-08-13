@@ -1978,8 +1978,8 @@ const balancedSystemCapacities: Record<string, Partial<Record<ProductionResource
   "helios-drift": { supply: 5, uridium: 0.3 },
   "blackglass": { supply: 10, industrialMaterial: 5 },
   "red-sabbath": { supply: 4, minerals: 1, uridium: 0.3 },
-  "nexus-aster": { minerals: 4, gold: 8, industrialMaterial: 6 },
-  "goregate": { supply: 4, honor: 1, gold: 8, industrialMaterial: 6 }
+  "nexus-aster": { supply: 10, minerals: 3, industrialMaterial: 5, uridium: 0.3 },
+  "goregate": { supply: 5, minerals: 5, industrialMaterial: 6, uridium: 0.3 }
 };
 
 const systemResourceCapabilities: CampaignSnapshot["systemResourceCapabilities"] = systems.flatMap(getMockResourceCapabilities);

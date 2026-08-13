@@ -86,8 +86,8 @@ const goldSystemSlugs = Object.entries(balanceConfig.systemCapacities ?? {})
   .map(([slug]) => slug)
   .sort();
 
-if (goldSystemSlugs.join(",") !== "goregate,nexus-aster") {
-  errors.push(`Solo nexus-aster y goregate pueden tener oro; recibido ${goldSystemSlugs.join(", ") || "ninguno"}.`);
+if (goldSystemSlugs.length > 0) {
+  errors.push(`Ningun sistema debe tener Oro natural en el balance actual; recibido ${goldSystemSlugs.join(", ")}.`);
 }
 
 if (balanceConfig.initialBuildings !== "none") {

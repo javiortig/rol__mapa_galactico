@@ -164,7 +164,7 @@ Estado jugable actual:
 - El catálogo final de unidades se genera con `npm run units:generate`; importa 347 hojas de unidad de 11.ª edición: 333 desde `data/11th40kPoints.txt` y 14 organismos tiránidos de `Final Day` para Cultos Genestealer desde `data/11th-final-day-tyranids.json`.
 - Los costes variables oficiales MFM de 11.ª edición se generan con `npm run units:generate-options` desde `https://mfm.warhammer-community.com/en/` y se guardan en `data/11th-unit-cost-options.json`. Este archivo anade tamaños legales, recargos por copia y extras pagados sin modificar `data/11th40kPoints.txt`.
 - El balance de costes y producción vive en `data/balance/faction-balance.json`; se audita con `docs/generated/faction-balance-report.md` y se valida con `npm run balance:validate`.
-- Capital + adyacente neutral suman 16 puntos/día potenciales en recursos de reclutamiento; Material Industrial y Uridium tienen economía separada. Solo `nexus-aster` y `goregate` tienen Oro natural.
+- Capital + adyacente neutral suman 16 puntos/día potenciales en recursos de reclutamiento; Material Industrial y Uridium tienen economía separada. En el balance actual no hay Oro natural en sistemas.
 - Los árboles de tropas por facción se definen de forma declarativa en `data/technology/faction-troop-trees.json` y se validan con `npm run tech:validate-troops`.
 - Producción diaria por tick temporal configurable, calculada desde edificios activos.
 - Movimiento, reclutamiento e investigación funcionan por timestamps y resolvers backend/lazy processing.
@@ -617,7 +617,7 @@ El mapa final usa capacidades explícitas, no generación determinista. El objet
 - Capital y adyacente no tienen capacidad natural de Oro.
 - Las capitales tienen `5 Material Industrial/día` de capacidad natural y `0 Uridium/día`.
 - Los sistemas adyacentes tienen `0 Material Industrial/día` y `0.3 Uridium/día`.
-- Solo `nexus-aster` y `goregate`, los dos sistemas centrales controlados por Orcos, tienen capacidad natural de Oro.
+- `nexus-aster` y `goregate`, los dos sistemas centrales controlados por Orcos, no tienen Oro natural en el balance actual; aportan recursos de reclutamiento, Material Industrial y Uridium escaso.
 - Los sistemas gaseosos no producen recursos.
 - Todos los sistemas empiezan sin edificios construidos. Por tanto, la producción activa inicial es 0 hasta que una facción construya edificios de producción.
 - Recursos iniciales de cada facción jugable: 100 Suministro vital, 40 Mineral, 0 Honor, 0 Oro, 150 Material Industrial y 10 Uridium.
