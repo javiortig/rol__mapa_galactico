@@ -17,31 +17,31 @@ Generado por `npm run units:generate`.
 
 | Faccion | Unidades | Unidades con oro | Puntos catalogo | Suministro | Mineral | Honor | Oro |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| adeptus-custodes | 51 | 20/20 (39%) | 16160 | 3727 | 4084 | 557 | 296 |
-| cultos-genestealer | 41 | 16/16 (39%) | 3360 | 1661 | 337 | 165 | 40 |
-| legiones-daemonicas | 19 | 8/8 (42%) | 2655 | 1210 | 220 | 166 | 35 |
-| necrones | 55 | 22/22 (40%) | 7575 | 2604 | 1383 | 326 | 115 |
-| space-marines | 85 | 34/34 (40%) | 10785 | 4067 | 2454 | 232 | 130 |
+| adeptus-custodes | 51 | 20/20 (39%) | 16160 | 3731 | 4077 | 556 | 299 |
+| cultos-genestealer | 41 | 16/16 (39%) | 3395 | 1691 | 337 | 166 | 40 |
+| legiones-daemonicas | 19 | 8/8 (42%) | 2720 | 1234 | 223 | 170 | 38 |
+| necrones | 55 | 22/22 (40%) | 7570 | 2567 | 1369 | 334 | 119 |
+| space-marines | 85 | 34/34 (40%) | 10565 | 3990 | 2415 | 226 | 123 |
 
 ## Infanteria inicial solo suministro
 
 - necrones: Immortals -> 70 Suministro
-- necrones: Necron Warriors -> 90 Suministro
+- necrones: Necron Warriors -> 80 Suministro
 - legiones-daemonicas: Blue Horrors -> 125 Suministro
-- legiones-daemonicas: Pink Horrors -> 140 Suministro
-- cultos-genestealer: Neophyte Hybrids -> 65 Suministro
-- cultos-genestealer: Hybrid Metamorphs -> 70 Suministro
+- legiones-daemonicas: Pink Horrors -> 150 Suministro
+- cultos-genestealer: Neophyte Hybrids -> 70 Suministro
+- cultos-genestealer: Hybrid Metamorphs -> 75 Suministro
 - space-marines: Assault Intercessor Squad -> 75 Suministro
 - space-marines: Heavy Intercessor Squad -> 100 Suministro
 - space-marines: Intercessor Squad -> 80 Suministro
 - space-marines: Tactical Squad -> 140 Suministro
-- space-marines: Incursor Squad -> 80 Suministro
-- space-marines: Infiltrator Squad -> 100 Suministro
-- space-marines: Scout Squad -> 70 Suministro
-- adeptus-custodes: Custodian Guard -> 160 Suministro
-- adeptus-custodes: Prosecutors -> 40 Suministro
-- adeptus-custodes: Vigilators -> 45 Suministro
-- adeptus-custodes: Witchseekers -> 45 Suministro
+- space-marines: Incursor Squad -> 85 Suministro
+- space-marines: Infiltrator Squad -> 110 Suministro
+- space-marines: Scout Squad -> 65 Suministro
+- adeptus-custodes: Custodian Guard -> 170 Suministro
+- adeptus-custodes: Prosecutors -> 45 Suministro
+- adeptus-custodes: Vigilators -> 50 Suministro
+- adeptus-custodes: Witchseekers -> 50 Suministro
 
 ## Produccion natural inicial
 

@@ -1,6 +1,6 @@
 # Informe de opciones y puntos variables 11th
 
-Generado: 2026-08-13T00:58:04.829Z
+Generado: 2026-08-13T23:06:59.333Z
 Fuente primaria: https://mfm.warhammer-community.com/en
 
 > MFM oficial 11th edition. No se usa BSData/wh40k-10e como fuente de puntos, tamanos ni opciones.

@@ -8,6 +8,7 @@ import {
 } from "./lib/campaign-balance.mjs";
 
 const SOURCE_PATH = "data/11th40kPoints.txt";
+const MFM_COST_OPTIONS_PATH = "data/11th-unit-cost-options.json";
 const FINAL_DAY_TYRANIDS_PATH = "data/11th-final-day-tyranids.json";
 const SEED_PATH = "supabase/seed.sql";
 const MOCK_PATH = "src/mocks/generated/40k-unit-templates.ts";
@@ -223,7 +224,8 @@ function main() {
   const balanceConfig = readJson(BALANCE_CONFIG_PATH);
   const troopTreeConfig = readJson(TROOP_TREE_CONFIG_PATH);
   const keywordSource = buildBsDataKeywordSource();
-  const catalog = parseCatalog(text, keywordSource);
+  const mfmBasePointOverrides = buildMfmBasePointOverrides();
+  const catalog = parseCatalog(text, keywordSource, mfmBasePointOverrides);
   const balance = applyUnitCostBalance(catalog.units, troopTreeConfig, balanceConfig);
   const report = buildReport(catalog);
   writeText(REPORT_PATH, report);
@@ -235,7 +237,7 @@ function main() {
   console.log(`Facciones procesadas: ${catalog.factionSummaries.length}.`);
 }
 
-function parseCatalog(text, keywordSource) {
+function parseCatalog(text, keywordSource, mfmBasePointOverrides) {
   const segments = text
     .split(/(?=\+ FACTION KEYWORD: )/g)
     .map((segment) => segment.trim())
@@ -243,6 +245,7 @@ function parseCatalog(text, keywordSource) {
   const units = [];
   const missingKeywordMatches = [];
   const keywordMatches = [];
+  const mfmPointOverrides = [];
   const factionSummaries = [];
 
   for (const segment of segments) {
@@ -267,7 +270,10 @@ function parseCatalog(text, keywordSource) {
       const isCharacterLine = Boolean(unitMatch[1]);
       const defaultQuantity = Number(unitMatch[2]);
       const name = unitMatch[3].trim();
-      const points = Number(unitMatch[4]);
+      const providedPoints = Number(unitMatch[4]);
+      const unitSlug = slugify(name);
+      const pointOverride = findMfmBasePointOverride(mfmBasePointOverrides, faction.slug, unitSlug, defaultQuantity);
+      const points = pointOverride?.points ?? providedPoints;
       const keywordMatch = findRealKeywordMatch(name, faction.slug, keywordSource.index);
       if (!keywordMatch) {
         missingKeywordMatches.push(`${faction.sourceName}: ${name}`);
@@ -278,8 +284,13 @@ function parseCatalog(text, keywordSource) {
       const isAlliedUnit = isAlliedMatch(faction.slug, keywordMatch);
       const category = deriveCategory(isAlliedUnit, isCharacterLine, keywordMatch.rawKeywords);
       const sourceSection = deriveSourceSection(category, isCharacterLine);
-      const slug = uniqueSlug(units, `unit-${faction.slug}-${slugify(name)}`);
+      const slug = uniqueSlug(units, `unit-${faction.slug}-${unitSlug}`);
       keywordMatches.push(`${faction.sourceName}: ${name} -> ${unitKeywords.join(", ")} (${keywordMatch.fileName})`);
+      if (pointOverride && points !== providedPoints) {
+        mfmPointOverrides.push(
+          `${faction.sourceName}: ${name} (${defaultQuantity} modelos) ${providedPoints} -> ${points} pts`
+        );
+      }
 
       units.push({
         slug,
@@ -325,7 +336,7 @@ function parseCatalog(text, keywordSource) {
 
   appendFinalDayTyranidUnits(units, factionSummaries, keywordMatches);
 
-  return { units, factionSummaries, keywordSource, keywordMatches, missingKeywordMatches };
+  return { units, factionSummaries, keywordSource, keywordMatches, missingKeywordMatches, mfmPointOverrides };
 }
 
 function appendFinalDayTyranidUnits(units, factionSummaries, keywordMatches) {
@@ -796,9 +807,9 @@ function buildInitialUnitsSql(units) {
     if (!template) {
       throw new Error(`No existe la plantilla inicial ${factionSlug}:${templateName}`);
     }
-    const points = pointsOverride ?? template.points;
     const quantity = quantityOverride ?? template.defaultQuantity;
     const startingQuantity = startingQuantityOverride ?? template.defaultQuantity;
+    const points = resolveInitialUnitPoints(template, startingQuantity, pointsOverride);
     return `    (${sql(slug)}, ${sql(factionSlug)}, ${sql(template.slug)}, ${sql(template.name)}, ${sql(template.category)}, ${sql(template.unitType)}, ${sqlArray(template.unitKeywords)}, ${points}, ${quantity}, ${startingQuantity}, ${wounds}, ${level}, ${rank === null ? "null" : sql(rank)}, ${sql(systemSlug)}, ${sql(status)})`;
   }).join(",\n");
 
@@ -940,9 +951,9 @@ function buildMockFile(units) {
   const unitByKey = new Map(units.map((unit) => [`${unit.factionSlug}:${unit.name}`, unit]));
   const initialUnits = INITIAL_UNITS.map(([slug, factionSlug, templateName, systemSlug, status, level, , wounds, quantityOverride, startingQuantityOverride, pointsOverride]) => {
     const template = unitByKey.get(`${factionSlug}:${templateName}`);
-    const points = pointsOverride ?? template.points;
     const quantity = quantityOverride ?? template.defaultQuantity;
     const startingQuantity = startingQuantityOverride ?? template.defaultQuantity;
+    const points = resolveInitialUnitPoints(template, startingQuantity, pointsOverride);
     return {
       id: slug,
       factionId: factionSlug,
@@ -1005,6 +1016,7 @@ function buildReport(catalog) {
     `- Unidades con keywords reales cruzadas: ${catalog.keywordMatches.length}.`,
     `- Cruces BSData faltantes: ${catalog.missingKeywordMatches.length}.`,
     "- Fallback heuristico: 0.",
+    `- Puntos base actualizados desde MFM: ${catalog.mfmPointOverrides.length}.`,
     "- Material Industrial y Uridium: siempre 0 en costes de unidades.",
     "- Disponibilidad inicial: todas las plantillas importadas quedan bloqueadas (`is_available = false`).",
     "",
@@ -1025,7 +1037,11 @@ function buildReport(catalog) {
     "",
     "## Cruces BSData faltantes",
     "",
-    ...(catalog.missingKeywordMatches.length > 0 ? catalog.missingKeywordMatches.map((line) => `- ${line}`) : ["- Ninguno."])
+    ...(catalog.missingKeywordMatches.length > 0 ? catalog.missingKeywordMatches.map((line) => `- ${line}`) : ["- Ninguno."]),
+    "",
+    "## Puntos base actualizados desde MFM",
+    "",
+    ...(catalog.mfmPointOverrides.length > 0 ? catalog.mfmPointOverrides.map((line) => `- ${line}`) : ["- Ninguno."])
   ];
 
   return `${lines.join("\n")}\n`;
@@ -1098,6 +1114,77 @@ function buildBalanceReport(catalog, balance, balanceConfig) {
 
 function readJson(path) {
   return JSON.parse(readFileSync(path, "utf8"));
+}
+
+function buildMfmBasePointOverrides() {
+  if (!existsSync(MFM_COST_OPTIONS_PATH)) {
+    return new Map();
+  }
+
+  const payload = readJson(MFM_COST_OPTIONS_PATH);
+  const units = Array.isArray(payload.units) ? payload.units : Array.isArray(payload) ? payload : [];
+  const overrides = new Map();
+
+  for (const unit of units) {
+    const factionSlug = unit.factionSlug;
+    const unitSlug = unit.unitSlug;
+    const providedModels = Number(unit.provided?.models);
+    const providedPoints = Number(unit.provided?.points);
+    if (!factionSlug || !unitSlug || !Number.isFinite(providedModels) || !Number.isFinite(providedPoints)) {
+      continue;
+    }
+
+    const modelOptions = Array.isArray(unit.modelOptions) ? unit.modelOptions : [];
+    const baseOption = modelOptions
+      .filter((option) => Number(option.models) === providedModels && Number.isFinite(Number(option.points)))
+      .sort(compareMfmModelOptions)[0];
+
+    if (!baseOption) {
+      continue;
+    }
+
+    const points = Number(baseOption.points);
+    if (points <= 0 || points === providedPoints) {
+      continue;
+    }
+
+    overrides.set(`${factionSlug}:${unitSlug}:${providedModels}`, {
+      points,
+      providedPoints,
+      models: providedModels,
+      label: baseOption.label ?? `${providedModels} modelos`
+    });
+  }
+
+  return overrides;
+}
+
+function compareMfmModelOptions(left, right) {
+  const leftFrom = Number(left.copyRange?.from ?? 1);
+  const rightFrom = Number(right.copyRange?.from ?? 1);
+  if (leftFrom !== rightFrom) {
+    return leftFrom - rightFrom;
+  }
+
+  const leftTo = left.copyRange?.to == null ? Number.MAX_SAFE_INTEGER : Number(left.copyRange.to);
+  const rightTo = right.copyRange?.to == null ? Number.MAX_SAFE_INTEGER : Number(right.copyRange.to);
+  if (leftTo !== rightTo) {
+    return leftTo - rightTo;
+  }
+
+  return Number(left.points) - Number(right.points);
+}
+
+function findMfmBasePointOverride(overrides, factionSlug, unitSlug, defaultQuantity) {
+  return overrides.get(`${factionSlug}:${unitSlug}:${defaultQuantity}`) ?? null;
+}
+
+function resolveInitialUnitPoints(template, startingQuantity, pointsOverride) {
+  if (pointsOverride == null || Number(startingQuantity) === Number(template.defaultQuantity)) {
+    return template.points;
+  }
+
+  return pointsOverride;
 }
 
 function sql(value) {

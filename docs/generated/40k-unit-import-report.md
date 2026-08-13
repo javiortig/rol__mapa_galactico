@@ -12,17 +12,18 @@ Generado por `npm run units:generate` desde `data/11th40kPoints.txt`.
 - Unidades con keywords reales cruzadas: 347.
 - Cruces BSData faltantes: 0.
 - Fallback heuristico: 0.
+- Puntos base actualizados desde MFM: 149.
 - Material Industrial y Uridium: siempre 0 en costes de unidades.
 - Disponibilidad inicial: todas las plantillas importadas quedan bloqueadas (`is_available = false`).
 
 ## Validacion por bloque
 
-- Xenos - Necrons: 55/55 unidades, 7575/7575 puntos.
-- Chaos - Chaos Daemons: 19/19 unidades, 2655/2655 puntos.
-- Imperium - Agents of the Imperium: 32/32 unidades, 2860/2860 puntos.
-- Xenos - Aeldari: 64/64 unidades, 10200/10200 puntos.
-- Xenos - Genestealer Cults: 27/27 unidades, 1910/1910 puntos.
-- Imperium - Adeptus Astartes - Space Marines: 85/85 unidades, 10785/10785 puntos.
+- Xenos - Necrons: 55/55 unidades, 7570/7575 puntos.
+- Chaos - Chaos Daemons: 19/19 unidades, 2720/2655 puntos.
+- Imperium - Agents of the Imperium: 32/32 unidades, 2800/2860 puntos.
+- Xenos - Aeldari: 64/64 unidades, 9860/10200 puntos.
+- Xenos - Genestealer Cults: 27/27 unidades, 1945/1910 puntos.
+- Imperium - Adeptus Astartes - Space Marines: 85/85 unidades, 10565/10785 puntos.
 - Imperium - Adeptus Custodes: 51/51 unidades, 16160/16160 puntos.
 - Cultos Genestealer - FINAL DAY TYRANIDS: 14/14 unidades, 1450/1450 puntos.
 
@@ -48,3 +49,155 @@ Generado por `npm run units:generate` desde `data/11th40kPoints.txt`.
 ## Cruces BSData faltantes
 
 - Ninguno.
+
+## Puntos base actualizados desde MFM
+
+- Xenos - Necrons: C'tan Shard of the Deceiver (1 modelos) 310 -> 330 pts
+- Xenos - Necrons: C'tan Shard of the Nightbringer (1 modelos) 340 -> 360 pts
+- Xenos - Necrons: C'tan Shard of the Void Dragon (1 modelos) 330 -> 345 pts
+- Xenos - Necrons: Chronomancer (1 modelos) 65 -> 70 pts
+- Xenos - Necrons: Illuminor Szeras (1 modelos) 165 -> 175 pts
+- Xenos - Necrons: Lokhust Lord (1 modelos) 80 -> 70 pts
+- Xenos - Necrons: Orikan the Diviner (1 modelos) 80 -> 90 pts
+- Xenos - Necrons: Overlord (1 modelos) 85 -> 90 pts
+- Xenos - Necrons: Overlord with Translocation Shroud (1 modelos) 85 -> 90 pts
+- Xenos - Necrons: The Silent King (3 modelos) 400 -> 420 pts
+- Xenos - Necrons: Transcendent C'tan (1 modelos) 325 -> 340 pts
+- Xenos - Necrons: Trazyn the Infinite (1 modelos) 75 -> 65 pts
+- Xenos - Necrons: Necron Warriors (10 modelos) 90 -> 80 pts
+- Xenos - Necrons: Annihilation Barge (1 modelos) 105 -> 95 pts
+- Xenos - Necrons: Canoptek Macrocytes (5 modelos) 85 -> 70 pts
+- Xenos - Necrons: Canoptek Spyders (1 modelos) 75 -> 65 pts
+- Xenos - Necrons: Canoptek Wraiths (3 modelos) 110 -> 95 pts
+- Xenos - Necrons: Doom Scythe (1 modelos) 230 -> 200 pts
+- Xenos - Necrons: Doomsday Ark (1 modelos) 200 -> 210 pts
+- Xenos - Necrons: Flayed Ones (5 modelos) 60 -> 55 pts
+- Xenos - Necrons: Ghost Ark (1 modelos) 115 -> 100 pts
+- Xenos - Necrons: Lokhust Heavy Destroyers (1 modelos) 55 -> 50 pts
+- Xenos - Necrons: Lychguard (5 modelos) 85 -> 80 pts
+- Xenos - Necrons: Monolith (1 modelos) 400 -> 420 pts
+- Xenos - Necrons: Night Scythe (1 modelos) 145 -> 125 pts
+- Xenos - Necrons: Obelisk (1 modelos) 300 -> 280 pts
+- Xenos - Necrons: Skorpekh Destroyers (3 modelos) 90 -> 85 pts
+- Xenos - Necrons: Tesseract Vault (1 modelos) 425 -> 465 pts
+- Xenos - Necrons: Tomb Blades (3 modelos) 75 -> 70 pts
+- Xenos - Necrons: Triarch Praetorians (5 modelos) 90 -> 80 pts
+- Chaos - Chaos Daemons: Daemon Prince of Chaos (1 modelos) 190 -> 165 pts
+- Chaos - Chaos Daemons: Daemon Prince of Chaos with wings (1 modelos) 180 -> 190 pts
+- Chaos - Chaos Daemons: Fluxmaster (1 modelos) 60 -> 70 pts
+- Chaos - Chaos Daemons: Kairos Fateweaver (1 modelos) 295 -> 305 pts
+- Chaos - Chaos Daemons: Lord of Change (1 modelos) 285 -> 320 pts
+- Chaos - Chaos Daemons: The Changeling (1 modelos) 90 -> 105 pts
+- Chaos - Chaos Daemons: Pink Horrors (10 modelos) 140 -> 150 pts
+- Imperium - Agents of the Imperium: Eversor Assassin (1 modelos) 110 -> 100 pts
+- Imperium - Agents of the Imperium: Exaction Squad (11 modelos) 90 -> 85 pts
+- Imperium - Agents of the Imperium: Grey Knights Terminator Squad (5 modelos) 190 -> 175 pts
+- Imperium - Agents of the Imperium: Imperial Rhino (1 modelos) 75 -> 65 pts
+- Imperium - Agents of the Imperium: Inquisitorial Chimera (1 modelos) 70 -> 60 pts
+- Imperium - Agents of the Imperium: Sisters of Battle Immolator (1 modelos) 100 -> 90 pts
+- Xenos - Aeldari: Autarch (1 modelos) 85 -> 75 pts
+- Xenos - Aeldari: Autarch Wayleaper (1 modelos) 80 -> 70 pts
+- Xenos - Aeldari: Avatar of Khaine (1 modelos) 280 -> 250 pts
+- Xenos - Aeldari: Death Jester (1 modelos) 90 -> 70 pts
+- Xenos - Aeldari: Eldrad Ulthran (1 modelos) 120 -> 130 pts
+- Xenos - Aeldari: Farseer (1 modelos) 70 -> 65 pts
+- Xenos - Aeldari: Farseer Skyrunner (1 modelos) 80 -> 60 pts
+- Xenos - Aeldari: Fuegan (1 modelos) 120 -> 130 pts
+- Xenos - Aeldari: Jain Zar (1 modelos) 120 -> 105 pts
+- Xenos - Aeldari: Kharseth (1 modelos) 95 -> 85 pts
+- Xenos - Aeldari: Shadowseer (1 modelos) 60 -> 50 pts
+- Xenos - Aeldari: Spiritseer (1 modelos) 65 -> 55 pts
+- Xenos - Aeldari: Guardian Defenders (11 modelos) 100 -> 90 pts
+- Xenos - Aeldari: Corsair Voidscarred (5 modelos) 80 -> 70 pts
+- Xenos - Aeldari: D-Cannon Platform (1 modelos) 125 -> 110 pts
+- Xenos - Aeldari: Dark Reapers (5 modelos) 90 -> 100 pts
+- Xenos - Aeldari: Howling Banshees (5 modelos) 95 -> 85 pts
+- Xenos - Aeldari: Night Spinner (1 modelos) 190 -> 170 pts
+- Xenos - Aeldari: Rangers (5 modelos) 55 -> 60 pts
+- Xenos - Aeldari: Shadow Weaver Platform (1 modelos) 75 -> 60 pts
+- Xenos - Aeldari: Shining Spears (3 modelos) 110 -> 100 pts
+- Xenos - Aeldari: Shroud Runners (3 modelos) 80 -> 90 pts
+- Xenos - Aeldari: Starfangs (1 modelos) 75 -> 70 pts
+- Xenos - Aeldari: Starweaver (1 modelos) 80 -> 70 pts
+- Xenos - Aeldari: Striking Scorpions (5 modelos) 85 -> 75 pts
+- Xenos - Aeldari: Voidweaver (1 modelos) 125 -> 115 pts
+- Xenos - Aeldari: Warlock Skyrunners (1 modelos) 45 -> 55 pts
+- Xenos - Aeldari: Wave Serpent (1 modelos) 125 -> 115 pts
+- Xenos - Aeldari: Wraithblades (5 modelos) 150 -> 140 pts
+- Xenos - Aeldari: Wraithguard (5 modelos) 160 -> 145 pts
+- Xenos - Aeldari: Wraithknight (1 modelos) 435 -> 385 pts
+- Xenos - Aeldari: Wraithknight with Ghostglaive (1 modelos) 420 -> 380 pts
+- Xenos - Aeldari: Wraithlord (1 modelos) 130 -> 125 pts
+- Xenos - Genestealer Cults: Benefictus (1 modelos) 70 -> 75 pts
+- Xenos - Genestealer Cults: Locus (1 modelos) 45 -> 35 pts
+- Xenos - Genestealer Cults: Patriarch (1 modelos) 75 -> 80 pts
+- Xenos - Genestealer Cults: Reductus Saboteur (1 modelos) 65 -> 70 pts
+- Xenos - Genestealer Cults: Sanctus (1 modelos) 50 -> 65 pts
+- Xenos - Genestealer Cults: Acolyte Hybrids with Autopistols (5 modelos) 65 -> 70 pts
+- Xenos - Genestealer Cults: Acolyte Hybrids with Hand Flamers (5 modelos) 70 -> 75 pts
+- Xenos - Genestealer Cults: Neophyte Hybrids (10 modelos) 65 -> 70 pts
+- Xenos - Genestealer Cults: Aberrants (5 modelos) 135 -> 140 pts
+- Xenos - Genestealer Cults: Goliath Truck (1 modelos) 85 -> 75 pts
+- Xenos - Genestealer Cults: Hybrid Metamorphs (5 modelos) 70 -> 75 pts
+- Imperium - Adeptus Astartes - Space Marines: Ancient (1 modelos) 50 -> 40 pts
+- Imperium - Adeptus Astartes - Space Marines: Ancient in Terminator Armor (1 modelos) 75 -> 65 pts
+- Imperium - Adeptus Astartes - Space Marines: Bladeguard Ancient (1 modelos) 45 -> 40 pts
+- Imperium - Adeptus Astartes - Space Marines: Captain in Terminator Armour (1 modelos) 95 -> 85 pts
+- Imperium - Adeptus Astartes - Space Marines: Chaplain on Bike (1 modelos) 75 -> 70 pts
+- Imperium - Adeptus Astartes - Space Marines: Judiciar (1 modelos) 70 -> 55 pts
+- Imperium - Adeptus Astartes - Space Marines: Librarian (1 modelos) 65 -> 70 pts
+- Imperium - Adeptus Astartes - Space Marines: Lieutenant (1 modelos) 55 -> 45 pts
+- Imperium - Adeptus Astartes - Space Marines: Lieutenant in Phobos Armour (1 modelos) 55 -> 45 pts
+- Imperium - Adeptus Astartes - Space Marines: Lieutenant in Reiver Armour (1 modelos) 55 -> 45 pts
+- Imperium - Adeptus Astartes - Space Marines: Lieutenant with Combi-weapon (1 modelos) 85 -> 95 pts
+- Imperium - Adeptus Astartes - Space Marines: Aggressor Squad (3 modelos) 95 -> 80 pts
+- Imperium - Adeptus Astartes - Space Marines: Assault Intercessors with Jump Packs (5 modelos) 90 -> 85 pts
+- Imperium - Adeptus Astartes - Space Marines: Brutalis Dreadnought (1 modelos) 160 -> 150 pts
+- Imperium - Adeptus Astartes - Space Marines: Desolation Squad (5 modelos) 200 -> 180 pts
+- Imperium - Adeptus Astartes - Space Marines: Drop Pod (1 modelos) 70 -> 60 pts
+- Imperium - Adeptus Astartes - Space Marines: Eliminator Squad (3 modelos) 85 -> 75 pts
+- Imperium - Adeptus Astartes - Space Marines: Impulsor (1 modelos) 80 -> 70 pts
+- Imperium - Adeptus Astartes - Space Marines: Inceptor Squad (3 modelos) 120 -> 125 pts
+- Imperium - Adeptus Astartes - Space Marines: Incursor Squad (5 modelos) 80 -> 85 pts
+- Imperium - Adeptus Astartes - Space Marines: Infernus Squad (5 modelos) 90 -> 85 pts
+- Imperium - Adeptus Astartes - Space Marines: Infiltrator Squad (5 modelos) 100 -> 110 pts
+- Imperium - Adeptus Astartes - Space Marines: Land Raider Redeemer (1 modelos) 270 -> 250 pts
+- Imperium - Adeptus Astartes - Space Marines: Outrider Squad (3 modelos) 80 -> 70 pts
+- Imperium - Adeptus Astartes - Space Marines: Razorback (1 modelos) 95 -> 85 pts
+- Imperium - Adeptus Astartes - Space Marines: Redemptor Dreadnought (1 modelos) 205 -> 195 pts
+- Imperium - Adeptus Astartes - Space Marines: Reiver Squad (5 modelos) 80 -> 75 pts
+- Imperium - Adeptus Astartes - Space Marines: Repulsor (1 modelos) 180 -> 170 pts
+- Imperium - Adeptus Astartes - Space Marines: Repulsor Executioner (1 modelos) 230 -> 255 pts
+- Imperium - Adeptus Astartes - Space Marines: Rhino (1 modelos) 75 -> 65 pts
+- Imperium - Adeptus Astartes - Space Marines: Scout Squad (5 modelos) 70 -> 65 pts
+- Imperium - Adeptus Astartes - Space Marines: Storm Speeder Hailstrike (1 modelos) 115 -> 105 pts
+- Imperium - Adeptus Astartes - Space Marines: Storm Speeder Hammerstrike (1 modelos) 125 -> 140 pts
+- Imperium - Adeptus Astartes - Space Marines: Suppressor Squad (3 modelos) 75 -> 85 pts
+- Imperium - Adeptus Astartes - Space Marines: Terminator Assault Squad (5 modelos) 180 -> 155 pts
+- Imperium - Adeptus Astartes - Space Marines: Terminator Squad (5 modelos) 170 -> 160 pts
+- Imperium - Adeptus Astartes - Space Marines: Vanguard Veteran Squad with Jump Packs (5 modelos) 100 -> 105 pts
+- Imperium - Adeptus Astartes - Space Marines: Whirlwind (1 modelos) 190 -> 175 pts
+- Imperium - Adeptus Custodes: Aleya (1 modelos) 65 -> 55 pts
+- Imperium - Adeptus Custodes: Blade Champion (1 modelos) 120 -> 110 pts
+- Imperium - Adeptus Custodes: Shield-Captain (1 modelos) 120 -> 110 pts
+- Imperium - Adeptus Custodes: Shield-Captain on Dawneagle Jetbike (1 modelos) 150 -> 140 pts
+- Imperium - Adeptus Custodes: Trajann Valoris (1 modelos) 140 -> 135 pts
+- Imperium - Adeptus Custodes: Custodian Guard (4 modelos) 160 -> 170 pts
+- Imperium - Adeptus Custodes: Anathema Psykana Rhino (1 modelos) 75 -> 65 pts
+- Imperium - Adeptus Custodes: Caladius Grav-tank (1 modelos) 215 -> 210 pts
+- Imperium - Adeptus Custodes: Coronus Grav-carrier (1 modelos) 200 -> 180 pts
+- Imperium - Adeptus Custodes: Custodian Wardens (4 modelos) 210 -> 200 pts
+- Imperium - Adeptus Custodes: Pallas Grav-attack (1 modelos) 105 -> 100 pts
+- Imperium - Adeptus Custodes: Prosecutors (4 modelos) 40 -> 45 pts
+- Imperium - Adeptus Custodes: Venatari Custodians (3 modelos) 165 -> 150 pts
+- Imperium - Adeptus Custodes: Vigilators (4 modelos) 45 -> 50 pts
+- Imperium - Adeptus Custodes: Witchseekers (4 modelos) 45 -> 50 pts
+- Imperium - Adeptus Custodes: Acastus Knight Asterius (1 modelos) 765 -> 785 pts
+- Imperium - Adeptus Custodes: Acastus Knight Porphyrion (1 modelos) 700 -> 725 pts
+- Imperium - Adeptus Custodes: Armiger Helverin (1 modelos) 135 -> 140 pts
+- Imperium - Adeptus Custodes: Cerastus Knight Lancer (1 modelos) 395 -> 415 pts
+- Imperium - Adeptus Custodes: Knight Castellan (1 modelos) 410 -> 425 pts
+- Imperium - Adeptus Custodes: Knight Crusader (1 modelos) 385 -> 395 pts
+- Imperium - Adeptus Custodes: Knight Defender (1 modelos) 415 -> 400 pts
+- Imperium - Adeptus Custodes: Knight Destrier (1 modelos) 250 -> 265 pts
+- Imperium - Adeptus Custodes: Knight Valiant (1 modelos) 410 -> 400 pts
