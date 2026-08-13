@@ -150,11 +150,11 @@ set from_system_id = excluded.from_system_id, to_system_id = excluded.to_system_
 
 insert into public.faction_resources (faction_id, supply, minerals, ancestral_stone, honor, gold, industrial_material, uridium, technology)
 values
-  (public.seed_uuid('faction', 'adeptus-custodes'), 100, 40, 12, 12, 34, 150, 10, 16),
-  (public.seed_uuid('faction', 'necrones'), 100, 40, 18, 18, 32, 150, 10, 16),
-  (public.seed_uuid('faction', 'cultos-genestealer'), 100, 40, 13, 13, 30, 150, 10, 16),
-  (public.seed_uuid('faction', 'space-marines'), 100, 40, 18, 18, 38, 150, 10, 16),
-  (public.seed_uuid('faction', 'legiones-daemonicas'), 100, 40, 15, 15, 28, 150, 10, 16)
+  (public.seed_uuid('faction', 'adeptus-custodes'), 100, 40, 0, 0, 0, 150, 10, 16),
+  (public.seed_uuid('faction', 'necrones'), 100, 40, 0, 0, 0, 150, 10, 16),
+  (public.seed_uuid('faction', 'cultos-genestealer'), 100, 40, 0, 0, 0, 150, 10, 16),
+  (public.seed_uuid('faction', 'space-marines'), 100, 40, 0, 0, 0, 150, 10, 16),
+  (public.seed_uuid('faction', 'legiones-daemonicas'), 100, 40, 0, 0, 0, 150, 10, 16)
 on conflict (faction_id) do update
 set supply = excluded.supply, minerals = excluded.minerals, ancestral_stone = excluded.ancestral_stone, honor = excluded.honor, gold = excluded.gold, industrial_material = excluded.industrial_material, uridium = excluded.uridium, technology = excluded.technology, updated_at = now();
 
@@ -1061,26 +1061,20 @@ select
   false
 from (
   values
-    ('custodes-kharon-guard', 'adeptus-custodes', 'unit-adeptus-custodes-custodian-guard', 'Custodian Guard', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 160, 4, 4, 0, 1, null, 'kharon-prime', 'ready'),
-    ('custodes-arx-caladius', 'adeptus-custodes', 'unit-adeptus-custodes-caladius-grav-tank', 'Caladius Grav-tank', 'Otras hojas de datos', 'vehicle', array['Vehiculo']::text[], 215, 1, 1, 0, 1, null, 'kharon-prime', 'ready'),
-    ('custodes-shield-captain', 'adeptus-custodes', 'unit-adeptus-custodes-shield-captain', 'Shield-Captain', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 120, 1, 1, 0, 3, null, 'kharon-prime', 'ready'),
-    ('custodes-azur-guard', 'adeptus-custodes', 'unit-adeptus-custodes-custodian-guard', 'Custodian Guard', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 160, 4, 4, 0, 1, null, 'kharon-prime', 'ready'),
-    ('space-gate-intercessors', 'space-marines', 'unit-space-marines-intercessor-squad', 'Intercessor Squad', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 80, 5, 5, 0, 1, null, 'sa-cea-gate', 'ready'),
-    ('space-narthex-rhino', 'space-marines', 'unit-space-marines-rhino', 'Rhino', 'Transporte', 'vehicle', array['Vehiculo']::text[], 75, 1, 1, 0, 1, null, 'sa-cea-gate', 'ready'),
-    ('space-captain', 'space-marines', 'unit-space-marines-captain', 'Captain', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 80, 1, 1, 0, 3, null, 'sa-cea-gate', 'ready'),
-    ('space-saint-intercessors', 'space-marines', 'unit-space-marines-intercessor-squad', 'Intercessor Squad', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 80, 5, 5, 0, 1, null, 'sa-cea-gate', 'ready'),
-    ('cult-blackglass-neophytes', 'cultos-genestealer', 'unit-cultos-genestealer-neophyte-hybrids', 'Neophyte Hybrids', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 65, 10, 10, 0, 1, null, 'blackglass', 'ready'),
-    ('cult-mirror-ridgerunner', 'cultos-genestealer', 'unit-cultos-genestealer-achilles-ridgerunners', 'Achilles Ridgerunners', 'Otras hojas de datos', 'vehicle', array['Vehiculo']::text[], 95, 1, 1, 0, 1, null, 'blackglass', 'ready'),
-    ('cult-primus', 'cultos-genestealer', 'unit-cultos-genestealer-primus', 'Primus', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 70, 1, 1, 0, 3, null, 'blackglass', 'ready'),
-    ('cult-saint-neophytes', 'cultos-genestealer', 'unit-cultos-genestealer-neophyte-hybrids', 'Neophyte Hybrids', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 65, 10, 10, 0, 1, null, 'blackglass', 'ready'),
-    ('necron-thokt-warriors', 'necrones', 'unit-necrones-necron-warriors', 'Necron Warriors', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 90, 10, 10, 0, 1, null, 'thokt-vault', 'ready'),
-    ('necron-ghost-wraiths', 'necrones', 'unit-necrones-canoptek-wraiths', 'Canoptek Wraiths', 'Otras hojas de datos', 'beast', array['Bestia']::text[], 110, 3, 3, 0, 1, null, 'thokt-vault', 'ready'),
-    ('necron-overlord', 'necrones', 'unit-necrones-overlord', 'Overlord', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 85, 1, 1, 0, 3, null, 'thokt-vault', 'ready'),
-    ('necron-ossuary-warriors', 'necrones', 'unit-necrones-necron-warriors', 'Necron Warriors', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 90, 10, 10, 0, 1, null, 'thokt-vault', 'ready'),
-    ('daemon-mordax-horrors', 'legiones-daemonicas', 'unit-legiones-daemonicas-pink-horrors', 'Pink Horrors', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 140, 10, 10, 0, 1, null, 'mordax', 'ready'),
-    ('daemon-plaguefall-screamers', 'legiones-daemonicas', 'unit-legiones-daemonicas-screamers', 'Screamers', 'Otras hojas de datos', 'beast', array['Bestia']::text[], 80, 3, 3, 0, 1, null, 'mordax', 'ready'),
-    ('daemon-lord-change', 'legiones-daemonicas', 'unit-legiones-daemonicas-lord-of-change', 'Lord of Change', 'Personaje', 'character', array['Bestia', 'Caracter']::text[], 285, 1, 1, 0, 3, null, 'mordax', 'ready'),
-    ('daemon-ossuary-horrors', 'legiones-daemonicas', 'unit-legiones-daemonicas-blue-horrors', 'Blue Horrors', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 125, 10, 10, 0, 1, null, 'mordax', 'ready')
+    ('necron-plasmancer', 'necrones', 'unit-necrones-plasmancer', 'Plasmancer', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 55, 1, 1, 0, 1, null, 'thokt-vault', 'ready'),
+    ('necron-immortals-damaged', 'necrones', 'unit-necrones-immortals', 'Immortals', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 70, 4, 5, 0, 1, null, 'thokt-vault', 'ready'),
+    ('necron-warriors', 'necrones', 'unit-necrones-necron-warriors', 'Necron Warriors', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 90, 10, 10, 0, 1, null, 'thokt-vault', 'ready'),
+    ('necron-tomb-blades-damaged', 'necrones', 'unit-necrones-tomb-blades', 'Tomb Blades', 'Otras hojas de datos', 'mounted', array['Montado']::text[], 75, 2, 3, 0, 1, null, 'thokt-vault', 'ready'),
+    ('daemon-flamers-damaged', 'legiones-daemonicas', 'unit-legiones-daemonicas-flamers', 'Flamers', 'Otras hojas de datos', 'infantry', array['Infanteria']::text[], 65, 1, 3, 0, 1, null, 'mordax', 'ready'),
+    ('daemon-burning-chariot', 'legiones-daemonicas', 'unit-legiones-daemonicas-burning-chariot', 'Burning Chariot', 'Otras hojas de datos', 'mounted', array['Montado']::text[], 115, 1, 1, 0, 1, null, 'mordax', 'ready'),
+    ('daemon-pink-horrors-damaged', 'legiones-daemonicas', 'unit-legiones-daemonicas-pink-horrors', 'Pink Horrors', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 140, 7, 10, 0, 1, null, 'mordax', 'ready'),
+    ('sombra-intercessors-damaged', 'space-marines', 'unit-space-marines-intercessor-squad', 'Intercessor Squad', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 80, 4, 5, 0, 1, null, 'sa-cea-gate', 'ready'),
+    ('sombra-intercessors-large-damaged', 'space-marines', 'unit-space-marines-intercessor-squad', 'Intercessor Squad', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 150, 7, 10, 0, 1, null, 'sa-cea-gate', 'ready'),
+    ('sombra-lieutenant', 'space-marines', 'unit-space-marines-lieutenant', 'Lieutenant', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 55, 1, 1, 0, 1, null, 'sa-cea-gate', 'ready'),
+    ('sombra-bladeguard-damaged', 'space-marines', 'unit-space-marines-bladeguard-veteran-squad', 'Bladeguard Veteran Squad', 'Otras hojas de datos', 'infantry', array['Infanteria']::text[], 80, 1, 3, 0, 1, null, 'sa-cea-gate', 'ready'),
+    ('custodes-blade-champion', 'adeptus-custodes', 'unit-adeptus-custodes-blade-champion', 'Blade Champion', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 120, 1, 1, 0, 1, null, 'kharon-prime', 'ready'),
+    ('custodes-guard-damaged', 'adeptus-custodes', 'unit-adeptus-custodes-custodian-guard', 'Custodian Guard', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 160, 3, 4, 0, 1, null, 'kharon-prime', 'ready'),
+    ('custodes-prosecutor-damaged', 'adeptus-custodes', 'unit-adeptus-custodes-prosecutors', 'Prosecutors', 'Otras hojas de datos', 'infantry', array['Infanteria']::text[], 40, 1, 4, 0, 1, null, 'kharon-prime', 'ready')
 ) as data(slug, faction_slug, template_slug, name, category, unit_type, unit_keywords, points, quantity, starting_quantity, wounds_taken, experience, rank, system_slug, status)
 join public.factions on factions.slug = data.faction_slug
 join public.unit_templates on unit_templates.slug = data.template_slug
@@ -1807,6 +1801,9 @@ update public.faction_resources
 set
   supply = 100,
   minerals = 40,
+  ancestral_stone = 0,
+  honor = 0,
+  gold = 0,
   industrial_material = 150,
   uridium = 10,
   updated_at = now()

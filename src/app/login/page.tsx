@@ -9,40 +9,34 @@ import { clearSupabaseAuthStorage, getSupabaseBrowserClient, markCampaignSession
 const campaignAccounts = [
   {
     label: "Administrador",
-    email: "admin@rol40k.local",
-    password: "Admin2000"
+    email: "admin@rol40k.local"
   },
   {
     label: "Adeptus Custodes",
-    email: "adeptus-custodes@rol40k.local",
-    password: "Penedorado"
+    email: "adeptus-custodes@rol40k.local"
   },
   {
     label: "Cultos Genestealer",
-    email: "cultos-genestealer@rol40k.local",
-    password: "tattoosummum"
+    email: "cultos-genestealer@rol40k.local"
   },
   {
     label: "Legiones Daemonicas",
-    email: "legiones-daemonicas@rol40k.local",
-    password: "demonio1997"
+    email: "legiones-daemonicas@rol40k.local"
   },
   {
     label: "Necrones",
-    email: "necrones@rol40k.local",
-    password: "necron1996"
+    email: "necrones@rol40k.local"
   },
   {
     label: "Sombra del Emperador",
-    email: "space-marines@rol40k.local",
-    password: "Sombra97"
+    email: "space-marines@rol40k.local"
   }
 ];
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("adeptus-custodes@rol40k.local");
-  const [password, setPassword] = useState("Penedorado");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -105,10 +99,9 @@ export default function LoginPage() {
             className="w-full rounded-md border border-cyan-200/20 bg-slate-950/70 px-3 py-2 text-sm outline-none transition focus:border-cyan-200/50"
             onChange={(event) => {
               const nextEmail = event.target.value;
-              const nextAccount = campaignAccounts.find((account) => account.email === nextEmail);
 
               setEmail(nextEmail);
-              setPassword(nextAccount?.password ?? "");
+              setPassword("");
             }}
             value={email}
           >
@@ -121,7 +114,8 @@ export default function LoginPage() {
           <input
             className="w-full rounded-md border border-cyan-200/20 bg-slate-950/70 px-3 py-2 text-sm outline-none transition focus:border-cyan-200/50"
             onChange={(event) => setPassword(event.target.value)}
-            placeholder="Contrasena"
+            autoComplete="current-password"
+            placeholder="Contraseña"
             type="password"
             value={password}
           />

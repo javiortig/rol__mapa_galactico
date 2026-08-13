@@ -620,7 +620,15 @@ El mapa final usa capacidades explícitas, no generación determinista. El objet
 - Solo `nexus-aster` y `goregate`, los dos sistemas centrales controlados por Orcos, tienen capacidad natural de Oro.
 - Los sistemas gaseosos no producen recursos.
 - Todos los sistemas empiezan sin edificios construidos. Por tanto, la producción activa inicial es 0 hasta que una facción construya edificios de producción.
-- Recursos iniciales de cada facción jugable: 100 Suministro vital, 40 Mineral, 150 Material Industrial y 10 Uridium.
+- Recursos iniciales de cada facción jugable: 100 Suministro vital, 40 Mineral, 0 Honor, 0 Oro, 150 Material Industrial y 10 Uridium.
+
+Tropas iniciales de campaña, todas en la capital de su facción:
+
+- Necrones: 1 Plasmancer, 4/5 Immortals, 10/10 Necron Warriors y 2/3 Tomb Blades.
+- Legiones Daemónicas: 1/3 Flamers, 1 Burning Chariot y 7/10 Pink Horrors.
+- Sombra del Emperador: 4/5 Intercessor Squad, 7/10 Intercessor Squad, 1 Lieutenant y 1/3 Bladeguard Veteran Squad.
+- Adeptus Custodes: 1 Blade Champion, 3/4 Custodian Guard y 1/4 Prosecutors.
+- Cultos Genestealer no tienen tropas iniciales definidas en esta fase.
 
 Tabla vigente de capital + adyacente:
 

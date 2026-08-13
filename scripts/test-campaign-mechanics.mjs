@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { randomUUID } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import WebSocket from "ws";
 
@@ -156,6 +157,64 @@ async function getUnitByName(factionId, namePart) {
   }
 
   return rows[0];
+}
+
+async function ensureUnitFixture(
+  maps,
+  { slug, factionSlug, templateName, systemSlug, quantity, startingQuantity, points, experience = 1, status = "ready" }
+) {
+  const faction = maps.factionBySlug[factionSlug];
+  const system = maps.systemBySlug[systemSlug];
+  const existingRows = await must(
+    `fixture unidad ${slug}`,
+    service.from("campaign_units").select("*").eq("slug", slug).gt("quantity", 0).limit(1)
+  );
+
+  if (existingRows.length) {
+    const existing = existingRows[0];
+    await must(
+      `actualizar fixture ${slug}`,
+      service
+        .from("campaign_units")
+        .update({ current_system_id: system.id, status, wounds_taken: 0 })
+        .eq("id", existing.id)
+    );
+    return { ...existing, current_system_id: system.id, status, wounds_taken: 0 };
+  }
+
+  const template = await must(
+    `template fixture ${templateName}`,
+    service
+      .from("unit_templates")
+      .select("*")
+      .eq("faction_id", faction.id)
+      .eq("name", templateName)
+      .single()
+  );
+  const row = {
+    id: randomUUID(),
+    slug,
+    faction_id: faction.id,
+    unit_template_id: template.id,
+    name: template.name,
+    category: template.category,
+    unit_type: template.unit_type,
+    unit_keywords: template.unit_keywords,
+    points: points ?? template.points,
+    quantity: quantity ?? template.default_quantity,
+    starting_quantity: startingQuantity ?? template.default_quantity,
+    wounds_taken: 0,
+    experience,
+    rank: null,
+    current_system_id: system.id,
+    status,
+    is_visible_publicly: false
+  };
+
+  return await must(
+    `crear fixture ${slug}`,
+    service.from("campaign_units").upsert(row, { onConflict: "slug" }).select("*").single()
+  );
 }
 
 async function upsertTechUnlocked(factionIds, nodeIds) {
@@ -320,30 +379,25 @@ async function resetCombatFixture(maps) {
       .eq("id", necronWarrior.id)
   );
 
-  await must(
-    "preparar Caladius inicial",
-    service
-      .from("campaign_units")
-      .update({ current_system_id: maps.systemBySlug["helios-drift"].id, status: "ready" })
-      .eq("faction_id", maps.factionBySlug["adeptus-custodes"].id)
-      .ilike("name", "%Caladius%")
-  );
-  await must(
-    "preparar Rhino",
-    service
-      .from("campaign_units")
-      .update({ current_system_id: maps.systemBySlug["lyra-terminus"].id, status: "ready" })
-      .eq("faction_id", maps.factionBySlug["space-marines"].id)
-      .eq("name", "Rhino")
-  );
-  await must(
-    "preparar Primus",
-    service
-      .from("campaign_units")
-      .update({ current_system_id: maps.systemBySlug["red-sabbath"].id, status: "ready" })
-      .eq("faction_id", maps.factionBySlug["cultos-genestealer"].id)
-      .eq("name", "Primus")
-  );
+  await ensureUnitFixture(maps, {
+    slug: "fixture-custodes-caladius",
+    factionSlug: "adeptus-custodes",
+    templateName: "Caladius Grav-tank",
+    systemSlug: "helios-drift"
+  });
+  await ensureUnitFixture(maps, {
+    slug: "fixture-sombra-rhino",
+    factionSlug: "space-marines",
+    templateName: "Rhino",
+    systemSlug: "lyra-terminus"
+  });
+  await ensureUnitFixture(maps, {
+    slug: "fixture-cultos-primus",
+    factionSlug: "cultos-genestealer",
+    templateName: "Primus",
+    systemSlug: "red-sabbath",
+    experience: 3
+  });
   await must(
     "preparar demonios",
     service
@@ -480,13 +534,13 @@ async function main() {
   recordCheck("movimientos seed resueltos", `${initialMoving.length} llegadas forzadas`);
 
   const custodianGuardForMove = await getUnitByName(maps.factionBySlug["adeptus-custodes"].id, "Custodian Guard");
-  const shieldCaptainForMove = await getUnitByName(maps.factionBySlug["adeptus-custodes"].id, "Shield-Captain");
+  const bladeChampionForMove = await getUnitByName(maps.factionBySlug["adeptus-custodes"].id, "Blade Champion");
   await must(
     "preparar dos unidades para coste por unidad",
     service
       .from("campaign_units")
       .update({ current_system_id: maps.systemBySlug["kharon-prime"].id, status: "ready" })
-      .in("id", [custodianGuardForMove.id, shieldCaptainForMove.id])
+      .in("id", [custodianGuardForMove.id, bladeChampionForMove.id])
   );
   await must(
     "preparar helios neutral coste por unidad",
@@ -515,7 +569,7 @@ async function main() {
     {
       unit_selections: [
         { unit_id: custodianGuardForMove.id, quantity: custodianGuardForMove.quantity },
-        { unit_id: shieldCaptainForMove.id, quantity: shieldCaptainForMove.quantity }
+        { unit_id: bladeChampionForMove.id, quantity: bladeChampionForMove.quantity }
       ],
       path_system_ids: [maps.systemBySlug["kharon-prime"].id, maps.systemBySlug["helios-drift"].id]
     },
@@ -926,18 +980,18 @@ async function main() {
         .limit(1)
     )
   )[0];
-  const shieldCaptain = await getUnitByName(maps.factionBySlug["adeptus-custodes"].id, "Shield-Captain");
+  const bladeChampion = await getUnitByName(maps.factionBySlug["adeptus-custodes"].id, "Blade Champion");
   await must(
-    "preparar Shield-Captain",
+    "preparar Blade Champion",
     service
       .from("campaign_units")
       .update({ current_system_id: maps.systemBySlug["kharon-prime"].id, status: "ready", experience: 3 })
-      .eq("id", shieldCaptain.id)
+      .eq("id", bladeChampion.id)
   );
   await rpc(
     custodes.client,
     "equip_relic_to_character",
-    { relic_id: relic.id, character_unit_id: shieldCaptain.id, system_building_id: sanctuary.id },
+    { relic_id: relic.id, character_unit_id: bladeChampion.id, system_building_id: sanctuary.id },
     "equipar reliquia"
   );
   await rpc(
@@ -1510,7 +1564,7 @@ async function main() {
     "El perdedor sigue viendo detalles de edificios del sistema perdido"
   );
 
-  const postBattleShieldCaptain = await getUnitByName(maps.factionBySlug["adeptus-custodes"].id, "Shield-Captain");
+  const postBattleBladeChampion = await getUnitByName(maps.factionBySlug["adeptus-custodes"].id, "Blade Champion");
   await must(
     "preparar movimiento a escudo",
     service
@@ -1518,16 +1572,16 @@ async function main() {
       .update({
         current_system_id: maps.systemBySlug["kharon-prime"].id,
         status: "ready",
-        quantity: postBattleShieldCaptain.quantity,
+        quantity: postBattleBladeChampion.quantity,
         wounds_taken: 0
       })
-      .eq("id", postBattleShieldCaptain.id)
+      .eq("id", postBattleBladeChampion.id)
   );
   const blockedRouteMoveId = await rpc(
     custodes.client,
     "create_movement_order",
     {
-      unit_selections: [{ unit_id: postBattleShieldCaptain.id, quantity: postBattleShieldCaptain.quantity }],
+      unit_selections: [{ unit_id: postBattleBladeChampion.id, quantity: postBattleBladeChampion.quantity }],
       path_system_ids: ["kharon-prime", "helios-drift", "voidmist-basin", "novem"].map(
         (slug) => maps.systemBySlug[slug].id
       )
@@ -1548,7 +1602,7 @@ async function main() {
   );
   const blockedRouteUnit = await must(
     "unidad no atraviesa frente bloqueado",
-    service.from("campaign_units").select("current_system_id,status").eq("id", postBattleShieldCaptain.id).single()
+    service.from("campaign_units").select("current_system_id,status").eq("id", postBattleBladeChampion.id).single()
   );
   assert(
     blockedRouteOrder.status === "cancelled" &&
@@ -1569,7 +1623,7 @@ async function main() {
     service
       .from("campaign_units")
       .update({ current_system_id: maps.systemBySlug["kharon-prime"].id, status: "ready" })
-      .eq("id", postBattleShieldCaptain.id)
+      .eq("id", postBattleBladeChampion.id)
   );
   recordCheck("rutas bloqueadas en trayecto", "movimiento existente se cancela y no cruza frentes nuevos");
 
@@ -1577,7 +1631,7 @@ async function main() {
     custodes.client,
     "create_movement_order",
     {
-      unit_selections: [{ unit_id: postBattleShieldCaptain.id, quantity: postBattleShieldCaptain.quantity }],
+      unit_selections: [{ unit_id: postBattleBladeChampion.id, quantity: postBattleBladeChampion.quantity }],
       path_system_ids: ["kharon-prime", "helios-drift", "voidmist-basin", "novem"].map(
         (slug) => maps.systemBySlug[slug].id
       )

@@ -196,26 +196,20 @@ const FACTION_DEFS = [
 ];
 
 const INITIAL_UNITS = [
-  ["custodes-kharon-guard", "adeptus-custodes", "Custodian Guard", "kharon-prime", "ready", 1, null, 0],
-  ["custodes-arx-caladius", "adeptus-custodes", "Caladius Grav-tank", "kharon-prime", "ready", 1, null, 0],
-  ["custodes-shield-captain", "adeptus-custodes", "Shield-Captain", "kharon-prime", "ready", 3, null, 0],
-  ["custodes-azur-guard", "adeptus-custodes", "Custodian Guard", "kharon-prime", "ready", 1, null, 0],
-  ["space-gate-intercessors", "space-marines", "Intercessor Squad", "sa-cea-gate", "ready", 1, null, 0],
-  ["space-narthex-rhino", "space-marines", "Rhino", "sa-cea-gate", "ready", 1, null, 0],
-  ["space-captain", "space-marines", "Captain", "sa-cea-gate", "ready", 3, null, 0],
-  ["space-saint-intercessors", "space-marines", "Intercessor Squad", "sa-cea-gate", "ready", 1, null, 0],
-  ["cult-blackglass-neophytes", "cultos-genestealer", "Neophyte Hybrids", "blackglass", "ready", 1, null, 0],
-  ["cult-mirror-ridgerunner", "cultos-genestealer", "Achilles Ridgerunners", "blackglass", "ready", 1, null, 0],
-  ["cult-primus", "cultos-genestealer", "Primus", "blackglass", "ready", 3, null, 0],
-  ["cult-saint-neophytes", "cultos-genestealer", "Neophyte Hybrids", "blackglass", "ready", 1, null, 0],
-  ["necron-thokt-warriors", "necrones", "Necron Warriors", "thokt-vault", "ready", 1, null, 0],
-  ["necron-ghost-wraiths", "necrones", "Canoptek Wraiths", "thokt-vault", "ready", 1, null, 0],
-  ["necron-overlord", "necrones", "Overlord", "thokt-vault", "ready", 3, null, 0],
-  ["necron-ossuary-warriors", "necrones", "Necron Warriors", "thokt-vault", "ready", 1, null, 0],
-  ["daemon-mordax-horrors", "legiones-daemonicas", "Pink Horrors", "mordax", "ready", 1, null, 0],
-  ["daemon-plaguefall-screamers", "legiones-daemonicas", "Screamers", "mordax", "ready", 1, null, 0],
-  ["daemon-lord-change", "legiones-daemonicas", "Lord of Change", "mordax", "ready", 3, null, 0],
-  ["daemon-ossuary-horrors", "legiones-daemonicas", "Blue Horrors", "mordax", "ready", 1, null, 0]
+  ["necron-plasmancer", "necrones", "Plasmancer", "thokt-vault", "ready", 1, null, 0, 1, 1, 55],
+  ["necron-immortals-damaged", "necrones", "Immortals", "thokt-vault", "ready", 1, null, 0, 4, 5, 70],
+  ["necron-warriors", "necrones", "Necron Warriors", "thokt-vault", "ready", 1, null, 0, 10, 10, 90],
+  ["necron-tomb-blades-damaged", "necrones", "Tomb Blades", "thokt-vault", "ready", 1, null, 0, 2, 3, 75],
+  ["daemon-flamers-damaged", "legiones-daemonicas", "Flamers", "mordax", "ready", 1, null, 0, 1, 3, 65],
+  ["daemon-burning-chariot", "legiones-daemonicas", "Burning Chariot", "mordax", "ready", 1, null, 0, 1, 1, 115],
+  ["daemon-pink-horrors-damaged", "legiones-daemonicas", "Pink Horrors", "mordax", "ready", 1, null, 0, 7, 10, 140],
+  ["sombra-intercessors-damaged", "space-marines", "Intercessor Squad", "sa-cea-gate", "ready", 1, null, 0, 4, 5, 80],
+  ["sombra-intercessors-large-damaged", "space-marines", "Intercessor Squad", "sa-cea-gate", "ready", 1, null, 0, 7, 10, 150],
+  ["sombra-lieutenant", "space-marines", "Lieutenant", "sa-cea-gate", "ready", 1, null, 0, 1, 1, 55],
+  ["sombra-bladeguard-damaged", "space-marines", "Bladeguard Veteran Squad", "sa-cea-gate", "ready", 1, null, 0, 1, 3, 80],
+  ["custodes-blade-champion", "adeptus-custodes", "Blade Champion", "kharon-prime", "ready", 1, null, 0, 1, 1, 120],
+  ["custodes-guard-damaged", "adeptus-custodes", "Custodian Guard", "kharon-prime", "ready", 1, null, 0, 3, 4, 160],
+  ["custodes-prosecutor-damaged", "adeptus-custodes", "Prosecutors", "kharon-prime", "ready", 1, null, 0, 1, 4, 40]
 ];
 
 const MOVEMENT_ORDERS = [];
@@ -730,12 +724,15 @@ set faction_id = excluded.faction_id, name = excluded.name, category = excluded.
 
 function buildInitialUnitsSql(units) {
   const byFactionAndName = new Map(units.map((unit) => [`${unit.factionSlug}:${unit.name}`, unit]));
-  const values = INITIAL_UNITS.map(([slug, factionSlug, templateName, systemSlug, status, level, rank, wounds]) => {
+  const values = INITIAL_UNITS.map(([slug, factionSlug, templateName, systemSlug, status, level, rank, wounds, quantityOverride, startingQuantityOverride, pointsOverride]) => {
     const template = byFactionAndName.get(`${factionSlug}:${templateName}`);
     if (!template) {
       throw new Error(`No existe la plantilla inicial ${factionSlug}:${templateName}`);
     }
-    return `    (${sql(slug)}, ${sql(factionSlug)}, ${sql(template.slug)}, ${sql(template.name)}, ${sql(template.category)}, ${sql(template.unitType)}, ${sqlArray(template.unitKeywords)}, ${template.points}, ${template.defaultQuantity}, ${template.defaultQuantity}, ${wounds}, ${level}, ${rank === null ? "null" : sql(rank)}, ${sql(systemSlug)}, ${sql(status)})`;
+    const points = pointsOverride ?? template.points;
+    const quantity = quantityOverride ?? template.defaultQuantity;
+    const startingQuantity = startingQuantityOverride ?? template.defaultQuantity;
+    return `    (${sql(slug)}, ${sql(factionSlug)}, ${sql(template.slug)}, ${sql(template.name)}, ${sql(template.category)}, ${sql(template.unitType)}, ${sqlArray(template.unitKeywords)}, ${points}, ${quantity}, ${startingQuantity}, ${wounds}, ${level}, ${rank === null ? "null" : sql(rank)}, ${sql(systemSlug)}, ${sql(status)})`;
   }).join(",\n");
 
   return `insert into public.campaign_units (
@@ -874,8 +871,11 @@ function buildMockFile(units) {
   }));
 
   const unitByKey = new Map(units.map((unit) => [`${unit.factionSlug}:${unit.name}`, unit]));
-  const initialUnits = INITIAL_UNITS.map(([slug, factionSlug, templateName, systemSlug, status, level, , wounds]) => {
+  const initialUnits = INITIAL_UNITS.map(([slug, factionSlug, templateName, systemSlug, status, level, , wounds, quantityOverride, startingQuantityOverride, pointsOverride]) => {
     const template = unitByKey.get(`${factionSlug}:${templateName}`);
+    const points = pointsOverride ?? template.points;
+    const quantity = quantityOverride ?? template.defaultQuantity;
+    const startingQuantity = startingQuantityOverride ?? template.defaultQuantity;
     return {
       id: slug,
       factionId: factionSlug,
@@ -886,9 +886,9 @@ function buildMockFile(units) {
       category: template.category,
       unitType: template.unitType,
       unitKeywords: template.unitKeywords,
-      points: template.points,
-      quantity: template.defaultQuantity,
-      startingQuantity: template.defaultQuantity,
+      points,
+      quantity,
+      startingQuantity,
       woundsTaken: wounds,
       experience: level,
       isVisiblePublicly: false,
