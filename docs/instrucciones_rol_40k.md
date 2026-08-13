@@ -628,7 +628,7 @@ Tropas iniciales de campaña, todas en la capital de su facción:
 - Legiones Daemónicas: 1/3 Flamers, 1 Burning Chariot y 7/10 Pink Horrors.
 - Sombra del Emperador: 4/5 Intercessor Squad, 7/10 Intercessor Squad, 1 Lieutenant y 1/3 Bladeguard Veteran Squad.
 - Adeptus Custodes: 1 Blade Champion, 3/4 Custodian Guard y 1/4 Prosecutors.
-- Cultos Genestealer no tienen tropas iniciales definidas en esta fase.
+- Cultos Genestealer: 7/10 Neophyte Hybrids, 1 Abominant y 5/5 Aberrants.
 
 Tabla vigente de capital + adyacente:
 
