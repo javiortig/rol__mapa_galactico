@@ -190,7 +190,7 @@ Antes de desplegar frontend que lea estos campos, aplica migraciones Supabase in
 - El defensor sí puede invitar apoyos mientras el ataque está en camino. Supabase calcula la ruta con el tiempo restante real y rechaza cualquier fuerza cuya llegada supere `attack_arrival_at`.
 - Al llegar el ataque se congela el plantel. El sistema queda en guerra y ningún movimiento posterior puede terminar allí, aunque una ruta normal sí puede atravesarlo como sistema intermedio.
 - Las unidades de apoyo conservan su planeta de origen. Tras resolver la batalla, los supervivientes regresan mediante una orden `battle_return`; si el origen ya no pertenece a su facción quedan en `return_pending`.
-- El admin puede alternar desde `/admin` entre `Testeo` y `Campaña`. `Testeo` usa movimiento 3s/arista, ataque 5min y colas de tecnología/reclutamiento/construcción/reabastecimiento de 3s. `Campaña` usa movimiento 3 días/arista, ataque 6 días, producción diaria, tecnología por coste, reclutamiento por potencia de unidad y construcción por coste de edificio.
+- El admin puede alternar desde `/admin` entre `Testeo` y `Campaña`. `Testeo` usa movimiento 3s/arista, ataque 5min y colas de tecnología/reclutamiento/construcción/reabastecimiento de 3s. `Campaña` usa movimiento 3 días/arista, ataque 6 días, producción diaria, rama `Progreso` a 30min/2h/6h según coste 0/1/2, resto de tecnología por coste, reclutamiento por potencia de unidad y construcción por coste de edificio.
 - Prueba integral local: `npm run db:test:coalitions` después de `npm run db:reset` y `npm run db:seed:users`.
 
 ## Uso móvil v1

@@ -1045,6 +1045,11 @@ Los tiempos se controlan con `campaign_settings.timing_mode` y el RPC admin `adm
 - `test`: 3 segundos por arista.
 - `campaign`: 3 días por arista.
 
+Tecnologías en modo campaña:
+
+- Rama común `Progreso`: coste 0 = 30 minutos, coste 1 = 2 horas, coste 2 = 6 horas.
+- Resto de tecnologías: 1 día por punto de coste tecnológico, con mínimo de 1 día.
+
 ### 8.2 Coste de movimiento
 
 Cada arista/ruta tiene:
@@ -1302,7 +1307,7 @@ Los jugadores pueden gastar recursos para crear tropas desde edificios militares
 
 El reclutamiento tarda tiempo real, estilo Grepolis.
 
-Para test local, los tiempos de investigación, construcción, reclutamiento y reabastecimiento son de 3 segundos. En modo campaña, tecnología escala por coste tecnológico, reclutamiento por puntos de unidad, construcción por coste de edificio y reabastecimiento usa la mitad del tiempo de reclutamiento.
+Para test local, los tiempos de investigación, construcción, reclutamiento y reabastecimiento son de 3 segundos. En modo campaña, la rama común `Progreso` tarda 30 minutos para coste 0, 2 horas para coste 1 y 6 horas para coste 2; el resto de tecnología escala por coste tecnológico. Reclutamiento escala por puntos de unidad, construcción por coste de edificio y reabastecimiento usa la mitad del tiempo de reclutamiento.
 
 Al completarse, las tropas aparecen en el sistema donde está el edificio que inició el reclutamiento.
 
@@ -1485,7 +1490,7 @@ Reglas:
 
 - Solo puede haber una investigación activa por facción.
 - Cada tecnología puede tener coste en Componentes tecnológicos.
-- Cada tecnología en modo test dura 3 segundos salvo que se documente lo contrario. En modo campaña el backend recalcula el tiempo desde el coste tecnológico.
+- Cada tecnología en modo test dura 3 segundos salvo que se documente lo contrario. En modo campaña, la rama común `Progreso` usa 30 minutos, 2 horas o 6 horas para costes 0, 1 y 2; el resto del árbol se recalcula desde el coste tecnológico.
 - Cada árbol militar especifico `ready` cuesta exactamente 30 Componentes tecnológicos en total.
 - Los nodos de árboles militares solo pueden costar 1, 2 o 3 Componentes tecnológicos.
 - El coste 3 se reserva exclusivamente para el nodo final de las dos ramas más grandes de cada facción.
