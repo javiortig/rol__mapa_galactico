@@ -1577,7 +1577,8 @@ Regla vigente de árboles tecnológicos:
 - `procesado-metalurgico` desbloquea Planta de Fundición.
 - `cristalizacion-combustible-cuantico` desbloquea Refineria de Iridium.
 - `extraccion-subterranea` desbloquea Complejo Minero.
-- `monumentos-gloria` desbloquea Monumento y Santuario de Reliquias.
+- `monumentos-gloria` desbloquea Monumento.
+- `custodia-reliquias`, que requiere `monumentos-gloria`, desbloquea Santuario de Reliquias.
 - `fiebre-oro` desbloquea Mina de Oro.
 - `pactos-mercantiles` desbloquea Cámara de Comercio.
 - `contactos-económicos` desbloquea el Mercader.
@@ -1623,7 +1624,7 @@ El `Santuario de Reliquias` es un edificio `building_kind = relic`.
 
 Reglas:
 
-- Requiere tecnología `monumentos-gloria`.
+- Requiere tecnología `custodia-reliquias`, que sale de `monumentos-gloria`.
 - Coste v1: 44 Material Industrial.
 - Tiempo de construcción en campaña: según coste de Material Industrial del edificio.
 - No empieza construido en capitales; debe construirse como cualquier edificio.
