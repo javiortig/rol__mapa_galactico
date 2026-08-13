@@ -28,7 +28,7 @@ import {
 import { getFactionArmyPoints } from "@/features/units/lib/army-points";
 import { getCharacterLevel, getCharacterRank, getCharacterRelicSlots, isCharacterUnit } from "@/features/units/lib/character-ranks";
 import { normalizeSpanishTextKey } from "@/lib/spanish-text";
-import { formatCountdown } from "@/lib/time";
+import { formatCountdown, formatDurationSeconds } from "@/lib/time";
 import type {
   BuildingTemplate,
   CampaignUnit,
@@ -1352,21 +1352,4 @@ function getQueueRefund(
   };
 }
 
-function formatDuration(seconds: number) {
-  if (seconds < 60) {
-    return `${Math.max(1, seconds)}s`;
-  }
-
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-
-  if (hours > 0 && minutes > 0) {
-    return `${hours}h ${minutes}m`;
-  }
-
-  if (hours > 0) {
-    return `${hours}h`;
-  }
-
-  return `${Math.max(1, minutes)}m`;
-}
+const formatDuration = formatDurationSeconds;

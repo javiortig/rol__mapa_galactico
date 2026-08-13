@@ -14,6 +14,7 @@ import {
   getVisibleBuildingCostResources,
   isBuildingTemplateUnlocked
 } from "@/features/technology/lib/technology-state";
+import { formatDurationSeconds } from "@/lib/time";
 import type { BuildingTemplate, CampaignSnapshot, FactionResources, ResourceKey, StarSystem } from "@/domain/campaign";
 
 const visibleResources: ResourceKey[] = ["supply", "minerals", "honor", "gold", "industrialMaterial", "uridium"];
@@ -144,7 +145,7 @@ export function ConstructionModal({
                     <div className="flex items-center justify-between gap-3 text-xs text-slate-400">
                       <span className="inline-flex items-center gap-1.5">
                         <Clock3 size={13} />
-                        {formatMinutes(template.constructionTimeSeconds)}
+                        {formatDurationSeconds(template.constructionTimeSeconds)}
                       </span>
                       {reason ? (
                         <span className="inline-flex items-center gap-1 text-violet-100">
@@ -353,11 +354,6 @@ function getEffectiveProductionAmount(snapshot: CampaignSnapshot, systemId: stri
       (capability) => capability.systemId === systemId && capability.resourceKey === template.producedResourceKey
     )?.productionAmount ?? 0
   );
-}
-
-function formatMinutes(seconds: number) {
-  const minutes = Math.ceil(seconds / 60);
-  return `${minutes} min`;
 }
 
 function formatCompactResource(value: number) {

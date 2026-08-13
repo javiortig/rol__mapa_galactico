@@ -51,7 +51,7 @@ import {
   type DerivedTechnologyStatus
 } from "@/features/technology/lib/technology-state";
 import { cn } from "@/lib/utils";
-import { formatCountdown } from "@/lib/time";
+import { formatCountdown, formatDurationSeconds } from "@/lib/time";
 import { useMediaQuery } from "@/lib/use-media-query";
 import type { CampaignSnapshot, TechnologyNode, TechnologyPrerequisite } from "@/domain/campaign";
 
@@ -1157,18 +1157,7 @@ function getStatusTone(status: DerivedTechnologyStatus): "cyan" | "rose" | "ambe
   return "slate";
 }
 
-function formatDuration(seconds: number) {
-  if (seconds <= 0) {
-    return "Instantaneo";
-  }
-
-  if (seconds < 60) {
-    return `${seconds}s`;
-  }
-
-  const minutes = Math.ceil(seconds / 60);
-  return `${minutes}m`;
-}
+const formatDuration = formatDurationSeconds;
 
 function getPrerequisiteGroups(snapshot: CampaignSnapshot, technologyNodeId: string) {
   const groups = new Map<number, TechnologyNode[]>();

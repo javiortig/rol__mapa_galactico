@@ -264,12 +264,46 @@ delete from public.system_buildings;
 delete from public.systems
 where coalesce(is_temporary_mission, false) = true;
 
+with initial_control(slug, controller_slug) as (
+  values
+    ('mordax', 'legiones-daemonicas'),
+    ('sa-cea-gate', 'space-marines'),
+    ('thokt-vault', 'necrones'),
+    ('kharon-prime', 'adeptus-custodes'),
+    ('blackglass', 'cultos-genestealer'),
+    ('nexus-aster', 'orcos'),
+    ('goregate', 'orcos'),
+    ('drusus', null),
+    ('lyra-terminus', null),
+    ('novem', null),
+    ('helios-drift', null),
+    ('red-sabbath', null),
+    ('maelstrom-gas', null),
+    ('voidmist-basin', null)
+)
 update public.systems
 set
-  status = case when controller_faction_id is null then 'neutral' else 'controlled' end,
+  controller_faction_id = factions.id,
+  status = case when factions.id is null then 'neutral' else 'controlled' end,
   blocked_until = null,
   updated_at = now()
-where coalesce(is_temporary_mission, false) = false;
+from initial_control
+left join public.factions on factions.slug = initial_control.controller_slug
+where systems.slug = initial_control.slug
+  and coalesce(systems.is_temporary_mission, false) = false;
+
+update public.systems
+set
+  controller_faction_id = null,
+  status = 'neutral',
+  blocked_until = null,
+  updated_at = now()
+where coalesce(is_temporary_mission, false) = false
+  and slug not in (
+    'mordax', 'sa-cea-gate', 'thokt-vault', 'kharon-prime', 'blackglass',
+    'nexus-aster', 'goregate', 'drusus', 'lyra-terminus', 'novem',
+    'helios-drift', 'red-sabbath', 'maelstrom-gas', 'voidmist-basin'
+  );
 
 select public.refresh_system_production_from_buildings();
 

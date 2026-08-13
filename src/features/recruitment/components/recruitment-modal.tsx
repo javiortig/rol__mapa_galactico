@@ -17,7 +17,7 @@ import {
   isUnitTemplateUnlocked
 } from "@/features/technology/lib/technology-state";
 import { getFactionArmyPoints } from "@/features/units/lib/army-points";
-import { formatCountdown } from "@/lib/time";
+import { formatCountdown, formatDurationSeconds } from "@/lib/time";
 import type { CampaignSnapshot, FactionResources, ResourceKey, UnitTemplate } from "@/domain/campaign";
 
 const resourceSummaryKeys: ResourceKey[] = ["supply", "minerals", "honor", "gold", "industrialMaterial", "uridium"];
@@ -344,17 +344,4 @@ function hasEnough(resources: FactionResources, resource: ResourceKey, value: nu
   return resources[resource] >= value;
 }
 
-function formatDuration(seconds: number) {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-
-  if (hours > 0 && minutes > 0) {
-    return `${hours}h ${minutes}m`;
-  }
-
-  if (hours > 0) {
-    return `${hours}h`;
-  }
-
-  return `${minutes}m`;
-}
+const formatDuration = formatDurationSeconds;

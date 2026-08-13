@@ -1,4 +1,5 @@
 import type { StarSystem, SystemEdge } from "@/domain/campaign";
+import { formatDurationSeconds } from "@/lib/time";
 
 export const MOVEMENT_EDGE_DURATION_SECONDS = 259200;
 
@@ -192,24 +193,7 @@ export function getEdgeBetween(edges: SystemEdge[], fromSystemId: string, toSyst
 }
 
 export function formatTravelDuration(seconds: number) {
-  const minutes = Math.ceil(seconds / 60);
-
-  if (minutes < 60) {
-    return `${minutes}m`;
-  }
-
-  const days = Math.floor(minutes / 1440);
-  const remainingAfterDays = minutes % 1440;
-  const remainingHours = Math.floor(remainingAfterDays / 60);
-
-  if (days > 0) {
-    return remainingHours > 0 ? `${days}d ${remainingHours}h` : `${days}d`;
-  }
-
-  const hours = Math.floor(minutes / 60);
-  const rest = minutes % 60;
-
-  return rest > 0 ? `${hours}h ${rest}m` : `${hours}h`;
+  return formatDurationSeconds(seconds);
 }
 
 function buildAdjacency(systems: StarSystem[], edges: SystemEdge[]) {
