@@ -111,14 +111,12 @@ DB: postgresql://postgres:postgres@127.0.0.1:54322/postgres
 **Usuarios de prueba**
 
 ```text
-admin@rol40k.local / admin-local-123
-legiones-daemonicas@rol40k.local / rol40k-local-123
-agentes-imperium@rol40k.local / rol40k-local-123
-cultos-genestealer@rol40k.local / rol40k-local-123
-aeldari@rol40k.local / rol40k-local-123
-space-marines@rol40k.local / rol40k-local-123
-adeptus-custodes@rol40k.local / rol40k-local-123
-necrones@rol40k.local / rol40k-local-123
+admin@rol40k.local / Admin2000
+legiones-daemonicas@rol40k.local / demonio1997
+cultos-genestealer@rol40k.local / tattoosummum
+space-marines@rol40k.local / Sombra97
+adeptus-custodes@rol40k.local / Penedorado
+necrones@rol40k.local / necron1996
 ```
 
 \newpage

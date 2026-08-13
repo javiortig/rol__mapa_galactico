@@ -54,7 +54,7 @@ insert into public.factions (id, slug, name, color, capital_system_id, is_narrat
 values
   (public.seed_uuid('faction', 'legiones-daemonicas'), 'legiones-daemonicas', 'Legiones Daemonicas', '#ef4444', null, false),
   (public.seed_uuid('faction', 'cultos-genestealer'), 'cultos-genestealer', 'Cultos Genestealer', '#ec4899', null, false),
-  (public.seed_uuid('faction', 'space-marines'), 'space-marines', 'Space Marines', '#3b82f6', null, false),
+  (public.seed_uuid('faction', 'space-marines'), 'space-marines', 'Sombra del Emperador', '#3b82f6', null, false),
   (public.seed_uuid('faction', 'adeptus-custodes'), 'adeptus-custodes', 'Adeptus Custodes', '#d4af37', null, false),
   (public.seed_uuid('faction', 'necrones'), 'necrones', 'Necrones', '#2dd4bf', null, false),
   (public.seed_uuid('faction', 'orcos'), 'orcos', 'Orcos', '#84cc16', null, true),
@@ -70,15 +70,15 @@ insert into public.systems (
   id, slug, name, x, y, size, star_class, type, status, controller_faction_id, blocked_until, public_description, is_capital
 )
 values
-  (public.seed_uuid('system', 'mordax'), 'mordax', 'Mordax', 90, 150, 1.18, 'red', 'Capital corrupta', 'controlled', public.seed_uuid('faction', 'legiones-daemonicas'), null, 'Mundo industrial desgarrado por senales disformes.', true),
+  (public.seed_uuid('system', 'mordax'), 'mordax', 'La Espiral de Tzeentch', 90, 150, 1.18, 'red', 'Capital corrupta', 'controlled', public.seed_uuid('faction', 'legiones-daemonicas'), null, 'Mundo industrial desgarrado por senales disformes.', true),
   (public.seed_uuid('system', 'drusus'), 'drusus', 'Drusus', 230, 190, 0.86, 'orange', 'Bastion menor neutral', 'neutral', null, null, 'Fortaleza abandonada en una ruta alta hacia los fuegos centrales.', false),
-  (public.seed_uuid('system', 'sa-cea-gate'), 'sa-cea-gate', 'Sa''cea Gate', 910, 150, 1.2, 'white', 'Capital orbital', 'controlled', public.seed_uuid('faction', 'space-marines'), null, 'Estacion de paso con matrices de navegacion de largo alcance.', true),
+  (public.seed_uuid('system', 'sa-cea-gate'), 'sa-cea-gate', 'Obscura Primus', 910, 150, 1.2, 'white', 'Capital orbital', 'controlled', public.seed_uuid('faction', 'space-marines'), null, 'Estacion de paso con matrices de navegacion de largo alcance.', true),
   (public.seed_uuid('system', 'lyra-terminus'), 'lyra-terminus', 'Lyra Terminus', 770, 190, 0.88, 'blue', 'Puerto externo neutral', 'neutral', null, null, 'Puerto orbital sin mando estable, demasiado cercano al frente para ser ignorado.', false),
-  (public.seed_uuid('system', 'thokt-vault'), 'thokt-vault', 'Thokt Vault', 820, 850, 1.2, 'green', 'Capital tumba', 'controlled', public.seed_uuid('faction', 'necrones'), null, 'Cripta silenciosa rodeada de energia verdosa.', true),
+  (public.seed_uuid('system', 'thokt-vault'), 'thokt-vault', 'Necronpolis', 820, 850, 1.2, 'green', 'Capital tumba', 'controlled', public.seed_uuid('faction', 'necrones'), null, 'Cripta silenciosa rodeada de energia verdosa.', true),
   (public.seed_uuid('system', 'novem'), 'novem', 'Novem', 705, 735, 0.84, 'white', 'Luna industrial neutral', 'neutral', null, null, 'Complejo lunar de extraccion automatizada a la espera de un nuevo amo.', false),
-  (public.seed_uuid('system', 'kharon-prime'), 'kharon-prime', 'Kharon Prime', 145, 850, 1.2, 'blue', 'Capital fortificada', 'controlled', public.seed_uuid('faction', 'adeptus-custodes'), null, 'Bastion aurico y astropuerto militar custodiado por los guardianes del Trono.', true),
+  (public.seed_uuid('system', 'kharon-prime'), 'kharon-prime', 'Santa Terra', 145, 850, 1.2, 'blue', 'Capital fortificada', 'controlled', public.seed_uuid('faction', 'adeptus-custodes'), null, 'Bastion aurico y astropuerto militar custodiado por los guardianes del Trono.', true),
   (public.seed_uuid('system', 'helios-drift'), 'helios-drift', 'Helios Drift', 285, 735, 0.9, 'orange', 'Cinturon minero neutral', 'neutral', null, null, 'Primer corredor desde Kharon: asteroides ricos en mineral y rutas abiertas hacia el centro.', false),
-  (public.seed_uuid('system', 'blackglass'), 'blackglass', 'Blackglass', 930, 500, 1.16, 'white', 'Capital cristalina', 'controlled', public.seed_uuid('faction', 'cultos-genestealer'), null, 'Honor bajo oceanos de vidrio oscuro.', true),
+  (public.seed_uuid('system', 'blackglass'), 'blackglass', 'Yaracuby77 mina abandonada', 930, 500, 1.16, 'white', 'Capital cristalina', 'controlled', public.seed_uuid('faction', 'cultos-genestealer'), null, 'Honor bajo oceanos de vidrio oscuro.', true),
   (public.seed_uuid('system', 'red-sabbath'), 'red-sabbath', 'Red Sabbath', 785, 500, 0.88, 'red', 'Mundo sermonario neutral', 'neutral', null, null, 'Ciudades santuario sin autoridad estable, llenas de rutas subterraneas y ruido civil.', false),
   (public.seed_uuid('system', 'maelstrom-gas'), 'maelstrom-gas', 'Maelstrom Gas', 500, 360, 1.08, 'violet', 'Anomalia gaseosa central', 'neutral', null, null, 'Una nube de plasma y gases ionizados abre un paso peligroso hacia el nucleo orko.', false),
   (public.seed_uuid('system', 'voidmist-basin'), 'voidmist-basin', 'Voidmist Basin', 500, 640, 1.04, 'blue', 'Cuenca gaseosa central', 'neutral', null, null, 'Un oceano de niebla estelar permite rodear el centro sin reclamar territorio estable.', false),
@@ -150,11 +150,11 @@ set from_system_id = excluded.from_system_id, to_system_id = excluded.to_system_
 
 insert into public.faction_resources (faction_id, supply, minerals, ancestral_stone, honor, gold, industrial_material, uridium, technology)
 values
-  (public.seed_uuid('faction', 'adeptus-custodes'), 180, 130, 12, 12, 34, 90, 24, 16),
-  (public.seed_uuid('faction', 'necrones'), 115, 155, 18, 18, 32, 90, 22, 16),
-  (public.seed_uuid('faction', 'cultos-genestealer'), 185, 115, 13, 13, 30, 90, 22, 16),
-  (public.seed_uuid('faction', 'space-marines'), 135, 130, 18, 18, 38, 90, 26, 16),
-  (public.seed_uuid('faction', 'legiones-daemonicas'), 155, 135, 15, 15, 28, 90, 20, 16)
+  (public.seed_uuid('faction', 'adeptus-custodes'), 100, 40, 12, 12, 34, 150, 10, 16),
+  (public.seed_uuid('faction', 'necrones'), 100, 40, 18, 18, 32, 150, 10, 16),
+  (public.seed_uuid('faction', 'cultos-genestealer'), 100, 40, 13, 13, 30, 150, 10, 16),
+  (public.seed_uuid('faction', 'space-marines'), 100, 40, 18, 18, 38, 150, 10, 16),
+  (public.seed_uuid('faction', 'legiones-daemonicas'), 100, 40, 15, 15, 28, 150, 10, 16)
 on conflict (faction_id) do update
 set supply = excluded.supply, minerals = excluded.minerals, ancestral_stone = excluded.ancestral_stone, honor = excluded.honor, gold = excluded.gold, industrial_material = excluded.industrial_material, uridium = excluded.uridium, technology = excluded.technology, updated_at = now();
 
@@ -1805,8 +1805,10 @@ select public.refresh_system_production_from_buildings();
 
 update public.faction_resources
 set
-  industrial_material = 80,
-  uridium = 3,
+  supply = 100,
+  minerals = 40,
+  industrial_material = 150,
+  uridium = 10,
   updated_at = now()
 where faction_id in (
   public.seed_uuid('faction', 'legiones-daemonicas'),

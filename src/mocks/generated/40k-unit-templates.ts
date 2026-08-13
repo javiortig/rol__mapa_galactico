@@ -27,7 +27,7 @@ export const generated40kFactions = [
   },
   {
     "id": "space-marines",
-    "name": "Space Marines",
+    "name": "Sombra del Emperador",
     "color": "#3b82f6",
     "capitalSystemId": "sa-cea-gate"
   },

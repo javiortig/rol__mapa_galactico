@@ -7,42 +7,42 @@ import WebSocket from "ws";
 const users = [
   {
     email: "admin@rol40k.local",
-    password: "admin-local-123",
-    displayName: "Administrador de Campana",
+    password: "Admin2000",
+    displayName: "Administrador de Campaña",
     role: "admin",
     factionSlug: "adeptus-custodes"
   },
   {
     email: "legiones-daemonicas@rol40k.local",
-    password: "rol40k-local-123",
+    password: "demonio1997",
     displayName: "Heraldo de las Legiones",
     role: "player",
     factionSlug: "legiones-daemonicas"
   },
   {
     email: "cultos-genestealer@rol40k.local",
-    password: "rol40k-local-123",
+    password: "tattoosummum",
     displayName: "Magus del Culto",
     role: "player",
     factionSlug: "cultos-genestealer"
   },
   {
     email: "space-marines@rol40k.local",
-    password: "rol40k-local-123",
-    displayName: "Capitan Astartes",
+    password: "Sombra97",
+    displayName: "Sombra del Emperador",
     role: "player",
     factionSlug: "space-marines"
   },
   {
     email: "adeptus-custodes@rol40k.local",
-    password: "rol40k-local-123",
+    password: "Penedorado",
     displayName: "Custodio del Trono",
     role: "player",
     factionSlug: "adeptus-custodes"
   },
   {
     email: "necrones@rol40k.local",
-    password: "rol40k-local-123",
+    password: "necron1996",
     displayName: "Noble Necron",
     role: "player",
     factionSlug: "necrones"

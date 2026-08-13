@@ -30,9 +30,16 @@ function fail(label, error) {
 
 async function login(slug) {
   const client = createClient(url, anonKey, { auth: { persistSession: false } });
+  const passwords = {
+    "adeptus-custodes": "Penedorado",
+    "space-marines": "Sombra97",
+    "cultos-genestealer": "tattoosummum",
+    necrones: "necron1996",
+    "legiones-daemonicas": "demonio1997"
+  };
   const { error } = await client.auth.signInWithPassword({
     email: `${slug}@rol40k.local`,
-    password: "rol40k-local-123"
+    password: passwords[slug] ?? ""
   });
   fail(`login ${slug}`, error);
   return client;
@@ -42,7 +49,7 @@ async function loginAdmin() {
   const client = createClient(url, anonKey, { auth: { persistSession: false } });
   const { error } = await client.auth.signInWithPassword({
     email: "admin@rol40k.local",
-    password: "admin-local-123"
+    password: "Admin2000"
   });
   fail("login admin", error);
   return client;

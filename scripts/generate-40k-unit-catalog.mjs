@@ -121,7 +121,7 @@ const LEGACY_FACTION_DEFS = [
   {
     sourceName: "Space Marines",
     slug: "space-marines",
-    name: "Space Marines",
+    name: "Sombra del Emperador",
     color: "#facc15",
     capitalSystemId: "sa-cea-gate"
   },
@@ -175,7 +175,7 @@ const FACTION_DEFS = [
   {
     sourceName: "Imperium - Adeptus Astartes - Space Marines",
     slug: "space-marines",
-    name: "Space Marines",
+    name: "Sombra del Emperador",
     color: "#3b82f6",
     capitalSystemId: "sa-cea-gate"
   },

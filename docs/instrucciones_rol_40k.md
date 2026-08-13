@@ -68,12 +68,12 @@ Base de datos: postgresql://postgres:postgres@127.0.0.1:54322/postgres
 Usuarios locales de prueba:
 
 ```text
-admin@rol40k.local / admin-local-123
-legiones-daemonicas@rol40k.local / rol40k-local-123
-cultos-genestealer@rol40k.local / rol40k-local-123
-space-marines@rol40k.local / rol40k-local-123
-adeptus-custodes@rol40k.local / rol40k-local-123
-necrones@rol40k.local / rol40k-local-123
+admin@rol40k.local / Admin2000
+legiones-daemonicas@rol40k.local / demonio1997
+cultos-genestealer@rol40k.local / tattoosummum
+space-marines@rol40k.local / Sombra97
+adeptus-custodes@rol40k.local / Penedorado
+necrones@rol40k.local / necron1996
 ```
 
 Orcos y Tiranidos son facciones narrativas de administrador, sin usuario de login propio.
@@ -620,18 +620,19 @@ El mapa final usa capacidades explícitas, no generación determinista. El objet
 - Solo `nexus-aster` y `goregate`, los dos sistemas centrales controlados por Orcos, tienen capacidad natural de Oro.
 - Los sistemas gaseosos no producen recursos.
 - Todos los sistemas empiezan sin edificios construidos. Por tanto, la producción activa inicial es 0 hasta que una facción construya edificios de producción.
+- Recursos iniciales de cada facción jugable: 100 Suministro vital, 40 Mineral, 150 Material Industrial y 10 Uridium.
 
 Tabla vigente de capital + adyacente:
 
 | Facción | Capital | Capacidad capital | Adyacente neutral | Capacidad adyacente | Total reclutamiento |
 |---|---|---:|---|---:|---:|
-| Legiones Daemónicas | Mordax | 7 Suministro, 1 Honor, 5 Material Industrial | Drusus | 2 Suministro, 1 Mineral, 0.3 Uridium | 16 pts/día |
-| Space Marines | Sa'cea Gate | 3 Mineral, 1 Honor, 5 Material Industrial | Lyra Terminus | 5 Suministro, 0.3 Uridium | 16 pts/día |
-| Necrones | Thokt Vault | 4 Mineral, 1 Honor, 5 Material Industrial | Novem | 3 Suministro, 0.3 Uridium | 16 pts/día |
-| Adeptus Custodes | Kharon Prime | 3 Mineral, 1 Honor, 5 Material Industrial | Helios Drift | 5 Suministro, 0.3 Uridium | 16 pts/día |
-| Cultos Genestealer | Blackglass | 10 Suministro, 5 Material Industrial | Red Sabbath | 4 Suministro, 1 Mineral, 0.3 Uridium | 16 pts/día |
+| Legiones Daemónicas | La Espiral de Tzeentch | 7 Suministro, 1 Honor, 5 Material Industrial | Drusus | 2 Suministro, 1 Mineral, 0.3 Uridium | 16 pts/día |
+| Sombra del Emperador | Obscura Primus | 3 Mineral, 1 Honor, 5 Material Industrial | Lyra Terminus | 5 Suministro, 0.3 Uridium | 16 pts/día |
+| Necrones | Necronpolis | 4 Mineral, 1 Honor, 5 Material Industrial | Novem | 3 Suministro, 0.3 Uridium | 16 pts/día |
+| Adeptus Custodes | Santa Terra | 3 Mineral, 1 Honor, 5 Material Industrial | Helios Drift | 5 Suministro, 0.3 Uridium | 16 pts/día |
+| Cultos Genestealer | Yaracuby77 mina abandonada | 10 Suministro, 5 Material Industrial | Red Sabbath | 4 Suministro, 1 Mineral, 0.3 Uridium | 16 pts/día |
 
-Los edificios iniciales ya no existen. Las facciones empiezan con `80 Material Industrial` y `3 Uridium` para poder construir, moverse y probar el sistema sin que la economía arranque ya explotada.
+Los edificios iniciales ya no existen. Las facciones empiezan con recursos suficientes para construir y moverse sin que la economía arranque ya explotada.
 
 ### 4.4 Componentes tecnológicos
 
@@ -2655,12 +2656,12 @@ npm run dev
 Usuarios locales de prueba:
 
 ```text
-admin@rol40k.local / admin-local-123
-legiones-daemonicas@rol40k.local / rol40k-local-123
-cultos-genestealer@rol40k.local / rol40k-local-123
-space-marines@rol40k.local / rol40k-local-123
-adeptus-custodes@rol40k.local / rol40k-local-123
-necrones@rol40k.local / rol40k-local-123
+admin@rol40k.local / Admin2000
+legiones-daemonicas@rol40k.local / demonio1997
+cultos-genestealer@rol40k.local / tattoosummum
+space-marines@rol40k.local / Sombra97
+adeptus-custodes@rol40k.local / Penedorado
+necrones@rol40k.local / necron1996
 ```
 
 Orcos y Tiranidos se gestionan desde la cuenta admin como facciones narrativas.

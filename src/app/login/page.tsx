@@ -10,39 +10,39 @@ const campaignAccounts = [
   {
     label: "Administrador",
     email: "admin@rol40k.local",
-    password: "admin-local-123"
+    password: "Admin2000"
   },
   {
     label: "Adeptus Custodes",
     email: "adeptus-custodes@rol40k.local",
-    password: "rol40k-local-123"
+    password: "Penedorado"
   },
   {
     label: "Cultos Genestealer",
     email: "cultos-genestealer@rol40k.local",
-    password: "rol40k-local-123"
+    password: "tattoosummum"
   },
   {
     label: "Legiones Daemonicas",
     email: "legiones-daemonicas@rol40k.local",
-    password: "rol40k-local-123"
+    password: "demonio1997"
   },
   {
     label: "Necrones",
     email: "necrones@rol40k.local",
-    password: "rol40k-local-123"
+    password: "necron1996"
   },
   {
-    label: "Space Marines",
+    label: "Sombra del Emperador",
     email: "space-marines@rol40k.local",
-    password: "rol40k-local-123"
+    password: "Sombra97"
   }
 ];
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("adeptus-custodes@rol40k.local");
-  const [password, setPassword] = useState("rol40k-local-123");
+  const [password, setPassword] = useState("Penedorado");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -108,7 +108,7 @@ export default function LoginPage() {
               const nextAccount = campaignAccounts.find((account) => account.email === nextEmail);
 
               setEmail(nextEmail);
-              setPassword(nextAccount?.password ?? "rol40k-local-123");
+              setPassword(nextAccount?.password ?? "");
             }}
             value={email}
           >

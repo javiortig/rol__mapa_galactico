@@ -112,15 +112,15 @@ npm run tech:validate-troops
 Usuarios locales:
 
 ```text
-admin@rol40k.local / admin-local-123
-legiones-daemonicas@rol40k.local / rol40k-local-123
-cultos-genestealer@rol40k.local / rol40k-local-123
-space-marines@rol40k.local / rol40k-local-123
-adeptus-custodes@rol40k.local / rol40k-local-123
-necrones@rol40k.local / rol40k-local-123
+admin@rol40k.local / Admin2000
+legiones-daemonicas@rol40k.local / demonio1997
+cultos-genestealer@rol40k.local / tattoosummum
+space-marines@rol40k.local / Sombra97
+adeptus-custodes@rol40k.local / Penedorado
+necrones@rol40k.local / necron1996
 ```
 
-Orcos y Tiranidos existen como facciones narrativas controladas desde admin, sin usuario de login propio.
+Orcos y Tiranidos existen como facciones narrativas controladas desde admin, sin usuario de login propio. La facción `space-marines` se muestra como `Sombra del Emperador` en la interfaz.
 
 La producción de recursos funciona con tick diario de backend, no por turno estratégico.
 
@@ -158,6 +158,7 @@ La producción de recursos funciona con tick diario de backend, no por turno est
 - Aproximadamente el 40% de las plantillas de cada facción jugable cuestan oro.
 - Capital + sistema neutral adyacente está balanceado para producir 16 puntos/día potenciales en recursos de reclutamiento. Material Industrial y Uridium no cuentan en ese cálculo.
 - La campaña empieza sin edificios construidos: la capacidad natural existe, pero la producción real solo empieza cuando se construyen edificios activos.
+- Recursos iniciales de cada facción jugable: 100 Suministro vital, 40 Mineral, 150 Material Industrial y 10 Uridium.
 - Las capitales tienen 5 Material Industrial/día de capacidad natural y 0 Uridium. Los sistemas adyacentes tienen 0 Material Industrial y 0.3 Uridium/día.
 - Los edificios básicos cuestan 20 Material Industrial, así que una capital con Planta de Fundición activa genera un edificio básico cada 4 días.
 - Solo `nexus-aster` y `goregate` tienen capacidad natural de oro en el mapa final.

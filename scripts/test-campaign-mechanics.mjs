@@ -73,7 +73,20 @@ async function expectError(label, promise, fragment) {
 async function login(slug) {
   const client = createClient(url, anonKey, { auth: { persistSession: false } });
   const email = slug === "admin" ? "admin@rol40k.local" : `${slug}@rol40k.local`;
-  const password = slug === "admin" ? "admin-local-123" : "rol40k-local-123";
+  const passwords = {
+    admin: "Admin2000",
+    "adeptus-custodes": "Penedorado",
+    "space-marines": "Sombra97",
+    "cultos-genestealer": "tattoosummum",
+    necrones: "necron1996",
+    "legiones-daemonicas": "demonio1997"
+  };
+  const password = passwords[slug];
+
+  if (!password) {
+    throw new Error(`No hay contrasena configurada para ${slug}`);
+  }
+
   const { data, error } = await client.auth.signInWithPassword({ email, password });
 
   if (error) {

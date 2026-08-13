@@ -45,7 +45,7 @@ async function forceArrival(orderIds) {
 async function main() {
   const login = await custodes.auth.signInWithPassword({
     email: "adeptus-custodes@rol40k.local",
-    password: "rol40k-local-123"
+    password: "Penedorado"
   });
   fail("login Adeptus Custodes", login.error);
 

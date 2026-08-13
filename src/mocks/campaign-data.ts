@@ -81,7 +81,7 @@ type BaseSystem = Omit<CampaignSnapshot["systems"][number], "systemKind" | "isCo
 const baseSystems: BaseSystem[] = [
   {
     id: "kharon-prime",
-    name: "Kharon Prime",
+    name: "Santa Terra",
     x: 90,
     y: 170,
     size: 1.2,
@@ -123,7 +123,7 @@ const baseSystems: BaseSystem[] = [
   },
   {
     id: "sa-cea-gate",
-    name: "Sa'cea Gate",
+    name: "Obscura Primus",
     x: 910,
     y: 150,
     size: 1.2,
@@ -165,7 +165,7 @@ const baseSystems: BaseSystem[] = [
   },
   {
     id: "blackglass",
-    name: "Blackglass",
+    name: "Yaracuby77 mina abandonada",
     x: 930,
     y: 440,
     size: 1.16,
@@ -207,7 +207,7 @@ const baseSystems: BaseSystem[] = [
   },
   {
     id: "thokt-vault",
-    name: "Thokt Vault",
+    name: "Necronpolis",
     x: 805,
     y: 800,
     size: 1.2,
@@ -249,7 +249,7 @@ const baseSystems: BaseSystem[] = [
   },
   {
     id: "mordax",
-    name: "Mordax",
+    name: "La Espiral de Tzeentch",
     x: 150,
     y: 780,
     size: 1.18,
