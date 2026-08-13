@@ -14,6 +14,7 @@ pnpm-debug.log*
 .next-dev.err.log
 *.tsbuildinfo
 .tmp/
+.local/
 supabase/.branches/
 supabase/.temp/
 recovery_vercel.txt

@@ -67,6 +67,14 @@ export function BattleOperationsModal({
   const pendingReports = snapshot.battleReports.filter((report) =>
     isBattleReportActionableForCurrentUser(snapshot, report, currentFactionId)
   );
+  const pendingBattleOperationInvites = currentFactionId
+    ? snapshot.battleOperationMembers.filter(
+        (member) =>
+          member.factionId === currentFactionId &&
+          member.invitationStatus === "invited" &&
+          operations.some((operation) => operation.id === member.operationId)
+      )
+    : [];
   const supportOperation = operations.find((operation) => operation.id === supportOperationId) ?? null;
   const supportMember =
     supportOperation && currentFactionId
@@ -229,6 +237,7 @@ export function BattleOperationsModal({
                 passageError={passageMutation.error?.message ?? null}
                 passagePending={passageMutation.isPending}
                 pendingBattles={pendingBattles}
+                pendingBattleOperationInvites={pendingBattleOperationInvites}
                 pendingPassageRequests={pendingPassageRequests}
                 pendingReports={pendingReports}
                 snapshot={snapshot}
@@ -297,6 +306,7 @@ function OperationCard({
   const currentMember = members.find((member) => member.factionId === currentFactionId) ?? null;
   const origin = snapshot.systems.find((system) => system.id === operation.originSystemId);
   const target = snapshot.systems.find((system) => system.id === operation.targetSystemId);
+  const defenderFaction = snapshot.factions.find((faction) => faction.id === operation.defenderFactionId);
   const eligibleFactions = snapshot.factions.filter(
     (faction) => !faction.isNarrative && !members.some((member) => member.factionId === faction.id)
   );
@@ -387,6 +397,9 @@ function OperationCard({
               ? `Cierre del plantel: ${new Date(operation.attackArrivalAt).toLocaleString()}`
               : "La salida se decide cuando las tropas aliadas esten reunidas."}
           </p>
+          <p className="mt-1 text-xs text-slate-300">
+            Objetivo: {target?.name ?? "Sistema objetivo"} - Defensor: {defenderFaction?.name ?? "Fuerza desconocida"}
+          </p>
         </div>
         <div className="shrink-0 text-left text-xs text-slate-400 sm:text-right">
           <div>{commitments.length} unidades comprometidas</div>
@@ -402,6 +415,11 @@ function OperationCard({
               {side === "attacker" ? "Bando atacante" : "Bando defensor"}
             </div>
             <div className="flex flex-wrap gap-1.5">
+              {members.filter((member) => member.side === side).length === 0 &&
+              side === "defender" &&
+              defenderFaction ? (
+                <Badge tone="rose">{defenderFaction.name} - objetivo</Badge>
+              ) : null}
               {members
                 .filter((member) => member.side === side)
                 .map((member) => (
@@ -739,6 +757,7 @@ function NotificationsPanel({
   snapshot,
   pendingPassageRequests,
   pendingBattles,
+  pendingBattleOperationInvites,
   pendingReports,
   movementRpcReady,
   passagePending,
@@ -748,13 +767,15 @@ function NotificationsPanel({
   snapshot: CampaignSnapshot;
   pendingPassageRequests: CampaignSnapshot["passageRequests"];
   pendingBattles: CampaignSnapshot["conflicts"];
+  pendingBattleOperationInvites: BattleOperationMember[];
   pendingReports: CampaignSnapshot["battleReports"];
   movementRpcReady: boolean;
   passagePending: boolean;
   passageError: string | null;
   onRespondPassage: (requestId: string, decision: "accepted" | "rejected") => void;
 }) {
-  const total = pendingPassageRequests.length + pendingBattles.length + pendingReports.length;
+  const total =
+    pendingPassageRequests.length + pendingBattles.length + pendingReports.length + pendingBattleOperationInvites.length;
 
   return (
     <section className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-4">
@@ -816,6 +837,33 @@ function NotificationsPanel({
                   Rechazar
                 </Button>
               </div>
+            </article>
+          );
+        })}
+
+        {pendingBattleOperationInvites.map((member) => {
+          const operation = snapshot.battleOperations.find((item) => item.id === member.operationId);
+          const origin = operation ? snapshot.systems.find((item) => item.id === operation.originSystemId) : null;
+          const target = operation ? snapshot.systems.find((item) => item.id === operation.targetSystemId) : null;
+          const defender = operation ? snapshot.factions.find((item) => item.id === operation.defenderFactionId) : null;
+          const inviter = member.invitedByFactionId
+            ? snapshot.factions.find((item) => item.id === member.invitedByFactionId)
+            : null;
+
+          return (
+            <article className="rounded-md border border-amber-300/25 bg-amber-300/10 p-3" key={member.id}>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-medium text-amber-50">
+                  {member.side === "attacker" ? "Invitacion de coalicion" : "Solicitud de defensa"}
+                </span>
+                <Badge tone="amber">Respuesta pendiente</Badge>
+              </div>
+              <p className="mt-1 text-xs text-amber-50/80">
+                {inviter?.name ?? "Una faccion"} propone atacar {target?.name ?? "un sistema"} defendido por{" "}
+                {defender?.name ?? "fuerzas enemigas"}.
+              </p>
+              {origin ? <p className="mt-1 text-xs text-slate-400">Punto de salida: {origin.name}</p> : null}
+              <p className="mt-2 text-xs text-slate-300">Responde desde la operacion conjunta activa de abajo.</p>
             </article>
           );
         })}
@@ -919,7 +967,8 @@ function isBattleReportActionableForCurrentUser(
   const participantFactionIds = getBattleReportRequiredFactionIds(
     conflict,
     warUnits,
-    snapshot.battleUnitCommitments
+    snapshot.battleUnitCommitments,
+    snapshot.factions
   );
 
   if (!participantFactionIds.includes(currentFactionId)) {
@@ -940,9 +989,11 @@ function getConflictFactionIds(conflict: Conflict) {
 function getBattleReportRequiredFactionIds(
   conflict: Conflict,
   warUnits: CampaignUnit[],
-  commitments: CampaignSnapshot["battleUnitCommitments"]
+  commitments: CampaignSnapshot["battleUnitCommitments"],
+  factions: CampaignSnapshot["factions"]
 ) {
   const factionIds = new Set(getConflictFactionIds(conflict));
+  const playerFactionIds = new Set(factions.filter((faction) => !faction.isNarrative).map((faction) => faction.id));
 
   for (const unit of warUnits) {
     factionIds.add(unit.factionId);
@@ -959,7 +1010,7 @@ function getBattleReportRequiredFactionIds(
     }
   }
 
-  return Array.from(factionIds);
+  return Array.from(factionIds).filter((factionId) => playerFactionIds.has(factionId));
 }
 
 function isActiveBattleCommitmentStatus(status: CampaignSnapshot["battleUnitCommitments"][number]["status"]) {

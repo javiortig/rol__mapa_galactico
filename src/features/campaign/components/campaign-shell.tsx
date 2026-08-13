@@ -55,7 +55,7 @@ const GalaxyMap = dynamic(
 
 const mainResources = ["supply", "minerals", "honor", "gold", "industrialMaterial", "uridium"] as const;
 const planetProductionResources = ["supply", "minerals", "honor", "gold", "industrialMaterial", "uridium"] as const;
-const defaultPostBattleBlockDays = 14;
+const defaultPostBattleBlockDays = 8;
 
 export function CampaignShell() {
   const router = useRouter();
@@ -91,6 +91,14 @@ export function CampaignShell() {
     queryKey: ["campaign-snapshot"],
     queryFn: getCampaignSnapshot
   });
+  const eventsSeenStorageKey = data ? `rol40k.eventsSeenAt.${data.currentUser.id}` : null;
+  const latestEventAt = data ? getLatestCampaignEventTimestamp(data.campaignEvents) : 0;
+  const eventsSeenAt = readStoredTimestamp(eventsSeenStorageKey);
+  const unreadEventsCount = data
+    ? eventsOpen
+      ? 0
+      : data.campaignEvents.filter((event) => Date.parse(event.createdAt) > eventsSeenAt).length
+    : 0;
 
   useEffect(() => {
     if (isCampaignAuthRequiredError(error)) {
@@ -103,6 +111,14 @@ export function CampaignShell() {
       router.replace("/admin");
     }
   }, [data?.currentUser.role, router]);
+
+  useEffect(() => {
+    if (!eventsOpen || !eventsSeenStorageKey || latestEventAt <= 0) {
+      return;
+    }
+
+    window.localStorage.setItem(eventsSeenStorageKey, String(latestEventAt));
+  }, [eventsOpen, eventsSeenStorageKey, latestEventAt]);
 
   const armMobileTapShield = useCallback(() => {
     if (!isMobile) {
@@ -333,6 +349,7 @@ export function CampaignShell() {
               onOpenEvents={() => setEventsOpen(true)}
               onOpenTechnology={() => setTechnologyOpen(true)}
               snapshot={data}
+              unreadEventsCount={unreadEventsCount}
             />
           ) : null}
           {showSystemPanel && panelSystem ? (
@@ -512,6 +529,31 @@ function formatCompactNumber(value: number) {
   return value.toLocaleString("es-ES");
 }
 
+function getLatestCampaignEventTimestamp(events: CampaignSnapshot["campaignEvents"]) {
+  let latest = 0;
+
+  for (const event of events) {
+    const timestamp = Date.parse(event.createdAt);
+
+    if (Number.isFinite(timestamp) && timestamp > latest) {
+      latest = timestamp;
+    }
+  }
+
+  return latest;
+}
+
+function readStoredTimestamp(storageKey: string | null) {
+  if (!storageKey || typeof window === "undefined") {
+    return 0;
+  }
+
+  const storedValue = window.localStorage.getItem(storageKey);
+  const storedTimestamp = storedValue ? Number(storedValue) : 0;
+
+  return Number.isFinite(storedTimestamp) ? storedTimestamp : 0;
+}
+
 function isBlockExpired(blockedUntil?: string | null) {
   return Boolean(blockedUntil && new Date(blockedUntil).getTime() <= Date.now());
 }
@@ -585,11 +627,13 @@ function HiddenBuildingSlot({ building }: { building: SystemBuilding }) {
 
 function CommandDock({
   snapshot,
+  unreadEventsCount,
   onOpenBattles,
   onOpenEvents,
   onOpenTechnology
 }: {
   snapshot: CampaignSnapshot;
+  unreadEventsCount: number;
   onOpenBattles: () => void;
   onOpenEvents: () => void;
   onOpenTechnology: () => void;
@@ -610,14 +654,28 @@ function CommandDock({
   const pendingReports = snapshot.battleReports.filter((report) =>
     isBattleReportActionableForCurrentUser(snapshot, report, currentFactionId)
   );
-  const pendingCount = pendingBattles.length + pendingPassageRequests.length + pendingReports.length;
+  const pendingBattleOperationInvites = currentFactionId
+    ? snapshot.battleOperationMembers.filter(
+        (member) =>
+          member.factionId === currentFactionId &&
+          member.invitationStatus === "invited" &&
+          snapshot.battleOperations.some(
+            (operation) =>
+              operation.id === member.operationId &&
+              ["assembling", "moving", "in_battle"].includes(operation.status)
+          )
+      )
+    : [];
+  const pendingCount =
+    pendingBattles.length + pendingPassageRequests.length + pendingReports.length + pendingBattleOperationInvites.length;
 
   return (
     <>
     <div className="pointer-events-auto fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-30 lg:hidden">
       <Panel className="p-2">
         <div className="grid grid-cols-4 gap-1.5">
-          <Button className="h-12 flex-col gap-1 px-1 text-[11px]" onClick={onOpenEvents} size="sm" variant="ghost">
+          <Button className="relative h-12 flex-col gap-1 px-1 text-[11px]" onClick={onOpenEvents} size="sm" variant="ghost">
+            <NotificationPip count={unreadEventsCount} label={`${unreadEventsCount} eventos sin leer`} />
             <Megaphone size={16} />
             Eventos
           </Button>
@@ -629,7 +687,8 @@ function CommandDock({
             <Cpu size={16} />
             Tecno.
           </Button>
-          <Button className="h-12 flex-col gap-1 px-1 text-[11px]" onClick={onOpenBattles} size="sm" variant="ghost">
+          <Button className="relative h-12 flex-col gap-1 px-1 text-[11px]" onClick={onOpenBattles} size="sm" variant="ghost">
+            <NotificationPip count={pendingCount} label={`${pendingCount} operaciones pendientes`} />
             <Bell size={16} />
             {pendingCount > 0 ? `${pendingCount} avisos` : "Operaciones"}
           </Button>
@@ -645,7 +704,8 @@ function CommandDock({
         </div>
 
         <div className="grid grid-cols-2 gap-2">
-          <Button onClick={onOpenEvents} size="sm" variant="ghost">
+          <Button className="relative" onClick={onOpenEvents} size="sm" variant="ghost">
+            <NotificationPip count={unreadEventsCount} label={`${unreadEventsCount} eventos sin leer`} />
             <Megaphone size={15} />
             Eventos
           </Button>
@@ -657,7 +717,8 @@ function CommandDock({
             <Cpu size={15} />
             Tecnología
           </Button>
-          <Button onClick={onOpenBattles} size="sm" variant="ghost">
+          <Button className="relative" onClick={onOpenBattles} size="sm" variant="ghost">
+            <NotificationPip count={pendingCount} label={`${pendingCount} operaciones pendientes`} />
             <Bell size={15} />
             {pendingCount > 0 ? `${pendingCount} avisos` : "Operaciones"}
           </Button>
@@ -665,6 +726,22 @@ function CommandDock({
       </Panel>
     </div>
     </>
+  );
+}
+
+function NotificationPip({ count, label }: { count: number; label: string }) {
+  if (count <= 0) {
+    return null;
+  }
+
+  return (
+    <span
+      aria-label={label}
+      className="absolute -right-1 -top-1 grid size-4 place-items-center rounded-full border border-slate-950 bg-amber-300 text-[10px] font-black leading-none text-slate-950 shadow-[0_0_14px_rgba(251,191,36,0.45)]"
+      title={label}
+    >
+      !
+    </span>
   );
 }
 
@@ -925,7 +1002,7 @@ function SystemPanel({
   );
   const canAttack = canMove && hasAdjacentEnemySystem;
   const conflictParticipantFactionIds = conflict
-    ? getBattleReportRequiredFactionIds(conflict, relatedUnits, snapshot.battleUnitCommitments)
+    ? getBattleReportRequiredFactionIds(conflict, relatedUnits, snapshot.battleUnitCommitments, snapshot.factions)
     : [];
   const canReport =
     Boolean(conflict) &&
@@ -2068,12 +2145,6 @@ function AttackPlanner({
             : "Sin unidades seleccionadas"}
         </div>
 
-        {snapshot.attackDurationSeconds < 86400 ? (
-          <div className="mb-4 rounded-md border border-amber-300/20 bg-amber-300/10 p-3 text-xs text-amber-100">
-            Tiempo de prueba local. Regla final: movimiento 3 días por salto y ataque 6 días.
-          </div>
-        ) : null}
-
         {limits ? (
           <div className="mb-4 rounded-md border border-cyan-200/15 bg-slate-950/45 p-3 text-xs text-slate-300">
             <div className="mb-2 font-semibold text-cyan-50">Ventana de campaña</div>
@@ -2220,8 +2291,8 @@ function BattleReportModal({
     [snapshot.units, system.id]
   );
   const requiredFactionIds = useMemo(
-    () => getBattleReportRequiredFactionIds(conflict, warUnits, snapshot.battleUnitCommitments),
-    [conflict, snapshot.battleUnitCommitments, warUnits]
+    () => getBattleReportRequiredFactionIds(conflict, warUnits, snapshot.battleUnitCommitments, snapshot.factions),
+    [conflict, snapshot.battleUnitCommitments, snapshot.factions, warUnits]
   );
   const factionOptions = snapshot.factions.filter((faction) =>
     getConflictFactionIds(conflict).includes(faction.id)
@@ -2251,7 +2322,7 @@ function BattleReportModal({
     finalControllerFactionId,
     survivors,
     woundsRemaining,
-    expectedRevisión: report?.revision ?? 0,
+    expectedRevision: report?.revision ?? 0,
     postBattleBlockedUntil: buildDefaultPostBattleBlockedUntil(),
     narrativeNotes: narrativeNotes.trim() || null
   });
@@ -2286,6 +2357,11 @@ function BattleReportModal({
   const allPlayersValidated = report
     ? requiredFactionIds.length > 0 && requiredFactionIds.every((factionId) => hasFactionValidated(report, factionId))
     : false;
+  const canValidateReport = Boolean(
+    report &&
+      isParticipant &&
+      (!currentFactionValidated || (report.status === "awaiting_validation" && allPlayersValidated))
+  );
 
   return (
     <div className="pointer-events-auto fixed inset-0 z-50 grid place-items-center bg-black/60 p-0 backdrop-blur-sm md:px-4 md:py-6">
@@ -2480,12 +2556,16 @@ function BattleReportModal({
               {isParticipant ? (
                 <Button
                   className="w-full"
-                  disabled={!rpcReady || !report || currentFactionValidated || busy}
+                  disabled={!rpcReady || !canValidateReport || busy}
                   onClick={() => validateMutation.mutate()}
                   variant="primary"
                 >
                   <Check size={16} />
-                  {currentFactionValidated ? "Ya validado" : validateMutation.isPending ? "Validando..." : "Validar informe"}
+                  {validateMutation.isPending
+                    ? "Validando..."
+                    : currentFactionValidated
+                      ? "Confirmar resolución"
+                      : "Validar informe"}
                 </Button>
               ) : null}
 
@@ -2559,9 +2639,11 @@ function getConflictFactionIds(conflict: Conflict) {
 function getBattleReportRequiredFactionIds(
   conflict: Conflict,
   warUnits: CampaignUnit[],
-  commitments: CampaignSnapshot["battleUnitCommitments"]
+  commitments: CampaignSnapshot["battleUnitCommitments"],
+  factions: CampaignSnapshot["factions"]
 ) {
   const factionIds = new Set(getConflictFactionIds(conflict));
+  const playerFactionIds = new Set(factions.filter((faction) => !faction.isNarrative).map((faction) => faction.id));
 
   for (const unit of warUnits) {
     factionIds.add(unit.factionId);
@@ -2578,7 +2660,7 @@ function getBattleReportRequiredFactionIds(
     }
   }
 
-  return Array.from(factionIds);
+  return Array.from(factionIds).filter((factionId) => playerFactionIds.has(factionId));
 }
 
 function isActiveBattleCommitmentStatus(status: CampaignSnapshot["battleUnitCommitments"][number]["status"]) {
@@ -2614,7 +2696,8 @@ function isBattleReportActionableForCurrentUser(
   const participantFactionIds = getBattleReportRequiredFactionIds(
     conflict,
     warUnits,
-    snapshot.battleUnitCommitments
+    snapshot.battleUnitCommitments,
+    snapshot.factions
   );
 
   if (!participantFactionIds.includes(currentFactionId)) {

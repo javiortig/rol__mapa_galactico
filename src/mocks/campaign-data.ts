@@ -165,7 +165,7 @@ const baseSystems: BaseSystem[] = [
   },
   {
     id: "blackglass",
-    name: "Yaracuby77 mina abandonada",
+    name: "Yaracuby77 Mina Abandonada",
     x: 930,
     y: 440,
     size: 1.16,

@@ -638,7 +638,7 @@ Tabla vigente de capital + adyacente:
 | Sombra del Emperador | Obscura Primus | 3 Mineral, 1 Honor, 5 Material Industrial | Lyra Terminus | 5 Suministro, 0.3 Uridium | 16 pts/día |
 | Necrones | Necronpolis | 4 Mineral, 1 Honor, 5 Material Industrial | Novem | 3 Suministro, 0.3 Uridium | 16 pts/día |
 | Adeptus Custodes | Santa Terra | 3 Mineral, 1 Honor, 5 Material Industrial | Helios Drift | 5 Suministro, 0.3 Uridium | 16 pts/día |
-| Cultos Genestealer | Yaracuby77 mina abandonada | 10 Suministro, 5 Material Industrial | Red Sabbath | 4 Suministro, 1 Mineral, 0.3 Uridium | 16 pts/día |
+| Cultos Genestealer | Yaracuby77 Mina Abandonada | 10 Suministro, 5 Material Industrial | Red Sabbath | 4 Suministro, 1 Mineral, 0.3 Uridium | 16 pts/día |
 
 Los edificios iniciales ya no existen. Las facciones empiezan con recursos suficientes para construir y moverse sin que la economía arranque ya explotada.
 
@@ -1259,9 +1259,10 @@ Cuando exista un conflicto:
 - Cada jugador/facción participante debe validar la revision actual.
 - Si un participante detecta un fallo, edita el informe y todos vuelven a validar.
 - El informe se aplica automáticamente cuando todos los participantes validan la misma revision.
+- Las facciones narrativas neutrales (`orcos`, `tiranidos`) no cuentan como validadores: solo validan jugadores reales y admin corrige casos excepcionales.
 - El admin conserva herramientas para corregir o confirmar manualmente casos antiguos/excepcionales.
 - Librar una batalla no genera recursos; no debe haber recursos ganados/perdidos en el informe.
-- Los jugadores no eligen control final ni bloqueo posterior: el control queda en manos del vencedor y el bloqueo estándar es de 14 días. Solo admin puede corregir esos valores si hace falta.
+- Los jugadores no eligen control final ni bloqueo posterior: el control queda en manos del vencedor y el escudo estándar de protección es de 8 días. Solo admin puede corregir esos valores si hace falta.
 
 El reporte debe permitir registrar:
 
@@ -1273,7 +1274,7 @@ El reporte debe permitir registrar:
 - Heridas restantes por unidad superviviente.
 - Control final del sistema, derivado automáticamente del vencedor.
 - Notas narrativas.
-- Duracion de bloqueo posterior: 14 días por defecto, corregible por admin.
+- Duracion de bloqueo posterior: 8 días por defecto, corregible por admin.
 
 Al aplicar el resultado:
 
@@ -3004,7 +3005,7 @@ Evitar collage visual.
 - Si defensor gana, mantiene controlador.
 - Las capitales no pueden ser atacadas por jugadores ni por amenazas narrativas. La UI no debe ofrecerlas como destino y el backend debe rechazar cualquier intento de crear ataque, coalición, conflicto pendiente o ataque narrativo contra una capital.
 - Un ataque puede salir desde cualquier sistema no bloqueado donde la facción tenga unidades propias listas. Esto incluye sistemas enemigos si el jugador llegó allí mediante permiso de paso/estancia.
-- El bloqueo posterior estándar tras aplicar una batalla es de 14 días.
+- El escudo posterior estándar tras aplicar una batalla es de 8 días.
 - El informe compartido se confirma automáticamente cuando todos los participantes validan la misma revision.
 - Si hay discrepancia, cualquier participante edita el informe y se reinician las validaciónes.
 - El admin puede corregir control/bloqueo si es necesario.
