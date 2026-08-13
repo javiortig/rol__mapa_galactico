@@ -156,7 +156,7 @@ La producción de recursos funciona con tick diario de backend, no por turno est
 - Las unidades no cuestan Material Industrial ni Uridium; Material Industrial es para edificios y Uridium para movimiento.
 - La progresión de costes sigue el árbol de tropas: infantería inicial solo Suministro, infantería avanzada con Mineral, Caracteres con más Honor, Vehículos/Aeronaves/Fortificaciones con más Mineral, y oro para unidades avanzadas, aliadas, Crucible, épicas o finales de rama.
 - Aproximadamente el 40% de las plantillas de cada facción jugable cuestan oro.
-- Capital + sistema neutral adyacente está balanceado para producir 16 puntos/día potenciales en recursos de reclutamiento. Material Industrial y Uridium no cuentan en ese cálculo.
+- Capital + sistema neutral adyacente está balanceado para producir 19 puntos/día potenciales en recursos de reclutamiento. Material Industrial y Uridium no cuentan en ese cálculo.
 - La campaña empieza sin edificios construidos: la capacidad natural existe, pero la producción real solo empieza cuando se construyen edificios activos.
 - Recursos iniciales de cada facción jugable: 100 Suministro vital, 40 Mineral, 0 Honor, 0 Oro, 150 Material Industrial y 10 Uridium.
 - Las capitales tienen 5 Material Industrial/día de capacidad natural y 0 Uridium. Los sistemas adyacentes tienen 0 Material Industrial y 0.3 Uridium/día.

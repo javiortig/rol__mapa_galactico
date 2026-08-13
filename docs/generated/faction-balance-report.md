@@ -6,7 +6,7 @@ Generado por `npm run units:generate`.
 
 - Conversion: `supply + 2*minerals + 5*honor + 5*gold = points`.
 - Material Industrial y Uridium no se usan para reclutar unidades.
-- Capital + adyacente objetivo: 16 puntos de reclutamiento/dia.
+- Capital + adyacente objetivo: 19 puntos de reclutamiento/dia.
 - Uridium y Material Industrial tienen economia separada.
 - La campana empieza sin edificios construidos.
 - Objetivo de unidades con oro: 40% por faccion.
@@ -47,11 +47,11 @@ Generado por `npm run units:generate`.
 
 | Faccion | Capital | Pts capital | Adyacente | Pts adyacente | Total | Material capital | Uridium adyacente |
 |---|---|---:|---|---:|---:|---:|---:|
-| legiones-daemonicas | mordax | 12 | drusus | 4 | 16 | 5 | 0.3 |
-| space-marines | sa-cea-gate | 11 | lyra-terminus | 5 | 16 | 5 | 0.3 |
-| necrones | thokt-vault | 13 | novem | 3 | 16 | 5 | 0.3 |
-| adeptus-custodes | kharon-prime | 11 | helios-drift | 5 | 16 | 5 | 0.3 |
-| cultos-genestealer | blackglass | 10 | red-sabbath | 6 | 16 | 5 | 0.3 |
+| legiones-daemonicas | mordax | 13 | drusus | 6 | 19 | 5 | 0.3 |
+| space-marines | sa-cea-gate | 13 | lyra-terminus | 6 | 19 | 5 | 0.3 |
+| necrones | thokt-vault | 13 | novem | 6 | 19 | 5 | 0.3 |
+| adeptus-custodes | kharon-prime | 13 | helios-drift | 6 | 19 | 5 | 0.3 |
+| cultos-genestealer | blackglass | 13 | red-sabbath | 6 | 19 | 5 | 0.3 |
 
 ## Validaciones rapidas
 
