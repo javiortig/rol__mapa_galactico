@@ -2572,19 +2572,13 @@ function BattleReportModal({
               {isAdmin ? (
                 <Button
                   className="sticky bottom-0 w-full"
-                  disabled={!rpcReady || warUnits.length === 0 || busy || !allPlayersValidated}
+                  disabled={!rpcReady || warUnits.length === 0 || busy}
                   onClick={() => adminMutation.mutate()}
                   variant="primary"
                 >
                   <Check size={16} />
                   {adminMutation.isPending ? "Aplicando..." : "Confirmar admin y aplicar"}
                 </Button>
-              ) : null}
-
-              {isAdmin && !allPlayersValidated ? (
-                <p className="text-xs text-amber-100">
-                  El resultado se aplicará automáticamente cuando todos los participantes validen la revisión actual.
-                </p>
               ) : null}
             </div>
           </aside>
