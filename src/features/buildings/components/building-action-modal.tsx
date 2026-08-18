@@ -1292,18 +1292,29 @@ function categoryMatches(allowedUnitCategories: string[], category: string) {
 }
 
 function getResupplyCosts(template: UnitTemplate, unit: CampaignUnit): Partial<Record<ResourceKey, number>> {
-  const halfCost = (value: number) => (value > 0 ? Math.ceil(value / 2) : 0);
   const costs = computeRecruitmentCostsForPoints(template, unit.points);
+  const resupplyRatio = getResupplyDamageCostRatio(template, unit);
+  const damageCost = (value: number) => (value > 0 ? Math.ceil(value * resupplyRatio) : 0);
 
   return {
-    supply: halfCost(costs.supply),
-    minerals: halfCost(costs.minerals),
-    honor: halfCost(costs.honor),
-    gold: halfCost(costs.gold),
+    supply: damageCost(costs.supply),
+    minerals: damageCost(costs.minerals),
+    honor: damageCost(costs.honor),
+    gold: damageCost(costs.gold),
     industrialMaterial: 0,
     uridium: 0,
     technology: 0
   };
+}
+
+function getResupplyDamageCostRatio(template: UnitTemplate, unit: CampaignUnit) {
+  const clamp01 = (value: number) => Math.max(0, Math.min(1, value));
+  const modelDamageRatio = clamp01((unit.startingQuantity - unit.quantity) / Math.max(unit.startingQuantity, 1));
+  const woundCapacity = Math.max(unit.quantity, 0) * Math.max(template.woundsPerModel, 1);
+  const woundDamageRatio = woundCapacity > 0 ? clamp01(unit.woundsTaken / woundCapacity) : 0;
+  const damageRatio = clamp01(modelDamageRatio * 0.8 + woundDamageRatio * 0.2);
+
+  return 0.1 + 0.65 * damageRatio;
 }
 
 function getActiveBuildingQueue(snapshot: CampaignSnapshot, buildingId: string) {
