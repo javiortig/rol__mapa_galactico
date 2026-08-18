@@ -1,7 +1,15 @@
 {
   "version": 2,
-  "targetGoldUnitRatio": 0.4,
-  "goldUnitTolerance": 1,
+  "targetGoldUnitRatioByType": 0.25,
+  "goldUnitToleranceByType": 1,
+  "basicInfantrySupplyOnlyRatio": 0.25,
+  "honorOnlyForKeyword": "Caracter",
+  "forceGoldUnitSlugs": [
+    "unit-adeptus-custodes-allarus-custodians"
+  ],
+  "forceNoGoldUnitSlugs": [
+    "unit-adeptus-custodes-venatari-custodians"
+  ],
   "dailyInitialPairRecruitmentPoints": 19,
   "weeklyInitialPairRecruitmentPoints": 133,
   "pointValues": {

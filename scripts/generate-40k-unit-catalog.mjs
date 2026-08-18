@@ -1055,14 +1055,31 @@ function buildBalanceReport(catalog, balance, balanceConfig) {
       const values = summary.totals;
       return `| ${summary.factionSlug} | ${summary.unitCount} | ${summary.goldUnits}/${summary.targetGoldUnits} (${summary.goldUnitPercent}%) | ${values.points} | ${values.supply} | ${values.minerals} | ${values.honor} | ${values.gold} |`;
     });
+  const typeGoldLines = balance.factionSummaries
+    .filter((summary) => targetFactionSlugs.has(summary.factionSlug))
+    .flatMap((summary) => summary.byType.map((typeSummary) => (
+      `| ${summary.factionSlug} | ${typeSummary.type} | ${typeSummary.unitCount} | ${typeSummary.goldUnits} | ${typeSummary.targetGoldUnits} |`
+    )));
 
   const initialInfantry = balance.summaries
     .filter((item) => targetFactionSlugs.has(item.factionSlug) && item.isInitialBasicInfantry)
     .map((item) => `- ${item.factionSlug}: ${item.name} -> ${item.costs.supplyCost} Suministro`);
+  const honorUnits = catalog.units
+    .filter((unit) => targetFactionSlugs.has(unit.factionSlug) && unit.honorCost > 0)
+    .map((unit) => `- ${unit.factionSlug}: ${unit.name} -> ${unit.honorCost} Honor (${Math.round(resourceShare(unit.honorCost, unit.points) * 100)}%, ${unit.unitKeywords.join(", ")})`);
 
   const invalidPointValues = balance.summaries.filter((item) => warhammerPointValue(item.costs) !== item.points);
   const invalidMilitaryCosts = balance.summaries.filter(
     (item) => (item.costs.industrialMaterialCost ?? 0) !== 0 || (item.costs.uridiumCost ?? 0) !== 0
+  );
+  const invalidHonorCosts = catalog.units.filter(
+    (unit) => unit.honorCost > 0 && !unit.unitKeywords.includes(balanceConfig.honorOnlyForKeyword ?? "Caracter")
+  );
+  const invalidCharacterHonorRange = catalog.units.filter(
+    (unit) => targetFactionSlugs.has(unit.factionSlug) && unit.unitKeywords.includes("Caracter") && !isBetween(resourceShare(unit.honorCost, unit.points), 0.4, 0.5)
+  );
+  const invalidGoldRange = catalog.units.filter(
+    (unit) => targetFactionSlugs.has(unit.factionSlug) && unit.goldCost > 0 && !isBetween(resourceShare(unit.goldCost, unit.points), 0.2, 0.3)
   );
   const pairLines = (balanceConfig.initialPairs ?? []).map((pair) => {
     const capital = balanceConfig.systemCapacities?.[pair.capitalSlug] ?? {};
@@ -1082,8 +1099,11 @@ function buildBalanceReport(catalog, balance, balanceConfig) {
     `- Capital + adyacente objetivo: ${balanceConfig.dailyInitialPairRecruitmentPoints} puntos de reclutamiento/dia.`,
     "- Uridium y Material Industrial tienen economia separada.",
     "- La campana empieza sin edificios construidos.",
-    `- Objetivo de unidades con oro: ${Math.round(Number(balanceConfig.targetGoldUnitRatio ?? 0.4) * 100)}% por faccion.`,
-    "- Las primeras infanterias de tier 1 cuestan solo Suministro vital.",
+    `- Objetivo de unidades con oro: ${Math.round(Number(balanceConfig.targetGoldUnitRatioByType ?? 0.25) * 100)}% por tipo principal y faccion.`,
+    "- Las unidades con Oro tienen entre 20% y 30% de su coste equivalente en Oro.",
+    `- Objetivo de infanteria no character solo Suministro: ${Math.round(Number(balanceConfig.basicInfantrySupplyOnlyRatio ?? 0.25) * 100)}% por faccion.`,
+    `- Honor solo aparece en unidades con keyword ${balanceConfig.honorOnlyForKeyword ?? "Caracter"}.`,
+    "- Los Characters tienen entre 40% y 50% de su coste equivalente en Honor.",
     "- Las variantes de miniaturas/equipo escalan desde el perfil de coste de la plantilla base.",
     "",
     "## Resumen por faccion jugable",
@@ -1092,9 +1112,19 @@ function buildBalanceReport(catalog, balance, balanceConfig) {
     "|---|---:|---:|---:|---:|---:|---:|---:|",
     ...summaryLines,
     "",
+    "## Oro por tipo principal",
+    "",
+    "| Faccion | Tipo | Unidades | Con oro | Objetivo |",
+    "|---|---|---:|---:|---:|",
+    ...typeGoldLines,
+    "",
     "## Infanteria inicial solo suministro",
     "",
     ...initialInfantry,
+    "",
+    "## Unidades con Honor",
+    "",
+    ...honorUnits,
     "",
     "## Produccion natural inicial",
     "",
@@ -1106,10 +1136,22 @@ function buildBalanceReport(catalog, balance, balanceConfig) {
     "",
     `- Unidades con conversion de puntos invalida: ${invalidPointValues.length}.`,
     `- Unidades con Material Industrial o Uridium: ${invalidMilitaryCosts.length}.`,
+    `- Unidades no character con Honor: ${invalidHonorCosts.length}.`,
+    `- Characters fuera de rango 40%-50% Honor: ${invalidCharacterHonorRange.length}.`,
+    `- Unidades con Oro fuera de rango 20%-30%: ${invalidGoldRange.length}.`,
     `- Facciones importadas desde catalogo: ${catalog.factionSummaries.length}.`
   ];
 
   return `${lines.join("\n")}\n`;
+}
+
+function resourceShare(resourceAmount, points) {
+  return (Number(resourceAmount ?? 0) * 5) / Math.max(1, Number(points ?? 0));
+}
+
+function isBetween(value, min, max) {
+  const epsilon = 0.0001;
+  return value + epsilon >= min && value - epsilon <= max;
 }
 
 function readJson(path) {

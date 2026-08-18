@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import {
   buildTechnologyAssignmentMap,
-  isInitialBasicInfantry,
+  primaryUnitType,
+  selectBasicSupplyOnlyInfantrySlugs,
   scaleCostsFromTemplate,
   systemWarhammerPointValue,
   warhammerPointValue
@@ -13,8 +14,11 @@ const unitTemplates = readGeneratedUnitTemplates("src/mocks/generated/40k-unit-t
 const assignmentByUnit = buildTechnologyAssignmentMap(troopTreeConfig);
 const errors = [];
 const targetFactionSlugs = new Set(balanceConfig.targetFactionSlugs ?? []);
-const goldTolerance = Number(balanceConfig.goldUnitTolerance ?? 1);
-const targetGoldRatio = Number(balanceConfig.targetGoldUnitRatio ?? 0.4);
+const goldToleranceByType = Number(balanceConfig.goldUnitToleranceByType ?? balanceConfig.goldUnitTolerance ?? 1);
+const targetGoldRatioByType = Number(balanceConfig.targetGoldUnitRatioByType ?? balanceConfig.targetGoldUnitRatio ?? 0.25);
+const basicInfantrySupplyOnlyRatio = Number(balanceConfig.basicInfantrySupplyOnlyRatio ?? 0.25);
+const honorKeyword = balanceConfig.honorOnlyForKeyword ?? "Caracter";
+const basicSupplyOnlySlugs = selectBasicSupplyOnlyInfantrySlugs(unitTemplates, assignmentByUnit, balanceConfig);
 
 for (const template of unitTemplates) {
   const pointValue = warhammerPointValue(template);
@@ -27,6 +31,24 @@ for (const template of unitTemplates) {
     errors.push(`${template.id}: Material Industrial y Uridium deben ser 0.`);
   }
 
+  if (template.honorCost > 0 && !(template.unitKeywords ?? []).includes(honorKeyword)) {
+    errors.push(`${template.id}: solo las unidades con ${honorKeyword} pueden costar Honor.`);
+  }
+
+  if ((template.unitKeywords ?? []).includes(honorKeyword)) {
+    const honorShare = resourceShare(template.honorCost, template.points);
+    if (!isBetween(honorShare, 0.4, 0.5)) {
+      errors.push(`${template.id}: los Characters deben tener 40%-50% de coste en Honor; recibido ${Math.round(honorShare * 100)}%.`);
+    }
+  }
+
+  if (template.goldCost > 0) {
+    const goldShare = resourceShare(template.goldCost, template.points);
+    if (!isBetween(goldShare, 0.2, 0.3)) {
+      errors.push(`${template.id}: las unidades con Oro deben tener 20%-30% de coste en Oro; recibido ${Math.round(goldShare * 100)}%.`);
+    }
+  }
+
   const scaled = scaleCostsFromTemplate(template, template.points);
   const scaledValue = scaled.supply + scaled.minerals * 2 + scaled.honor * 5 + scaled.gold * 5;
   if (scaledValue !== template.points) {
@@ -36,17 +58,30 @@ for (const template of unitTemplates) {
 
 for (const factionSlug of targetFactionSlugs) {
   const factionUnits = unitTemplates.filter((template) => template.factionId === factionSlug);
-  const goldUnits = factionUnits.filter((template) => template.goldCost > 0).length;
-  const targetGoldUnits = Math.round(factionUnits.length * targetGoldRatio);
+  const unitsByType = groupBy(factionUnits, primaryUnitType);
 
-  if (Math.abs(goldUnits - targetGoldUnits) > goldTolerance) {
-    errors.push(`${factionSlug}: ${goldUnits} unidades con oro, objetivo ${targetGoldUnits} +/- ${goldTolerance}.`);
+  for (const [type, typedUnits] of unitsByType.entries()) {
+    const goldUnits = typedUnits.filter((template) => template.goldCost > 0).length;
+    const targetGoldUnits = Math.round(typedUnits.length * targetGoldRatioByType);
+
+    if (Math.abs(goldUnits - targetGoldUnits) > goldToleranceByType) {
+      errors.push(`${factionSlug}/${type}: ${goldUnits} unidades con oro, objetivo ${targetGoldUnits} +/- ${goldToleranceByType}.`);
+    }
   }
 
-  for (const template of factionUnits) {
-    const assignment = assignmentByUnit.get(template.id);
-    if (isInitialBasicInfantry(template, assignment) && (template.mineralsCost > 0 || template.honorCost > 0 || template.goldCost > 0)) {
-      errors.push(`${template.id}: la infanteria inicial debe costar solo Suministro vital.`);
+  const basicInfantryCandidates = factionUnits
+    .filter((template) => primaryUnitType(template) === "Infanteria")
+    .filter((template) => template.category !== "Aliada" && !template.isAlliedUnit);
+  const targetBasicSupplyOnly = Math.ceil(basicInfantryCandidates.length * basicInfantrySupplyOnlyRatio);
+  const basicSupplyOnlyUnits = basicInfantryCandidates.filter((template) => basicSupplyOnlySlugs.has(template.id));
+
+  if (basicSupplyOnlyUnits.length < targetBasicSupplyOnly) {
+    errors.push(`${factionSlug}: ${basicSupplyOnlyUnits.length} infanterias basicas solo Suministro, minimo ${targetBasicSupplyOnly}.`);
+  }
+
+  for (const template of basicSupplyOnlyUnits) {
+    if (template.supplyCost !== template.points || template.mineralsCost > 0 || template.honorCost > 0 || template.goldCost > 0) {
+      errors.push(`${template.id}: la infanteria basica seleccionada debe costar solo Suministro vital.`);
     }
   }
 }
@@ -125,6 +160,15 @@ function almostEqual(left, right) {
   return Math.abs(left - right) < 0.0001;
 }
 
+function resourceShare(resourceAmount, points) {
+  return (Number(resourceAmount ?? 0) * 5) / Math.max(1, Number(points ?? 0));
+}
+
+function isBetween(value, min, max) {
+  const epsilon = 0.0001;
+  return value + epsilon >= min && value - epsilon <= max;
+}
+
 function readGeneratedUnitTemplates(path) {
   const source = readFileSync(path, "utf8");
   const marker = "export const generated40kUnitTemplates = ";
@@ -137,4 +181,15 @@ function readGeneratedUnitTemplates(path) {
   }
 
   return JSON.parse(source.slice(arrayStart, arrayEnd + 1));
+}
+
+function groupBy(items, selector) {
+  const grouped = new Map();
+  for (const item of items) {
+    const key = selector(item);
+    const group = grouped.get(key) ?? [];
+    group.push(item);
+    grouped.set(key, group);
+  }
+  return grouped;
 }
