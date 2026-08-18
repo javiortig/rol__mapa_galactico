@@ -564,6 +564,7 @@ function HealTab({
     ? snapshot.unitTemplates.find((unitTemplate) => unitTemplate.id === selectedUnit.unitTemplateId) ?? null
     : null;
   const recoveryCosts = selectedTemplate && selectedUnit ? getResupplyCosts(selectedTemplate, selectedUnit) : {};
+  const recoveryDurationSeconds = selectedTemplate ? getResupplyDurationSeconds(selectedTemplate) : 0;
   const visibleResources = Object.entries(recoveryCosts)
     .filter(([, value]) => value > 0)
     .map(([resource]) => resource as ResourceKey);
@@ -647,6 +648,20 @@ function HealTab({
               resources={resources}
               visibleResources={visibleResources}
             />
+
+            {selectedTemplate ? (
+              <div className="rounded-lg border border-violet-300/20 bg-violet-400/10 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 text-sm font-medium text-violet-100">
+                    <span className="grid size-8 place-items-center rounded-full border border-violet-200/25 bg-violet-300/10 text-violet-100">
+                      <Clock3 size={15} />
+                    </span>
+                    Tiempo de reabastecimiento
+                  </div>
+                  <Badge tone="violet">{formatDuration(recoveryDurationSeconds)}</Badge>
+                </div>
+              </div>
+            ) : null}
 
             {mutation.error ? <p className="text-sm text-rose-200">{mutation.error.message}</p> : null}
 
@@ -1315,6 +1330,10 @@ function getResupplyDamageCostRatio(template: UnitTemplate, unit: CampaignUnit) 
   const damageRatio = clamp01(modelDamageRatio * 0.8 + woundDamageRatio * 0.2);
 
   return 0.1 + 0.65 * damageRatio;
+}
+
+function getResupplyDurationSeconds(template: UnitTemplate) {
+  return Math.max(3, Math.ceil(template.recruitmentTimeSeconds / 2));
 }
 
 function getActiveBuildingQueue(snapshot: CampaignSnapshot, buildingId: string) {
