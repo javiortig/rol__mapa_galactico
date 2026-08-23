@@ -450,7 +450,7 @@ const baseSystems: BaseSystem[] = [
     type: "Nodo central",
     status: "neutral",
     isCapital: false,
-    publicDescription: "Interseccion de corrientes de salto que todas las facciones desean controlar.",
+    publicDescription: "Un nudo central de rutas sepultado por ventiscas perpetuas. Entre los cráteres de hielo sobreviven asentamientos fortificados, torres de combustible y campamentos orkos semienterrados.",
     production: dailyProduction({ supply: 2, minerals: 2, honor: 1, uridium: 3 }),
     specialObjects: [{ id: "obj-nexus-aster", name: "Baliza del Nexus", type: "technology", isPublic: true }]
   },
@@ -490,7 +490,7 @@ const baseSystems: BaseSystem[] = [
     type: "Paso sangriento",
     status: "neutral",
     isCapital: false,
-    publicDescription: "Paso estrecho entre chatarra orka y ruinas funerarias.",
+    publicDescription: "Un paso glacial de nieve negra y cañones helados, salpicado por pequeños asentamientos blindados que resisten bajo la sombra de las hogueras orkas.",
     production: dailyProduction({ supply: 2, minerals: 3, uridium: 2 })
   },
   {
@@ -652,7 +652,7 @@ const finalSystemOverrides: Record<string, Partial<BaseSystem>> = {
     status: "controlled",
     controllerFactionId: "orcos",
     type: "Enclave orko central",
-    publicDescription: "Un nudo de rutas tomado por senales de guerra orkas y chatarra militar.",
+    publicDescription: "Un nudo central de rutas sepultado por ventiscas perpetuas. Entre los cráteres de hielo sobreviven asentamientos fortificados, torres de combustible y campamentos orkos semienterrados.",
     specialObjects: [{ id: "obj-nexus-aster", name: "Totem del Nexus", type: "anomaly", isPublic: true }]
   },
   goregate: {
@@ -662,7 +662,7 @@ const finalSystemOverrides: Record<string, Partial<BaseSystem>> = {
     status: "controlled",
     controllerFactionId: "orcos",
     type: "Portal de guerra orko",
-    publicDescription: "Paso sangriento convertido en puerta de saqueo para incursiones orkas.",
+    publicDescription: "Un paso glacial de nieve negra y cañones helados, salpicado por pequeños asentamientos blindados que resisten bajo la sombra de las hogueras orkas.",
     specialObjects: [{ id: "obj-goregate", name: "Puerta de la Waaagh", type: "anomaly", isPublic: true }]
   }
 };
@@ -2085,7 +2085,21 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
   battleReports: [],
   narrativeAttacks: [],
   missions,
-  campaignEvents: []
+  campaignEvents: [
+    {
+      id: "event-prismatic-uridium-refinement",
+      slug: "prismatic-uridium-refinement",
+      title: "Refinado prismático de Uridium",
+      content:
+        "Comandante, hemos conseguido refinar nuestros conocimientos de extracción de Uridium mediante tecnología prismática. Gracias a esta tecnología, podremos extraer el doble de combustible. Con este avance, deberíamos poder atacar finalmente a los orkos, aunque quizás deberíamos unir fuerzas.",
+      eventType: "narrative",
+      systemId: null,
+      conflictId: null,
+      createdByUserId: null,
+      isPublic: true,
+      createdAt: "2026-08-23T00:00:00.000Z"
+    }
+  ]
 };
 
 function getMockResourceCapabilities(system: CampaignSnapshot["systems"][number]): CampaignSnapshot["systemResourceCapabilities"] {

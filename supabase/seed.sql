@@ -82,8 +82,8 @@ values
   (public.seed_uuid('system', 'red-sabbath'), 'red-sabbath', 'Red Sabbath', 785, 500, 0.88, 'red', 'Mundo sermonario neutral', 'neutral', null, null, 'Ciudades santuario sin autoridad estable, llenas de rutas subterraneas y ruido civil.', false),
   (public.seed_uuid('system', 'maelstrom-gas'), 'maelstrom-gas', 'Maelstrom Gas', 500, 360, 1.08, 'violet', 'Anomalia gaseosa central', 'neutral', null, null, 'Una nube de plasma y gases ionizados abre un paso peligroso hacia el nucleo orko.', false),
   (public.seed_uuid('system', 'voidmist-basin'), 'voidmist-basin', 'Voidmist Basin', 500, 640, 1.04, 'blue', 'Cuenca gaseosa central', 'neutral', null, null, 'Un oceano de niebla estelar permite rodear el centro sin reclamar territorio estable.', false),
-  (public.seed_uuid('system', 'nexus-aster'), 'nexus-aster', 'Nexus Aster', 420, 500, 0.96, 'green', 'Enclave orko central', 'controlled', public.seed_uuid('faction', 'orcos'), null, 'Un nudo de rutas tomado por senales de guerra orkas y chatarra militar.', false),
-  (public.seed_uuid('system', 'goregate'), 'goregate', 'Goregate', 580, 500, 0.96, 'red', 'Portal de guerra orko', 'controlled', public.seed_uuid('faction', 'orcos'), null, 'Paso sangriento convertido en puerta de saqueo para incursiones orkas.', false)
+  (public.seed_uuid('system', 'nexus-aster'), 'nexus-aster', 'Nexus Aster', 420, 500, 0.96, 'green', 'Enclave orko central', 'controlled', public.seed_uuid('faction', 'orcos'), null, 'Un nudo central de rutas sepultado por ventiscas perpetuas. Entre los cráteres de hielo sobreviven asentamientos fortificados, torres de combustible y campamentos orkos semienterrados.', false),
+  (public.seed_uuid('system', 'goregate'), 'goregate', 'Goregate', 580, 500, 0.96, 'red', 'Portal de guerra orko', 'controlled', public.seed_uuid('faction', 'orcos'), null, 'Un paso glacial de nieve negra y cañones helados, salpicado por pequeños asentamientos blindados que resisten bajo la sombra de las hogueras orkas.', false)
 on conflict (slug) do update
 set
   name = excluded.name,
@@ -1870,6 +1870,27 @@ values
   (public.seed_uuid('system_special_object', 'obj-voidmist-basin'), public.seed_uuid('system', 'voidmist-basin'), 'Cuenca de vacio', 'anomaly', 'Nubes frias de gas estelar cubren el corredor inferior del nucleo orko.', true)
 on conflict (id) do update
 set system_id = excluded.system_id, name = excluded.name, type = excluded.type, public_description = excluded.public_description, is_public = excluded.is_public;
+
+insert into public.campaign_events (
+  slug,
+  title,
+  content,
+  event_type,
+  is_public
+)
+values (
+  'prismatic-uridium-refinement',
+  'Refinado prismático de Uridium',
+  'Comandante, hemos conseguido refinar nuestros conocimientos de extracción de Uridium mediante tecnología prismática. Gracias a esta tecnología, podremos extraer el doble de combustible. Con este avance, deberíamos poder atacar finalmente a los orkos, aunque quizás deberíamos unir fuerzas.',
+  'narrative',
+  true
+)
+on conflict (slug) do update
+set title = excluded.title,
+    content = excluded.content,
+    event_type = excluded.event_type,
+    is_public = excluded.is_public,
+    updated_at = now();
 
 update public.campaign_settings
 set
