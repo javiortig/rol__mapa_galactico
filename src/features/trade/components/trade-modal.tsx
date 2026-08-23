@@ -23,6 +23,7 @@ import {
   getStellarTradeFeePercent,
   hasUnlockedTechnologyEffect
 } from "@/features/technology/lib/technology-state";
+import { formatCompactOwnedResourceValue, formatOwnedResourceValue } from "@/lib/resource-format";
 import type { CampaignSnapshot, FactionResources, TradeOffer, TradeOfferType, TradeableResourceKey } from "@/domain/campaign";
 
 const tradeableResources: TradeableResourceKey[] = ["supply", "minerals", "industrialMaterial", "uridium"];
@@ -141,7 +142,10 @@ function MerchantPanel({ snapshot }: { snapshot: CampaignSnapshot }) {
         </p>
         <div className="mt-4 rounded-md border border-amber-200/15 bg-slate-950/45 p-3">
           <div className="mb-2 text-xs uppercase tracking-[0.18em] text-amber-200/70">Caja disponible</div>
-          <ResourceAmount resource="gold" value={ownedGold} />
+          <span className="inline-flex items-center gap-1.5 tabular-nums text-slate-100">
+            <ResourceIcon className="size-4" resource="gold" />
+            {formatOwnedResourceValue(ownedGold)}
+          </span>
         </div>
       </aside>
 
@@ -510,7 +514,7 @@ function ResourceStrip({ resources, className }: { resources?: FactionResources;
         <div className="min-w-0 rounded-md border border-cyan-200/15 bg-slate-950/45 px-1.5 py-2 text-center" key={resource}>
           <ResourceIcon className="mx-auto mb-1 size-4" resource={resource} />
           <div className="truncate text-[clamp(0.68rem,2.6vw,0.9rem)] font-semibold tabular-nums text-cyan-50">
-            {formatCompactResource(resources?.[resource] ?? 0)}
+            {formatCompactOwnedResourceValue(resources?.[resource] ?? 0)}
           </div>
         </div>
       ))}
@@ -574,7 +578,7 @@ function getCurrentResources(snapshot: CampaignSnapshot) {
 }
 
 function ownedResourceFor(resources: FactionResources | undefined, resource: TradeableResourceKey) {
-  return formatCompactResource(resources?.[resource] ?? 0);
+  return formatCompactOwnedResourceValue(resources?.[resource] ?? 0);
 }
 
 function getMerchantBuyCost(resource: TradeableResourceKey, quantity: number, buyMultiplier: number) {
@@ -630,18 +634,6 @@ function hasEnoughTradeResources(
 
 function clampInteger(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, Math.trunc(Number.isFinite(value) ? value : min)));
-}
-
-function formatCompactResource(value: number) {
-  if (Math.abs(value) >= 1000000) {
-    return `${(value / 1000000).toFixed(value >= 10000000 ? 0 : 1)}M`;
-  }
-
-  if (Math.abs(value) >= 1000) {
-    return `${(value / 1000).toFixed(value >= 10000 ? 0 : 1)}k`;
-  }
-
-  return String(value);
 }
 
 function formatRate(value: number) {

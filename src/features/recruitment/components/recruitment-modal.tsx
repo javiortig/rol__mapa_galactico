@@ -17,6 +17,7 @@ import {
   isUnitTemplateUnlocked
 } from "@/features/technology/lib/technology-state";
 import { getFactionArmyPoints } from "@/features/units/lib/army-points";
+import { formatCompactOwnedResourceValue } from "@/lib/resource-format";
 import { formatCountdown, formatDurationSeconds } from "@/lib/time";
 import type { CampaignSnapshot, FactionResources, ResourceKey, UnitTemplate } from "@/domain/campaign";
 
@@ -289,24 +290,12 @@ function ResourceSummary({ resources }: { resources?: FactionResources }) {
             <span className="hidden md:inline">{resourceLabels[resource]}</span>
           </div>
           <div className="truncate text-[clamp(0.68rem,2.8vw,1rem)] font-semibold tabular-nums text-cyan-50 md:text-lg">
-            {formatCompactResource(resources?.[resource] ?? 0)}
+            {formatCompactOwnedResourceValue(resources?.[resource] ?? 0)}
           </div>
         </div>
       ))}
     </div>
   );
-}
-
-function formatCompactResource(value: number) {
-  if (Math.abs(value) >= 1000000) {
-    return `${(value / 1000000).toFixed(value >= 10000000 ? 0 : 1)}M`;
-  }
-
-  if (Math.abs(value) >= 1000) {
-    return `${(value / 1000).toFixed(value >= 10000 ? 0 : 1)}k`;
-  }
-
-  return String(value);
 }
 
 function CostPill({

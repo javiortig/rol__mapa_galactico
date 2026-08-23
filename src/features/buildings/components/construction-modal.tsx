@@ -14,6 +14,7 @@ import {
   getVisibleBuildingCostResources,
   isBuildingTemplateUnlocked
 } from "@/features/technology/lib/technology-state";
+import { formatCompactOwnedResourceValue } from "@/lib/resource-format";
 import { formatDurationSeconds } from "@/lib/time";
 import type { BuildingTemplate, CampaignSnapshot, FactionResources, ResourceKey, StarSystem } from "@/domain/campaign";
 
@@ -221,7 +222,7 @@ function ResourceSummary({ resources }: { resources?: FactionResources }) {
         <div className="min-w-0 rounded-md border border-cyan-200/15 bg-slate-950/45 px-1.5 py-2 text-center" key={resource}>
           <ResourceIcon className="mx-auto mb-1 size-4" resource={resource} />
           <div className="truncate text-[clamp(0.66rem,2.4vw,0.9rem)] font-semibold tabular-nums text-cyan-50">
-            {formatCompactResource(resources?.[resource] ?? 0)}
+            {formatCompactOwnedResourceValue(resources?.[resource] ?? 0)}
           </div>
         </div>
       ))}
@@ -354,16 +355,4 @@ function getEffectiveProductionAmount(snapshot: CampaignSnapshot, systemId: stri
       (capability) => capability.systemId === systemId && capability.resourceKey === template.producedResourceKey
     )?.productionAmount ?? 0
   );
-}
-
-function formatCompactResource(value: number) {
-  if (Math.abs(value) >= 1000000) {
-    return `${(value / 1000000).toFixed(value >= 10000000 ? 0 : 1)}M`;
-  }
-
-  if (Math.abs(value) >= 1000) {
-    return `${(value / 1000).toFixed(value >= 10000 ? 0 : 1)}k`;
-  }
-
-  return String(value);
 }

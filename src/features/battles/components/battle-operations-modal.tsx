@@ -25,6 +25,7 @@ import {
 } from "@/features/battles/api/battle-operation-api";
 import { canUseMovementRpc, respondMovementPassageRequest } from "@/features/movement/api/movement-api";
 import { findCheapestRoute, formatTravelDuration } from "@/features/movement/lib/pathfinding";
+import { formatOwnedResourceValue } from "@/lib/resource-format";
 
 type ActionInput =
   | { kind: "invite"; operationId: string; factionId: string; side: BattleSide }
@@ -670,7 +671,7 @@ function SupportComposer({
               {route ? formatTravelDuration(route.durationSeconds) : "Ruta no disponible"}
             </div>
             <div className={hasEnoughUridium ? "mt-1 text-slate-300" : "mt-1 text-rose-200"}>
-              Coste: {formatResourceValue(totalUridiumCost)} / {formatResourceValue(currentResources?.uridium ?? 0)} Uridium
+              Coste: {formatResourceValue(totalUridiumCost)} / {formatOwnedResourceValue(currentResources?.uridium ?? 0)} Uridium
             </div>
             {route && selectedUnitCount > 1 ? (
               <div className="mt-1 text-slate-500">
