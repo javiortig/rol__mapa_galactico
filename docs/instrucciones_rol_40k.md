@@ -190,7 +190,11 @@ Estado jugable actual:
 - El panel de mando operativo tiene entrada `Eventos`, no `Comercio` ni `Recursos`; Comercio se abre desde una `Cámara de Comercio` activa.
 - El botón `Operaciones` abre avisos pendientes: permisos de paso/estancia, batallas pendientes y reportes pendientes, con contador de disponibilidad de batalla de la ventana vigente de 35 días.
 - Batallas se juegan fuera de la app; la web gestiona conflicto, bloqueo, reportes, supervivientes, heridas restantes y control final.
+- Las batallas entre facciones jugadoras tienen límite de 500 puntos por bando. Las batallas narrativas contra `Orcos` o `Tiranidos` no usan ese límite.
+- `Ver misión` abre el briefing estándar de Combat Patrol equilibrada: máximo 500 puntos por bando y misiones de combat patrol.
+- Los escudos de protección vencidos no se muestran en el mapa ni en el panel del sistema; un bloqueo expirado no debe aparecer como estado visible de juego.
 - Facciones narrativas de admin: `Orcos` y `Tiranidos` son amenazas no jugables (`is_narrative = true`), sin capital, usuarios, recursos ni tropas iniciales. Desde `/admin`, el admin puede programar incursiones narrativas con descripción pública y días hasta llegada, darles control inmediato de sistemas conquistables o crear misiones temporales atacables.
+- Si un sistema normal controlado por una facción narrativa pasa a una facción jugadora, se limpian sus metadatos narrativos y vuelve a funcionar como un sistema normal.
 - Comercio estelar usa reserva de recursos: publicar una oferta inmoviliza el recurso/oro y su comisión; al aceptar solo se valida el coste del aceptante.
 - Sistemas gaseosos compartidos: `Nexus Aster` y `Ashen Road` son no conquistables, no generan batalla al llegar y permiten coexistencia de facciones.
 
@@ -840,7 +844,7 @@ Visualmente:
 - Borde ámbar.
 - Tooltip con tiempo restante.
 - Panel del sistema muestra "Bloqueado durante X días/horas".
-- Si `blocked_until` ya ha vencido, la UI debe mostrar `Expirado` y el marcador visual pasa a un estado gris/apagado.
+- Si `blocked_until` ya ha vencido, no debe mostrarse escudo, candado, texto de bloqueo ni estado expirado.
 
 ### 6.3 Reglas del bloqueo
 

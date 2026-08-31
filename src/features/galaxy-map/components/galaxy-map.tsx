@@ -712,22 +712,6 @@ function drawSystems({
       node.addChild(alert);
     }
 
-    if (system.blockedUntil) {
-      const blockExpired = new Date(system.blockedUntil).getTime() <= Date.now();
-      const shieldColor = blockExpired ? 0x94a3b8 : 0xfbbf24;
-      const shield = new PIXI.Graphics();
-      shield.moveTo(radius * 2.2, -radius * 2.75);
-      shield.lineTo(radius * 3.1, -radius * 2.36);
-      shield.lineTo(radius * 2.86, -radius * 1.32);
-      shield.lineTo(radius * 2.2, -radius * 0.94);
-      shield.lineTo(radius * 1.54, -radius * 1.32);
-      shield.lineTo(radius * 1.3, -radius * 2.36);
-      shield.closePath();
-      shield.fill({ color: shieldColor, alpha: blockExpired ? 0.1 : 0.18 });
-      shield.stroke({ color: shieldColor, alpha: blockExpired ? 0.55 : 0.9, width: 1.35 });
-      node.addChild(shield);
-    }
-
     if (system.specialObjects?.some((object) => object.isPublic)) {
       const relic = new PIXI.Graphics();
       relic.moveTo(-radius * 0.7, radius * 2.76);
@@ -915,6 +899,21 @@ function drawSystemEffects({
       missionPulse.circle(system.x, system.y, missionRadius);
       missionPulse.stroke({ color: missionColor, alpha: 0.28, width: 1.6 });
       layer.addChild(missionPulse);
+    }
+
+    if (system.blockedUntil && new Date(system.blockedUntil).getTime() > Date.now()) {
+      const shieldColor = 0xfbbf24;
+      const shield = new PIXI.Graphics();
+      shield.moveTo(system.x + radius * 2.2, system.y - radius * 2.75);
+      shield.lineTo(system.x + radius * 3.1, system.y - radius * 2.36);
+      shield.lineTo(system.x + radius * 2.86, system.y - radius * 1.32);
+      shield.lineTo(system.x + radius * 2.2, system.y - radius * 0.94);
+      shield.lineTo(system.x + radius * 1.54, system.y - radius * 1.32);
+      shield.lineTo(system.x + radius * 1.3, system.y - radius * 2.36);
+      shield.closePath();
+      shield.fill({ color: shieldColor, alpha: 0.18 });
+      shield.stroke({ color: shieldColor, alpha: 0.9, width: 1.35 });
+      layer.addChild(shield);
     }
 
     if (system.id === movementOriginSystemId) {

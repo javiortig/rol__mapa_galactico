@@ -2035,6 +2035,7 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
   resourceTickIntervalHours: 24,
   movementEdgeDurationSeconds: 259200,
   attackDurationSeconds: 604800,
+  battlePointsLimit: 500,
   nextResourceTickAt: inHours(24),
   resourceCaps: {
     supply: 500,

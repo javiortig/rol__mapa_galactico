@@ -621,9 +621,30 @@ function SupportComposer({
     route?.pathSystemIds.map((id) => snapshot.systems.find((system) => system.id === id)?.name ?? id).join(" -> ") ??
     "Sin ruta";
   const selectedUnitCount = selectedUnitIds.length;
+  const selectedPoints = availableUnits.reduce(
+    (total, unit) => total + (selectedUnitIds.includes(unit.id) ? unit.points : 0),
+    0
+  );
   const currentResources = snapshot.resources.find((item) => item.factionId === snapshot.currentUser.factionId);
   const totalUridiumCost = route ? route.uridiumCost * selectedUnitCount : 0;
   const hasEnoughUridium = Boolean(route && currentResources && currentResources.uridium >= totalUridiumCost);
+  const attackingFaction = snapshot.factions.find((faction) => faction.id === operation.leaderFactionId);
+  const defendingFaction = snapshot.factions.find((faction) => faction.id === operation.defenderFactionId);
+  const usesBattlePointsLimit = Boolean(
+    attackingFaction && defendingFaction && !attackingFaction.isNarrative && !defendingFaction.isNarrative
+  );
+  const committedSidePoints = snapshot.battleUnitCommitments.reduce(
+    (total, commitment) =>
+      commitment.operationId === operation.id &&
+      commitment.side === side &&
+      isActiveBattleCommitmentStatus(commitment.status)
+        ? total + commitment.pointsAtCommitment
+        : total,
+    0
+  );
+  const battlePointsLimit = snapshot.battlePointsLimit || 500;
+  const projectedSidePoints = committedSidePoints + selectedPoints;
+  const battlePointsExceeded = usesBattlePointsLimit && projectedSidePoints > battlePointsLimit;
 
   return (
     <div>
@@ -678,6 +699,11 @@ function SupportComposer({
                 Ruta {route.uridiumCost} x {selectedUnitCount} unidades
               </div>
             ) : null}
+            {usesBattlePointsLimit ? (
+              <div className={battlePointsExceeded ? "mt-2 text-rose-200" : "mt-2 text-cyan-100"}>
+                Fuerza: {projectedSidePoints} / {battlePointsLimit} pts
+              </div>
+            ) : null}
             {operation.attackArrivalAt && side === "defender" ? (
               <div className="mt-1 text-slate-400">
                 Plantel cierra en: {formatTravelDuration(secondsRemaining ?? 0)}
@@ -726,10 +752,22 @@ function SupportComposer({
           ) : null}
 
           {error ? <p className="mt-3 text-sm text-rose-200">{error}</p> : null}
+          {battlePointsExceeded ? (
+            <p className="mt-3 text-sm text-rose-200">
+              Este bando supera el límite de {battlePointsLimit} puntos para una batalla equilibrada.
+            </p>
+          ) : null}
 
           <Button
             className="mt-4 w-full"
-            disabled={!route || !arrivesInTime || selectedUnitIds.length === 0 || !hasEnoughUridium || isPending}
+            disabled={
+              !route ||
+              !arrivesInTime ||
+              selectedUnitIds.length === 0 ||
+              !hasEnoughUridium ||
+              battlePointsExceeded ||
+              isPending
+            }
             onClick={onConfirm}
           >
             <Route size={16} />
@@ -875,6 +913,7 @@ function NotificationsPanel({
           const isAttacker = conflict.attackerFactionId === currentFactionId;
           const rivalFactionId = isAttacker ? conflict.defenderFactionId : conflict.attackerFactionId;
           const rival = snapshot.factions.find((item) => item.id === rivalFactionId);
+          const activeBlockEndsAt = formatActiveConflictBlock(conflict.blockedUntil);
 
           return (
             <article className="rounded-md border border-rose-300/25 bg-rose-400/10 p-3" key={conflict.id}>
@@ -883,9 +922,10 @@ function NotificationsPanel({
                 <Badge tone="rose">{isAttacker ? "Atacante" : "Defensor"}</Badge>
               </div>
               <p className="mt-1 text-xs text-rose-100/80">Rival: {rival?.name ?? "Fuerza desconocida"}</p>
-              <p className="mt-1 text-xs text-slate-400">
-                Estado: pendiente de batalla fisica o reporte. Bloqueo: {formatConflictTimer(conflict.blockedUntil)}
-              </p>
+              <p className="mt-1 text-xs text-slate-400">Estado: pendiente de batalla física o reporte.</p>
+              {activeBlockEndsAt ? (
+                <p className="mt-1 text-xs text-amber-100">Protección activa hasta {activeBlockEndsAt}</p>
+              ) : null}
             </article>
           );
         })}
@@ -1057,18 +1097,18 @@ function formatResourceValue(value: number) {
   return value.toLocaleString("es-ES", { maximumFractionDigits: 2 });
 }
 
-function formatConflictTimer(blockedUntil?: string | null) {
+function formatActiveConflictBlock(blockedUntil?: string | null) {
   if (!blockedUntil) {
-    return "sin cierre";
+    return null;
   }
 
   const timestamp = Date.parse(blockedUntil);
 
-  if (Number.isNaN(timestamp)) {
-    return "sin cierre";
+  if (Number.isNaN(timestamp) || timestamp <= Date.now()) {
+    return null;
   }
 
-  return timestamp <= Date.now() ? "Expirado" : new Date(blockedUntil).toLocaleString();
+  return new Date(blockedUntil).toLocaleString();
 }
 
 function invitationLabel(member: BattleOperationMember) {

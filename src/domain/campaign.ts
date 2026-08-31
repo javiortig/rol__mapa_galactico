@@ -602,6 +602,7 @@ export interface CampaignSnapshot {
   resourceTickIntervalHours: number;
   movementEdgeDurationSeconds: number;
   attackDurationSeconds: number;
+  battlePointsLimit: number;
   nextResourceTickAt: string;
   resourceCaps: ResourceBundle;
   maxArmyPoints: number;

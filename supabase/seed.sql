@@ -1899,6 +1899,7 @@ set
   timing_mode_updated_at = now(),
   movement_edge_duration_seconds = 259200,
   attack_duration_seconds = 604800,
+  battle_points_limit = 500,
   conflict_block_duration_minutes = 20160,
   next_resource_tick_at = now() + interval '24 hours',
   updated_at = now()

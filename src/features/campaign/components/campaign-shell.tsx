@@ -72,6 +72,7 @@ export function CampaignShell() {
   const [tradeOpen, setTradeOpen] = useState(false);
   const [tradeLockedReason, setTradeLockedReason] = useState<string | null>(null);
   const [eventsOpen, setEventsOpen] = useState(false);
+  const [missionBriefSystemId, setMissionBriefSystemId] = useState<string | null>(null);
   const [technologyOpen, setTechnologyOpen] = useState(false);
   const [battleOperationsOpen, setBattleOperationsOpen] = useState(false);
   const [constructionSystemId, setConstructionSystemId] = useState<string | null>(null);
@@ -174,6 +175,7 @@ export function CampaignShell() {
       attackOriginSystemId ||
       tradeOpen ||
       eventsOpen ||
+      missionBriefSystemId ||
       technologyOpen ||
       battleOperationsOpen ||
       battleReportSystemId ||
@@ -181,6 +183,7 @@ export function CampaignShell() {
       selectedBuildingId)
   );
   const battleReportSystem = data.systems.find((system) => system.id === battleReportSystemId) ?? null;
+  const missionBriefSystem = data.systems.find((system) => system.id === missionBriefSystemId) ?? null;
   const battleReportConflict =
     battleReportSystem
       ? data.conflicts.find((conflict) => conflict.systemId === battleReportSystem.id && conflict.status === "pending") ?? null
@@ -361,6 +364,7 @@ export function CampaignShell() {
                 setSelectedBuildingId(building.id);
               }}
               onOpenConstruction={(system) => setConstructionSystemId(system.id)}
+              onOpenMissionBrief={(system) => setMissionBriefSystemId(system.id)}
               onOpenAttack={openAttack}
               onOpenMovement={openMovement}
               snapshot={data}
@@ -395,6 +399,11 @@ export function CampaignShell() {
       />
       <TradeModal lockedReason={tradeLockedReason} onClose={() => setTradeOpen(false)} open={tradeOpen} snapshot={data} />
       <EventsModal onClose={() => setEventsOpen(false)} open={eventsOpen} snapshot={data} />
+      <MissionBriefModal
+        onClose={() => setMissionBriefSystemId(null)}
+        open={Boolean(missionBriefSystem)}
+        system={missionBriefSystem}
+      />
       <TechnologyTreeModal onClose={() => setTechnologyOpen(false)} open={technologyOpen} snapshot={data} />
       <BattleOperationsModal
         onClose={() => setBattleOperationsOpen(false)}
@@ -555,8 +564,8 @@ function readStoredTimestamp(storageKey: string | null) {
   return Number.isFinite(storedTimestamp) ? storedTimestamp : 0;
 }
 
-function isBlockExpired(blockedUntil?: string | null) {
-  return Boolean(blockedUntil && new Date(blockedUntil).getTime() <= Date.now());
+function isSystemBlockActive(blockedUntil?: string | null) {
+  return Boolean(blockedUntil && new Date(blockedUntil).getTime() > Date.now());
 }
 
 function formatBlockCountdown(blockedUntil?: string | null) {
@@ -564,7 +573,7 @@ function formatBlockCountdown(blockedUntil?: string | null) {
     return "";
   }
 
-  return isBlockExpired(blockedUntil) ? "Expirado" : formatCountdown(blockedUntil);
+  return isSystemBlockActive(blockedUntil) ? formatCountdown(blockedUntil) : "";
 }
 
 function hasUnresolvedBattleBlock(snapshot: CampaignSnapshot, systemId: string) {
@@ -815,6 +824,42 @@ function EventsModal({
   );
 }
 
+function MissionBriefModal({
+  open,
+  system,
+  onClose
+}: {
+  open: boolean;
+  system: StarSystem | null;
+  onClose: () => void;
+}) {
+  if (!open || !system) {
+    return null;
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/80 p-0 backdrop-blur-sm md:p-4">
+      <Panel className="flex h-[var(--app-height)] w-full max-w-2xl flex-col overflow-hidden rounded-none md:h-auto md:max-h-[calc(var(--app-height)-2rem)] md:rounded-lg">
+        <header className="flex shrink-0 items-center justify-between gap-3 border-b border-cyan-200/15 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] md:p-5">
+          <div>
+            <div className="text-xs uppercase tracking-[0.22em] text-cyan-200/70">{system.name}</div>
+            <h2 className="mt-1 text-xl font-semibold text-cyan-50">Combat Patrol equilibrada</h2>
+          </div>
+          <Button aria-label="Cerrar misión" onClick={onClose} size="icon" variant="ghost">
+            <X size={17} />
+          </Button>
+        </header>
+
+        <div className="mobile-scroll min-h-0 flex-1 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:p-5">
+          <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 p-4 text-sm leading-6 text-slate-200 shadow-[0_0_28px_rgba(8,145,178,0.1)]">
+            Se permiten un máximo de 500 puntos por bando. Se deben usar misiones de combat patrol.
+          </div>
+        </div>
+      </Panel>
+    </div>
+  );
+}
+
 function eventLabel(type: CampaignSnapshot["campaignEvents"][number]["eventType"]) {
   const labels: Record<CampaignSnapshot["campaignEvents"][number]["eventType"], string> = {
     manual: "Comunicado",
@@ -843,6 +888,7 @@ function GalaxyTooltip({
   const faction = snapshot.factions.find((item) => item.id === system.controllerFactionId);
   const naturalProduction = getNaturalSystemProduction(snapshot, system.id);
   const totalProduction = planetProductionResources.reduce((total, key) => total + naturalProduction[key], 0);
+  const hasActiveBlock = isSystemBlockActive(system.blockedUntil);
   const stateText =
     system.status === "war" ? "En guerra" : system.status === "controlled" ? "Controlado" : "Neutral";
 
@@ -884,7 +930,7 @@ function GalaxyTooltip({
           <span>Capacidad base</span>
           <span className="text-cyan-100">+{totalProduction}/día</span>
         </div>
-        {system.blockedUntil ? (
+        {hasActiveBlock ? (
           <div className="flex items-center justify-between gap-3 text-amber-100">
             <span>Bloqueo</span>
             <span>{formatBlockCountdown(system.blockedUntil)}</span>
@@ -923,6 +969,7 @@ function SystemPanel({
   onOpenBattleReport,
   onOpenBuilding,
   onOpenConstruction,
+  onOpenMissionBrief,
   onOpenAttack,
   onOpenMovement,
 }: {
@@ -932,6 +979,7 @@ function SystemPanel({
   onOpenBattleReport: (system: StarSystem) => void;
   onOpenBuilding: (building: SystemBuilding, template: BuildingTemplate) => void;
   onOpenConstruction: (system: StarSystem) => void;
+  onOpenMissionBrief: (system: StarSystem) => void;
   onOpenAttack: (system: StarSystem) => void;
   onOpenMovement: (system: StarSystem) => void;
 }) {
@@ -1043,7 +1091,7 @@ function SystemPanel({
 
     retireUnitMutation.mutate(unit.id);
   };
-  const blockExpired = isBlockExpired(system.blockedUntil);
+  const hasActiveBlock = isSystemBlockActive(system.blockedUntil);
   const naturalProduction = getNaturalSystemProduction(snapshot, system.id);
 
   return (
@@ -1209,17 +1257,11 @@ function SystemPanel({
             ) : null}
           </section>
 
-          {system.blockedUntil ? (
+          {hasActiveBlock ? (
             <section>
               <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-amber-200/70">Bloqueo</h2>
-              <div
-                className={`rounded-md border p-3 text-sm ${
-                  blockExpired
-                    ? "border-slate-400/25 bg-slate-500/10 text-slate-200"
-                    : "border-amber-300/25 bg-amber-300/10 text-amber-50"
-                }`}
-              >
-                {blockExpired ? "Bloqueo expirado" : `Bloqueado durante ${formatCountdown(system.blockedUntil)}`}
+              <div className="rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-50">
+                Protegido durante {formatCountdown(system.blockedUntil)}
               </div>
             </section>
           ) : null}
@@ -1361,7 +1403,9 @@ function SystemPanel({
         </div>
 
         <div className="grid shrink-0 grid-cols-2 gap-2 border-t border-cyan-200/15 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 sm:grid-cols-4 md:p-5">
-          <Button className="min-w-0 px-2 text-xs sm:text-sm">Ver misión</Button>
+          <Button className="min-w-0 px-2 text-xs sm:text-sm" onClick={() => onOpenMissionBrief(system)}>
+            Ver misión
+          </Button>
           {system.systemKind === "gaseous" ? (
             <Button className="min-w-0 px-2 text-xs sm:text-sm" disabled variant="ghost">
               No edificable
@@ -1945,8 +1989,15 @@ function AttackPlanner({
     selectedQuantities[unit.id] ? [{ unitId: unit.id, quantity: unit.quantity }] : []
   );
   const selectedMiniatures = selectedSelections.reduce((total, selection) => total + selection.quantity, 0);
+  const selectedPoints = availableUnits.reduce(
+    (total, unit) => total + (selectedQuantities[unit.id] ? getUnitRosterPoints(unit) : 0),
+    0
+  );
   const targetSystem = targetSystems.find((system) => system.id === targetSystemId) ?? null;
   const targetFaction = snapshot.factions.find((faction) => faction.id === targetSystem?.controllerFactionId) ?? null;
+  const battlePointsLimit = snapshot.battlePointsLimit || 500;
+  const usesBattlePointsLimit = Boolean(targetSystem && !targetFaction?.isNarrative);
+  const battlePointsExceeded = usesBattlePointsLimit && selectedPoints > battlePointsLimit;
   const supportFactions = snapshot.factions.filter(
     (faction) =>
       !faction.isNarrative &&
@@ -1966,7 +2017,8 @@ function AttackPlanner({
     rpcReady &&
     selectedSelections.length > 0 &&
     Boolean(targetSystem) &&
-    !ownLimitReason;
+    !ownLimitReason &&
+    !battlePointsExceeded;
   const mutation = useMutation({
     mutationFn: () => {
       if (!targetSystem) {
@@ -2142,8 +2194,13 @@ function AttackPlanner({
 
         <div className="mb-4 rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-xs text-slate-300">
           {selectedSelections.length > 0
-            ? `${selectedSelections.length} unidades seleccionadas - ${selectedMiniatures} miniaturas`
+            ? `${selectedSelections.length} unidades seleccionadas - ${selectedMiniatures} miniaturas - ${selectedPoints} pts`
             : "Sin unidades seleccionadas"}
+          {usesBattlePointsLimit ? (
+            <div className={battlePointsExceeded ? "mt-1 text-rose-200" : "mt-1 text-cyan-100"}>
+              Límite de batalla: {battlePointsLimit} pts por bando.
+            </div>
+          ) : null}
         </div>
 
         {limits ? (
@@ -2163,6 +2220,11 @@ function AttackPlanner({
         ) : null}
 
         {ownLimitReason ? <p className="mb-3 text-sm text-rose-200">{ownLimitReason}</p> : null}
+        {battlePointsExceeded ? (
+          <p className="mb-3 text-sm text-rose-200">
+            La fuerza seleccionada supera el límite de {battlePointsLimit} puntos.
+          </p>
+        ) : null}
         {mutation.error ? <p className="mb-3 text-sm text-rose-200">{mutation.error.message}</p> : null}
 
         <Button className="sticky bottom-0 w-full" disabled={!canConfirm || mutation.isPending} onClick={() => mutation.mutate()} variant="danger">

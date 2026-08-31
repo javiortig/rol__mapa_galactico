@@ -255,6 +255,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       resourceTickIntervalHours: settingsResult.data?.resource_tick_interval_hours ?? 24,
       movementEdgeDurationSeconds: Number(settingsResult.data?.movement_edge_duration_seconds ?? 259200),
       attackDurationSeconds: Number(settingsResult.data?.attack_duration_seconds ?? 604800),
+      battlePointsLimit: Number(settingsResult.data?.battle_points_limit ?? 500),
       nextResourceTickAt: settingsResult.data?.next_resource_tick_at ?? new Date().toISOString(),
       resourceCaps: mapResourceCaps(settingsResult.data ?? {}),
       maxArmyPoints: Number(settingsResult.data?.max_army_points ?? 1000),
@@ -508,7 +509,7 @@ function mapSystem(
     type: fixSpanishText(row.type as string),
     status: row.status as StarSystem["status"],
     controllerFactionId: (row.controller_faction_id as string | null) ?? null,
-    blockedUntil: (row.blocked_until as string | null) ?? null,
+    blockedUntil: getActiveTimestamp((row.blocked_until as string | null) ?? null),
     publicDescription: fixOptionalSpanishText((row.public_description as string | null) ?? "") ?? "",
     secretAdminNotes: fixOptionalSpanishText((row.secret_admin_notes as string | null) ?? null),
     missionId: (row.mission_id as string | null) ?? null,
@@ -1055,7 +1056,7 @@ function mapConflict(row: Record<string, unknown>): Conflict {
     defenderFactionId: (row.defender_faction_id as string | null) ?? null,
     status: row.status as Conflict["status"],
     winnerFactionId: (row.winner_faction_id as string | null) ?? null,
-    blockedUntil: (row.blocked_until as string | null) ?? null,
+    blockedUntil: getActiveTimestamp((row.blocked_until as string | null) ?? null),
     notes: fixOptionalSpanishText((row.notes as string | null) ?? null)
   };
 }
@@ -1071,6 +1072,16 @@ function mapNarrativeAttack(row: Record<string, unknown>): NarrativeAttack {
     conflictId: (row.conflict_id as string | null) ?? null,
     createdAt: row.created_at as string
   };
+}
+
+function getActiveTimestamp(value?: string | null) {
+  if (!value) {
+    return null;
+  }
+
+  const timestamp = Date.parse(value);
+
+  return Number.isFinite(timestamp) && timestamp > Date.now() ? value : null;
 }
 
 function mapNullableResourceKey(value: unknown): ResourceKey | null {
