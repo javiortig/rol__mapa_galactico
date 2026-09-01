@@ -162,7 +162,7 @@ Estado jugable actual:
 - Agentes del Imperium, Aeldari y Astra Militarum no forman parte de esta campaña final.
 - `Astra Militarum` ya no es facción jugable; `Adeptus Custodes` ocupa su hueco de campaña en `kharon-prime`.
 - El catálogo final de unidades se genera con `npm run units:generate`; importa 347 hojas de unidad de 11.ª edición: 333 desde `data/11th40kPoints.txt` y 14 organismos tiránidos de `Final Day` para Cultos Genestealer desde `data/11th-final-day-tyranids.json`.
-- Los costes variables oficiales MFM de 11.ª edición se generan con `npm run units:generate-options` desde `https://mfm.warhammer-community.com/en/` y se guardan en `data/11th-unit-cost-options.json`. Este archivo anade tamaños legales, recargos por copia y extras pagados sin modificar `data/11th40kPoints.txt`.
+- Los costes variables oficiales MFM de 11.ª edición se generan con `npm run units:generate-options` desde `https://mfm.warhammer-community.com/en/` y se guardan en `data/11th-unit-cost-options.json`. Este archivo añade tamaños legales y extras pagados sin modificar `data/11th40kPoints.txt`. Si MFM trae recargos por copias repetidas, la campaña los conserva como dato de origen pero no los aplica.
 - El balance de costes y producción vive en `data/balance/faction-balance.json`; se audita con `docs/generated/faction-balance-report.md` y se valida con `npm run balance:validate`.
 - Capital + adyacente neutral suman 19 puntos/día potenciales en recursos de reclutamiento; Material Industrial y Uridium tienen economía separada. En el balance actual no hay Oro natural en sistemas.
 - Los árboles de tropas por facción se definen de forma declarativa en `data/technology/faction-troop-trees.json` y se validan con `npm run tech:validate-troops`.
@@ -1398,7 +1398,7 @@ Las etiquetas funcionales de unidad (`unit_keywords`) se cruzan con datos estruc
 
 Las unidades se pagan solo con Suministro vital, Mineral, Honor y Oro. Material Industrial queda reservado para construcción y Uridium queda reservado para movimiento/comercio, no para generar tropas.
 
-`data/11th40kPoints.txt` es la lista base aportada por el jugador y no se sobrescribe. `data/11th-unit-cost-options.json` es la capa adicional oficial MFM: registra tamaños legales, recargos por copia y extras pagados, por ejemplo `Twin Arachnus Heavy Blaze Cannon +15 pts`. El frontend muestra estas opciones al reclutar y el backend recalcula puntos y recursos en `recruit_unit_variant_at_building(...)`.
+`data/11th40kPoints.txt` es la lista base aportada por el jugador y no se sobrescribe. `data/11th-unit-cost-options.json` es la capa adicional oficial MFM: registra tamaños legales y extras pagados, por ejemplo `Twin Arachnus Heavy Blaze Cannon +15 pts`. El frontend muestra estas opciones al reclutar y el backend recalcula puntos y recursos en `recruit_unit_variant_at_building(...)`. Los recargos por copias repetidas no modifican el coste de campaña: reclutar la segunda, tercera o cuarta copia cuesta lo mismo que producir la primera, salvo que el jugador elija otro tamaño legal o equipo pagado.
 
 ### 9.4 Al reclutar
 
@@ -1426,7 +1426,7 @@ Si todo es válido:
 - Guarda `selected_points`.
 - Guarda `selected_model_option_id` si aplica.
 - Guarda `selected_wargear_options` y `selected_wargear_points` si aplica.
-- Guarda `point_cost_breakdown` con puntos base, extras y copia usada.
+- Guarda `point_cost_breakdown` con puntos base, extras y copia de coste aplicada, que en campaña debe ser siempre la primera copia.
 - Guarda `started_at`.
 - Guarda `finishes_at`.
 - Estado `queued`.

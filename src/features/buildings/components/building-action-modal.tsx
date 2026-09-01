@@ -245,21 +245,15 @@ function RecruitTab({
     [snapshot.currentUser.factionId, snapshot.unitTemplates, template.allowedUnitCategories, template.slug]
   );
   const selectedTemplate = templates.find((item) => item.id === selectedTemplateId) ?? templates[0] ?? null;
-  const selectedCopyIndex = selectedTemplate ? getRecruitmentCopyIndex(snapshot, selectedTemplate) : 1;
-  const selectedModelChoices = selectedTemplate ? getModelChoices(selectedTemplate, selectedCopyIndex) : [];
+  const selectedModelChoices = selectedTemplate ? getModelChoices(selectedTemplate) : [];
   const selectedModelCount = selectedTemplate
     ? selectedModelCounts[selectedTemplate.id] ?? selectedModelChoices[0]?.models ?? selectedTemplate.defaultQuantity
     : 0;
   const selectedWargearForTemplate = selectedTemplate ? selectedWargearQuantities[selectedTemplate.id] ?? {} : {};
-  const selectedModelOption = selectedTemplate
-    ? getModelOptionForCopy(selectedTemplate, selectedModelCount, selectedCopyIndex)
-    : null;
   const selectedWargearPoints = selectedTemplate
     ? getWargearPoints(selectedTemplate, selectedWargearForTemplate, selectedModelCount)
     : 0;
-  const selectedPoints = selectedTemplate
-    ? getVariantPoints(selectedTemplate, selectedModelCount, selectedCopyIndex, selectedWargearForTemplate)
-    : 0;
+  const selectedPoints = selectedTemplate ? getVariantPoints(selectedTemplate, selectedModelCount, selectedWargearForTemplate) : 0;
   const selectedUnlocked = selectedTemplate ? isUnitTemplateUnlocked(snapshot, selectedTemplate) : false;
   const selectedResources = selectedTemplate
     ? getVisibleRecruitmentVariantCostResources(snapshot, selectedTemplate, selectedPoints)
@@ -311,8 +305,7 @@ function RecruitTab({
               const selected = unitTemplate.id === selectedTemplate?.id;
               const unlocked = isUnitTemplateUnlocked(snapshot, unitTemplate);
               const requiredTechnologyName = getRequiredTechnologyName(snapshot, unitTemplate.requiredTechnologyNodeId);
-              const previewCopyIndex = getRecruitmentCopyIndex(snapshot, unitTemplate);
-              const previewChoice = getModelChoices(unitTemplate, previewCopyIndex)[0];
+              const previewChoice = getModelChoices(unitTemplate)[0];
               const previewPoints = previewChoice?.points ?? unitTemplate.points;
               const affordable = resources ? canAffordRecruitmentVariant(snapshot, resources, unitTemplate, previewPoints) : false;
               const costResources = getVisibleRecruitmentVariantCostResources(snapshot, unitTemplate, previewPoints);
@@ -404,11 +397,6 @@ function RecruitTab({
               <p className="mt-2 text-xs text-slate-400">
                 Ejército: {currentArmyPoints + selectedPoints}/{snapshot.maxArmyPoints} pts
               </p>
-              {selectedModelOption?.copyFrom && selectedModelOption.copyFrom > 1 ? (
-                <p className="mt-1 text-xs text-amber-100">
-                  MFM aplica precio de {formatCopyRange(selectedModelOption)} para esta copia.
-                </p>
-              ) : null}
             </div>
 
             {selectedModelChoices.length > 1 ? (
@@ -1180,22 +1168,7 @@ function canAffordRecruitmentVariant(
   );
 }
 
-function getRecruitmentCopyIndex(snapshot: CampaignSnapshot, template: UnitTemplate) {
-  const livingCopies = snapshot.units.filter(
-    (unit) =>
-      unit.factionId === template.factionId &&
-      unit.unitTemplateId === template.id &&
-      unit.status !== "destroyed" &&
-      unit.quantity > 0
-  ).length;
-  const queuedCopies = snapshot.recruitmentQueue
-    .filter((item) => item.factionId === template.factionId && item.unitTemplateId === template.id && item.status === "queued")
-    .reduce((total, item) => total + Math.max(1, item.quantity), 0);
-
-  return livingCopies + queuedCopies + 1;
-}
-
-function getModelChoices(template: UnitTemplate, copyIndex: number) {
+function getModelChoices(template: UnitTemplate) {
   const modelOptions = template.modelOptions ?? [];
 
   if (modelOptions.length === 0) {
@@ -1214,7 +1187,7 @@ function getModelChoices(template: UnitTemplate, copyIndex: number) {
   return modelCounts
     .map((models) => {
       const option =
-        getModelOptionForCopy(template, models, copyIndex) ??
+        getFirstCopyModelOption(template, models) ??
         [...modelOptions]
           .filter((candidate) => candidate.minModels <= models && candidate.maxModels >= models)
           .sort((left, right) => left.copyFrom - right.copyFrom || left.points - right.points)[0] ??
@@ -1230,28 +1203,23 @@ function getModelChoices(template: UnitTemplate, copyIndex: number) {
     .sort((left, right) => left.models - right.models);
 }
 
-function getModelOptionForCopy(template: UnitTemplate, modelCount: number, copyIndex: number): UnitTemplateModelOption | null {
+function getFirstCopyModelOption(template: UnitTemplate, modelCount: number): UnitTemplateModelOption | null {
   return (
     [...(template.modelOptions ?? [])]
       .filter(
         (option) =>
           option.minModels <= modelCount &&
           option.maxModels >= modelCount &&
-          option.copyFrom <= copyIndex &&
-          (option.copyTo === null || option.copyTo === undefined || copyIndex <= option.copyTo)
+          option.copyFrom <= 1 &&
+          (option.copyTo === null || option.copyTo === undefined || option.copyTo >= 1)
       )
-      .sort((left, right) => right.copyFrom - left.copyFrom || left.maxModels - right.maxModels || right.minModels - left.minModels)[0] ??
+      .sort((left, right) => left.copyFrom - right.copyFrom || left.maxModels - right.maxModels || right.minModels - left.minModels)[0] ??
     null
   );
 }
 
-function getVariantPoints(
-  template: UnitTemplate,
-  modelCount: number,
-  copyIndex: number,
-  wargearQuantities: Record<string, number>
-) {
-  const modelOption = getModelOptionForCopy(template, modelCount, copyIndex);
+function getVariantPoints(template: UnitTemplate, modelCount: number, wargearQuantities: Record<string, number>) {
+  const modelOption = getFirstCopyModelOption(template, modelCount);
   const basePoints = modelOption?.points ?? template.points;
 
   return basePoints + getWargearPoints(template, wargearQuantities, modelCount);
@@ -1281,17 +1249,6 @@ function getBoundedWargearQuantity(wargearQuantities: Record<string, number>, sl
   return Math.max(0, Math.min(Math.max(1, modelCount), Math.trunc(wargearQuantities[slug] ?? 0)));
 }
 
-function formatCopyRange(option: UnitTemplateModelOption) {
-  if (option.copyTo === null || option.copyTo === undefined) {
-    return `${option.copyFrom}+ copia`;
-  }
-
-  if (option.copyFrom === option.copyTo) {
-    return `${option.copyFrom}. copia`;
-  }
-
-  return `${option.copyFrom}-${option.copyTo} copia`;
-}
 
 function canUseTemplateAtBuilding(unitTemplate: UnitTemplate, buildingSlug: string, allowedUnitCategories: string[]) {
   if (unitTemplate.recruitmentBuildingType) {

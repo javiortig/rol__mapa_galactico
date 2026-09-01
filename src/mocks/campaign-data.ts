@@ -2046,7 +2046,7 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
     uridium: 500,
     technology: 500
   },
-  maxArmyPoints: 1000,
+  maxArmyPoints: 2000,
   factions,
   systems: systemsWithBaseProduction,
   edges,

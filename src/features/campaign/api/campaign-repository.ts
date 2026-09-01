@@ -258,7 +258,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       battlePointsLimit: Number(settingsResult.data?.battle_points_limit ?? 500),
       nextResourceTickAt: settingsResult.data?.next_resource_tick_at ?? new Date().toISOString(),
       resourceCaps: mapResourceCaps(settingsResult.data ?? {}),
-      maxArmyPoints: Number(settingsResult.data?.max_army_points ?? 1000),
+      maxArmyPoints: Number(settingsResult.data?.max_army_points ?? 2000),
       factions: factionRows.map(mapFaction),
       systems: getRows(systemsResult, "systems").map((row) =>
         mapSystem(

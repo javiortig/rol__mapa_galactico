@@ -97,7 +97,7 @@ Para regenerar el catálogo final de unidades desde `data/11th40kPoints.txt`:
 npm run units:generate
 ```
 
-Para regenerar las opciones oficiales MFM de tamaños, recargos por copia y equipo pagado sin tocar el TXT base:
+Para regenerar las opciones oficiales MFM de tamaños y equipo pagado sin tocar el TXT base:
 
 ```bash
 npm run units:generate-options
@@ -131,7 +131,7 @@ La producción de recursos funciona con tick diario de backend, no por turno est
 - En sistemas sin presencia propia, los edificios ajenos se muestran solo como slots ocupados sin revelar el edificio.
 - Las tropas visibles en un sistema se agrupan como aliadas y enemigas; las enemigas se separan por facción.
 - La sesión caduca a los 7 días y obliga a iniciar sesión otra vez.
-- Los límites globales iniciales son 500 por recurso y 1000 puntos de ejército.
+- Los límites globales iniciales son 500 por recurso y 2000 puntos de ejército.
 - El limite de puntos cuenta unidades vivas mas reclutamientos en cola.
 - El admin puede cambiar límites de recursos y puntos desde `/admin`.
 - Los jugadores pueden retirar unidades propias listas desde el panel del sistema; no hay reembolso.
@@ -141,7 +141,7 @@ La producción de recursos funciona con tick diario de backend, no por turno est
 - Los sistemas tienen slots de edificio: 6 en capitales y 3 en el resto.
 - El panel del sistema muestra la capacidad natural diaria; la producción real sale de edificios activos que explotan esa capacidad.
 - El reclutamiento se hace clicando un edificio militar activo: Barracon, Cuartel, Taller, Nido o Cámara de Leyendas.
-- El reclutamiento admite variantes oficiales MFM: tamaños legales, recargos por copia y opciones de equipo pagadas. El contrato adicional vive en `data/11th-unit-cost-options.json` y se regenera con `npm run units:generate-options`.
+- El reclutamiento admite variantes oficiales MFM: tamaños legales y opciones de equipo pagadas. Si MFM trae recargos por copias repetidas, la campaña los ignora y usa siempre el coste de producir la primera copia.
 - La Cámara de Leyendas recluta unidades `[Crucible]`; su tecnología existe después de Asamblea Planetaria, pero está bloqueada por ahora.
 - Las unidades heridas pueden curarse desde edificios militares compatibles a mitad de coste proporcional.
 - La Cámara de Comercio desbloquea el acceso al mercader y comercio estelar.
