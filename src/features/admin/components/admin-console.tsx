@@ -1609,7 +1609,7 @@ function AdminBattleResolutionForm({
           ) : (
             warUnits.map((unit) => {
               const faction = snapshot.factions.find((item) => item.id === unit.factionId);
-              const currentSurvivors = clampInteger(survivors[unit.id] ?? unit.quantity, 0, unit.quantity);
+              const currentSurvivors = clampInteger(survivors[unit.id] ?? unit.quantity, 0, unit.startingQuantity);
               const woundsPerModel = getUnitWoundsPerModel(snapshot, unit);
               const maxWounds = currentSurvivors * woundsPerModel;
               const currentWounds = clampInteger(woundsRemaining[unit.id] ?? unit.woundsTaken, 0, maxWounds);
@@ -1623,7 +1623,7 @@ function AdminBattleResolutionForm({
                         {faction?.name ?? "Facción"} - {unit.quantity}/{unit.startingQuantity} miniaturas - {unit.points} pts
                       </div>
                     </div>
-                    <Badge tone={currentSurvivors === 0 ? "rose" : currentSurvivors < unit.quantity ? "amber" : "cyan"}>
+                    <Badge tone={currentSurvivors === 0 ? "rose" : currentSurvivors < unit.startingQuantity ? "amber" : "cyan"}>
                       {currentSurvivors} sobreviven
                     </Badge>
                   </div>
@@ -1634,10 +1634,14 @@ function AdminBattleResolutionForm({
                       <input
                         className="mt-1 w-full rounded-md border border-cyan-200/15 bg-slate-950/70 px-3 py-2 text-sm text-cyan-50 outline-none"
                         disabled={busy}
-                        max={unit.quantity}
+                        max={unit.startingQuantity}
                         min={0}
                         onChange={(event) => {
-                          const nextSurvivors = clampInteger(toInt(event.target.value, currentSurvivors), 0, unit.quantity);
+                          const nextSurvivors = clampInteger(
+                            toInt(event.target.value, currentSurvivors),
+                            0,
+                            unit.startingQuantity
+                          );
                           setSurvivors((current) => ({ ...current, [unit.id]: nextSurvivors }));
                           setWoundsRemaining((current) => ({
                             ...current,
@@ -1813,7 +1817,10 @@ function getBattleReportStatusLabel(report: BattleReport | null) {
 
 function buildAdminBattleSurvivors(units: CampaignUnit[], report: BattleReport | null) {
   return Object.fromEntries(
-    units.map((unit) => [unit.id, clampInteger(report?.survivors?.[unit.id] ?? unit.quantity, 0, unit.quantity)])
+    units.map((unit) => [
+      unit.id,
+      clampInteger(report?.survivors?.[unit.id] ?? unit.quantity, 0, unit.startingQuantity)
+    ])
   );
 }
 

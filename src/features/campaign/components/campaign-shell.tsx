@@ -2473,7 +2473,7 @@ function BattleReportModal({
             <h3 className="mb-3 text-sm font-semibold text-cyan-50">Supervivientes por unidad</h3>
             <div className="space-y-2">
               {warUnits.map((unit) => {
-                const value = clampInteger(survivors[unit.id] ?? unit.quantity, 0, unit.quantity);
+                const value = clampInteger(survivors[unit.id] ?? unit.quantity, 0, unit.startingQuantity);
                 const woundsPerModel = getUnitWoundsPerModel(snapshot, unit);
                 const maxWounds = value * woundsPerModel;
                 const woundsValue = clampInteger(woundsRemaining[unit.id] ?? 0, 0, maxWounds);
@@ -2488,7 +2488,7 @@ function BattleReportModal({
                           {faction?.name ?? "Facción"} - {unit.quantity}/{unit.startingQuantity} miniaturas actuales
                         </div>
                       </div>
-                      <Badge tone={value === 0 ? "rose" : value < unit.quantity ? "amber" : "cyan"}>
+                      <Badge tone={value === 0 ? "rose" : value < unit.startingQuantity ? "amber" : "cyan"}>
                         {value} sobreviven
                       </Badge>
                     </div>
@@ -2510,11 +2510,11 @@ function BattleReportModal({
                         <Minus size={15} />
                       </Button>
                       <div className="text-center">
-                        <div className="text-[11px] text-slate-400">Bajas: {unit.quantity - value}</div>
+                        <div className="text-[11px] text-slate-400">Bajas: {unit.startingQuantity - value}</div>
                         <div className="text-base font-semibold text-cyan-50">{value}</div>
                       </div>
                       <Button
-                        disabled={value >= unit.quantity || busy}
+                        disabled={value >= unit.startingQuantity || busy}
                         onClick={() => setSurvivors((current) => ({ ...current, [unit.id]: value + 1 }))}
                         size="icon"
                         variant="ghost"
@@ -2661,7 +2661,7 @@ function buildReportSurvivors(units: CampaignUnit[], report: BattleReport | null
   return Object.fromEntries(
     units.map((unit) => [
       unit.id,
-      clampInteger(report?.survivors?.[unit.id] ?? unit.quantity, 0, unit.quantity)
+      clampInteger(report?.survivors?.[unit.id] ?? unit.quantity, 0, unit.startingQuantity)
     ])
   );
 }
