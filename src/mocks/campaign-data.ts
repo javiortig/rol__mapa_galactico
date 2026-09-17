@@ -1970,15 +1970,15 @@ const productionResourceKeys: ProductionResourceKey[] = [
 ];
 
 const balancedSystemCapacities: Record<string, Partial<Record<ProductionResourceKey, number>>> = {
-  "mordax": { supply: 8, honor: 1, industrialMaterial: 5 },
+  "mordax": { supply: 11, honor: 0.5, industrialMaterial: 5 },
   "drusus": { minerals: 3, uridium: 0.6 },
-  "sa-cea-gate": { supply: 8, honor: 1, industrialMaterial: 5 },
+  "sa-cea-gate": { supply: 11, honor: 0.5, industrialMaterial: 5 },
   "lyra-terminus": { minerals: 3, uridium: 0.6 },
-  "thokt-vault": { supply: 8, honor: 1, industrialMaterial: 5 },
+  "thokt-vault": { supply: 11, honor: 0.5, industrialMaterial: 5 },
   "novem": { minerals: 3, uridium: 0.6 },
-  "kharon-prime": { supply: 8, honor: 1, industrialMaterial: 5 },
+  "kharon-prime": { supply: 11, honor: 0.5, industrialMaterial: 5 },
   "helios-drift": { minerals: 3, uridium: 0.6 },
-  "blackglass": { supply: 8, honor: 1, industrialMaterial: 5 },
+  "blackglass": { supply: 11, honor: 0.5, industrialMaterial: 5 },
   "red-sabbath": { minerals: 3, uridium: 0.6 },
   "nexus-aster": { supply: 10, minerals: 3, industrialMaterial: 5, uridium: 0.6 },
   "goregate": { supply: 5, minerals: 5, industrialMaterial: 6, uridium: 0.6 }

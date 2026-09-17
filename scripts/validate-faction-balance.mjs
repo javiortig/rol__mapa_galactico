@@ -103,8 +103,8 @@ for (const pair of balanceConfig.initialPairs ?? []) {
     errors.push(`${pair.factionSlug}: la capital ${pair.capitalSlug} no debe tener Uridium.`);
   }
 
-  if (!almostEqual(Number(adjacent.uridium ?? 0), 0.3)) {
-    errors.push(`${pair.factionSlug}: el adyacente ${pair.adjacentSlug} debe producir 0.3 Uridium/dia.`);
+  if (!almostEqual(Number(adjacent.uridium ?? 0), 0.6)) {
+    errors.push(`${pair.factionSlug}: el adyacente ${pair.adjacentSlug} debe producir 0.6 Uridium/dia.`);
   }
 
   if (!almostEqual(Number(capital.industrial_material ?? 0), 5)) {

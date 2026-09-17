@@ -10,8 +10,8 @@
   "forceNoGoldUnitSlugs": [
     "unit-adeptus-custodes-venatari-custodians"
   ],
-  "dailyInitialPairRecruitmentPoints": 19,
-  "weeklyInitialPairRecruitmentPoints": 133,
+  "dailyInitialPairRecruitmentPoints": 19.5,
+  "weeklyInitialPairRecruitmentPoints": 136.5,
   "pointValues": {
     "supply": 1,
     "minerals": 2,
@@ -53,20 +53,20 @@
     }
   ],
   "systemCapacities": {
-    "mordax": { "supply": 8, "honor": 1, "industrial_material": 5 },
-    "drusus": { "minerals": 3, "uridium": 0.3 },
-    "sa-cea-gate": { "supply": 8, "honor": 1, "industrial_material": 5 },
-    "lyra-terminus": { "minerals": 3, "uridium": 0.3 },
-    "thokt-vault": { "supply": 8, "honor": 1, "industrial_material": 5 },
-    "novem": { "minerals": 3, "uridium": 0.3 },
-    "kharon-prime": { "supply": 8, "honor": 1, "industrial_material": 5 },
-    "helios-drift": { "minerals": 3, "uridium": 0.3 },
-    "blackglass": { "supply": 8, "honor": 1, "industrial_material": 5 },
-    "red-sabbath": { "minerals": 3, "uridium": 0.3 },
+    "mordax": { "supply": 11, "honor": 0.5, "industrial_material": 5 },
+    "drusus": { "minerals": 3, "uridium": 0.6 },
+    "sa-cea-gate": { "supply": 11, "honor": 0.5, "industrial_material": 5 },
+    "lyra-terminus": { "minerals": 3, "uridium": 0.6 },
+    "thokt-vault": { "supply": 11, "honor": 0.5, "industrial_material": 5 },
+    "novem": { "minerals": 3, "uridium": 0.6 },
+    "kharon-prime": { "supply": 11, "honor": 0.5, "industrial_material": 5 },
+    "helios-drift": { "minerals": 3, "uridium": 0.6 },
+    "blackglass": { "supply": 11, "honor": 0.5, "industrial_material": 5 },
+    "red-sabbath": { "minerals": 3, "uridium": 0.6 },
     "maelstrom-gas": {},
     "voidmist-basin": {},
-    "nexus-aster": { "supply": 10, "minerals": 3, "industrial_material": 5, "uridium": 0.3 },
-    "goregate": { "supply": 5, "minerals": 5, "industrial_material": 6, "uridium": 0.3 }
+    "nexus-aster": { "supply": 10, "minerals": 3, "industrial_material": 5, "uridium": 0.6 },
+    "goregate": { "supply": 5, "minerals": 5, "industrial_material": 6, "uridium": 0.6 }
   },
   "initialFactionResources": {
     "industrialMaterial": 80,

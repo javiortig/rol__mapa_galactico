@@ -164,7 +164,7 @@ Estado jugable actual:
 - El catálogo final de unidades se genera con `npm run units:generate`; importa 347 hojas de unidad de 11.ª edición: 333 desde `data/11th40kPoints.txt` y 14 organismos tiránidos de `Final Day` para Cultos Genestealer desde `data/11th-final-day-tyranids.json`.
 - Los costes variables oficiales MFM de 11.ª edición se generan con `npm run units:generate-options` desde `https://mfm.warhammer-community.com/en/` y se guardan en `data/11th-unit-cost-options.json`. Este archivo añade tamaños legales y extras pagados sin modificar `data/11th40kPoints.txt`. Si MFM trae recargos por copias repetidas, la campaña los conserva como dato de origen pero no los aplica.
 - El balance de costes y producción vive en `data/balance/faction-balance.json`; se audita con `docs/generated/faction-balance-report.md` y se valida con `npm run balance:validate`.
-- Capital + adyacente neutral suman 19 puntos/día potenciales en recursos de reclutamiento; Material Industrial y Uridium tienen economía separada. En el balance actual no hay Oro natural en sistemas.
+- Capital + adyacente neutral suman 19,5 puntos/día potenciales en recursos de reclutamiento; Material Industrial y Uridium tienen economía separada. En el balance actual no hay Oro natural en sistemas.
 - Los árboles de tropas por facción se definen de forma declarativa en `data/technology/faction-troop-trees.json` y se validan con `npm run tech:validate-troops`.
 - Producción diaria por tick temporal configurable, calculada desde edificios activos.
 - Movimiento, reclutamiento e investigación funcionan por timestamps y resolvers backend/lazy processing.
@@ -616,7 +616,7 @@ El mapa final usa capacidades explícitas, no generación determinista. El objet
 
 - Cada jugador empieza controlando solo su capital.
 - El sistema adyacente directo empieza neutral y aporta parte de la economía inicial cuando se conquista, pero no empieza con edificios construidos.
-- Capital + adyacente suman `19 puntos/día` potenciales solo en recursos de reclutamiento: Suministro, Mineral, Honor y Oro.
+- Capital + adyacente suman `19,5 puntos/día` potenciales solo en recursos de reclutamiento: Suministro, Mineral, Honor y Oro.
 - Material Industrial y Uridium no cuentan para ese cálculo de puntos Warhammer.
 - Capital y adyacente no tienen capacidad natural de Oro.
 - Las capitales tienen `5 Material Industrial/día` de capacidad natural y `0 Uridium/día`.
@@ -638,11 +638,11 @@ Tabla vigente de capital + adyacente:
 
 | Facción | Capital | Capacidad capital | Adyacente neutral | Capacidad adyacente | Total reclutamiento |
 |---|---|---:|---|---:|---:|
-| Legiones Daemónicas | Fasciata | 8 Suministro, 1 Honor, 5 Material Industrial | Drusus | 3 Mineral, 0.3 Uridium | 19 pts/día |
-| Sombra del Emperador | Obscura Primus | 8 Suministro, 1 Honor, 5 Material Industrial | Lyra Terminus | 3 Mineral, 0.3 Uridium | 19 pts/día |
-| Necrones | Necronpolis | 8 Suministro, 1 Honor, 5 Material Industrial | Novem | 3 Mineral, 0.3 Uridium | 19 pts/día |
-| Adeptus Custodes | Santa Terra | 8 Suministro, 1 Honor, 5 Material Industrial | Helios Drift | 3 Mineral, 0.3 Uridium | 19 pts/día |
-| Cultos Genestealer | Yaracuby77 Mina Abandonada | 8 Suministro, 1 Honor, 5 Material Industrial | Red Sabbath | 3 Mineral, 0.3 Uridium | 19 pts/día |
+| Legiones Daemónicas | Fasciata | 11 Suministro, 0.5 Honor, 5 Material Industrial | Drusus | 3 Mineral, 0.6 Uridium | 19,5 pts/día |
+| Sombra del Emperador | Obscura Primus | 11 Suministro, 0.5 Honor, 5 Material Industrial | Lyra Terminus | 3 Mineral, 0.6 Uridium | 19,5 pts/día |
+| Necrones | Necronpolis | 11 Suministro, 0.5 Honor, 5 Material Industrial | Novem | 3 Mineral, 0.6 Uridium | 19,5 pts/día |
+| Adeptus Custodes | Santa Terra | 11 Suministro, 0.5 Honor, 5 Material Industrial | Helios Drift | 3 Mineral, 0.6 Uridium | 19,5 pts/día |
+| Cultos Genestealer | Yaracuby77 Mina Abandonada | 11 Suministro, 0.5 Honor, 5 Material Industrial | Red Sabbath | 3 Mineral, 0.6 Uridium | 19,5 pts/día |
 
 Los edificios iniciales ya no existen. Las facciones empiezan con recursos suficientes para construir y moverse sin que la economía arranque ya explotada.
 
