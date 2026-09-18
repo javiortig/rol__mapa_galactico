@@ -1314,6 +1314,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
           <div className="grid gap-4 xl:grid-cols-[1fr_320px]">
             <div className="grid gap-3">
               <ResourceEditorGrid
+                decimalKeys={[]}
                 keys={factionResourceKeys}
                 value={limitDraft}
                 onChange={(resourceKey, nextValue) =>
@@ -1377,6 +1378,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
               </select>
 
               <ResourceEditorGrid
+                decimalKeys={["honor", "uridium"]}
                 keys={factionResourceKeys}
                 value={resourceDraft}
                 onChange={(resourceKey, nextValue) =>
@@ -1415,6 +1417,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
               </select>
 
               <ResourceEditorGrid
+                decimalKeys={["honor", "uridium"]}
                 keys={systemCapabilityKeys}
                 value={capabilityDraft}
                 onChange={(resourceKey, nextValue) =>
@@ -1746,10 +1749,12 @@ function AdminBattleResolutionForm({
 }
 
 function ResourceEditorGrid<K extends keyof ResourceBundle>({
+  decimalKeys,
   keys,
   value,
   onChange
 }: {
+  decimalKeys: readonly K[];
   keys: readonly K[];
   value: Record<K, number>;
   onChange: (resourceKey: K, nextValue: number) => void;
@@ -1765,8 +1770,14 @@ function ResourceEditorGrid<K extends keyof ResourceBundle>({
           <input
             className="w-full rounded-md border border-cyan-200/15 bg-slate-950/50 px-2 py-1.5 text-sm text-cyan-50"
             min={0}
-            onChange={(event) => onChange(resourceKey, Math.max(0, toNumber(event.target.value, 0)))}
-            step={resourceKey === "uridium" ? "0.1" : "1"}
+            onChange={(event) => {
+              const nextValue = Math.max(0, toNumber(event.target.value, 0));
+              onChange(
+                resourceKey,
+                decimalKeys.includes(resourceKey) ? Math.round(nextValue * 100) / 100 : Math.trunc(nextValue)
+              );
+            }}
+            step={decimalKeys.includes(resourceKey) ? "0.1" : "1"}
             type="number"
             value={value[resourceKey] ?? 0}
           />

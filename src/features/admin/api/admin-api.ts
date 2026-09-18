@@ -69,13 +69,13 @@ export async function adminSetFactionResources(input: {
 
   const { error } = await supabase.rpc("admin_set_faction_resources", {
     target_faction_id: input.factionId,
-    supply: input.resources.supply,
-    minerals: input.resources.minerals,
-    honor: input.resources.honor,
-    gold: input.resources.gold,
-    industrial_material: input.resources.industrialMaterial,
-    uridium: input.resources.uridium,
-    technology: input.resources.technology
+    supply: toNonNegativeInteger(input.resources.supply),
+    minerals: toNonNegativeInteger(input.resources.minerals),
+    honor: toNonNegativeDecimal(input.resources.honor),
+    gold: toNonNegativeInteger(input.resources.gold),
+    industrial_material: toNonNegativeInteger(input.resources.industrialMaterial),
+    uridium: toNonNegativeDecimal(input.resources.uridium),
+    technology: toNonNegativeInteger(input.resources.technology)
   });
 
   if (error) {
@@ -91,17 +91,26 @@ export async function adminSetSystemResourceCapabilities(input: {
 
   const { error } = await supabase.rpc("admin_set_system_resource_capabilities", {
     target_system_id: input.systemId,
-    supply: input.capabilities.supply,
-    minerals: input.capabilities.minerals,
-    honor: input.capabilities.honor,
-    gold: input.capabilities.gold,
-    industrial_material: input.capabilities.industrialMaterial,
-    uridium: input.capabilities.uridium
+    supply: toNonNegativeInteger(input.capabilities.supply),
+    minerals: toNonNegativeInteger(input.capabilities.minerals),
+    honor: toNonNegativeDecimal(input.capabilities.honor),
+    gold: toNonNegativeInteger(input.capabilities.gold),
+    industrial_material: toNonNegativeInteger(input.capabilities.industrialMaterial),
+    uridium: toNonNegativeDecimal(input.capabilities.uridium)
   });
 
   if (error) {
     throw new Error(fixSpanishText(error.message));
   }
+}
+
+function toNonNegativeInteger(value: number) {
+  return Math.max(0, Math.trunc(Number.isFinite(value) ? value : 0));
+}
+
+function toNonNegativeDecimal(value: number) {
+  const safeValue = Math.max(0, Number.isFinite(value) ? value : 0);
+  return Math.round(safeValue * 100) / 100;
 }
 
 export async function adminSetCampaignLimits(input: {
