@@ -29,6 +29,7 @@ import { Panel } from "@/components/ui/panel";
 import { ResourceIcon, resourceLabels } from "@/components/ui/resource-icon";
 import { formatCountdown } from "@/lib/time";
 import { adminConfirmBattleReport } from "@/features/battle-reports/api/battle-report-api";
+import { AdminFactionSummary } from "@/features/admin/components/admin-faction-summary";
 import {
   adminConstructBuilding,
   adminCreateCampaignEvent,
@@ -504,6 +505,8 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
             </p>
           ) : null}
         </Panel>
+
+        <AdminFactionSummary snapshot={snapshot} />
 
         <Panel className="p-4 md:p-5">
           <div className="mb-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
