@@ -15,6 +15,13 @@
     "legiones-daemonicas": 0.4,
     "cultos-genestealer": 0.4
   },
+  "characterHonorShareByUnitSlug": {
+    "unit-legiones-daemonicas-mortarion": 0.5,
+    "unit-legiones-daemonicas-noxious-blightbringer": 0.5,
+    "unit-legiones-daemonicas-malignant-plaguecaster": 0.5,
+    "unit-legiones-daemonicas-biologus-putrifier": 0.5,
+    "unit-legiones-daemonicas-lord-of-contagion": 0.5
+  },
   "namedAlliedCharacterSlugs": [
     "unit-adeptus-custodes-canis-rex",
     "unit-cultos-genestealer-deathleaper",
@@ -27,6 +34,8 @@
     "unit-adeptus-custodes-witchseekers",
     "unit-legiones-daemonicas-blue-horrors",
     "unit-legiones-daemonicas-pink-horrors",
+    "unit-legiones-daemonicas-plague-marines",
+    "unit-legiones-daemonicas-poxwalkers",
     "unit-necrones-flayed-ones",
     "unit-necrones-immortals",
     "unit-necrones-necron-warriors",
@@ -49,6 +58,10 @@
     "unit-legiones-daemonicas-daemon-prince-of-chaos-with-wings": 0.25,
     "unit-legiones-daemonicas-burning-chariot": 0.25,
     "unit-legiones-daemonicas-belakor": 0.25,
+    "unit-legiones-daemonicas-blightlord-terminators": 0.25,
+    "unit-legiones-daemonicas-mortarion": 0.25,
+    "unit-legiones-daemonicas-plagueburst-crawler": 0.25,
+    "unit-legiones-daemonicas-lord-of-contagion": 0.25,
     "unit-necrones-ctan-shard-of-the-deceiver": 0.25,
     "unit-necrones-ctan-shard-of-the-nightbringer": 0.25,
     "unit-necrones-ctan-shard-of-the-void-dragon": 0.25,
@@ -70,8 +83,8 @@
     "unit-cultos-genestealer-acolyte-iconward": 0.25,
     "unit-cultos-genestealer-aberrants": 0.25
   },
-  "dailyInitialPairRecruitmentPoints": 19.5,
-  "weeklyInitialPairRecruitmentPoints": 136.5,
+  "dailyInitialPairRecruitmentPoints": 21.5,
+  "weeklyInitialPairRecruitmentPoints": 150.5,
   "pointValues": {
     "supply": 1,
     "minerals": 2,
@@ -114,23 +127,37 @@
   ],
   "systemCapacities": {
     "mordax": { "supply": 11, "honor": 0.5, "industrial_material": 5 },
-    "drusus": { "minerals": 3, "uridium": 0.6 },
+    "drusus": { "minerals": 4, "uridium": 0.6 },
     "sa-cea-gate": { "supply": 11, "honor": 0.5, "industrial_material": 5 },
-    "lyra-terminus": { "minerals": 3, "uridium": 0.6 },
+    "lyra-terminus": { "minerals": 4, "uridium": 0.6 },
     "thokt-vault": { "supply": 11, "honor": 0.5, "industrial_material": 5 },
-    "novem": { "minerals": 3, "uridium": 0.6 },
+    "novem": { "minerals": 4, "uridium": 0.6 },
     "kharon-prime": { "supply": 11, "honor": 0.5, "industrial_material": 5 },
-    "helios-drift": { "minerals": 3, "uridium": 0.6 },
+    "helios-drift": { "minerals": 4, "uridium": 0.6 },
     "blackglass": { "supply": 11, "honor": 0.5, "industrial_material": 5 },
-    "red-sabbath": { "minerals": 3, "uridium": 0.6 },
+    "red-sabbath": { "minerals": 4, "uridium": 0.6 },
     "maelstrom-gas": {},
     "voidmist-basin": {},
+    "nebulosa-caronte": {},
     "nexus-aster": { "supply": 10, "minerals": 3, "industrial_material": 5, "uridium": 0.6 },
-    "goregate": { "supply": 5, "minerals": 5, "industrial_material": 6, "uridium": 0.6 }
+    "goregate": { "supply": 5, "minerals": 5, "industrial_material": 6, "uridium": 0.6 },
+    "cenotafio-ankh": { "supply": 4, "minerals": 3 },
+    "umbral-ceniza": { "supply": 6, "minerals": 2 },
+    "baluarte-sol": { "supply": 6, "minerals": 2 },
+    "pozo-khepra": { "supply": 8, "minerals": 1 },
+    "vigilia-noctis": { "supply": 8, "minerals": 1 },
+    "corona-voss": { "supply": 7, "minerals": 2, "honor": 1, "gold": 1, "industrial_material": 5, "uridium": 0.5 },
+    "cicatriz-helion": { "supply": 6, "minerals": 5, "gold": 1, "industrial_material": 5, "uridium": 0.5 },
+    "nadir-kappa": { "supply": 12, "minerals": 4, "gold": 1, "industrial_material": 4, "uridium": 0.5 }
   },
+  "goldSystemSlugs": [
+    "cicatriz-helion",
+    "corona-voss",
+    "nadir-kappa"
+  ],
   "initialFactionResources": {
-    "industrialMaterial": 80,
-    "uridium": 3
+    "industrialMaterial": 150,
+    "uridium": 10
   },
   "initialBuildings": "none",
   "basicBuildingSlugs": [
@@ -140,20 +167,20 @@
     "barracon-infanteria"
   ],
   "buildingCosts": {
-    "granja-biologica": 20,
-    "complejo-minero": 20,
-    "planta-fundicion": 20,
-    "barracon-infanteria": 20,
-    "monumento": 24,
-    "refineria-iridium": 26,
-    "camara-comercio": 30,
-    "antenas-reconocimiento": 30,
-    "mina-oro": 34,
-    "taller-guerra": 38,
-    "nido-bestias": 38,
-    "nexo-inteligencia": 38,
-    "cuartel-mando": 42,
-    "santuario-reliquias": 44,
-    "camara-leyendas": 56
+    "granja-biologica": 25,
+    "complejo-minero": 25,
+    "planta-fundicion": 25,
+    "barracon-infanteria": 25,
+    "monumento": 30,
+    "refineria-iridium": 33,
+    "camara-comercio": 38,
+    "antenas-reconocimiento": 38,
+    "mina-oro": 43,
+    "taller-guerra": 48,
+    "nido-bestias": 48,
+    "nexo-inteligencia": 48,
+    "cuartel-mando": 53,
+    "santuario-reliquias": 55,
+    "camara-leyendas": 70
   }
 }

@@ -24,14 +24,22 @@ import {
   hasUnlockedTechnologyEffect
 } from "@/features/technology/lib/technology-state";
 import { formatCompactOwnedResourceValue, formatOwnedResourceValue } from "@/lib/resource-format";
-import type { CampaignSnapshot, FactionResources, TradeOffer, TradeOfferType, TradeableResourceKey } from "@/domain/campaign";
+import type {
+  CampaignSnapshot,
+  FactionResources,
+  MerchantTradeResourceKey,
+  TradeOffer,
+  TradeOfferType,
+  TradeableResourceKey
+} from "@/domain/campaign";
 
-const merchantResources: TradeableResourceKey[] = ["supply", "minerals"];
+const merchantResources: MerchantTradeResourceKey[] = ["supply", "minerals", "honor"];
 const stellarTradeResources: TradeableResourceKey[] = ["supply", "minerals", "industrialMaterial", "uridium"];
 
-const resourcePointValues: Record<TradeableResourceKey | "gold", number> = {
+const resourcePointValues: Record<TradeableResourceKey | MerchantTradeResourceKey | "gold", number> = {
   supply: 1,
   minerals: 2,
+  honor: 5,
   uridium: 2,
   industrialMaterial: 2,
   gold: 5
@@ -114,7 +122,7 @@ function MerchantPanel({ snapshot }: { snapshot: CampaignSnapshot }) {
   const queryClient = useQueryClient();
   const resources = getCurrentResources(snapshot);
   const rpcReady = canUseTradeRpc();
-  const [resourceKey, setResourceKey] = useState<TradeableResourceKey>("minerals");
+  const [resourceKey, setResourceKey] = useState<MerchantTradeResourceKey>("minerals");
   const [quantity, setQuantity] = useState(10);
   const merchantUnlocked = hasUnlockedTechnologyEffect(snapshot, "unlock_merchant_trade");
   const tradeRates = getMerchantTradeRates(snapshot);
@@ -297,20 +305,26 @@ function StellarTradePanel({ snapshot }: { snapshot: CampaignSnapshot }) {
           </Button>
         </div>
 
-        <label className="mt-4 block text-sm">
-          <span className="mb-2 block text-slate-300">Recurso</span>
-          <select
-            className="w-full rounded-md border border-cyan-200/15 bg-slate-950/70 px-3 py-2 text-sm text-cyan-50 outline-none"
-            onChange={(event) => setResourceKey(event.target.value as TradeableResourceKey)}
-            value={resourceKey}
-          >
+        <fieldset className="mt-4">
+          <legend className="mb-2 text-sm text-slate-300">Recurso</legend>
+          <div className="grid grid-cols-2 gap-2">
             {stellarTradeResources.map((resource) => (
-              <option key={resource} value={resource}>
-                {resourceLabels[resource]}
-              </option>
+              <button
+                className={`flex min-h-12 items-center gap-2 rounded-md border px-3 py-2 text-left text-sm transition ${
+                  resource === resourceKey
+                    ? "border-cyan-200/55 bg-cyan-300/12 text-cyan-50"
+                    : "border-cyan-200/15 bg-slate-950/45 text-slate-300 hover:border-cyan-200/35"
+                }`}
+                key={resource}
+                onClick={() => setResourceKey(resource)}
+                type="button"
+              >
+                <ResourceIcon className="size-5 shrink-0" resource={resource} />
+                <span className="min-w-0 leading-tight">{resourceLabels[resource]}</span>
+              </button>
             ))}
-          </select>
-        </label>
+          </div>
+        </fieldset>
 
         <NumberField label="Cantidad de recurso" onChange={setResourceAmount} value={resourceAmount} />
         <NumberField label="Oro ofertado" onChange={setGoldAmount} value={goldAmount} />
@@ -476,7 +490,7 @@ function TradeActionCard({
 }: {
   action: string;
   buttonText: string;
-  primaryResource: TradeableResourceKey;
+  primaryResource: TradeableResourceKey | MerchantTradeResourceKey;
   primaryValue: number;
   secondaryResource: "gold";
   secondaryValue: number;
@@ -578,15 +592,15 @@ function getCurrentResources(snapshot: CampaignSnapshot) {
   return snapshot.resources.find((item) => item.factionId === snapshot.currentUser.factionId);
 }
 
-function ownedResourceFor(resources: FactionResources | undefined, resource: TradeableResourceKey) {
+function ownedResourceFor(resources: FactionResources | undefined, resource: TradeableResourceKey | MerchantTradeResourceKey) {
   return formatCompactOwnedResourceValue(resources?.[resource] ?? 0);
 }
 
-function getMerchantBuyCost(resource: TradeableResourceKey, quantity: number, buyMultiplier: number) {
+function getMerchantBuyCost(resource: MerchantTradeResourceKey, quantity: number, buyMultiplier: number) {
   return Math.ceil((resourcePointValues[resource] * quantity * buyMultiplier) / resourcePointValues.gold);
 }
 
-function getMerchantSellPayout(resource: TradeableResourceKey, quantity: number, sellMultiplier: number) {
+function getMerchantSellPayout(resource: MerchantTradeResourceKey, quantity: number, sellMultiplier: number) {
   return Math.ceil((resourcePointValues[resource] * quantity * sellMultiplier) / resourcePointValues.gold);
 }
 

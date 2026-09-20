@@ -127,6 +127,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       battleOperationMembersResult,
       battleUnitCommitmentsResult,
       unitTemplatesResult,
+      unitTemplateTechnologyUnlocksResult,
       unitTemplateModelOptionsResult,
       unitTemplateWargearOptionsResult,
       recruitmentQueueResult,
@@ -163,6 +164,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       supabase.from("battle_operation_members").select("*").order("created_at"),
       supabase.from("battle_unit_commitments").select("*").order("joined_at"),
       supabase.from("unit_templates").select("*").order("name"),
+      supabase.from("unit_template_technology_unlocks").select("unit_template_id, technology_node_id"),
       supabase.from("unit_template_model_options").select("*").order("min_models").order("copy_from"),
       supabase.from("unit_template_wargear_options").select("*").order("name"),
       supabase.from("recruitment_queue").select("*, unit_templates(name)").order("finishes_at"),
@@ -230,6 +232,10 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       getRows(unitTemplateWargearOptionsResult, "unit_template_wargear_options").map(mapUnitTemplateWargearOption),
       (item) => item.unitTemplateId
     );
+    const technologyUnlocksByTemplate = groupBy(
+      getRows(unitTemplateTechnologyUnlocksResult, "unit_template_technology_unlocks"),
+      (item) => item.unit_template_id as string
+    );
     let battleLimits: BattleLimitSummary | null = null;
 
     if (currentFactionId) {
@@ -282,7 +288,8 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
         mapUnitTemplate(
           row,
           modelOptionsByTemplate.get(row.id as string) ?? [],
-          wargearOptionsByTemplate.get(row.id as string) ?? []
+          wargearOptionsByTemplate.get(row.id as string) ?? [],
+          (technologyUnlocksByTemplate.get(row.id as string) ?? []).map((item) => item.technology_node_id as string)
         )
       ),
       recruitmentQueue: getRows(recruitmentQueueResult, "recruitment_queue").map(mapRecruitmentQueueItem),
@@ -768,7 +775,8 @@ function mapBattleUnitCommitment(row: Record<string, unknown>): BattleUnitCommit
 function mapUnitTemplate(
   row: Record<string, unknown>,
   modelOptions: UnitTemplateModelOption[] = [],
-  wargearOptions: UnitTemplateWargearOption[] = []
+  wargearOptions: UnitTemplateWargearOption[] = [],
+  requiredTechnologyNodeIds: string[] = []
 ): UnitTemplate {
   return {
     id: row.id as string,
@@ -792,6 +800,7 @@ function mapUnitTemplate(
     notes: fixOptionalSpanishText((row.notes as string | null) ?? null),
     isAvailable: Boolean(row.is_available),
     requiredTechnologyNodeId: (row.required_technology_node_id as string | null) ?? null,
+    requiredTechnologyNodeIds,
     sourceSection: (row.source_section as string | null) ?? null,
     sourceFactionName: (row.source_faction_name as string | null) ?? null,
     isAlliedUnit: Boolean(row.is_allied_unit),

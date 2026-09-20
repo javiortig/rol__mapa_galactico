@@ -525,6 +525,126 @@ const baseSystems: BaseSystem[] = [
   }
 ];
 
+const expandedMapSystems: BaseSystem[] = [
+  {
+    id: "umbral-ceniza",
+    name: "Umbral de Ceniza",
+    x: 275,
+    y: 147,
+    size: 0.88,
+    starClass: "orange",
+    type: "Sistema fronterizo",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Una estrella exhausta envuelta en velos de ceniza y fragmentos de antiguas fortalezas orbitales.",
+    production: dailyProduction({})
+  },
+  {
+    id: "vigilia-noctis",
+    name: "Vigilia Noctis",
+    x: 735,
+    y: 68,
+    size: 0.92,
+    starClass: "blue",
+    type: "Sistema fronterizo",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Un corredor oscuro vigilado por lunas sin atmosfera y balizas imperiales apagadas.",
+    production: dailyProduction({})
+  },
+  {
+    id: "pozo-khepra",
+    name: "Pozo Khepra",
+    x: 784,
+    y: 447,
+    size: 0.84,
+    starClass: "yellow",
+    type: "Sistema fronterizo",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Pozos mineros abandonados horadan sus mundos interiores, unidos por tuneles de origen incierto.",
+    production: dailyProduction({})
+  },
+  {
+    id: "cenotafio-ankh",
+    name: "Cenotafio Ankh",
+    x: 615,
+    y: 860,
+    size: 0.9,
+    starClass: "green",
+    type: "Sistema fronterizo",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Un sol verdoso ilumina complejos funerarios que preceden a todos los registros del sector.",
+    production: dailyProduction({})
+  },
+  {
+    id: "baluarte-sol",
+    name: "Baluarte Sol",
+    x: 287,
+    y: 807,
+    size: 0.9,
+    starClass: "white",
+    type: "Sistema fronterizo",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Restos de una ciudadela solar orbitan una estrella blanca de luz severa y constante.",
+    production: dailyProduction({})
+  },
+  {
+    id: "corona-voss",
+    name: "Corona Voss",
+    x: 452,
+    y: 406,
+    size: 0.82,
+    starClass: "white",
+    type: "Sistema del corredor central",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Mundos rocosos forman una corona irregular alrededor de una estrella cubierta de cicatrices magneticas.",
+    production: dailyProduction({})
+  },
+  {
+    id: "nadir-kappa",
+    name: "Nadir Kappa",
+    x: 504,
+    y: 594,
+    size: 0.86,
+    starClass: "red",
+    type: "Encrucijada central",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Una encrucijada de rutas antiguas marcada por pecios, puestos de escucha y senales contradictorias.",
+    production: dailyProduction({})
+  },
+  {
+    id: "cicatriz-helion",
+    name: "Cicatriz Helion",
+    x: 378,
+    y: 687,
+    size: 0.8,
+    starClass: "violet",
+    type: "Sistema del corredor central",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Descargas violetas recorren una cadena de planetas quebrados por una catastrofe olvidada.",
+    production: dailyProduction({})
+  },
+  {
+    id: "nebulosa-caronte",
+    name: "Nebulosa Caronte",
+    x: 298,
+    y: 542,
+    size: 1.06,
+    starClass: "violet",
+    type: "Anomalia gaseosa central",
+    status: "neutral",
+    isCapital: false,
+    publicDescription: "Un oceano de gases ionizados donde los auspex dibujan rutas que cambian con cada tormenta.",
+    production: dailyProduction({})
+  }
+];
+
 const finalMapSystemIds = new Set([
   "mordax",
   "drusus",
@@ -539,8 +659,43 @@ const finalMapSystemIds = new Set([
   "maelstrom-gas",
   "voidmist-basin",
   "nexus-aster",
-  "goregate"
+  "goregate",
+  "umbral-ceniza",
+  "vigilia-noctis",
+  "pozo-khepra",
+  "cenotafio-ankh",
+  "baluarte-sol",
+  "corona-voss",
+  "nadir-kappa",
+  "cicatriz-helion",
+  "nebulosa-caronte"
 ]);
+
+const expandedMapPositions: Record<string, { x: number; y: number }> = {
+  mordax: { x: 102, y: 157 },
+  drusus: { x: 167, y: 362 },
+  "umbral-ceniza": { x: 275, y: 147 },
+  goregate: { x: 478, y: 224 },
+  "vigilia-noctis": { x: 735, y: 68 },
+  "sa-cea-gate": { x: 853, y: 137 },
+  "lyra-terminus": { x: 929, y: 329 },
+  "maelstrom-gas": { x: 642, y: 379 },
+  "pozo-khepra": { x: 784, y: 447 },
+  blackglass: { x: 900, y: 552 },
+  "red-sabbath": { x: 800, y: 623 },
+  "voidmist-basin": { x: 679, y: 635 },
+  novem: { x: 756, y: 737 },
+  "thokt-vault": { x: 918, y: 895 },
+  "cenotafio-ankh": { x: 615, y: 860 },
+  "nexus-aster": { x: 494, y: 871 },
+  "baluarte-sol": { x: 287, y: 807 },
+  "kharon-prime": { x: 68, y: 885 },
+  "helios-drift": { x: 78, y: 727 },
+  "nebulosa-caronte": { x: 298, y: 542 },
+  "cicatriz-helion": { x: 378, y: 687 },
+  "nadir-kappa": { x: 504, y: 594 },
+  "corona-voss": { x: 452, y: 406 }
+};
 
 const finalSystemOverrides: Record<string, Partial<BaseSystem>> = {
   "kharon-prime": { x: 145, y: 850, status: "controlled", controllerFactionId: "adeptus-custodes", isCapital: true },
@@ -667,11 +822,17 @@ const finalSystemOverrides: Record<string, Partial<BaseSystem>> = {
   }
 };
 
-const gaseousSystemIds = new Set<string>(["maelstrom-gas", "voidmist-basin"]);
+const gaseousSystemIds = new Set<string>(["maelstrom-gas", "voidmist-basin", "nebulosa-caronte"]);
 
-const systems: CampaignSnapshot["systems"] = baseSystems.filter((system) => finalMapSystemIds.has(system.id)).map((system) => {
+const systems: CampaignSnapshot["systems"] = [...baseSystems, ...expandedMapSystems]
+  .filter((system) => finalMapSystemIds.has(system.id))
+  .map((system) => {
   const isGaseous = gaseousSystemIds.has(system.id);
-  const finalSystem = { ...system, ...finalSystemOverrides[system.id] };
+  const finalSystem = {
+    ...system,
+    ...finalSystemOverrides[system.id],
+    ...expandedMapPositions[system.id]
+  };
 
   return {
     ...finalSystem,
@@ -679,23 +840,38 @@ const systems: CampaignSnapshot["systems"] = baseSystems.filter((system) => fina
     isConquerable: !isGaseous,
     allowsSharedOccupation: isGaseous
   };
-});
+  });
 
 const edges: CampaignSnapshot["edges"] = [
-  { id: "route-01", fromSystemId: "mordax", toSystemId: "drusus", uridiumCost: 1 },
-  { id: "route-02", fromSystemId: "drusus", toSystemId: "maelstrom-gas", uridiumCost: 1 },
-  { id: "route-03", fromSystemId: "sa-cea-gate", toSystemId: "lyra-terminus", uridiumCost: 1 },
-  { id: "route-04", fromSystemId: "lyra-terminus", toSystemId: "maelstrom-gas", uridiumCost: 1 },
-  { id: "route-05", fromSystemId: "thokt-vault", toSystemId: "novem", uridiumCost: 1 },
-  { id: "route-06", fromSystemId: "novem", toSystemId: "voidmist-basin", uridiumCost: 1 },
-  { id: "route-07", fromSystemId: "kharon-prime", toSystemId: "helios-drift", uridiumCost: 1 },
-  { id: "route-08", fromSystemId: "helios-drift", toSystemId: "voidmist-basin", uridiumCost: 1 },
-  { id: "route-09", fromSystemId: "blackglass", toSystemId: "red-sabbath", uridiumCost: 1 },
-  { id: "route-10", fromSystemId: "red-sabbath", toSystemId: "maelstrom-gas", uridiumCost: 1 },
-  { id: "route-11", fromSystemId: "maelstrom-gas", toSystemId: "nexus-aster", uridiumCost: 1 },
-  { id: "route-12", fromSystemId: "maelstrom-gas", toSystemId: "goregate", uridiumCost: 1 },
-  { id: "route-13", fromSystemId: "voidmist-basin", toSystemId: "nexus-aster", uridiumCost: 1 },
-  { id: "route-14", fromSystemId: "voidmist-basin", toSystemId: "goregate", uridiumCost: 1 }
+  { id: "route-drusus-mordax", fromSystemId: "drusus", toSystemId: "mordax", uridiumCost: 1 },
+  { id: "route-mordax-umbral-ceniza", fromSystemId: "mordax", toSystemId: "umbral-ceniza", uridiumCost: 1 },
+  { id: "route-goregate-umbral-ceniza", fromSystemId: "goregate", toSystemId: "umbral-ceniza", uridiumCost: 1 },
+  { id: "route-drusus-nebulosa-caronte", fromSystemId: "drusus", toSystemId: "nebulosa-caronte", uridiumCost: 1 },
+  { id: "route-lyra-terminus-sa-cea-gate", fromSystemId: "lyra-terminus", toSystemId: "sa-cea-gate", uridiumCost: 1 },
+  { id: "route-sa-cea-gate-vigilia-noctis", fromSystemId: "sa-cea-gate", toSystemId: "vigilia-noctis", uridiumCost: 1 },
+  { id: "route-goregate-vigilia-noctis", fromSystemId: "goregate", toSystemId: "vigilia-noctis", uridiumCost: 1 },
+  { id: "route-lyra-terminus-maelstrom-gas", fromSystemId: "lyra-terminus", toSystemId: "maelstrom-gas", uridiumCost: 1 },
+  { id: "route-goregate-maelstrom-gas", fromSystemId: "goregate", toSystemId: "maelstrom-gas", uridiumCost: 1 },
+  { id: "route-maelstrom-gas-pozo-khepra", fromSystemId: "maelstrom-gas", toSystemId: "pozo-khepra", uridiumCost: 1 },
+  { id: "route-blackglass-pozo-khepra", fromSystemId: "blackglass", toSystemId: "pozo-khepra", uridiumCost: 1 },
+  { id: "route-blackglass-red-sabbath", fromSystemId: "blackglass", toSystemId: "red-sabbath", uridiumCost: 1 },
+  { id: "route-red-sabbath-voidmist-basin", fromSystemId: "red-sabbath", toSystemId: "voidmist-basin", uridiumCost: 1 },
+  { id: "route-novem-voidmist-basin", fromSystemId: "novem", toSystemId: "voidmist-basin", uridiumCost: 1 },
+  { id: "route-novem-thokt-vault", fromSystemId: "novem", toSystemId: "thokt-vault", uridiumCost: 1 },
+  { id: "route-cenotafio-ankh-thokt-vault", fromSystemId: "cenotafio-ankh", toSystemId: "thokt-vault", uridiumCost: 1 },
+  { id: "route-cenotafio-ankh-nexus-aster", fromSystemId: "cenotafio-ankh", toSystemId: "nexus-aster", uridiumCost: 1 },
+  { id: "route-nexus-aster-voidmist-basin", fromSystemId: "nexus-aster", toSystemId: "voidmist-basin", uridiumCost: 1 },
+  { id: "route-helios-drift-nebulosa-caronte", fromSystemId: "helios-drift", toSystemId: "nebulosa-caronte", uridiumCost: 1 },
+  { id: "route-helios-drift-kharon-prime", fromSystemId: "helios-drift", toSystemId: "kharon-prime", uridiumCost: 1 },
+  { id: "route-baluarte-sol-kharon-prime", fromSystemId: "baluarte-sol", toSystemId: "kharon-prime", uridiumCost: 1 },
+  { id: "route-baluarte-sol-nexus-aster", fromSystemId: "baluarte-sol", toSystemId: "nexus-aster", uridiumCost: 1 },
+  { id: "route-corona-voss-nebulosa-caronte", fromSystemId: "corona-voss", toSystemId: "nebulosa-caronte", uridiumCost: 1 },
+  { id: "route-corona-voss-maelstrom-gas", fromSystemId: "corona-voss", toSystemId: "maelstrom-gas", uridiumCost: 1 },
+  { id: "route-nadir-kappa-nebulosa-caronte", fromSystemId: "nadir-kappa", toSystemId: "nebulosa-caronte", uridiumCost: 1 },
+  { id: "route-maelstrom-gas-nadir-kappa", fromSystemId: "maelstrom-gas", toSystemId: "nadir-kappa", uridiumCost: 1 },
+  { id: "route-nadir-kappa-voidmist-basin", fromSystemId: "nadir-kappa", toSystemId: "voidmist-basin", uridiumCost: 1 },
+  { id: "route-cicatriz-helion-nebulosa-caronte", fromSystemId: "cicatriz-helion", toSystemId: "nebulosa-caronte", uridiumCost: 1 },
+  { id: "route-cicatriz-helion-voidmist-basin", fromSystemId: "cicatriz-helion", toSystemId: "voidmist-basin", uridiumCost: 1 }
 ];
 
 const resources: CampaignSnapshot["resources"] = [
@@ -1766,11 +1942,18 @@ const troopTechnologyEffects: CampaignSnapshot["technologyEffects"] = readyTroop
     payload: { unitTemplateSlugs: node.unitTemplateSlugs ?? [] }
   }))
 );
-const troopTechnologyByUnitSlug = new Map(
-  readyTroopTrees.flatMap((tree) =>
-    tree.nodes.flatMap((node) => (node.unitTemplateSlugs ?? []).map((unitSlug) => [unitSlug, node.slug] as const))
-  )
-);
+const troopTechnologiesByUnitSlug = new Map<string, string[]>();
+for (const tree of readyTroopTrees) {
+  for (const node of tree.nodes) {
+    for (const unitSlug of node.unitTemplateSlugs ?? []) {
+      const technologyNodeIds = troopTechnologiesByUnitSlug.get(unitSlug) ?? [];
+      if (!technologyNodeIds.includes(node.slug)) {
+        technologyNodeIds.push(node.slug);
+      }
+      troopTechnologiesByUnitSlug.set(unitSlug, technologyNodeIds);
+    }
+  }
+}
 type MfmCostOptionsUnit = (typeof mfmCostOptions.units)[number];
 type MfmChange = { direction?: unknown; amount?: unknown } | null | undefined;
 
@@ -1787,7 +1970,8 @@ function getMfmChangeAmount(change: MfmChange) {
 }
 
 const unitTemplates: CampaignSnapshot["unitTemplates"] = generated40kUnitTemplates.filter((template) => isActiveFactionId(template.factionId)).map((template) => {
-  const requiredTechnologyNodeId = troopTechnologyByUnitSlug.get(template.id);
+  const requiredTechnologyNodeIds = troopTechnologiesByUnitSlug.get(template.id) ?? [];
+  const requiredTechnologyNodeId = requiredTechnologyNodeIds[0];
   const mfmOptions = mfmOptionsByTemplateId.get(template.id);
   const withMfmOptions = {
     ...template,
@@ -1825,7 +2009,8 @@ const unitTemplates: CampaignSnapshot["unitTemplates"] = generated40kUnitTemplat
     ? {
         ...withMfmOptions,
         isAvailable: true,
-        requiredTechnologyNodeId
+        requiredTechnologyNodeId,
+        requiredTechnologyNodeIds
       }
     : withMfmOptions;
 });
@@ -1971,17 +2156,25 @@ const productionResourceKeys: ProductionResourceKey[] = [
 
 const balancedSystemCapacities: Record<string, Partial<Record<ProductionResourceKey, number>>> = {
   "mordax": { supply: 11, honor: 0.5, industrialMaterial: 5 },
-  "drusus": { minerals: 3, uridium: 0.6 },
+  "drusus": { minerals: 4, uridium: 0.6 },
   "sa-cea-gate": { supply: 11, honor: 0.5, industrialMaterial: 5 },
-  "lyra-terminus": { minerals: 3, uridium: 0.6 },
+  "lyra-terminus": { minerals: 4, uridium: 0.6 },
   "thokt-vault": { supply: 11, honor: 0.5, industrialMaterial: 5 },
-  "novem": { minerals: 3, uridium: 0.6 },
+  "novem": { minerals: 4, uridium: 0.6 },
   "kharon-prime": { supply: 11, honor: 0.5, industrialMaterial: 5 },
-  "helios-drift": { minerals: 3, uridium: 0.6 },
+  "helios-drift": { minerals: 4, uridium: 0.6 },
   "blackglass": { supply: 11, honor: 0.5, industrialMaterial: 5 },
-  "red-sabbath": { minerals: 3, uridium: 0.6 },
+  "red-sabbath": { minerals: 4, uridium: 0.6 },
   "nexus-aster": { supply: 10, minerals: 3, industrialMaterial: 5, uridium: 0.6 },
-  "goregate": { supply: 5, minerals: 5, industrialMaterial: 6, uridium: 0.6 }
+  "goregate": { supply: 5, minerals: 5, industrialMaterial: 6, uridium: 0.6 },
+  "cenotafio-ankh": { supply: 4, minerals: 3 },
+  "umbral-ceniza": { supply: 6, minerals: 2 },
+  "baluarte-sol": { supply: 6, minerals: 2 },
+  "pozo-khepra": { supply: 8, minerals: 1 },
+  "vigilia-noctis": { supply: 8, minerals: 1 },
+  "corona-voss": { supply: 7, minerals: 2, honor: 1, gold: 1, industrialMaterial: 5, uridium: 0.5 },
+  "cicatriz-helion": { supply: 6, minerals: 5, gold: 1, industrialMaterial: 5, uridium: 0.5 },
+  "nadir-kappa": { supply: 12, minerals: 4, gold: 1, industrialMaterial: 4, uridium: 0.5 }
 };
 
 const systemResourceCapabilities: CampaignSnapshot["systemResourceCapabilities"] = systems.flatMap(getMockResourceCapabilities);
@@ -2005,7 +2198,13 @@ const relics: CampaignSnapshot["relics"] = [
 
 const systemsWithBaseProduction: CampaignSnapshot["systems"] = systems.map((system) => ({
   ...system,
-  buildingSlots: system.isCapital ? 6 : 3,
+  buildingSlots: system.systemKind === "gaseous"
+    ? 0
+    : ["corona-voss", "cicatriz-helion", "nadir-kappa"].includes(system.id)
+      ? 4
+      : system.isCapital
+        ? 6
+        : 3,
   production: getMockBaseProduction(system.id)
 }));
 

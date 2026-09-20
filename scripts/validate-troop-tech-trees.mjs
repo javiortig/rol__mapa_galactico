@@ -67,6 +67,7 @@ function validateReadyTree(tree) {
   const nodeSlugs = new Set(nodes.map((node) => node.slug));
   const unitsForFaction = unitTemplates.filter((template) => template.factionId === tree.factionSlug);
   const assignedUnitSlugs = new Map();
+  const multipleUnlockUnitSlugs = new Set(config.multipleTechnologyUnlockUnitSlugs ?? []);
   const allowedTechnologyCosts = new Set(config.allowedTechnologyCosts ?? [1, 2, 3]);
   const totalTechnologyCost = nodes.reduce((sum, node) => sum + Number(node.costTechnology ?? 0), 0);
 
@@ -100,8 +101,11 @@ function validateReadyTree(tree) {
       errors.push(`${tree.factionSlug}/${node.slug}: cada nodo activo debe desbloquear al menos una unidad.`);
     }
 
-    if (node.researchTimeSeconds !== config.researchTimeSeconds) {
-      errors.push(`${tree.factionSlug}/${node.slug}: researchTimeSeconds debe ser ${config.researchTimeSeconds}.`);
+    const expectedResearchTime = (config.campaignResearchTimeFactionSlugs ?? []).includes(tree.factionSlug)
+      ? Math.max(86400, Number(node.costTechnology ?? 0) * 86400)
+      : config.researchTimeSeconds;
+    if (node.researchTimeSeconds !== expectedResearchTime) {
+      errors.push(`${tree.factionSlug}/${node.slug}: researchTimeSeconds debe ser ${expectedResearchTime}.`);
     }
 
     if (!allowedTechnologyCosts.has(node.costTechnology)) {
@@ -119,7 +123,7 @@ function validateReadyTree(tree) {
     for (const unitSlug of node.unitTemplateSlugs ?? []) {
       const previousNode = assignedUnitSlugs.get(unitSlug);
 
-      if (previousNode) {
+      if (previousNode && !multipleUnlockUnitSlugs.has(unitSlug)) {
         errors.push(`${tree.factionSlug}: unidad ${unitSlug} asignada en ${previousNode} y ${node.slug}.`);
       }
 

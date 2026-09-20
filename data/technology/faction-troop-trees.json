@@ -5,6 +5,12 @@
   "expectedBranchesPerFaction": 3,
   "expectedActiveNodesPerFaction": 15,
   "researchTimeSeconds": 30,
+  "campaignResearchTimeFactionSlugs": [
+    "legiones-daemonicas"
+  ],
+  "multipleTechnologyUnlockUnitSlugs": [
+    "unit-legiones-daemonicas-myphitic-blight-hauler"
+  ],
   "expectedTechnologyCostPerReadyTree": 30,
   "allowedTechnologyCosts": [
     1,
@@ -45,221 +51,233 @@
         {
           "slug": "daemonicas-chispas-inmaterium",
           "name": "Coros de Horrores",
-          "description": "Los primeros coros de Tzeentch se dividen, chillan y se recomponen en una pantalla de magia viva. Desbloquea: Blue Horrors y Pink Horrors.",
+          "description": "Los primeros coros del Caos avanzan entre magia viva y guerreros marcados por la plaga. Desbloquea: Blue Horrors, Pink Horrors y Plague Marines.",
           "branchSlug": "hordas-velo",
           "tier": 1,
           "positionX": 1,
           "positionY": 2,
           "costTechnology": 2,
-          "researchTimeSeconds": 30,
+          "researchTimeSeconds": 172800,
           "iconKey": "daemon_horror",
-          "effectSummary": "Desbloquea: Blue Horrors, Pink Horrors.",
+          "effectSummary": "Desbloquea: Blue Horrors, Pink Horrors, Plague Marines.",
           "prerequisiteSlugs": [
             "fundacion-planetaria"
           ],
           "unitTemplateSlugs": [
             "unit-legiones-daemonicas-blue-horrors",
-            "unit-legiones-daemonicas-pink-horrors"
+            "unit-legiones-daemonicas-pink-horrors",
+            "unit-legiones-daemonicas-plague-marines"
           ]
         },
         {
           "slug": "daemonicas-mareas-rosadas",
           "name": "Llamas Mutables",
-          "description": "Las llamas del cambio aprenden a perseguir objetivos con voluntad propia, convirtiendo trincheras y rituales enemigos en ceniza irreal. Desbloquea: Flamers.",
+          "description": "Las llamas del cambio aprenden a perseguir objetivos con voluntad propia mientras la guardia corrupta cierra la brecha. Desbloquea: Flamers y Blightlord Terminators.",
           "branchSlug": "hordas-velo",
           "tier": 3,
           "positionX": 1,
           "positionY": 1,
           "costTechnology": 2,
-          "researchTimeSeconds": 30,
+          "researchTimeSeconds": 172800,
           "iconKey": "daemon_flame",
-          "effectSummary": "Desbloquea: Flamers.",
+          "effectSummary": "Desbloquea: Flamers, Blightlord Terminators.",
           "prerequisiteSlugs": [
             "daemonicas-carros-fuego-mutante",
             "daemonicas-piras-cambio"
           ],
           "unitTemplateSlugs": [
-            "unit-legiones-daemonicas-flamers"
+            "unit-legiones-daemonicas-flamers",
+            "unit-legiones-daemonicas-blightlord-terminators"
           ]
         },
         {
           "slug": "daemonicas-llamas-imposibles",
           "name": "Incendio Exaltado",
-          "description": "Una llama con nombre propio cruza el velo y convierte la artilleria menor en una presencia de mando ardiente. Desbloquea: Exalted Flamer.",
+          "description": "Una llama con nombre propio cruza el velo mientras una marea de muertos resistentes ocupa las ruinas. Desbloquea: Exalted Flamer y Poxwalkers.",
           "branchSlug": "hordas-velo",
           "tier": 3,
           "positionX": 1,
           "positionY": 3,
           "costTechnology": 2,
-          "researchTimeSeconds": 30,
+          "researchTimeSeconds": 172800,
           "iconKey": "daemon_pyro",
-          "effectSummary": "Desbloquea: Exalted Flamer.",
+          "effectSummary": "Desbloquea: Exalted Flamer, Poxwalkers.",
           "prerequisiteSlugs": [
             "daemonicas-mareas-rosadas",
             "daemonicas-piras-cambio"
           ],
           "unitTemplateSlugs": [
-            "unit-legiones-daemonicas-exalted-flamer"
+            "unit-legiones-daemonicas-exalted-flamer",
+            "unit-legiones-daemonicas-poxwalkers"
           ]
         },
         {
           "slug": "daemonicas-carros-fuego-mutante",
           "name": "Rayas del Velo",
-          "description": "Bestias aullantes cruzan la batalla como meteoros de hambre y hechiceria. Desbloquea: Screamers.",
+          "description": "Bestias aullantes y engendros mutados cruzan la batalla como meteoros de hambre y hechiceria. Desbloquea: Screamers y Chaos Spawn.",
           "branchSlug": "hordas-velo",
           "tier": 2,
           "positionX": 1,
           "positionY": 1,
           "costTechnology": 2,
-          "researchTimeSeconds": 30,
+          "researchTimeSeconds": 172800,
           "iconKey": "daemon_beast",
-          "effectSummary": "Desbloquea: Screamers.",
+          "effectSummary": "Desbloquea: Screamers, Chaos Spawn.",
           "prerequisiteSlugs": [
             "daemonicas-chispas-inmaterium",
             "criadero-guerra"
           ],
           "unitTemplateSlugs": [
-            "unit-legiones-daemonicas-screamers"
+            "unit-legiones-daemonicas-screamers",
+            "unit-legiones-daemonicas-chaos-spawn"
           ]
         },
         {
           "slug": "daemonicas-carros-ardientes",
           "name": "Carros Ardientes",
-          "description": "Plataformas de fuego cambiante cabalgan sobre la tormenta para abrir brechas en la linea real. Desbloquea: Burning Chariot.",
+          "description": "Plataformas de fuego cambiante y drones corruptos cabalgan sobre la tormenta para abrir brechas. Desbloquea: Burning Chariot y Foetid Bloat-drone.",
           "branchSlug": "hordas-velo",
           "tier": 4,
           "positionX": 1,
           "positionY": 3,
           "costTechnology": 2,
-          "researchTimeSeconds": 30,
+          "researchTimeSeconds": 172800,
           "iconKey": "daemon_chariot",
-          "effectSummary": "Desbloquea: Burning Chariot.",
+          "effectSummary": "Desbloquea: Burning Chariot, Foetid Bloat-drone.",
           "prerequisiteSlugs": [
             "daemonicas-mareas-rosadas",
             "daemonicas-carros-fuego-mutante"
           ],
           "unitTemplateSlugs": [
-            "unit-legiones-daemonicas-burning-chariot"
+            "unit-legiones-daemonicas-burning-chariot",
+            "unit-legiones-daemonicas-foetid-bloat-drone"
           ]
         },
         {
           "slug": "daemonicas-forja-almas-tzeentch",
           "name": "Forja de Almas de Tzeentch",
-          "description": "La disformidad encadena maquinas infernales y las empuja al frente como artilleria blasfema. Desbloquea: Tzeentch Soul Grinder.",
+          "description": "La disformidad encadena maquinas infernales y llama al Primarca de la Plaga al frente. Desbloquea: Tzeentch Soul Grinder y Mortarion.",
           "branchSlug": "hordas-velo",
           "tier": 5,
           "positionX": 1,
           "positionY": 2,
           "costTechnology": 3,
-          "researchTimeSeconds": 30,
+          "researchTimeSeconds": 259200,
           "iconKey": "daemon_soul_grinder",
-          "effectSummary": "Desbloquea: Tzeentch Soul Grinder.",
+          "effectSummary": "Desbloquea: Tzeentch Soul Grinder, Mortarion.",
           "prerequisiteSlugs": [
             "daemonicas-carros-ardientes",
             "maquinaria-belica"
           ],
           "unitTemplateSlugs": [
-            "unit-legiones-daemonicas-tzeentch-soul-grinder"
+            "unit-legiones-daemonicas-tzeentch-soul-grinder",
+            "unit-legiones-daemonicas-mortarion"
           ]
         },
         {
           "slug": "daemonicas-voces-velo",
           "name": "Voces del Velo",
-          "description": "Los heraldos sin nombre traducen augurios imposibles en ordenes que incluso los mortales pueden temer. Desbloquea: Daemonic Herald [Crucible].",
+          "description": "Los heraldos sin nombre y los hechiceros de la plaga traducen augurios imposibles en ordenes. Desbloquea: Daemonic Herald [Crucible] y Malignant Plaguecaster.",
           "branchSlug": "corte-cambiante",
           "tier": 2,
           "positionX": 2,
           "positionY": 1,
           "costTechnology": 1,
-          "researchTimeSeconds": 30,
+          "researchTimeSeconds": 86400,
           "iconKey": "daemon_herald",
-          "effectSummary": "Desbloquea: Daemonic Herald [Crucible].",
+          "effectSummary": "Desbloquea: Daemonic Herald [Crucible], Malignant Plaguecaster.",
           "prerequisiteSlugs": [
             "daemonicas-piras-cambio"
           ],
           "unitTemplateSlugs": [
-            "unit-legiones-daemonicas-daemonic-herald-crucible"
+            "unit-legiones-daemonicas-daemonic-herald-crucible",
+            "unit-legiones-daemonicas-malignant-plaguecaster"
           ]
         },
         {
           "slug": "daemonicas-piras-cambio",
           "name": "Conjuradores del Cambio",
-          "description": "Los horrores reciben maestros de hechiceria menor capaces de doblar la marea y convertir caos bruto en plan. Desbloquea: Changecaster.",
+          "description": "Los horrores reciben maestros de hechiceria y heraldos de la entropia capaces de convertir caos bruto en plan. Desbloquea: Changecaster y Noxious Blightbringer.",
           "branchSlug": "corte-cambiante",
           "tier": 1,
           "positionX": 2,
           "positionY": 2,
           "costTechnology": 1,
-          "researchTimeSeconds": 30,
+          "researchTimeSeconds": 86400,
           "iconKey": "daemon_herald",
-          "effectSummary": "Desbloquea: Changecaster.",
+          "effectSummary": "Desbloquea: Changecaster, Noxious Blightbringer.",
           "prerequisiteSlugs": [
             "asamblea-planetaria",
             "daemonicas-chispas-inmaterium"
           ],
           "unitTemplateSlugs": [
-            "unit-legiones-daemonicas-changecaster"
+            "unit-legiones-daemonicas-changecaster",
+            "unit-legiones-daemonicas-noxious-blightbringer"
           ]
         },
         {
           "slug": "daemonicas-discos-sortilegio",
           "name": "Discos de Sortilegio",
-          "description": "Augures montados y senores de disco sobrevuelan el frente para torcer rutas, destinos y cargas enemigas. Desbloquea: Fluxmaster y Fateskimmer.",
+          "description": "Augures montados, senores de disco y alquimistas de la plaga tuercen el destino del frente. Desbloquea: Fluxmaster, Fateskimmer y Biologus Putrifier.",
           "branchSlug": "corte-cambiante",
           "tier": 2,
           "positionX": 2,
           "positionY": 3,
           "costTechnology": 2,
-          "researchTimeSeconds": 30,
+          "researchTimeSeconds": 172800,
           "iconKey": "daemon_disc",
-          "effectSummary": "Desbloquea: Fluxmaster, Fateskimmer.",
+          "effectSummary": "Desbloquea: Fluxmaster, Fateskimmer, Biologus Putrifier.",
           "prerequisiteSlugs": [
             "daemonicas-piras-cambio",
             "daemonicas-carros-fuego-mutante"
           ],
           "unitTemplateSlugs": [
             "unit-legiones-daemonicas-fluxmaster",
-            "unit-legiones-daemonicas-fateskimmer"
+            "unit-legiones-daemonicas-fateskimmer",
+            "unit-legiones-daemonicas-biologus-putrifier"
           ]
         },
         {
           "slug": "daemonicas-escribas-destino",
           "name": "Escribas del Destino",
-          "description": "Los nombres verdaderos, rutas de invasion y fracasos inevitables quedan inscritos antes de que ocurran. Desbloquea: The Blue Scribes.",
+          "description": "Los nombres verdaderos y las rutas de invasion quedan inscritos junto a planos de maquinas corruptas. Desbloquea: The Blue Scribes, Myphitic Blight-hauler y Chaos Predator Annihilator.",
           "branchSlug": "corte-cambiante",
           "tier": 3,
           "positionX": 2,
           "positionY": 1,
           "costTechnology": 2,
-          "researchTimeSeconds": 30,
+          "researchTimeSeconds": 172800,
           "iconKey": "daemon_scribes",
-          "effectSummary": "Desbloquea: The Blue Scribes.",
+          "effectSummary": "Desbloquea: The Blue Scribes, Myphitic Blight-hauler, Chaos Predator Annihilator.",
           "prerequisiteSlugs": [
             "daemonicas-voces-velo"
           ],
           "unitTemplateSlugs": [
-            "unit-legiones-daemonicas-the-blue-scribes"
+            "unit-legiones-daemonicas-the-blue-scribes",
+            "unit-legiones-daemonicas-myphitic-blight-hauler",
+            "unit-legiones-daemonicas-chaos-predator-annihilator"
           ]
         },
         {
           "slug": "daemonicas-mascaras-engano",
           "name": "Mascaras del Engano",
-          "description": "La corte aprende a ganar guerras con apariciones, aurigas imposibles y senuelos que rompen toda certeza. Desbloquea: The Changeling y Daemonic Charioteer [Crucible].",
+          "description": "La corte aprende a ganar guerras con apariciones, aurigas y campeones acorazados por la podredumbre. Desbloquea: The Changeling, Daemonic Charioteer [Crucible] y Lord of Contagion.",
           "branchSlug": "corte-cambiante",
           "tier": 4,
           "positionX": 2,
           "positionY": 2,
           "costTechnology": 3,
-          "researchTimeSeconds": 30,
+          "researchTimeSeconds": 259200,
           "iconKey": "daemon_changeling",
-          "effectSummary": "Desbloquea: The Changeling, Daemonic Charioteer [Crucible].",
+          "effectSummary": "Desbloquea: The Changeling, Daemonic Charioteer [Crucible], Lord of Contagion.",
           "prerequisiteSlugs": [
             "daemonicas-escribas-destino",
             "daemonicas-discos-sortilegio"
           ],
           "unitTemplateSlugs": [
             "unit-legiones-daemonicas-the-changeling",
-            "unit-legiones-daemonicas-daemonic-charioteer-crucible"
+            "unit-legiones-daemonicas-daemonic-charioteer-crucible",
+            "unit-legiones-daemonicas-lord-of-contagion"
           ]
         },
         {
@@ -271,7 +289,7 @@
           "positionX": 3,
           "positionY": 2,
           "costTechnology": 2,
-          "researchTimeSeconds": 30,
+          "researchTimeSeconds": 172800,
           "iconKey": "daemon_prince",
           "effectSummary": "Desbloquea: Daemon Prince of Chaos, Daemon Prince of Chaos with wings.",
           "prerequisiteSlugs": [
@@ -286,62 +304,66 @@
         {
           "slug": "daemonicas-senor-cambio",
           "name": "Senor del Cambio",
-          "description": "Un Gran Demonio de Tzeentch atraviesa el velo y convierte el frente en un tablero de paradojas. Desbloquea: Lord of Change.",
+          "description": "Un Gran Demonio de Tzeentch atraviesa el velo junto a ingenios de plaga de avance inexorable. Desbloquea: Lord of Change, Myphitic Blight-hauler y Foetid Bloat-drone with Heavy Blight Launcher.",
           "branchSlug": "tronos-disformidad",
           "tier": 3,
           "positionX": 3,
           "positionY": 2,
           "costTechnology": 2,
-          "researchTimeSeconds": 30,
+          "researchTimeSeconds": 172800,
           "iconKey": "daemon_lord_change",
-          "effectSummary": "Desbloquea: Lord of Change.",
+          "effectSummary": "Desbloquea: Lord of Change, Myphitic Blight-hauler, Foetid Bloat-drone with Heavy Blight Launcher.",
           "prerequisiteSlugs": [
             "daemonicas-ascension-demonica",
             "daemonicas-piras-cambio"
           ],
           "unitTemplateSlugs": [
-            "unit-legiones-daemonicas-lord-of-change"
+            "unit-legiones-daemonicas-lord-of-change",
+            "unit-legiones-daemonicas-myphitic-blight-hauler",
+            "unit-legiones-daemonicas-foetid-bloat-drone-heavy-blight-launcher"
           ]
         },
         {
           "slug": "daemonicas-kairos-teje-destinos",
           "name": "Kairos Teje-Destinos",
-          "description": "La campana queda atrapada entre futuros contradictorios cuando Kairos abre ambos ojos al sector. Desbloquea: Kairos Fateweaver.",
+          "description": "La campana queda atrapada entre futuros contradictorios mientras la artilleria de plaga avanza. Desbloquea: Kairos Fateweaver y Plagueburst Crawler.",
           "branchSlug": "tronos-disformidad",
           "tier": 4,
           "positionX": 3,
           "positionY": 2,
           "costTechnology": 2,
-          "researchTimeSeconds": 30,
+          "researchTimeSeconds": 172800,
           "iconKey": "daemon_kairos",
-          "effectSummary": "Desbloquea: Kairos Fateweaver.",
+          "effectSummary": "Desbloquea: Kairos Fateweaver, Plagueburst Crawler.",
           "prerequisiteSlugs": [
             "daemonicas-senor-cambio",
             "daemonicas-escribas-destino"
           ],
           "unitTemplateSlugs": [
-            "unit-legiones-daemonicas-kairos-fateweaver"
+            "unit-legiones-daemonicas-kairos-fateweaver",
+            "unit-legiones-daemonicas-plagueburst-crawler"
           ]
         },
         {
           "slug": "daemonicas-primer-principe",
           "name": "El Primer Principe",
-          "description": "Las sendas rivales de la disformidad se inclinan ante una sombra que no pertenece a ningun dios por completo. Desbloquea: Be'lakor.",
+          "description": "Las sendas rivales de la disformidad se inclinan ante una sombra y sus maquinas profanadas. Desbloquea: Be'lakor y Defiler.",
           "branchSlug": "tronos-disformidad",
           "tier": 5,
           "positionX": 3,
           "positionY": 2,
           "costTechnology": 2,
-          "researchTimeSeconds": 30,
+          "researchTimeSeconds": 172800,
           "iconKey": "daemon_belakor",
-          "effectSummary": "Desbloquea: Be'lakor.",
+          "effectSummary": "Desbloquea: Be'lakor, Defiler.",
           "prerequisiteSlugs": [
             "daemonicas-kairos-teje-destinos",
             "daemonicas-ascension-demonica",
             "daemonicas-forja-almas-tzeentch"
           ],
           "unitTemplateSlugs": [
-            "unit-legiones-daemonicas-belakor"
+            "unit-legiones-daemonicas-belakor",
+            "unit-legiones-daemonicas-defiler"
           ]
         }
       ]

@@ -145,6 +145,7 @@ La producción de recursos funciona con tick diario de backend, no por turno est
 - La Cámara de Leyendas recluta unidades `[Crucible]`; su tecnología existe después de Asamblea Planetaria, pero está bloqueada por ahora.
 - Las unidades heridas pueden curarse desde edificios militares compatibles a mitad de coste proporcional.
 - La Cámara de Comercio desbloquea el acceso al mercader y comercio estelar.
+- El Mercader compra y vende Suministro vital, Mineral y Honor. El Comercio estelar mantiene Suministro, Mineral, Material Industrial y Uridium.
 - Los edificios propios pueden destruirse sin reembolso; no se puede destruir un edificio con cola activa.
 - Si el atacante conquista un sistema tras resolver una batalla, todos los edificios existentes se destruyen sin reembolso y se cancelan las colas de reclutamiento, reabastecimiento y construcción de ese sistema.
 - Honor sustituye a Piedra ancestral en UI/reglas; columnas legacy pueden existir solo por compatibilidad.
@@ -156,12 +157,13 @@ La producción de recursos funciona con tick diario de backend, no por turno est
 - Las unidades no cuestan Material Industrial ni Uridium; Material Industrial es para edificios y Uridium para movimiento.
 - La progresión de costes sigue el árbol de tropas: infantería inicial solo Suministro, infantería avanzada con Mineral, Caracteres con más Honor, Vehículos/Aeronaves/Fortificaciones con más Mineral, y oro para unidades avanzadas, aliadas, Crucible, épicas o finales de rama.
 - Aproximadamente el 40% de las plantillas de cada facción jugable cuestan oro.
-- Capital + sistema neutral adyacente está balanceado para producir 19,5 puntos/día potenciales en recursos de reclutamiento. Material Industrial y Uridium no cuentan en ese cálculo.
+- Capital + sistema neutral adyacente está balanceado para producir 21,5 puntos/día potenciales en recursos de reclutamiento. Material Industrial y Uridium no cuentan en ese cálculo.
 - La campaña empieza sin edificios construidos: la capacidad natural existe, pero la producción real solo empieza cuando se construyen edificios activos.
 - Recursos iniciales de cada facción jugable: 100 Suministro vital, 40 Mineral, 0 Honor, 0 Oro, 150 Material Industrial y 10 Uridium.
-- Las capitales tienen 5 Material Industrial/día de capacidad natural y 0 Uridium. Los sistemas adyacentes tienen 0 Material Industrial y 0.3 Uridium/día.
-- Los edificios básicos cuestan 20 Material Industrial, así que una capital con Planta de Fundición activa genera un edificio básico cada 4 días.
-- Solo `nexus-aster` y `goregate` tienen capacidad natural de oro en el mapa final.
+- Las capitales tienen 5 Material Industrial/día de capacidad natural y 0 Uridium. Los sistemas adyacentes tienen 0 Material Industrial y 0.6 Uridium/día.
+- Los edificios básicos cuestan 25 Material Industrial, así que una capital con Planta de Fundición activa genera un edificio básico cada 5 días.
+- `Corona Voss`, `Cicatriz Helion` y `Nadir Kappa` son los sistemas con capacidad natural de Oro del mapa ampliado.
+- El mapa ampliado tiene 23 sistemas y 29 rutas: cinco sistemas fronterizos nuevos, tres sistemas productivos del corredor central y la gaseosa compartida `Nebulosa Caronte`.
 - La configuración vive en `data/balance/faction-balance.json`; el informe generado vive en `docs/generated/faction-balance-report.md`.
 - Validación: `npm run balance:validate`.
 
@@ -215,6 +217,6 @@ En móvil la experiencia es mapa primero:
 - `troops-necrones-v1` ya está implementado como primer árbol militar completo: 3 ramas asimétricas, 15 nodos de 3s, bifurcaciones/convergencias y las 55 plantillas Necron asignadas exactamente una vez. Cada nodo lista en su descripción las unidades exactas que desbloquea.
 - `troops-cultos-genestealer-v1` también está implementado: 3 ramas asimétricas, 15 nodos de 3s, bifurcaciones/convergencias y las 27 plantillas del Culto asignadas exactamente una vez. Cada nodo lista en su descripción las unidades exactas que desbloquea.
 - `troops-space-marines-v1` también está implementado: 3 ramas asimétricas, 15 nodos de 3s, bifurcaciones/convergencias y las 85 plantillas de Space Marines asignadas exactamente una vez. Cada nodo lista en su descripción las unidades exactas que desbloquea.
-- `troops-legiones-daemonicas-v1` también está implementado: 3 ramas asimétricas, 15 nodos de 3s, bifurcaciones/convergencias y las 19 plantillas de Legiones Daemónicas asignadas exactamente una vez. Cada nodo lista en su descripción las unidades exactas que desbloquea.
+- `troops-legiones-daemonicas-v1` representa ahora a **El Caos**: conserva las 19 unidades demoníacas e integra 15 unidades de Death Guard en los nodos existentes. Sus tiempos de campaña son de 1, 2 o 3 días según el coste del nodo. Una unidad puede admitir varios nodos alternativos de desbloqueo; basta con investigar uno de ellos.
 - `troops-adeptus-custodes-v1` también está implementado: 3 ramas asimétricas, 15 nodos de 3s, bifurcaciones/convergencias y las 51 plantillas de Adeptus Custodes asignadas exactamente una vez. Cada nodo lista en su descripción las unidades exactas que desbloquea.
 - Antes de desplegar cambios de UI móvil hay que probar al menos iPhone Safari y Android Chrome, verificando que todos los paneles scrollean hasta el final y que los botones no quedan bajo la barra del navegador.

@@ -15,7 +15,7 @@ const FACTIONS = [
   { slug: "space-marines", name: "Sombra del Emperador", subtitle: "Space Marines", file: "costes-sombra-del-emperador.pdf", color: "#3b82f6" },
   { slug: "cultos-genestealer", name: "Cultos Genestealer", file: "costes-cultos-genestealer.pdf", color: "#c084fc" },
   { slug: "necrones", name: "Necrones", file: "costes-necrones.pdf", color: "#2dd4bf" },
-  { slug: "legiones-daemonicas", name: "Legiones Demoníacas", file: "costes-legiones-daemoniacas.pdf", color: "#ef4444" }
+  { slug: "legiones-daemonicas", name: "El Caos", file: "costes-el-caos.pdf", color: "#ef4444" }
 ];
 
 const requestedFactionSlugs = new Set(process.argv.slice(2));
@@ -336,7 +336,10 @@ function formatSourceDate(value) {
 }
 
 function renderIndex() {
-  const links = factionsToGenerate.map((faction) => `- [${faction.name}](./${faction.file})`).join("\n");
+  const links = FACTIONS
+    .filter((faction) => fs.existsSync(path.join(OUTPUT_DIR, faction.file)))
+    .map((faction) => `- [${faction.name}](./${faction.file})`)
+    .join("\n");
   return `# Costes de unidades por facción\n\n${links}\n\nGenerar de nuevo con \`npm run docs:unit-costs\`.\n`;
 }
 

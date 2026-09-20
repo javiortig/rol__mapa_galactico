@@ -24,7 +24,7 @@ Generado por `npm run units:generate`.
 |---|---:|---:|---:|---:|---:|---:|---:|
 | adeptus-custodes | 51 | 23 (45%) | 16160 | 2107 | 4468 | 535 | 489 |
 | cultos-genestealer | 41 | 11 (27%) | 3395 | 1501 | 503 | 131 | 47 |
-| legiones-daemonicas | 19 | 6 (32%) | 2720 | 1022 | 284 | 155 | 71 |
+| legiones-daemonicas | 34 | 10 (29%) | 4660 | 1460 | 779 | 221 | 108 |
 | necrones | 55 | 14 (25%) | 7570 | 1462 | 1677 | 357 | 195 |
 
 ## Distribucion de Oro por tipo principal
@@ -39,11 +39,11 @@ Generado por `npm run units:generate`.
 | cultos-genestealer | Monstruo | 3 | 0 |
 | cultos-genestealer | Montado | 1 | 0 |
 | cultos-genestealer | Vehiculo | 3 | 0 |
-| legiones-daemonicas | Bestia | 1 | 0 |
-| legiones-daemonicas | Caracter | 13 | 5 |
-| legiones-daemonicas | Infanteria | 3 | 0 |
+| legiones-daemonicas | Bestia | 2 | 0 |
+| legiones-daemonicas | Caracter | 18 | 7 |
+| legiones-daemonicas | Infanteria | 6 | 1 |
 | legiones-daemonicas | Montado | 1 | 1 |
-| legiones-daemonicas | Vehiculo | 1 | 0 |
+| legiones-daemonicas | Vehiculo | 7 | 1 |
 | necrones | Bestia | 4 | 1 |
 | necrones | Caracter | 25 | 6 |
 | necrones | Infanteria | 9 | 2 |
@@ -64,6 +64,8 @@ Generado por `npm run units:generate`.
 - adeptus-custodes: Prosecutors -> 45 Suministro
 - adeptus-custodes: Vigilators -> 50 Suministro
 - adeptus-custodes: Witchseekers -> 50 Suministro
+- legiones-daemonicas: Plague Marines -> 90 Suministro
+- legiones-daemonicas: Poxwalkers -> 65 Suministro
 
 ## Unidades con Honor
 
@@ -151,6 +153,11 @@ Generado por `npm run units:generate`.
 - cultos-genestealer: Hyperadapted Raveners -> 13 Honor (39%, Infanteria, Caracter)
 - cultos-genestealer: Parasite of Mortrex -> 5 Honor (36%, Infanteria, Caracter)
 - cultos-genestealer: The Red Terror -> 10 Honor (38%, Monstruo, Caracter)
+- legiones-daemonicas: Mortarion -> 37 Honor (49%, Monstruo, Caracter)
+- legiones-daemonicas: Noxious Blightbringer -> 5 Honor (50%, Infanteria, Caracter)
+- legiones-daemonicas: Malignant Plaguecaster -> 6 Honor (50%, Infanteria, Caracter)
+- legiones-daemonicas: Biologus Putrifier -> 6 Honor (50%, Infanteria, Caracter)
+- legiones-daemonicas: Lord of Contagion -> 12 Honor (50%, Infanteria, Caracter)
 
 ## Produccion natural inicial
 
@@ -168,4 +175,4 @@ Generado por `npm run units:generate`.
 - Unidades con Material Industrial o Uridium: 0.
 - Unidades no character con Honor: 0.
 - Sombra del Emperador: costes preservados sin cambios.
-- Facciones importadas desde catalogo: 8.
+- Facciones importadas desde catalogo: 9.

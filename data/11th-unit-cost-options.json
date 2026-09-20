@@ -3,14 +3,14 @@
   "source": {
     "kind": "mfm",
     "url": "https://mfm.warhammer-community.com/en",
-    "fetchedAt": "2026-08-13T23:06:59.333Z",
-    "note": "MFM oficial 11th edition. No se usa BSData/wh40k-10e como fuente de puntos, tamanos ni opciones."
+    "fetchedAt": "2026-09-20T19:59:25.284Z",
+    "note": "MFM oficial 11th edition. No se usa BSData/wh40k-10e como fuente de puntos, tamanos ni opciones. El catálogo previo se conserva y Death Guard se extrajo de /death-guard."
   },
   "summary": {
-    "providedUnits": 347,
-    "matchedUnits": 326,
+    "providedUnits": 362,
+    "matchedUnits": 341,
     "unmatchedUnits": 21,
-    "variableUnits": 161,
+    "variableUnits": 169,
     "conflicts": 150
   },
   "units": [
@@ -16806,6 +16806,743 @@
         "url": "https://mfm.warhammer-community.com/en/tyranids",
         "pageSlug": "tyranids",
         "fetchedAt": "2026-08-13T23:06:59.333Z"
+      }
+    },
+    {
+      "factionSlug": "legiones-daemonicas",
+      "factionName": "El Caos",
+      "unitSlug": "plague-marines",
+      "name": "Plague Marines",
+      "mfmName": "PLAGUE MARINES",
+      "provided": {
+        "models": 5,
+        "points": 90
+      },
+      "modelOptions": [
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 90,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 7,
+          "minModels": 7,
+          "maxModels": 7,
+          "label": "7 models",
+          "points": 125,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 10,
+          "minModels": 10,
+          "maxModels": 10,
+          "label": "10 models",
+          "points": 180,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/death-guard",
+        "pageSlug": "death-guard",
+        "fetchedAt": "2026-09-20T19:59:25.284Z"
+      }
+    },
+    {
+      "factionSlug": "legiones-daemonicas",
+      "factionName": "El Caos",
+      "unitSlug": "chaos-spawn",
+      "name": "Chaos Spawn",
+      "mfmName": "CHAOS SPAWN",
+      "provided": {
+        "models": 2,
+        "points": 80
+      },
+      "modelOptions": [
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 80,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/death-guard",
+        "pageSlug": "death-guard",
+        "fetchedAt": "2026-09-20T19:59:25.284Z"
+      }
+    },
+    {
+      "factionSlug": "legiones-daemonicas",
+      "factionName": "El Caos",
+      "unitSlug": "poxwalkers",
+      "name": "Poxwalkers",
+      "mfmName": "POXWALKERS",
+      "provided": {
+        "models": 10,
+        "points": 65
+      },
+      "modelOptions": [
+        {
+          "models": 10,
+          "minModels": 10,
+          "maxModels": 10,
+          "label": "10 models",
+          "points": 65,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 20,
+          "minModels": 20,
+          "maxModels": 20,
+          "label": "20 models",
+          "points": 130,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/death-guard",
+        "pageSlug": "death-guard",
+        "fetchedAt": "2026-09-20T19:59:25.284Z"
+      }
+    },
+    {
+      "factionSlug": "legiones-daemonicas",
+      "factionName": "El Caos",
+      "unitSlug": "blightlord-terminators",
+      "name": "Blightlord Terminators",
+      "mfmName": "BLIGHTLORD TERMINATORS",
+      "provided": {
+        "models": 3,
+        "points": 115
+      },
+      "modelOptions": [
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 115,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 180,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 10,
+          "minModels": 10,
+          "maxModels": 10,
+          "label": "10 models",
+          "points": 360,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/death-guard",
+        "pageSlug": "death-guard",
+        "fetchedAt": "2026-09-20T19:59:25.284Z"
+      }
+    },
+    {
+      "factionSlug": "legiones-daemonicas",
+      "factionName": "El Caos",
+      "unitSlug": "foetid-bloat-drone",
+      "name": "Foetid Bloat-drone",
+      "mfmName": "FOETID BLOAT-DRONE",
+      "provided": {
+        "models": 1,
+        "points": 100
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 100,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 110,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 10,
+          "resultingPoints": 110,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/death-guard",
+        "pageSlug": "death-guard",
+        "fetchedAt": "2026-09-20T19:59:25.284Z"
+      }
+    },
+    {
+      "factionSlug": "legiones-daemonicas",
+      "factionName": "El Caos",
+      "unitSlug": "mortarion",
+      "name": "Mortarion",
+      "mfmName": "MORTARION",
+      "provided": {
+        "models": 1,
+        "points": 375
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 375,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/death-guard",
+        "pageSlug": "death-guard",
+        "fetchedAt": "2026-09-20T19:59:25.284Z"
+      }
+    },
+    {
+      "factionSlug": "legiones-daemonicas",
+      "factionName": "El Caos",
+      "unitSlug": "myphitic-blight-hauler",
+      "name": "Myphitic Blight-hauler",
+      "mfmName": "MYPHITIC BLIGHT-HAULERS",
+      "provided": {
+        "models": 1,
+        "points": 95
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 95,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 190,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/death-guard",
+        "pageSlug": "death-guard",
+        "fetchedAt": "2026-09-20T19:59:25.284Z"
+      }
+    },
+    {
+      "factionSlug": "legiones-daemonicas",
+      "factionName": "El Caos",
+      "unitSlug": "foetid-bloat-drone-heavy-blight-launcher",
+      "name": "Foetid Bloat-drone with Heavy Blight Launcher",
+      "mfmName": "FOETID BLOAT-DRONE WITH HEAVY BLIGHT LAUNCHER",
+      "provided": {
+        "models": 1,
+        "points": 125
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 125,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 135,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 10,
+          "resultingPoints": 135,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/death-guard",
+        "pageSlug": "death-guard",
+        "fetchedAt": "2026-09-20T19:59:25.284Z"
+      }
+    },
+    {
+      "factionSlug": "legiones-daemonicas",
+      "factionName": "El Caos",
+      "unitSlug": "plagueburst-crawler",
+      "name": "Plagueburst Crawler",
+      "mfmName": "PLAGUEBURST CRAWLER",
+      "provided": {
+        "models": 1,
+        "points": 170
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 170,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 200,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 30,
+          "resultingPoints": 200,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/death-guard",
+        "pageSlug": "death-guard",
+        "fetchedAt": "2026-09-20T19:59:25.284Z"
+      }
+    },
+    {
+      "factionSlug": "legiones-daemonicas",
+      "factionName": "El Caos",
+      "unitSlug": "defiler",
+      "name": "Defiler",
+      "mfmName": "DEFILER",
+      "provided": {
+        "models": 1,
+        "points": 300
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 300,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 350,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [
+        {
+          "slug": "heavy-reaper-autocannon",
+          "name": "Heavy Reaper Autocannon",
+          "points": 15,
+          "pricing": "per_option",
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "slug": "hades-lascannon",
+          "name": "Hades Lascannon",
+          "points": 15,
+          "pricing": "per_option",
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 50,
+          "resultingPoints": 350,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/death-guard",
+        "pageSlug": "death-guard",
+        "fetchedAt": "2026-09-20T19:59:25.284Z"
+      }
+    },
+    {
+      "factionSlug": "legiones-daemonicas",
+      "factionName": "El Caos",
+      "unitSlug": "noxious-blightbringer",
+      "name": "Noxious Blightbringer",
+      "mfmName": "NOXIOUS BLIGHTBRINGER",
+      "provided": {
+        "models": 1,
+        "points": 50
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 50,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/death-guard",
+        "pageSlug": "death-guard",
+        "fetchedAt": "2026-09-20T19:59:25.284Z"
+      }
+    },
+    {
+      "factionSlug": "legiones-daemonicas",
+      "factionName": "El Caos",
+      "unitSlug": "malignant-plaguecaster",
+      "name": "Malignant Plaguecaster",
+      "mfmName": "MALIGNANT PLAGUECASTER",
+      "provided": {
+        "models": 1,
+        "points": 60
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 60,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/death-guard",
+        "pageSlug": "death-guard",
+        "fetchedAt": "2026-09-20T19:59:25.284Z"
+      }
+    },
+    {
+      "factionSlug": "legiones-daemonicas",
+      "factionName": "El Caos",
+      "unitSlug": "biologus-putrifier",
+      "name": "Biologus Putrifier",
+      "mfmName": "BIOLOGUS PUTRIFIER",
+      "provided": {
+        "models": 1,
+        "points": 60
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 60,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/death-guard",
+        "pageSlug": "death-guard",
+        "fetchedAt": "2026-09-20T19:59:25.284Z"
+      }
+    },
+    {
+      "factionSlug": "legiones-daemonicas",
+      "factionName": "El Caos",
+      "unitSlug": "chaos-predator-annihilator",
+      "name": "Chaos Predator Annihilator",
+      "mfmName": "CHAOS PREDATOR ANNIHILATOR",
+      "provided": {
+        "models": 1,
+        "points": 135
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 135,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/death-guard",
+        "pageSlug": "death-guard",
+        "fetchedAt": "2026-09-20T19:59:25.284Z"
+      }
+    },
+    {
+      "factionSlug": "legiones-daemonicas",
+      "factionName": "El Caos",
+      "unitSlug": "lord-of-contagion",
+      "name": "Lord of Contagion",
+      "mfmName": "LORD OF CONTAGION",
+      "provided": {
+        "models": 1,
+        "points": 120
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 120,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/death-guard",
+        "pageSlug": "death-guard",
+        "fetchedAt": "2026-09-20T19:59:25.284Z"
       }
     }
   ]

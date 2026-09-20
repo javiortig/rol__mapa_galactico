@@ -57,7 +57,7 @@ export function RecruitmentModal({
   const canRecruitSelected = Boolean(selectedTemplate && selectedTemplateUnlocked && hasResources && !exceedsArmyLimit);
   const selectedCostResources = selectedTemplate ? getVisibleRecruitmentCostResources(snapshot, selectedTemplate) : [];
   const selectedRequiredTechnologyName = selectedTemplate
-    ? getRequiredTechnologyName(snapshot, selectedTemplate.requiredTechnologyNodeId)
+    ? getRequiredTechnologyName(snapshot, selectedTemplate.requiredTechnologyNodeIds ?? selectedTemplate.requiredTechnologyNodeId)
     : null;
   const selectedDurationSeconds = selectedTemplate ? getRecruitmentDuration(snapshot, selectedTemplate, quantity) : 0;
 
@@ -106,7 +106,10 @@ export function RecruitmentModal({
                 const selected = template.id === selectedTemplate?.id;
                 const unlocked = isUnitTemplateUnlocked(snapshot, template);
                 const affordable = resources ? canAfford(snapshot, resources, template, quantity) : false;
-                const requiredTechnologyName = getRequiredTechnologyName(snapshot, template.requiredTechnologyNodeId);
+                const requiredTechnologyName = getRequiredTechnologyName(
+                  snapshot,
+                  template.requiredTechnologyNodeIds ?? template.requiredTechnologyNodeId
+                );
                 const visibleCostResources = getVisibleRecruitmentCostResources(snapshot, template);
                 const durationSeconds = getRecruitmentDuration(snapshot, template, 1);
 

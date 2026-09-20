@@ -1,11 +1,11 @@
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
-import type { TradeOfferType, TradeableResourceKey } from "@/domain/campaign";
+import type { MerchantTradeResourceKey, TradeOfferType, TradeableResourceKey } from "@/domain/campaign";
 import { fixSpanishText } from "@/lib/spanish-text";
 
 export type MerchantTradeDirection = "buy" | "sell";
 
 export async function merchantTrade(
-  resourceKey: TradeableResourceKey,
+  resourceKey: MerchantTradeResourceKey,
   direction: MerchantTradeDirection,
   quantity: number
 ) {

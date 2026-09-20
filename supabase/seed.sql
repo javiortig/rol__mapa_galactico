@@ -52,7 +52,7 @@ delete from public.factions;
 
 insert into public.factions (id, slug, name, color, capital_system_id, is_narrative)
 values
-  (public.seed_uuid('faction', 'legiones-daemonicas'), 'legiones-daemonicas', 'Legiones Daemonicas', '#ef4444', null, false),
+  (public.seed_uuid('faction', 'legiones-daemonicas'), 'legiones-daemonicas', 'El Caos', '#ef4444', null, false),
   (public.seed_uuid('faction', 'cultos-genestealer'), 'cultos-genestealer', 'Cultos Genestealer', '#ec4899', null, false),
   (public.seed_uuid('faction', 'space-marines'), 'space-marines', 'Sombra del Emperador', '#3b82f6', null, false),
   (public.seed_uuid('faction', 'adeptus-custodes'), 'adeptus-custodes', 'Adeptus Custodes', '#d4af37', null, false),
@@ -99,6 +99,71 @@ set
   is_capital = excluded.is_capital,
   updated_at = now();
 
+insert into public.systems (
+  id, slug, name, x, y, size, star_class, type, status, controller_faction_id,
+  blocked_until, public_description, is_capital, building_slots, system_kind,
+  is_conquerable, allows_shared_occupation
+)
+values
+  (public.seed_uuid('system', 'umbral-ceniza'), 'umbral-ceniza', 'Umbral de Ceniza', 275, 147, 0.88, 'orange', 'Sistema fronterizo', 'neutral', null, null, 'Una estrella exhausta envuelta en velos de ceniza y fragmentos de antiguas fortalezas orbitales.', false, 3, 'standard', true, false),
+  (public.seed_uuid('system', 'vigilia-noctis'), 'vigilia-noctis', 'Vigilia Noctis', 735, 68, 0.92, 'blue', 'Sistema fronterizo', 'neutral', null, null, 'Un corredor oscuro vigilado por lunas sin atmosfera y balizas imperiales apagadas.', false, 3, 'standard', true, false),
+  (public.seed_uuid('system', 'pozo-khepra'), 'pozo-khepra', 'Pozo Khepra', 784, 447, 0.84, 'yellow', 'Sistema fronterizo', 'neutral', null, null, 'Pozos mineros abandonados horadan sus mundos interiores, unidos por tuneles de origen incierto.', false, 3, 'standard', true, false),
+  (public.seed_uuid('system', 'cenotafio-ankh'), 'cenotafio-ankh', 'Cenotafio Ankh', 615, 860, 0.90, 'green', 'Sistema fronterizo', 'neutral', null, null, 'Un sol verdoso ilumina complejos funerarios que preceden a todos los registros del sector.', false, 3, 'standard', true, false),
+  (public.seed_uuid('system', 'baluarte-sol'), 'baluarte-sol', 'Baluarte Sol', 287, 807, 0.90, 'white', 'Sistema fronterizo', 'neutral', null, null, 'Restos de una ciudadela solar orbitan una estrella blanca de luz severa y constante.', false, 3, 'standard', true, false),
+  (public.seed_uuid('system', 'corona-voss'), 'corona-voss', 'Corona Voss', 452, 406, 0.82, 'white', 'Sistema del corredor central', 'neutral', null, null, 'Mundos rocosos forman una corona irregular alrededor de una estrella cubierta de cicatrices magneticas.', false, 4, 'standard', true, false),
+  (public.seed_uuid('system', 'nadir-kappa'), 'nadir-kappa', 'Nadir Kappa', 504, 594, 0.86, 'red', 'Encrucijada central', 'neutral', null, null, 'Una encrucijada de rutas antiguas marcada por pecios, puestos de escucha y senales contradictorias.', false, 4, 'standard', true, false),
+  (public.seed_uuid('system', 'cicatriz-helion'), 'cicatriz-helion', 'Cicatriz Helion', 378, 687, 0.80, 'violet', 'Sistema del corredor central', 'neutral', null, null, 'Descargas violetas recorren una cadena de planetas quebrados por una catastrofe olvidada.', false, 4, 'standard', true, false),
+  (public.seed_uuid('system', 'nebulosa-caronte'), 'nebulosa-caronte', 'Nebulosa Caronte', 298, 542, 1.06, 'violet', 'Anomalia gaseosa central', 'neutral', null, null, 'Un oceano de gases ionizados donde los auspex dibujan rutas que cambian con cada tormenta.', false, 0, 'gaseous', false, true)
+on conflict (slug) do update
+set
+  name = excluded.name,
+  x = excluded.x,
+  y = excluded.y,
+  size = excluded.size,
+  star_class = excluded.star_class,
+  type = excluded.type,
+  status = excluded.status,
+  controller_faction_id = excluded.controller_faction_id,
+  blocked_until = excluded.blocked_until,
+  public_description = excluded.public_description,
+  is_capital = excluded.is_capital,
+  building_slots = excluded.building_slots,
+  system_kind = excluded.system_kind,
+  is_conquerable = excluded.is_conquerable,
+  allows_shared_occupation = excluded.allows_shared_occupation,
+  updated_at = now();
+
+update public.systems systems
+set
+  x = positions.x,
+  y = positions.y
+from (values
+  ('mordax', 102::numeric, 157::numeric),
+  ('drusus', 167::numeric, 362::numeric),
+  ('umbral-ceniza', 275::numeric, 147::numeric),
+  ('goregate', 478::numeric, 224::numeric),
+  ('vigilia-noctis', 735::numeric, 68::numeric),
+  ('sa-cea-gate', 853::numeric, 137::numeric),
+  ('lyra-terminus', 929::numeric, 329::numeric),
+  ('maelstrom-gas', 642::numeric, 379::numeric),
+  ('pozo-khepra', 784::numeric, 447::numeric),
+  ('blackglass', 900::numeric, 552::numeric),
+  ('red-sabbath', 800::numeric, 623::numeric),
+  ('voidmist-basin', 679::numeric, 635::numeric),
+  ('novem', 756::numeric, 737::numeric),
+  ('thokt-vault', 918::numeric, 895::numeric),
+  ('cenotafio-ankh', 615::numeric, 860::numeric),
+  ('nexus-aster', 494::numeric, 871::numeric),
+  ('baluarte-sol', 287::numeric, 807::numeric),
+  ('kharon-prime', 68::numeric, 885::numeric),
+  ('helios-drift', 78::numeric, 727::numeric),
+  ('nebulosa-caronte', 298::numeric, 542::numeric),
+  ('cicatriz-helion', 378::numeric, 687::numeric),
+  ('nadir-kappa', 504::numeric, 594::numeric),
+  ('corona-voss', 452::numeric, 406::numeric)
+) as positions(slug, x, y)
+where systems.slug = positions.slug;
+
 update public.systems
 set building_slots = case when is_capital then 6 else 3 end;
 
@@ -118,7 +183,11 @@ set
   blocked_until = null,
   building_slots = 0,
   updated_at = now()
-where slug in ('maelstrom-gas', 'voidmist-basin');
+where slug in ('maelstrom-gas', 'voidmist-basin', 'nebulosa-caronte');
+
+update public.systems
+set building_slots = 4
+where slug in ('corona-voss', 'cicatriz-helion', 'nadir-kappa');
 
 update public.factions set capital_system_id = public.seed_uuid('system', 'thokt-vault') where slug = 'necrones';
 update public.factions set capital_system_id = public.seed_uuid('system', 'kharon-prime') where slug = 'adeptus-custodes';
@@ -148,6 +217,40 @@ values
 on conflict (slug) do update
 set from_system_id = excluded.from_system_id, to_system_id = excluded.to_system_id, uridium_cost = excluded.uridium_cost, is_blocked = excluded.is_blocked;
 
+delete from public.system_edges;
+
+insert into public.system_edges (id, slug, from_system_id, to_system_id, uridium_cost, is_blocked)
+values
+  (public.seed_uuid('edge', 'route-drusus-mordax'), 'route-drusus-mordax', public.seed_uuid('system', 'drusus'), public.seed_uuid('system', 'mordax'), 1, false),
+  (public.seed_uuid('edge', 'route-mordax-umbral-ceniza'), 'route-mordax-umbral-ceniza', public.seed_uuid('system', 'mordax'), public.seed_uuid('system', 'umbral-ceniza'), 1, false),
+  (public.seed_uuid('edge', 'route-goregate-umbral-ceniza'), 'route-goregate-umbral-ceniza', public.seed_uuid('system', 'goregate'), public.seed_uuid('system', 'umbral-ceniza'), 1, false),
+  (public.seed_uuid('edge', 'route-drusus-nebulosa-caronte'), 'route-drusus-nebulosa-caronte', public.seed_uuid('system', 'drusus'), public.seed_uuid('system', 'nebulosa-caronte'), 1, false),
+  (public.seed_uuid('edge', 'route-lyra-terminus-sa-cea-gate'), 'route-lyra-terminus-sa-cea-gate', public.seed_uuid('system', 'lyra-terminus'), public.seed_uuid('system', 'sa-cea-gate'), 1, false),
+  (public.seed_uuid('edge', 'route-sa-cea-gate-vigilia-noctis'), 'route-sa-cea-gate-vigilia-noctis', public.seed_uuid('system', 'sa-cea-gate'), public.seed_uuid('system', 'vigilia-noctis'), 1, false),
+  (public.seed_uuid('edge', 'route-goregate-vigilia-noctis'), 'route-goregate-vigilia-noctis', public.seed_uuid('system', 'goregate'), public.seed_uuid('system', 'vigilia-noctis'), 1, false),
+  (public.seed_uuid('edge', 'route-lyra-terminus-maelstrom-gas'), 'route-lyra-terminus-maelstrom-gas', public.seed_uuid('system', 'lyra-terminus'), public.seed_uuid('system', 'maelstrom-gas'), 1, false),
+  (public.seed_uuid('edge', 'route-goregate-maelstrom-gas'), 'route-goregate-maelstrom-gas', public.seed_uuid('system', 'goregate'), public.seed_uuid('system', 'maelstrom-gas'), 1, false),
+  (public.seed_uuid('edge', 'route-maelstrom-gas-pozo-khepra'), 'route-maelstrom-gas-pozo-khepra', public.seed_uuid('system', 'maelstrom-gas'), public.seed_uuid('system', 'pozo-khepra'), 1, false),
+  (public.seed_uuid('edge', 'route-blackglass-pozo-khepra'), 'route-blackglass-pozo-khepra', public.seed_uuid('system', 'blackglass'), public.seed_uuid('system', 'pozo-khepra'), 1, false),
+  (public.seed_uuid('edge', 'route-blackglass-red-sabbath'), 'route-blackglass-red-sabbath', public.seed_uuid('system', 'blackglass'), public.seed_uuid('system', 'red-sabbath'), 1, false),
+  (public.seed_uuid('edge', 'route-red-sabbath-voidmist-basin'), 'route-red-sabbath-voidmist-basin', public.seed_uuid('system', 'red-sabbath'), public.seed_uuid('system', 'voidmist-basin'), 1, false),
+  (public.seed_uuid('edge', 'route-novem-voidmist-basin'), 'route-novem-voidmist-basin', public.seed_uuid('system', 'novem'), public.seed_uuid('system', 'voidmist-basin'), 1, false),
+  (public.seed_uuid('edge', 'route-novem-thokt-vault'), 'route-novem-thokt-vault', public.seed_uuid('system', 'novem'), public.seed_uuid('system', 'thokt-vault'), 1, false),
+  (public.seed_uuid('edge', 'route-cenotafio-ankh-thokt-vault'), 'route-cenotafio-ankh-thokt-vault', public.seed_uuid('system', 'cenotafio-ankh'), public.seed_uuid('system', 'thokt-vault'), 1, false),
+  (public.seed_uuid('edge', 'route-cenotafio-ankh-nexus-aster'), 'route-cenotafio-ankh-nexus-aster', public.seed_uuid('system', 'cenotafio-ankh'), public.seed_uuid('system', 'nexus-aster'), 1, false),
+  (public.seed_uuid('edge', 'route-nexus-aster-voidmist-basin'), 'route-nexus-aster-voidmist-basin', public.seed_uuid('system', 'nexus-aster'), public.seed_uuid('system', 'voidmist-basin'), 1, false),
+  (public.seed_uuid('edge', 'route-helios-drift-nebulosa-caronte'), 'route-helios-drift-nebulosa-caronte', public.seed_uuid('system', 'helios-drift'), public.seed_uuid('system', 'nebulosa-caronte'), 1, false),
+  (public.seed_uuid('edge', 'route-helios-drift-kharon-prime'), 'route-helios-drift-kharon-prime', public.seed_uuid('system', 'helios-drift'), public.seed_uuid('system', 'kharon-prime'), 1, false),
+  (public.seed_uuid('edge', 'route-baluarte-sol-kharon-prime'), 'route-baluarte-sol-kharon-prime', public.seed_uuid('system', 'baluarte-sol'), public.seed_uuid('system', 'kharon-prime'), 1, false),
+  (public.seed_uuid('edge', 'route-baluarte-sol-nexus-aster'), 'route-baluarte-sol-nexus-aster', public.seed_uuid('system', 'baluarte-sol'), public.seed_uuid('system', 'nexus-aster'), 1, false),
+  (public.seed_uuid('edge', 'route-corona-voss-nebulosa-caronte'), 'route-corona-voss-nebulosa-caronte', public.seed_uuid('system', 'corona-voss'), public.seed_uuid('system', 'nebulosa-caronte'), 1, false),
+  (public.seed_uuid('edge', 'route-corona-voss-maelstrom-gas'), 'route-corona-voss-maelstrom-gas', public.seed_uuid('system', 'corona-voss'), public.seed_uuid('system', 'maelstrom-gas'), 1, false),
+  (public.seed_uuid('edge', 'route-nadir-kappa-nebulosa-caronte'), 'route-nadir-kappa-nebulosa-caronte', public.seed_uuid('system', 'nadir-kappa'), public.seed_uuid('system', 'nebulosa-caronte'), 1, false),
+  (public.seed_uuid('edge', 'route-maelstrom-gas-nadir-kappa'), 'route-maelstrom-gas-nadir-kappa', public.seed_uuid('system', 'maelstrom-gas'), public.seed_uuid('system', 'nadir-kappa'), 1, false),
+  (public.seed_uuid('edge', 'route-nadir-kappa-voidmist-basin'), 'route-nadir-kappa-voidmist-basin', public.seed_uuid('system', 'nadir-kappa'), public.seed_uuid('system', 'voidmist-basin'), 1, false),
+  (public.seed_uuid('edge', 'route-cicatriz-helion-nebulosa-caronte'), 'route-cicatriz-helion-nebulosa-caronte', public.seed_uuid('system', 'cicatriz-helion'), public.seed_uuid('system', 'nebulosa-caronte'), 1, false),
+  (public.seed_uuid('edge', 'route-cicatriz-helion-voidmist-basin'), 'route-cicatriz-helion-voidmist-basin', public.seed_uuid('system', 'cicatriz-helion'), public.seed_uuid('system', 'voidmist-basin'), 1, false);
+
 insert into public.faction_resources (faction_id, supply, minerals, ancestral_stone, honor, gold, industrial_material, uridium, technology)
 values
   (public.seed_uuid('faction', 'adeptus-custodes'), 100, 40, 0, 0, 0, 150, 10, 6),
@@ -176,6 +279,22 @@ values
   (public.seed_uuid('system', 'goregate'), 2, 3, 0, 0, 2, 0)
 on conflict (system_id) do update
 set supply_per_tick = excluded.supply_per_tick, minerals_per_tick = excluded.minerals_per_tick, ancestral_stone_per_tick = excluded.ancestral_stone_per_tick, gold_per_tick = excluded.gold_per_tick, uridium_per_tick = excluded.uridium_per_tick, technology_per_tick = excluded.technology_per_tick;
+
+insert into public.system_production (system_id)
+select systems.id
+from public.systems systems
+where systems.slug in (
+  'umbral-ceniza',
+  'vigilia-noctis',
+  'pozo-khepra',
+  'cenotafio-ankh',
+  'baluarte-sol',
+  'corona-voss',
+  'nadir-kappa',
+  'cicatriz-helion',
+  'nebulosa-caronte'
+)
+on conflict (system_id) do nothing;
 
 insert into public.technology_nodes (
   id, slug, tree_key, name, description, branch, tier, position_x, position_y, cost_technology, research_time_seconds, icon_key, effect_summary, is_starter
@@ -1048,7 +1167,22 @@ from (
     ('unit-cultos-genestealer-trygon', 'cultos-genestealer', 'Trygon', 'Aliada', 'monster', array['Monstruo']::text[], 140, 1, 8, 28, 56, 0, 0, 0, 0, 0, 0, 172800, 'nido-bestias', 'Unidad aliada Final Day importada desde data/11th-final-day-tyranids.json.', false, null, 'FINAL DAY TYRANIDS', 'Xenos - Tyranids', true),
     ('unit-cultos-genestealer-tyrannocyte', 'cultos-genestealer', 'Tyrannocyte', 'Aliada', 'monster', array['Monstruo']::text[], 80, 1, 8, 16, 32, 0, 0, 0, 0, 0, 0, 86400, 'nido-bestias', 'Unidad aliada Final Day importada desde data/11th-final-day-tyranids.json.', false, null, 'FINAL DAY TYRANIDS', 'Xenos - Tyranids', true),
     ('unit-cultos-genestealer-von-ryans-leapers', 'cultos-genestealer', 'Von Ryan''s Leapers', 'Aliada', 'infantry', array['Infanteria']::text[], 55, 3, 1, 51, 2, 0, 0, 0, 0, 0, 0, 86400, 'barracon-infanteria', 'Unidad aliada Final Day importada desde data/11th-final-day-tyranids.json.', false, null, 'FINAL DAY TYRANIDS', 'Xenos - Tyranids', true),
-    ('unit-cultos-genestealer-the-red-terror', 'cultos-genestealer', 'The Red Terror', 'Aliada', 'character', array['Monstruo', 'Caracter']::text[], 130, 1, 10, 35, 10, 0, 10, 5, 0, 0, 0, 172800, 'cuartel-mando', 'Unidad aliada Final Day importada desde data/11th-final-day-tyranids.json.', false, null, 'FINAL DAY TYRANIDS', 'Xenos - Tyranids', true)
+    ('unit-cultos-genestealer-the-red-terror', 'cultos-genestealer', 'The Red Terror', 'Aliada', 'character', array['Monstruo', 'Caracter']::text[], 130, 1, 10, 35, 10, 0, 10, 5, 0, 0, 0, 172800, 'cuartel-mando', 'Unidad aliada Final Day importada desde data/11th-final-day-tyranids.json.', false, null, 'FINAL DAY TYRANIDS', 'Xenos - Tyranids', true),
+    ('unit-legiones-daemonicas-plague-marines', 'legiones-daemonicas', 'Plague Marines', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 90, 5, 2, 90, 0, 0, 0, 0, 0, 0, 0, 86400, 'barracon-infanteria', 'Unidad de Chaos - Death Guard integrada en El Caos.', false, null, 'Death Guard', 'Chaos - Death Guard', false),
+    ('unit-legiones-daemonicas-chaos-spawn', 'legiones-daemonicas', 'Chaos Spawn', 'Otras hojas de datos', 'beast', array['Bestia']::text[], 80, 2, 4, 64, 8, 0, 0, 0, 0, 0, 0, 86400, 'nido-bestias', 'Unidad de Chaos - Death Guard integrada en El Caos.', false, null, 'Death Guard', 'Chaos - Death Guard', false),
+    ('unit-legiones-daemonicas-poxwalkers', 'legiones-daemonicas', 'Poxwalkers', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 65, 10, 1, 65, 0, 0, 0, 0, 0, 0, 0, 86400, 'barracon-infanteria', 'Unidad de Chaos - Death Guard integrada en El Caos.', false, null, 'Death Guard', 'Chaos - Death Guard', false),
+    ('unit-legiones-daemonicas-blightlord-terminators', 'legiones-daemonicas', 'Blightlord Terminators', 'Otras hojas de datos', 'infantry', array['Infanteria']::text[], 115, 3, 3, 74, 8, 0, 0, 5, 0, 0, 0, 172800, 'barracon-infanteria', 'Unidad de Chaos - Death Guard integrada en El Caos.', false, null, 'Death Guard', 'Chaos - Death Guard', false),
+    ('unit-legiones-daemonicas-foetid-bloat-drone', 'legiones-daemonicas', 'Foetid Bloat-drone', 'Otras hojas de datos', 'vehicle', array['Vehiculo']::text[], 100, 1, 10, 0, 50, 0, 0, 0, 0, 0, 0, 172800, 'taller-guerra', 'Unidad de Chaos - Death Guard integrada en El Caos.', false, null, 'Death Guard', 'Chaos - Death Guard', false),
+    ('unit-legiones-daemonicas-mortarion', 'legiones-daemonicas', 'Mortarion', 'Personaje', 'character', array['Monstruo', 'Caracter']::text[], 375, 1, 16, 64, 18, 0, 37, 18, 0, 0, 0, 345600, 'cuartel-mando', 'Unidad de Chaos - Death Guard integrada en El Caos.', false, null, 'Death Guard', 'Chaos - Death Guard', false),
+    ('unit-legiones-daemonicas-myphitic-blight-hauler', 'legiones-daemonicas', 'Myphitic Blight-hauler', 'Otras hojas de datos', 'vehicle', array['Vehiculo']::text[], 95, 1, 10, 0, 48, 0, 0, 0, 0, 0, 0, 172800, 'taller-guerra', 'Unidad de Chaos - Death Guard integrada en El Caos.', false, null, 'Death Guard', 'Chaos - Death Guard', false),
+    ('unit-legiones-daemonicas-foetid-bloat-drone-heavy-blight-launcher', 'legiones-daemonicas', 'Foetid Bloat-drone with Heavy Blight Launcher', 'Otras hojas de datos', 'vehicle', array['Vehiculo']::text[], 125, 1, 10, 0, 63, 0, 0, 0, 0, 0, 0, 172800, 'taller-guerra', 'Unidad de Chaos - Death Guard integrada en El Caos.', false, null, 'Death Guard', 'Chaos - Death Guard', false),
+    ('unit-legiones-daemonicas-plagueburst-crawler', 'legiones-daemonicas', 'Plagueburst Crawler', 'Otras hojas de datos', 'vehicle', array['Vehiculo']::text[], 170, 1, 12, 0, 65, 0, 0, 8, 0, 0, 0, 172800, 'taller-guerra', 'Unidad de Chaos - Death Guard integrada en El Caos.', false, null, 'Death Guard', 'Chaos - Death Guard', false),
+    ('unit-legiones-daemonicas-defiler', 'legiones-daemonicas', 'Defiler', 'Otras hojas de datos', 'vehicle', array['Vehiculo']::text[], 300, 1, 14, 0, 150, 0, 0, 0, 0, 0, 0, 259200, 'taller-guerra', 'Unidad de Chaos - Death Guard integrada en El Caos.', false, null, 'Death Guard', 'Chaos - Death Guard', false),
+    ('unit-legiones-daemonicas-noxious-blightbringer', 'legiones-daemonicas', 'Noxious Blightbringer', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 50, 1, 4, 19, 3, 0, 5, 0, 0, 0, 0, 86400, 'cuartel-mando', 'Unidad de Chaos - Death Guard integrada en El Caos.', false, null, 'Death Guard', 'Chaos - Death Guard', false),
+    ('unit-legiones-daemonicas-malignant-plaguecaster', 'legiones-daemonicas', 'Malignant Plaguecaster', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 60, 1, 4, 22, 4, 0, 6, 0, 0, 0, 0, 86400, 'cuartel-mando', 'Unidad de Chaos - Death Guard integrada en El Caos.', false, null, 'Death Guard', 'Chaos - Death Guard', false),
+    ('unit-legiones-daemonicas-biologus-putrifier', 'legiones-daemonicas', 'Biologus Putrifier', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 60, 1, 4, 22, 4, 0, 6, 0, 0, 0, 0, 86400, 'cuartel-mando', 'Unidad de Chaos - Death Guard integrada en El Caos.', false, null, 'Death Guard', 'Chaos - Death Guard', false),
+    ('unit-legiones-daemonicas-chaos-predator-annihilator', 'legiones-daemonicas', 'Chaos Predator Annihilator', 'Otras hojas de datos', 'vehicle', array['Vehiculo']::text[], 135, 1, 11, 0, 68, 0, 0, 0, 0, 0, 0, 172800, 'taller-guerra', 'Unidad de Chaos - Death Guard integrada en El Caos.', false, null, 'Death Guard', 'Chaos - Death Guard', false),
+    ('unit-legiones-daemonicas-lord-of-contagion', 'legiones-daemonicas', 'Lord of Contagion', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 120, 1, 6, 18, 6, 0, 12, 6, 0, 0, 0, 172800, 'cuartel-mando', 'Unidad de Chaos - Death Guard integrada en El Caos.', false, null, 'Death Guard', 'Chaos - Death Guard', false)
 ) as data(slug, faction_slug, name, category, unit_type, unit_keywords, points, default_quantity, wounds_per_model, supply_cost, minerals_cost, ancestral_stone_cost, honor_cost, gold_cost, industrial_material_cost, uridium_cost, technology_cost, recruitment_time_seconds, recruitment_building_type, notes, is_available, required_technology_node_id, source_section, source_faction_name, is_allied_unit)
 join public.factions on factions.slug = data.faction_slug
 on conflict (slug) do update
@@ -1674,7 +1808,32 @@ from (
     ('unit-cultos-genestealer-tyrannocyte', 'models-1-1-copy-4-plus', '1 model', 1, 1, 1, 90, 4, null, 'mfm', null, null),
     ('unit-cultos-genestealer-von-ryans-leapers', 'models-3-3-copy-1-plus', '3 models', 3, 3, 3, 55, 1, null, 'mfm', null, null),
     ('unit-cultos-genestealer-von-ryans-leapers', 'models-6-6-copy-1-plus', '6 models', 6, 6, 6, 105, 1, null, 'mfm', null, null),
-    ('unit-cultos-genestealer-the-red-terror', 'models-1-1-copy-1-plus', '1 model', 1, 1, 1, 130, 1, null, 'mfm', null, null)
+    ('unit-cultos-genestealer-the-red-terror', 'models-1-1-copy-1-plus', '1 model', 1, 1, 1, 130, 1, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-plague-marines', 'models-5-5-copy-1-plus', '5 models', 5, 5, 5, 90, 1, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-plague-marines', 'models-7-7-copy-1-plus', '7 models', 7, 7, 7, 125, 1, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-plague-marines', 'models-10-10-copy-1-plus', '10 models', 10, 10, 10, 180, 1, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-chaos-spawn', 'models-2-2-copy-1-plus', '2 models', 2, 2, 2, 80, 1, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-poxwalkers', 'models-10-10-copy-1-plus', '10 models', 10, 10, 10, 65, 1, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-poxwalkers', 'models-20-20-copy-1-plus', '20 models', 20, 20, 20, 130, 1, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-blightlord-terminators', 'models-3-3-copy-1-plus', '3 models', 3, 3, 3, 115, 1, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-blightlord-terminators', 'models-5-5-copy-1-plus', '5 models', 5, 5, 5, 180, 1, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-blightlord-terminators', 'models-10-10-copy-1-plus', '10 models', 10, 10, 10, 360, 1, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-foetid-bloat-drone', 'models-1-1-copy-1-2', '1 model', 1, 1, 1, 100, 1, 2, 'mfm', null, null),
+    ('unit-legiones-daemonicas-foetid-bloat-drone', 'models-1-1-copy-3-plus', '1 model', 1, 1, 1, 110, 3, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-mortarion', 'models-1-1-copy-1-plus', '1 model', 1, 1, 1, 375, 1, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-myphitic-blight-hauler', 'models-1-1-copy-1-plus', '1 model', 1, 1, 1, 95, 1, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-myphitic-blight-hauler', 'models-2-2-copy-1-plus', '2 models', 2, 2, 2, 190, 1, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-foetid-bloat-drone-heavy-blight-launcher', 'models-1-1-copy-1-2', '1 model', 1, 1, 1, 125, 1, 2, 'mfm', null, null),
+    ('unit-legiones-daemonicas-foetid-bloat-drone-heavy-blight-launcher', 'models-1-1-copy-3-plus', '1 model', 1, 1, 1, 135, 3, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-plagueburst-crawler', 'models-1-1-copy-1-1', '1 model', 1, 1, 1, 170, 1, 1, 'mfm', null, null),
+    ('unit-legiones-daemonicas-plagueburst-crawler', 'models-1-1-copy-2-plus', '1 model', 1, 1, 1, 200, 2, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-defiler', 'models-1-1-copy-1-1', '1 model', 1, 1, 1, 300, 1, 1, 'mfm', null, null),
+    ('unit-legiones-daemonicas-defiler', 'models-1-1-copy-2-plus', '1 model', 1, 1, 1, 350, 2, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-noxious-blightbringer', 'models-1-1-copy-1-plus', '1 model', 1, 1, 1, 50, 1, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-malignant-plaguecaster', 'models-1-1-copy-1-plus', '1 model', 1, 1, 1, 60, 1, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-biologus-putrifier', 'models-1-1-copy-1-plus', '1 model', 1, 1, 1, 60, 1, null, 'mfm', null, null),
+    ('unit-legiones-daemonicas-chaos-predator-annihilator', 'models-1-1-copy-1-2', '1 model', 1, 1, 1, 135, 1, 2, 'mfm', null, null),
+    ('unit-legiones-daemonicas-lord-of-contagion', 'models-1-1-copy-1-plus', '1 model', 1, 1, 1, 120, 1, null, 'mfm', null, null)
 ) as data(template_slug, slug, label, models, min_models, max_models, points, copy_from, copy_to, source, points_change_direction, points_change_amount)
 join public.unit_templates on unit_templates.slug = data.template_slug
 on conflict (unit_template_id, slug) do update
@@ -1715,7 +1874,9 @@ from (
     ('unit-space-marines-terminator-assault-squad', 'thunder-hammer', 'Thunder Hammer', 5, 'per_option', 'mfm', null, null),
     ('unit-adeptus-custodes-caladius-grav-tank', 'twin-arachnus-heavy-blaze-cannon', 'Twin Arachnus Heavy Blaze Cannon', 15, 'per_option', 'mfm', null, null),
     ('unit-adeptus-custodes-venatari-custodians', 'venatari-lance', 'Venatari Lance', 5, 'per_option', 'mfm', null, null),
-    ('unit-adeptus-custodes-knight-crusader', 'rapid-fire-battle-cannon', 'Rapid-Fire Battle Cannon', 15, 'per_option', 'mfm', null, null)
+    ('unit-adeptus-custodes-knight-crusader', 'rapid-fire-battle-cannon', 'Rapid-Fire Battle Cannon', 15, 'per_option', 'mfm', null, null),
+    ('unit-legiones-daemonicas-defiler', 'heavy-reaper-autocannon', 'Heavy Reaper Autocannon', 15, 'per_option', 'mfm', null, null),
+    ('unit-legiones-daemonicas-defiler', 'hades-lascannon', 'Hades Lascannon', 15, 'per_option', 'mfm', null, null)
 ) as data(template_slug, slug, name, points, pricing, source, points_change_direction, points_change_amount)
 join public.unit_templates on unit_templates.slug = data.template_slug
 on conflict (unit_template_id, slug) do update

@@ -278,7 +278,8 @@ export function getUnitCostRule(unit, balanceConfig = {}) {
   const alliedGoldShare = configuredGoldShare <= 0 && alliedUnitQualifiesForGold(unit, isNamedCharacter) ? 0.2 : 0;
   const goldShare = supplyOnly ? 0 : configuredGoldShare || alliedGoldShare;
   const characterHonorShare = Number(
-    balanceConfig.characterHonorShareByFaction?.[factionSlug] ??
+    balanceConfig.characterHonorShareByUnitSlug?.[slug] ??
+      balanceConfig.characterHonorShareByFaction?.[factionSlug] ??
       balanceConfig.characterHonorShareByFaction?.default ??
       0.5
   );

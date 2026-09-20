@@ -71,6 +71,7 @@ export type UnitKeyword = "Vehiculo" | "Caracter" | "Infanteria" | "Bestia" | "M
 export type ResourceKey = "supply" | "minerals" | "honor" | "gold" | "industrialMaterial" | "uridium" | "technology";
 
 export type TradeableResourceKey = "supply" | "minerals" | "industrialMaterial" | "uridium";
+export type MerchantTradeResourceKey = "supply" | "minerals" | "honor";
 
 export type TradeOfferType = "buy" | "sell";
 
@@ -382,6 +383,7 @@ export interface UnitTemplate {
   notes?: string | null;
   isAvailable: boolean;
   requiredTechnologyNodeId?: string | null;
+  requiredTechnologyNodeIds?: string[];
   sourceSection?: string | null;
   sourceFactionName?: string | null;
   isAlliedUnit?: boolean;

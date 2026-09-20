@@ -157,14 +157,14 @@ Estado técnico actual:
 Estado jugable actual:
 
 - Campaña en tiempo real, sin turnos estratégicos.
-- Facciones jugables finales importadas desde `data/11th40kPoints.txt`: Legiones Daemónicas, Cultos Genestealer, Space Marines, Adeptus Custodes y Necrones.
+- Facciones jugables finales: El Caos, Cultos Genestealer, Space Marines, Adeptus Custodes y Necrones. El Caos conserva internamente el slug histórico `legiones-daemonicas` y combina Legiones Daemónicas con Death Guard.
 - Facciones narrativas de administrador: Orcos y Tiranidos. No tienen capital, usuario de jugador, recursos ni tropas iniciales; se usan para incursiones, control narrativo y misiones temporales.
 - Agentes del Imperium, Aeldari y Astra Militarum no forman parte de esta campaña final.
 - `Astra Militarum` ya no es facción jugable; `Adeptus Custodes` ocupa su hueco de campaña en `kharon-prime`.
-- El catálogo final de unidades se genera con `npm run units:generate`; importa 347 hojas de unidad de 11.ª edición: 333 desde `data/11th40kPoints.txt` y 14 organismos tiránidos de `Final Day` para Cultos Genestealer desde `data/11th-final-day-tyranids.json`.
+- El catálogo final de unidades se genera con `npm run units:generate`; importa 362 hojas de unidad de 11.ª edición: 333 desde `data/11th40kPoints.txt`, 14 organismos tiránidos de `Final Day` y 15 unidades Death Guard desde `data/11th-death-guard.json`.
 - Los costes variables oficiales MFM de 11.ª edición se generan con `npm run units:generate-options` desde `https://mfm.warhammer-community.com/en/` y se guardan en `data/11th-unit-cost-options.json`. Este archivo añade tamaños legales y extras pagados sin modificar `data/11th40kPoints.txt`. Si MFM trae recargos por copias repetidas, la campaña los conserva como dato de origen pero no los aplica.
 - El balance de costes y producción vive en `data/balance/faction-balance.json`; se audita con `docs/generated/faction-balance-report.md` y se valida con `npm run balance:validate`.
-- Capital + adyacente neutral suman 19,5 puntos/día potenciales en recursos de reclutamiento; Material Industrial y Uridium tienen economía separada. En el balance actual no hay Oro natural en sistemas.
+- Capital + adyacente neutral suman 21,5 puntos/día potenciales en recursos de reclutamiento; Material Industrial y Uridium tienen economía separada. El Oro natural se concentra en los sistemas nuevos del corredor central.
 - Los árboles de tropas por facción se definen de forma declarativa en `data/technology/faction-troop-trees.json` y se validan con `npm run tech:validate-troops`.
 - Producción diaria por tick temporal configurable, calculada desde edificios activos.
 - Movimiento, reclutamiento e investigación funcionan por timestamps y resolvers backend/lazy processing.
@@ -182,7 +182,7 @@ Estado jugable actual:
 - Cancelar reclutamiento, reabastecimiento o movimiento devuelve el 50% de los recursos gastados, redondeando hacia arriba.
 - Árbol tecnológico común `common-v1` con progreso independiente por facción. Incluye rama `Progreso` funcional, rama `Inteligencia` visible pero bloqueada como contenido futuro y tecnologías comunes.
 - Los árboles militares específicos usan la convención `troops-{faction_slug}-v1`. Cada jugador solo ve/investiga `common-v1` y el árbol militar de su facción; admin puede inspeccionar facciones desde el selector del árbol.
-- Las facciones objetivo para árboles de tropas son Legiones Daemónicas, Adeptus Custodes, Space Marines, Cultos Genestealer y Necrones.
+- Las facciones objetivo para árboles de tropas son El Caos, Adeptus Custodes, Space Marines, Cultos Genestealer y Necrones.
 - Oro es un recurso principal visible en la barra superior y se usa sobre todo para comercio.
 - Material Industrial es un recurso visible y comerciable usado principalmente para construcción.
 - Componentes tecnológicos son un recurso especial del árbol tecnológico; no aparecen en la barra superior y no se producen en planetas ni por edificios de producción.
@@ -196,11 +196,11 @@ Estado jugable actual:
 - Facciones narrativas de admin: `Orcos` y `Tiranidos` son amenazas no jugables (`is_narrative = true`), sin capital, usuarios, recursos ni tropas iniciales. Desde `/admin`, el admin puede programar incursiones narrativas con descripción pública y días hasta llegada, darles control inmediato de sistemas conquistables o crear misiones temporales atacables.
 - Si un sistema normal controlado por una facción narrativa pasa a una facción jugadora, se limpian sus metadatos narrativos y vuelve a funcionar como un sistema normal.
 - Comercio estelar usa reserva de recursos: publicar una oferta inmoviliza el recurso/oro y su comisión; al aceptar solo se valida el coste del aceptante.
-- Sistemas gaseosos compartidos: `Nexus Aster` y `Ashen Road` son no conquistables, no generan batalla al llegar y permiten coexistencia de facciones.
+- Sistemas gaseosos compartidos: `Maelstrom Gas`, `Voidmist Basin` y `Nebulosa Caronte` son no conquistables, no generan batalla al llegar y permiten coexistencia de facciones.
 
 Estado visual actual:
 
-- El mapa inicial tiene 30 sistemas, capitales en bordes del grafo, territorios iniciales contiguos, movimientos iniciales y 3 conflictos de prueba.
+- El mapa vivo ampliado tiene 23 sistemas y 29 rutas. Las capitales permanecen en los bordes, los corredores son asimétricos y los nueve sistemas añadidos empiezan neutrales.
 - Las aristas no muestran números por defecto; el coste de Uridium aparece en el flujo de movimiento.
 - Si una arista no está bloqueada y une dos sistemas controlados por la misma facción, se colorea con el color de esa facción.
 - La animación direccional de aristas se reserva solo para movimientos reales visibles para el usuario o admin.
@@ -546,14 +546,14 @@ Fórmula:
 Coste en puntos = Suministro + 2*Mineral + 5*Honor + 5*Oro
 ```
 
-Uridium equivale a 2 puntos a efectos económicos/comerciales, pero no se usa para generar tropas normales. Su saldo y producción admiten decimales, por ejemplo `0.3 Uridium/día`, aunque los costes de movimiento sigan siendo enteros. Material Industrial no tiene conversión a puntos de ejército en v1; sirve principalmente para construcción.
+Uridium equivale a 2 puntos a efectos económicos/comerciales, pero no se usa para generar tropas normales. Su saldo y producción admiten decimales, por ejemplo `0.6 Uridium/día`, aunque los costes de movimiento sigan siendo enteros. Material Industrial no tiene conversión a puntos de ejército en v1; sirve principalmente para construcción.
 
 Regla de balance vigente para unidades:
 
 - Toda unidad debe cumplir `Suministro + 2*Mineral + 5*Honor + 5*Oro = puntos Warhammer`. Si un perfil sin Suministro no puede representar un coste impar, se redondea hacia arriba con el recurso más barato ya usado y puede exceder en 1 punto equivalente.
 - Las unidades no pueden costar Material Industrial ni Uridium.
 - Por defecto una unidad no cuesta Oro. Las excepciones nominales cuestan un 25% en Oro, salvo los tres Shield-Captains Custodes y las unidades aliadas elegibles, que usan un 20%.
-- Todo `Caracter` paga un 50% en Honor; los Caracteres de Legiones Daemónicas y Cultos Genestealer pagan un 40%.
+- Todo `Caracter` paga un 50% en Honor; los demonios de El Caos y los Caracteres de Cultos Genestealer pagan un 40%. Los Caracteres Death Guard integrados en El Caos mantienen el 50% general.
 - La Infantería, Bestia y Montado no character reparten el coste entre Suministro y Mineral por tramos de puntos. Necrones usa un perfil propio más intensivo en Mineral.
 - `Vehiculo`, `Aeronave` y `Fortificacion` no character cuestan solo Mineral, salvo la fracción de Oro de una excepción.
 - `Monstruo` no character cuesta 20% Suministro y 80% Mineral. `Bestia` es una etiqueta distinta y usa la progresión orgánica de Infantería/Montado.
@@ -578,7 +578,7 @@ Honor debe ser raro y usarse para:
 - Reliquias.
 - Desbloqueos narrativos.
 
-No todas las unidades básicas deben costar Honor. Honor se genera mediante el edificio `Monumento` y no es comerciable ni con el mercader ni entre jugadores.
+No todas las unidades básicas deben costar Honor. Honor se genera mediante el edificio `Monumento`; puede comprarse o venderse al Mercader, pero no se intercambia mediante Comercio estelar entre jugadores.
 
 Nota técnica: las columnas SQL legacy `ancestral_stone` y `ancestral_stone_cost` pueden seguir existiendo temporalmente para despliegues seguros en cloud, pero no deben usarse como contrato nuevo. El frontend debe mapear valores legacy a `honor` solo como compatibilidad.
 
@@ -623,11 +623,11 @@ El mapa final usa capacidades explícitas, no generación determinista. El objet
 
 - Cada jugador empieza controlando solo su capital.
 - El sistema adyacente directo empieza neutral y aporta parte de la economía inicial cuando se conquista, pero no empieza con edificios construidos.
-- Capital + adyacente suman `19,5 puntos/día` potenciales solo en recursos de reclutamiento: Suministro, Mineral, Honor y Oro.
+- Capital + adyacente suman `21,5 puntos/día` potenciales solo en recursos de reclutamiento: Suministro, Mineral, Honor y Oro.
 - Material Industrial y Uridium no cuentan para ese cálculo de puntos Warhammer.
 - Capital y adyacente no tienen capacidad natural de Oro.
 - Las capitales tienen `5 Material Industrial/día` de capacidad natural y `0 Uridium/día`.
-- Los sistemas adyacentes tienen `0 Material Industrial/día` y `0.3 Uridium/día`.
+- Los sistemas adyacentes tienen `0 Material Industrial/día` y `0.6 Uridium/día`.
 - `nexus-aster` y `goregate`, los dos sistemas centrales controlados por Orcos, no tienen Oro natural en el balance actual; aportan recursos de reclutamiento, Material Industrial y Uridium escaso.
 - Los sistemas gaseosos no producen recursos.
 - Todos los sistemas empiezan sin edificios construidos. Por tanto, la producción activa inicial es 0 hasta que una facción construya edificios de producción.
@@ -636,7 +636,7 @@ El mapa final usa capacidades explícitas, no generación determinista. El objet
 Tropas iniciales de campaña, todas en la capital de su facción:
 
 - Necrones: 1 Plasmancer, 4/5 Immortals, 10/10 Necron Warriors y 2/3 Tomb Blades.
-- Legiones Daemónicas: 1/3 Flamers, 1 Burning Chariot y 7/10 Pink Horrors.
+- El Caos: 1/3 Flamers, 1 Burning Chariot y 7/10 Pink Horrors.
 - Sombra del Emperador: 4/5 Intercessor Squad, 7/10 Intercessor Squad, 1 Lieutenant y 1/3 Bladeguard Veteran Squad.
 - Adeptus Custodes: 1 Blade Champion, 3/4 Custodian Guard y 1/4 Prosecutors.
 - Cultos Genestealer: 7/10 Neophyte Hybrids, 1 Abominant y 5/5 Aberrants.
@@ -645,11 +645,15 @@ Tabla vigente de capital + adyacente:
 
 | Facción | Capital | Capacidad capital | Adyacente neutral | Capacidad adyacente | Total reclutamiento |
 |---|---|---:|---|---:|---:|
-| Legiones Daemónicas | Fasciata | 11 Suministro, 0.5 Honor, 5 Material Industrial | Drusus | 3 Mineral, 0.6 Uridium | 19,5 pts/día |
-| Sombra del Emperador | Obscura Primus | 11 Suministro, 0.5 Honor, 5 Material Industrial | Lyra Terminus | 3 Mineral, 0.6 Uridium | 19,5 pts/día |
-| Necrones | Necronpolis | 11 Suministro, 0.5 Honor, 5 Material Industrial | Novem | 3 Mineral, 0.6 Uridium | 19,5 pts/día |
-| Adeptus Custodes | Santa Terra | 11 Suministro, 0.5 Honor, 5 Material Industrial | Helios Drift | 3 Mineral, 0.6 Uridium | 19,5 pts/día |
-| Cultos Genestealer | Yaracuby77 Mina Abandonada | 11 Suministro, 0.5 Honor, 5 Material Industrial | Red Sabbath | 3 Mineral, 0.6 Uridium | 19,5 pts/día |
+| El Caos | Fasciata | 11 Suministro, 0.5 Honor, 5 Material Industrial | Drusus | 4 Mineral, 0.6 Uridium | 21,5 pts/día |
+| Sombra del Emperador | Obscura Primus | 11 Suministro, 0.5 Honor, 5 Material Industrial | Lyra Terminus | 4 Mineral, 0.6 Uridium | 21,5 pts/día |
+| Necrones | Necronpolis | 11 Suministro, 0.5 Honor, 5 Material Industrial | Novem | 4 Mineral, 0.6 Uridium | 21,5 pts/día |
+| Adeptus Custodes | Santa Terra | 11 Suministro, 0.5 Honor, 5 Material Industrial | Helios Drift | 4 Mineral, 0.6 Uridium | 21,5 pts/día |
+| Cultos Genestealer | Yaracuby77 Mina Abandonada | 11 Suministro, 0.5 Honor, 5 Material Industrial | Red Sabbath | 4 Mineral, 0.6 Uridium | 21,5 pts/día |
+
+El mapa de campaña ampliado tiene 23 sistemas y 29 rutas. Añade cinco sistemas fronterizos (`Umbral de Ceniza`, `Vigilia Noctis`, `Pozo Khepra`, `Cenotafio Ankh` y `Baluarte Sol`), tres sistemas productivos del corredor central (`Corona Voss`, `Cicatriz Helion` y `Nadir Kappa`) y el sistema gaseoso compartido `Nebulosa Caronte`. Los tres sistemas gaseosos no son conquistables, permiten ocupación compartida y no producen recursos.
+
+La ampliación del mapa se aplica sobre una campaña viva mediante migración incremental: conserva control territorial previo, tropas, investigaciones, recursos, edificios, colas, conflictos y movimientos. Solo inserta los sistemas nuevos, recoloca visualmente los existentes, sustituye el grafo de rutas y actualiza las capacidades naturales expresamente diseñadas.
 
 Los edificios iniciales ya no existen. Las facciones empiezan con recursos suficientes para construir y moverse sin que la economía arranque ya explotada.
 
@@ -698,9 +702,9 @@ Al abrir comercio desde el edificio, la pestaña por defecto es `Mercader`.
 El mercader:
 
 - Usa el avatar `icons/resources/merchant1.png`.
-- Permite comprar y vender únicamente `supply` y `minerals`.
+- Permite comprar y vender `supply`, `minerals` y `honor`.
 - Material Industrial y Uridium solo pueden intercambiarse entre jugadores mediante Comercio estelar.
-- No comercia Honor ni Componentes tecnológicos.
+- No comercia Material Industrial, Uridium ni Componentes tecnológicos.
 - Requiere que la facción tenga al menos una `Cámara de Comercio` activa.
 - Requiere tecnología `Contactos Económicos` para operar.
 - Vende recursos al doble de su valor por defecto.
@@ -722,7 +726,7 @@ El comercio entre jugadores usa ofertas abiertas de recurso contra Oro:
 - Oferta de venta: "Vendo X de recurso por Y de Oro".
 - Recursos comerciables: Suministro, Mineral, Material Industrial y Uridium.
 - No se comercia Oro como recurso objetivo; Oro es la moneda.
-- No se comercian Honor ni Componentes tecnológicos.
+- No se comercian Honor ni Componentes tecnológicos entre jugadores; Honor es exclusivo del Mercader.
 - Requiere que la facción tenga al menos una `Cámara de Comercio` activa.
 - Requiere tecnología `Mercado Galactico`.
 - Cada transacción cobra una comisión del 30% del Oro de la oferta, redondeada hacia arriba.
@@ -1528,7 +1532,7 @@ Reglas:
 
 Efectos v1:
 
-- `unlock_unit_template`: una tecnología permite reclutar plantillas de unidad asociadas mediante `unit_templates.required_technology_node_id`.
+- `unlock_unit_template`: una tecnología permite reclutar plantillas de unidad asociadas. La relación normal usa `unit_templates.required_technology_node_id`; `unit_template_technology_unlocks` permite varios nodos alternativos y basta con tener uno desbloqueado.
 - `unlock_building_template`: permite construir plantillas de edificio asociadas si la facción tiene la tecnología desbloqueada.
 - `recruitment_cost_discount`: reduce costes de reclutamiento por recurso y categoría.
 - `recruitment_time_discount`: reduce tiempo de reclutamiento por categoría.
@@ -1559,18 +1563,18 @@ Unidades finales:
 - El árbol de Space Marines tiene 15 nodos activos y cubre las 85 plantillas de Space Marines importadas exactamente una vez.
 - La descripción de cada nodo de Space Marines debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
 - `troops-legiones-daemonicas-v1` también está `ready`.
-- El árbol de Legiones Daemónicas tiene 3 ramas: `Hordas del Velo`, `Corte del Cambiante` y `Tronos de la Disformidad`.
-- El árbol de Legiones Daemónicas es asimetrico: 6 nodos en Hordas, 5 en Corte y 4 en Tronos.
-- El árbol de Legiones Daemónicas tiene bifurcaciones entre horrores, llamas, carros, heraldos, escribas, principes demonio y grandes entidades de la Disformidad, con convergencia final en `El Primer Principe`.
-- El árbol de Legiones Daemónicas tiene 15 nodos activos y cubre las 19 plantillas de Legiones Daemónicas importadas exactamente una vez.
-- La descripción de cada nodo de Legiones Daemónicas debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
+- El árbol de El Caos usa el tree key histórico `troops-legiones-daemonicas-v1` y tiene 3 ramas: `Hordas del Velo`, `Corte del Cambiante` y `Tronos de la Disformidad`.
+- El árbol de El Caos es asimétrico: 6 nodos en Hordas, 5 en Corte y 4 en Tronos.
+- Sus 15 nodos combinan las 19 plantillas demoníacas con 15 unidades Death Guard. Cada nodo enumera literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
+- `Myphitic Blight-hauler` puede desbloquearse por `Señor del Cambio` o por `Escribas del Destino`; es una relación OR real validada por backend.
+- En modo campaña, los nodos militares de El Caos tardan 1, 2 o 3 días para costes tecnológicos de 1, 2 o 3 respectivamente.
 - `troops-adeptus-custodes-v1` también está `ready`.
 - El árbol de Adeptus Custodes tiene 3 ramas: `Guardia Auramita`, `Cámara Anathema` y `Arsenal del Trono`.
 - El árbol de Adeptus Custodes es asimetrico: 5 nodos en Guardia, 4 en Cámara y 6 en Arsenal.
 - El árbol de Adeptus Custodes tiene bifurcaciones entre custodios de linea, campeones, exterminadores auricos, Hermanas del Silencio, grav-vehiculos, dreadnoughts, naves, Knights aliados y Titanes, con cierre de poder en `Titanes de Terra`.
 - El árbol de Adeptus Custodes tiene 15 nodos activos y cubre las 51 plantillas de Adeptus Custodes importadas exactamente una vez.
 - La descripción de cada nodo de Adeptus Custodes debe listar literalmente las unidades que desbloquea con el prefijo `Desbloquea:`.
-- Las cinco facciones objetivo de jugador ya están `ready`: Legiones Daemónicas, Adeptus Custodes, Space Marines, Cultos Genestealer y Necrones. Aeldari y Agentes del Imperium no forman parte de esta campaña final.
+- Las cinco facciones objetivo de jugador ya están `ready`: El Caos, Adeptus Custodes, Space Marines, Cultos Genestealer y Necrones. Aeldari y Agentes del Imperium no forman parte de esta campaña final.
 
 La pantalla de tecnología debe sentirse como interfaz de videojuego:
 
@@ -1799,7 +1803,7 @@ Mercader:
 - Avatar en `icons/resources/merchant1.png`.
 - Compra y venta únicamente de Suministro y Mineral usando Oro.
 - Material Industrial y Uridium quedan reservados al Comercio estelar entre jugadores.
-- No comercia Honor ni Componentes tecnológicos.
+- Comercia Suministro vital, Mineral y Honor; no comercia Componentes tecnológicos, Material Industrial ni Uridium.
 - Requiere al menos una Cámara de Comercio activa de la facción.
 - Requiere `Contactos Económicos`.
 - Vende al doble de valor por defecto.
@@ -2136,7 +2140,7 @@ industrialMaterial
 uridium
 ```
 
-`technology` solo se muestra dentro del árbol tecnológico. `honor` no es comerciable. `ancestral_stone` y `ancestral_stone_cost` son columnas legacy temporales para compatibilidad y no deben usarse como contrato nuevo.
+`technology` solo se muestra dentro del árbol tecnológico. `honor` solo es comerciable con el Mercader, no entre jugadores. `ancestral_stone` y `ancestral_stone_cost` son columnas legacy temporales para compatibilidad y no deben usarse como contrato nuevo.
 
 Tablas nuevas/vigentes:
 

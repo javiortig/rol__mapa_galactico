@@ -128,9 +128,13 @@ const goldSystemSlugs = Object.entries(balanceConfig.systemCapacities ?? {})
   .filter(([, capacity]) => Number(capacity.gold ?? 0) > 0)
   .map(([slug]) => slug)
   .sort();
+const expectedGoldSystemSlugs = [...(balanceConfig.goldSystemSlugs ?? [])].sort();
 
-if (goldSystemSlugs.length > 0) {
-  errors.push(`Ningun sistema debe tener Oro natural en el balance actual; recibido ${goldSystemSlugs.join(", ")}.`);
+if (JSON.stringify(goldSystemSlugs) !== JSON.stringify(expectedGoldSystemSlugs)) {
+  errors.push(
+    `Sistemas con Oro natural incorrectos: ${goldSystemSlugs.join(", ") || "ninguno"}; ` +
+    `esperado ${expectedGoldSystemSlugs.join(", ") || "ninguno"}.`,
+  );
 }
 
 if (balanceConfig.initialBuildings !== "none") {
@@ -139,8 +143,8 @@ if (balanceConfig.initialBuildings !== "none") {
 
 for (const slug of balanceConfig.basicBuildingSlugs ?? []) {
   const cost = Number(balanceConfig.buildingCosts?.[slug] ?? 0);
-  if (cost !== 20) {
-    errors.push(`${slug}: los edificios basicos deben costar 20 Material Industrial.`);
+  if (cost !== 25) {
+    errors.push(`${slug}: los edificios basicos deben costar 25 Material Industrial.`);
   }
 }
 

@@ -304,7 +304,10 @@ function RecruitTab({
             templates.map((unitTemplate) => {
               const selected = unitTemplate.id === selectedTemplate?.id;
               const unlocked = isUnitTemplateUnlocked(snapshot, unitTemplate);
-              const requiredTechnologyName = getRequiredTechnologyName(snapshot, unitTemplate.requiredTechnologyNodeId);
+              const requiredTechnologyName = getRequiredTechnologyName(
+                snapshot,
+                unitTemplate.requiredTechnologyNodeIds ?? unitTemplate.requiredTechnologyNodeId
+              );
               const previewChoice = getModelChoices(unitTemplate)[0];
               const previewPoints = previewChoice?.points ?? unitTemplate.points;
               const affordable = resources ? canAffordRecruitmentVariant(snapshot, resources, unitTemplate, previewPoints) : false;
@@ -473,7 +476,10 @@ function RecruitTab({
                   <div className="min-w-0">
                     <div className="font-medium text-violet-50">Patron de guerra sellado</div>
                     <div className="mt-1 break-words text-violet-100/75">
-                      {getRequiredTechnologyName(snapshot, selectedTemplate.requiredTechnologyNodeId)}
+                      {getRequiredTechnologyName(
+                        snapshot,
+                        selectedTemplate.requiredTechnologyNodeIds ?? selectedTemplate.requiredTechnologyNodeId
+                      )}
                     </div>
                   </div>
                 </div>

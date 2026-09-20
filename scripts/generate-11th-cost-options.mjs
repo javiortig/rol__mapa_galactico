@@ -3,6 +3,7 @@ import { dirname } from "node:path";
 
 const SOURCE_PATH = "data/11th40kPoints.txt";
 const FINAL_DAY_TYRANIDS_PATH = "data/11th-final-day-tyranids.json";
+const DEATH_GUARD_PATH = "data/11th-death-guard.json";
 const OUTPUT_PATH = "data/11th-unit-cost-options.json";
 const REPORT_PATH = "docs/generated/11th-unit-cost-options-report.md";
 const SEED_PATH = "supabase/seed.sql";
@@ -18,7 +19,7 @@ const FACTION_MAP = {
   },
   "Chaos - Chaos Daemons": {
     slug: "legiones-daemonicas",
-    name: "Legiones Daemonicas",
+    name: "El Caos",
     mfmSlug: "chaos-daemons"
   },
   "Imperium - Agents of the Imperium": {
@@ -61,10 +62,39 @@ const SOURCE_NOTE =
   "MFM oficial 11th edition. No se usa BSData/wh40k-10e como fuente de puntos, tamanos ni opciones.";
 
 async function main() {
+  if (process.argv.includes("--from-cache")) {
+    const output = readJson(OUTPUT_PATH);
+    const variableUnits = output.units.filter(
+      (unit) =>
+        unit.modelOptions.length > 1 ||
+        unit.wargearOptions.length > 0 ||
+        unit.rosterModifiers.length > 0
+    );
+    const unmatched = output.units.filter((unit) => unit.matchStatus !== "matched");
+
+    output.summary = {
+      providedUnits: output.units.length,
+      matchedUnits: output.units.length - unmatched.length,
+      unmatchedUnits: unmatched.length,
+      variableUnits: variableUnits.length,
+      conflicts: output.summary?.conflicts ?? 0
+    };
+
+    writeText(OUTPUT_PATH, `${JSON.stringify(output, null, 2)}\n`);
+    writeText(REPORT_PATH, buildCachedReport(output, variableUnits, unmatched));
+    updateSeedCostOptions(output.units);
+
+    console.log(`Opciones MFM reconstruidas desde cache: ${OUTPUT_PATH}`);
+    console.log(`Informe generado: ${REPORT_PATH}`);
+    console.log(`Seed actualizado con opciones MFM: ${SEED_PATH}`);
+    return;
+  }
+
   const fetchedAt = new Date().toISOString();
   const providedUnits = [
     ...parseProvidedCatalog(readFileSync(SOURCE_PATH, "utf8")),
-    ...parseFinalDayTyranidCatalog(readJson(FINAL_DAY_TYRANIDS_PATH))
+    ...parseFinalDayTyranidCatalog(readJson(FINAL_DAY_TYRANIDS_PATH)),
+    ...parseSupplementalCatalog(readJson(DEATH_GUARD_PATH))
   ];
   const factionGroups = groupBy(providedUnits, (unit) => unit.factionSlug);
   const primaryMfmByFaction = new Map();
@@ -167,6 +197,57 @@ async function main() {
   console.log(`Unidades no encontradas: ${unmatched.length}`);
 }
 
+function buildCachedReport(output, variableUnits, unmatched) {
+  const lines = [
+    "# Informe de opciones y puntos variables 11th",
+    "",
+    `Generado desde cache: ${output.source.fetchedAt}`,
+    `Fuente primaria: ${output.source.url}`,
+    "",
+    `> ${output.source.note}`,
+    "",
+    "## Resumen",
+    "",
+    `- Unidades del catálogo: ${output.summary.providedUnits}`,
+    `- Unidades cruzadas con MFM: ${output.summary.matchedUnits}`,
+    `- Unidades con tamaños/opciones/thresholds: ${output.summary.variableUnits}`,
+    `- Conflictos registrados en la extracción original: ${output.summary.conflicts}`,
+    `- Unidades no encontradas: ${output.summary.unmatchedUnits}`,
+    "",
+    "## Unidades enriquecidas",
+    "",
+    "| Facción | Unidad | Base | Tamaños MFM | Equipo pagado |",
+    "|---|---|---:|---|---|"
+  ];
+
+  for (const unit of variableUnits) {
+    const models = unit.modelOptions.length > 0
+      ? unit.modelOptions
+          .map((option) => `${option.models}m/${option.points} ptos`)
+          .join(", ")
+      : "-";
+    const wargear = unit.wargearOptions.length > 0
+      ? unit.wargearOptions
+          .map((option) => `${option.name} +${option.points}`)
+          .join(", ")
+      : "-";
+    lines.push(
+      `| ${unit.factionName} | ${unit.name} | ${unit.provided.models}m / ${unit.provided.points} ptos | ${models} | ${wargear} |`
+    );
+  }
+
+  lines.push("", "## Unidades sin cruce MFM", "");
+  if (unmatched.length === 0) {
+    lines.push("- Ninguna.");
+  } else {
+    for (const unit of unmatched) {
+      lines.push(`- ${unit.factionName}: ${unit.name}.`);
+    }
+  }
+
+  return `${lines.join("\n")}\n`;
+}
+
 function parseProvidedCatalog(text) {
   const units = [];
   let currentFaction = null;
@@ -224,6 +305,21 @@ function parseFinalDayTyranidCatalog(finalDay) {
     models: Number(unit.defaultQuantity),
     points: Number(unit.points),
     preferredMfmSlug: finalDay.mfmSlug
+  }));
+}
+
+function parseSupplementalCatalog(supplement) {
+  return (supplement.units ?? []).map((unit) => ({
+    factionSlug: supplement.factionSlug,
+    factionName: supplement.factionName,
+    factionSourceName: supplement.sourceFactionName,
+    unitSlug: unit.unitSlug ?? slugify(unit.name),
+    name: unit.name,
+    rawName: unit.name,
+    mfmName: unit.mfmName ?? unit.name,
+    models: Number(unit.defaultQuantity),
+    points: Number(unit.points),
+    preferredMfmSlug: supplement.mfmSlug
   }));
 }
 
@@ -613,7 +709,7 @@ function findCostForProvidedModels(modelOptions, models) {
 }
 
 function resolveMatchKey(unit) {
-  const normalized = normalizeName(unit.name);
+  const normalized = normalizeName(unit.mfmName ?? unit.name);
   return NAME_ALIASES.get(`${unit.factionSlug}:${normalized}`) ?? normalized;
 }
 

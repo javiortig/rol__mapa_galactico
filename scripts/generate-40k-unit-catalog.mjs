@@ -10,13 +10,14 @@ import {
 const SOURCE_PATH = "data/11th40kPoints.txt";
 const MFM_COST_OPTIONS_PATH = "data/11th-unit-cost-options.json";
 const FINAL_DAY_TYRANIDS_PATH = "data/11th-final-day-tyranids.json";
+const DEATH_GUARD_PATH = "data/11th-death-guard.json";
 const SEED_PATH = "supabase/seed.sql";
 const MOCK_PATH = "src/mocks/generated/40k-unit-templates.ts";
 const REPORT_PATH = "docs/generated/40k-unit-import-report.md";
 const BALANCE_CONFIG_PATH = "data/balance/faction-balance.json";
 const TROOP_TREE_CONFIG_PATH = "data/technology/faction-troop-trees.json";
 const BALANCE_REPORT_PATH = "docs/generated/faction-balance-report.md";
-const COST_MIGRATION_PATH = "supabase/migrations/0103_unit_cost_profiles_and_monsters.sql";
+const COST_PROFILE_SQL_PATH = "data/generated/unit-cost-profiles.sql";
 const BSDATA_REPO_URL = "https://github.com/BSData/wh40k-10e.git";
 const BSDATA_PATH = ".tmp/wh40k-10e";
 
@@ -150,7 +151,7 @@ const FACTION_DEFS = [
   {
     sourceName: "Chaos - Chaos Daemons",
     slug: "legiones-daemonicas",
-    name: "Legiones Daemonicas",
+    name: "El Caos",
     color: "#ef4444",
     capitalSystemId: "mordax"
   },
@@ -233,7 +234,7 @@ function main() {
   writeText(REPORT_PATH, report);
   writeText(BALANCE_REPORT_PATH, buildBalanceReport(catalog, balance, balanceConfig));
   writeText(MOCK_PATH, buildMockFile(catalog.units));
-  writeText(COST_MIGRATION_PATH, buildUnitCostMigrationSql(catalog.units, balanceConfig));
+  writeText(COST_PROFILE_SQL_PATH, buildUnitCostMigrationSql(catalog.units, balanceConfig));
   updateSeed(catalog.units);
 
   console.log(`Catalogo generado: ${catalog.units.length} unidades reales.`);
@@ -339,8 +340,66 @@ function parseCatalog(text, keywordSource, mfmBasePointOverrides) {
   }
 
   appendFinalDayTyranidUnits(units, factionSummaries, keywordMatches);
+  appendSupplementalFactionUnits(units, factionSummaries, keywordMatches, DEATH_GUARD_PATH);
 
   return { units, factionSummaries, keywordSource, keywordMatches, missingKeywordMatches, mfmPointOverrides };
+}
+
+function appendSupplementalFactionUnits(units, factionSummaries, keywordMatches, sourcePath) {
+  const supplement = readJson(sourcePath);
+  const addedUnits = [];
+  let pointsForFaction = 0;
+
+  for (const entry of supplement.units ?? []) {
+    const unitKeywords = sortUnitKeywords(entry.unitKeywords ?? []);
+    if (unitKeywords.length === 0 || unitKeywords.length > 2) {
+      throw new Error(`${supplement.factionName} ${entry.name}: debe tener 1 o 2 keywords validas.`);
+    }
+
+    const slug = uniqueSlug(units, `unit-${supplement.factionSlug}-${entry.unitSlug ?? slugify(entry.name)}`);
+    const points = Number(entry.points);
+    const defaultQuantity = Number(entry.defaultQuantity);
+
+    if (!Number.isFinite(points) || points <= 0 || !Number.isFinite(defaultQuantity) || defaultQuantity <= 0) {
+      throw new Error(`${supplement.factionName} ${entry.name}: puntos o miniaturas invalidas.`);
+    }
+
+    const unit = {
+      slug,
+      factionSlug: supplement.factionSlug,
+      sourceFactionName: supplement.sourceFactionName,
+      name: entry.name,
+      sourceSection: supplement.sourceSection,
+      isAlliedUnit: Boolean(supplement.isAlliedUnit),
+      category: entry.category ?? "Otras hojas de datos",
+      unitKeywords,
+      isNamedCharacter: Boolean(entry.isNamedCharacter),
+      unitType: legacyUnitType(unitKeywords),
+      points,
+      defaultQuantity,
+      woundsPerModel: Number(entry.woundsPerModel ?? inferWoundsPerModel(entry.name, unitKeywords)),
+      recruitmentBuildingType: recruitmentBuildingType(entry.name, unitKeywords),
+      ...emptyCosts(points),
+      notes: `Unidad de ${supplement.sourceFactionName} integrada en ${supplement.factionName}.`,
+      isAvailable: false
+    };
+
+    units.push(unit);
+    addedUnits.push(unit);
+    pointsForFaction += points;
+    keywordMatches.push(
+      `${supplement.sourceFactionName}: ${entry.name} -> ${unitKeywords.join(", ")} (${sourcePath})`
+    );
+  }
+
+  factionSummaries.push({
+    sourceFactionName: `${supplement.factionName} - ${supplement.sourceSection}`,
+    slug: supplement.factionSlug,
+    expectedUnits: addedUnits.length,
+    importedUnits: addedUnits.length,
+    totalPoints: pointsForFaction,
+    importedPoints: pointsForFaction
+  });
 }
 
 function appendFinalDayTyranidUnits(units, factionSummaries, keywordMatches) {

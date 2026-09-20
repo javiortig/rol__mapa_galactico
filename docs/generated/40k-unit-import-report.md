@@ -2,14 +2,14 @@
 
 Generado por `npm run units:generate` desde `data/11th40kPoints.txt`.
 
-- Hojas de unidad importadas: 347.
+- Hojas de unidad importadas: 362.
 - Adeptus Custodes: 51.
 - Astra Militarum: 0.
 - Fuente de keywords reales: BSData/wh40k-10e @ 6056155b5e2100e4f656707b24ac080d7c46d323.
 - Archivos BSData escaneados: 46.
 - Entradas BSData escaneadas: 1508.
 - Entradas BSData con keywords de tipo usadas por el rol: 1460.
-- Unidades con keywords reales cruzadas: 347.
+- Unidades con keywords reales cruzadas: 362.
 - Cruces BSData faltantes: 0.
 - Fallback heuristico: 0.
 - Puntos base actualizados desde MFM: 149.
@@ -26,6 +26,7 @@ Generado por `npm run units:generate` desde `data/11th40kPoints.txt`.
 - Imperium - Adeptus Astartes - Space Marines: 85/85 unidades, 10565/10785 puntos.
 - Imperium - Adeptus Custodes: 51/51 unidades, 16160/16160 puntos.
 - Cultos Genestealer - FINAL DAY TYRANIDS: 14/14 unidades, 1450/1450 puntos.
+- El Caos - Death Guard: 15/15 unidades, 1940/1940 puntos.
 
 ## Unidades por faccion
 
@@ -37,12 +38,13 @@ Generado por `npm run units:generate` desde `data/11th40kPoints.txt`.
 - Imperium - Adeptus Astartes - Space Marines: 85
 - Imperium - Adeptus Custodes: 51
 - Xenos - Tyranids: 14
+- Chaos - Death Guard: 15
 
 ## Unidades por categoria
 
-- Personaje: 131
-- Linea de batalla: 19
-- Otras hojas de datos: 150
+- Personaje: 136
+- Linea de batalla: 21
+- Otras hojas de datos: 158
 - Transporte: 12
 - Aliada: 35
 

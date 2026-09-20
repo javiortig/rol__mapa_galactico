@@ -42,7 +42,15 @@ export function isTechnologyUnlocked(snapshot: CampaignSnapshot, technologyNodeI
 }
 
 export function isUnitTemplateUnlocked(snapshot: CampaignSnapshot, template: UnitTemplate) {
-  return isTechnologyUnlocked(snapshot, template.requiredTechnologyNodeId);
+  const technologyNodeIds = getUnitTemplateTechnologyNodeIds(template);
+  return technologyNodeIds.length === 0 || technologyNodeIds.some((nodeId) => isTechnologyUnlocked(snapshot, nodeId));
+}
+
+export function getUnitTemplateTechnologyNodeIds(template: UnitTemplate) {
+  if (template.requiredTechnologyNodeIds && template.requiredTechnologyNodeIds.length > 0) {
+    return template.requiredTechnologyNodeIds;
+  }
+  return template.requiredTechnologyNodeId ? [template.requiredTechnologyNodeId] : [];
 }
 
 export function isBuildingTemplateUnlocked(snapshot: CampaignSnapshot, template: BuildingTemplate) {
@@ -53,12 +61,20 @@ export function isTechnologyNodeVisible(node: TechnologyNode) {
   return node.implementationStatus !== "deprecated";
 }
 
-export function getRequiredTechnologyName(snapshot: CampaignSnapshot, technologyNodeId?: string | null) {
-  if (!technologyNodeId) {
+export function getRequiredTechnologyName(snapshot: CampaignSnapshot, technologyNodeId?: string | string[] | null) {
+  const technologyNodeIds = Array.isArray(technologyNodeId)
+    ? technologyNodeId
+    : technologyNodeId
+      ? [technologyNodeId]
+      : [];
+  if (technologyNodeIds.length === 0) {
     return null;
   }
 
-  return snapshot.technologyNodes.find((node) => node.id === technologyNodeId)?.name ?? "Tecnolog\u00eda requerida";
+  const names = technologyNodeIds.map(
+    (nodeId) => snapshot.technologyNodes.find((node) => node.id === nodeId)?.name ?? "Tecnolog\u00eda requerida"
+  );
+  return names.join(" o ");
 }
 
 export function getActiveTechnologyResearch(snapshot: CampaignSnapshot, factionId = snapshot.currentUser.factionId) {

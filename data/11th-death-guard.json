@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "factionSlug": "legiones-daemonicas",
+  "factionName": "El Caos",
+  "sourceFactionName": "Chaos - Death Guard",
+  "sourceSection": "Death Guard",
+  "mfmSlug": "death-guard",
+  "isAlliedUnit": false,
+  "source": {
+    "kind": "mfm",
+    "url": "https://mfm.warhammer-community.com/en/death-guard"
+  },
+  "units": [
+    {
+      "unitSlug": "plague-marines",
+      "name": "Plague Marines",
+      "defaultQuantity": 5,
+      "points": 90,
+      "category": "Linea de batalla",
+      "unitKeywords": ["Infanteria"],
+      "woundsPerModel": 2
+    },
+    {
+      "unitSlug": "chaos-spawn",
+      "name": "Chaos Spawn",
+      "defaultQuantity": 2,
+      "points": 80,
+      "category": "Otras hojas de datos",
+      "unitKeywords": ["Bestia"],
+      "woundsPerModel": 4
+    },
+    {
+      "unitSlug": "poxwalkers",
+      "name": "Poxwalkers",
+      "defaultQuantity": 10,
+      "points": 65,
+      "category": "Linea de batalla",
+      "unitKeywords": ["Infanteria"],
+      "woundsPerModel": 1
+    },
+    {
+      "unitSlug": "blightlord-terminators",
+      "name": "Blightlord Terminators",
+      "defaultQuantity": 3,
+      "points": 115,
+      "category": "Otras hojas de datos",
+      "unitKeywords": ["Infanteria"],
+      "woundsPerModel": 3
+    },
+    {
+      "unitSlug": "foetid-bloat-drone",
+      "name": "Foetid Bloat-drone",
+      "defaultQuantity": 1,
+      "points": 100,
+      "category": "Otras hojas de datos",
+      "unitKeywords": ["Vehiculo"],
+      "woundsPerModel": 10
+    },
+    {
+      "unitSlug": "mortarion",
+      "name": "Mortarion",
+      "defaultQuantity": 1,
+      "points": 375,
+      "category": "Personaje",
+      "unitKeywords": ["Monstruo", "Caracter"],
+      "isNamedCharacter": true,
+      "woundsPerModel": 16
+    },
+    {
+      "unitSlug": "myphitic-blight-hauler",
+      "mfmName": "Myphitic Blight-haulers",
+      "name": "Myphitic Blight-hauler",
+      "defaultQuantity": 1,
+      "points": 95,
+      "category": "Otras hojas de datos",
+      "unitKeywords": ["Vehiculo"],
+      "woundsPerModel": 10
+    },
+    {
+      "unitSlug": "foetid-bloat-drone-heavy-blight-launcher",
+      "mfmName": "Foetid Bloat-drone with Heavy Blight Launcher",
+      "name": "Foetid Bloat-drone with Heavy Blight Launcher",
+      "defaultQuantity": 1,
+      "points": 125,
+      "category": "Otras hojas de datos",
+      "unitKeywords": ["Vehiculo"],
+      "woundsPerModel": 10
+    },
+    {
+      "unitSlug": "plagueburst-crawler",
+      "name": "Plagueburst Crawler",
+      "defaultQuantity": 1,
+      "points": 170,
+      "category": "Otras hojas de datos",
+      "unitKeywords": ["Vehiculo"],
+      "woundsPerModel": 12
+    },
+    {
+      "unitSlug": "defiler",
+      "name": "Defiler",
+      "defaultQuantity": 1,
+      "points": 300,
+      "category": "Otras hojas de datos",
+      "unitKeywords": ["Vehiculo"],
+      "woundsPerModel": 14
+    },
+    {
+      "unitSlug": "noxious-blightbringer",
+      "name": "Noxious Blightbringer",
+      "defaultQuantity": 1,
+      "points": 50,
+      "category": "Personaje",
+      "unitKeywords": ["Infanteria", "Caracter"],
+      "woundsPerModel": 4
+    },
+    {
+      "unitSlug": "malignant-plaguecaster",
+      "name": "Malignant Plaguecaster",
+      "defaultQuantity": 1,
+      "points": 60,
+      "category": "Personaje",
+      "unitKeywords": ["Infanteria", "Caracter"],
+      "woundsPerModel": 4
+    },
+    {
+      "unitSlug": "biologus-putrifier",
+      "name": "Biologus Putrifier",
+      "defaultQuantity": 1,
+      "points": 60,
+      "category": "Personaje",
+      "unitKeywords": ["Infanteria", "Caracter"],
+      "woundsPerModel": 4
+    },
+    {
+      "unitSlug": "chaos-predator-annihilator",
+      "name": "Chaos Predator Annihilator",
+      "defaultQuantity": 1,
+      "points": 135,
+      "category": "Otras hojas de datos",
+      "unitKeywords": ["Vehiculo"],
+      "woundsPerModel": 11
+    },
+    {
+      "unitSlug": "lord-of-contagion",
+      "name": "Lord of Contagion",
+      "defaultQuantity": 1,
+      "points": 120,
+      "category": "Personaje",
+      "unitKeywords": ["Infanteria", "Caracter"],
+      "woundsPerModel": 6
+    }
+  ]
+}
