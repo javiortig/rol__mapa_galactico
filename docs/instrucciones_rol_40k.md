@@ -691,7 +691,8 @@ Al abrir comercio desde el edificio, la pestaña por defecto es `Mercader`.
 El mercader:
 
 - Usa el avatar `icons/resources/merchant1.png`.
-- Permite comprar y vender `supply`, `minerals`, `industrialMaterial` y `uridium`.
+- Permite comprar y vender únicamente `supply` y `minerals`.
+- Material Industrial y Uridium solo pueden intercambiarse entre jugadores mediante Comercio estelar.
 - No comercia Honor ni Componentes tecnológicos.
 - Requiere que la facción tenga al menos una `Cámara de Comercio` activa.
 - Requiere tecnología `Contactos Económicos` para operar.
@@ -850,13 +851,14 @@ Visualmente:
 
 Por ahora:
 
-- Un sistema con batalla pendiente queda bloqueado.
+- Un sistema queda bloqueado cuando el ataque llega y se crea la batalla, no cuando el ataque se declara o está viajando.
 - La duración estándar del bloqueo inicial de batalla en modo campaña es de 14 días (`conflict_block_duration_minutes = 20160`).
 - Durante el bloqueo no puede ser atacado.
 - Puede seguir mostrando su controlador públicamente.
 - El bloqueo puede mantenerse hasta que los jugadores participantes o el admin reporten el resultado.
 - El admin puede definir una duración adicional de bloqueo después de resolver la batalla.
-- Puede producir recursos si se decide así.
+- Mientras la batalla está activa no produce recursos, no admite nuevas construcciones, reclutamientos ni reabastecimientos, y las colas existentes quedan pausadas.
+- Al resolver la batalla, las colas supervivientes recuperan el tiempo que les quedaba; el escudo posterior a la batalla no pausa la actividad del vencedor.
 - Se puede permitir mover tropas propias dentro/fuera, salvo que el admin lo bloquee manualmente.
 
 ### 6.4 Información pública
@@ -1001,21 +1003,21 @@ Costes actuales de construcción, todos pagados solo con Material Industrial:
 
 | Edificio | Coste |
 |---|---:|
-| Granja Biológica | 20 |
-| Complejo Minero | 20 |
-| Planta de Fundición | 20 |
-| Barracón de Infantería | 20 |
-| Monumento | 24 |
-| Refinería de Iridium | 26 |
-| Cámara de Comercio | 30 |
-| Antenas de Reconocimiento | 30 |
-| Mina de Oro | 34 |
-| Taller de Guerra | 38 |
-| Nido de Bestias | 38 |
-| Nexo de Inteligencia | 38 |
-| Cuartel de Mando | 42 |
-| Santuario de Reliquias | 44 |
-| Cámara de Leyendas | 56 |
+| Granja Biológica | 25 |
+| Complejo Minero | 25 |
+| Planta de Fundición | 25 |
+| Barracón de Infantería | 25 |
+| Monumento | 30 |
+| Refinería de Iridium | 33 |
+| Cámara de Comercio | 38 |
+| Antenas de Reconocimiento | 38 |
+| Mina de Oro | 43 |
+| Taller de Guerra | 48 |
+| Nido de Bestias | 48 |
+| Nexo de Inteligencia | 48 |
+| Cuartel de Mando | 53 |
+| Santuario de Reliquias | 55 |
+| Cámara de Leyendas | 70 |
 
 RPCs principales:
 
@@ -1288,7 +1290,10 @@ Al aplicar el resultado:
 
 - Las unidades con `0` supervivientes pasan a `destroyed`.
 - Las unidades de la facción que conserva/controla el sistema quedan `ready` en el sistema.
-- Las unidades supervivientes que pierden el sistema se retiran automáticamente al sistema aliado más cercano que no está bloqueado, en guerra ni recibiendo un ataque.
+- Las unidades supervivientes del bando perdedor inician una retirada de exactamente 1 día, sin coste de Uridium y sin importar la distancia.
+- La retirada intenta volver primero al sistema desde el que se lanzó el ataque si es gaseoso o pertenece a la facción de la unidad.
+- Si ese origen no es válido, busca el sistema propio seguro más cercano que no esté bloqueado, en guerra ni recibiendo un ataque.
+- Las unidades en retirada no otorgan visión del sistema perdido.
 - Si no hay ruta de retirada valida, quedan en estado `retreat_pending` para que el admin las coloque o resuelva narrativamente.
 
 ### 8.6 Visibilidad del movimiento
@@ -1629,7 +1634,7 @@ El `Santuario de Reliquias` es un edificio `building_kind = relic`.
 Reglas:
 
 - Requiere tecnología `custodia-reliquias`, que sale de `monumentos-gloria`.
-- Coste v1: 44 Material Industrial.
+- Coste v1: 55 Material Industrial.
 - Tiempo de construcción en campaña: según coste de Material Industrial del edificio.
 - No empieza construido en capitales; debe construirse como cualquier edificio.
 - Al abrirlo muestra reliquias guardadas en ese sistema, Caracteres propios presentes y reliquias equipadas.
@@ -1773,7 +1778,8 @@ Al abrir comercio:
 Mercader:
 
 - Avatar en `icons/resources/merchant1.png`.
-- Compra y venta de Suministro, Mineral, Material Industrial y Uridium usando Oro.
+- Compra y venta únicamente de Suministro y Mineral usando Oro.
+- Material Industrial y Uridium quedan reservados al Comercio estelar entre jugadores.
 - No comercia Honor ni Componentes tecnológicos.
 - Requiere al menos una Cámara de Comercio activa de la facción.
 - Requiere `Contactos Económicos`.
@@ -2811,7 +2817,7 @@ Comportamiento implementado actual del árbol:
 Muestra:
 
 - Mercader con avatar.
-- Compra/venta de Suministro, Mineral, Material Industrial y Uridium contra Oro.
+- Compra/venta de Suministro y Mineral contra Oro.
 - Bloqueo si la facción no tiene Cámara de Comercio activa.
 - Comercio estelar entre jugadores.
 - Creacion de ofertas de compra/venta.

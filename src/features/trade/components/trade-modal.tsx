@@ -26,7 +26,8 @@ import {
 import { formatCompactOwnedResourceValue, formatOwnedResourceValue } from "@/lib/resource-format";
 import type { CampaignSnapshot, FactionResources, TradeOffer, TradeOfferType, TradeableResourceKey } from "@/domain/campaign";
 
-const tradeableResources: TradeableResourceKey[] = ["supply", "minerals", "industrialMaterial", "uridium"];
+const merchantResources: TradeableResourceKey[] = ["supply", "minerals"];
+const stellarTradeResources: TradeableResourceKey[] = ["supply", "minerals", "industrialMaterial", "uridium"];
 
 const resourcePointValues: Record<TradeableResourceKey | "gold", number> = {
   supply: 1,
@@ -163,7 +164,7 @@ function MerchantPanel({ snapshot }: { snapshot: CampaignSnapshot }) {
         ) : null}
 
         <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {tradeableResources.map((resource) => (
+          {merchantResources.map((resource) => (
             <button
               className={`rounded-md border p-3 text-left transition ${
                 resource === resourceKey
@@ -303,7 +304,7 @@ function StellarTradePanel({ snapshot }: { snapshot: CampaignSnapshot }) {
             onChange={(event) => setResourceKey(event.target.value as TradeableResourceKey)}
             value={resourceKey}
           >
-            {tradeableResources.map((resource) => (
+            {stellarTradeResources.map((resource) => (
               <option key={resource} value={resource}>
                 {resourceLabels[resource]}
               </option>

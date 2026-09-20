@@ -198,7 +198,7 @@ const FACTION_DEFS = [
 ];
 
 const INITIAL_UNITS = [
-  ["necron-plasmancer", "necrones", "Plasmancer", "thokt-vault", "ready", 1, null, 0, 1, 1, 55],
+  ["necron-plasmancer", "necrones", "Plasmancer", "thokt-vault", "ready", 2, null, 0, 1, 1, 55],
   ["necron-immortals-damaged", "necrones", "Immortals", "thokt-vault", "ready", 1, null, 0, 4, 5, 70],
   ["necron-warriors", "necrones", "Necron Warriors", "thokt-vault", "ready", 1, null, 0, 10, 10, 90],
   ["necron-tomb-blades-damaged", "necrones", "Tomb Blades", "thokt-vault", "ready", 1, null, 0, 2, 3, 75],
@@ -206,13 +206,13 @@ const INITIAL_UNITS = [
   ["daemon-burning-chariot", "legiones-daemonicas", "Burning Chariot", "mordax", "ready", 1, null, 0, 1, 1, 115],
   ["daemon-pink-horrors-damaged", "legiones-daemonicas", "Pink Horrors", "mordax", "ready", 1, null, 0, 7, 10, 140],
   ["cult-neophyte-hybrids-damaged", "cultos-genestealer", "Neophyte Hybrids", "blackglass", "ready", 1, null, 0, 7, 10, 65],
-  ["cult-abominant", "cultos-genestealer", "Abominant", "blackglass", "ready", 1, null, 0, 1, 1, 85],
+  ["cult-abominant", "cultos-genestealer", "Abominant", "blackglass", "ready", 2, null, 0, 1, 1, 85],
   ["cult-aberrants", "cultos-genestealer", "Aberrants", "blackglass", "ready", 1, null, 0, 5, 5, 135],
   ["sombra-intercessors-damaged", "space-marines", "Intercessor Squad", "sa-cea-gate", "ready", 1, null, 0, 4, 5, 80],
   ["sombra-intercessors-large-damaged", "space-marines", "Intercessor Squad", "sa-cea-gate", "ready", 1, null, 0, 7, 10, 150],
-  ["sombra-lieutenant", "space-marines", "Lieutenant", "sa-cea-gate", "ready", 1, null, 0, 1, 1, 55],
+  ["sombra-lieutenant", "space-marines", "Lieutenant", "sa-cea-gate", "ready", 2, null, 0, 1, 1, 55],
   ["sombra-bladeguard-damaged", "space-marines", "Bladeguard Veteran Squad", "sa-cea-gate", "ready", 1, null, 0, 1, 3, 80],
-  ["custodes-blade-champion", "adeptus-custodes", "Blade Champion", "kharon-prime", "ready", 1, null, 0, 1, 1, 120],
+  ["custodes-blade-champion", "adeptus-custodes", "Blade Champion", "kharon-prime", "ready", 2, null, 0, 1, 1, 120],
   ["custodes-guard-damaged", "adeptus-custodes", "Custodian Guard", "kharon-prime", "ready", 1, null, 0, 3, 4, 160],
   ["custodes-prosecutor-damaged", "adeptus-custodes", "Prosecutors", "kharon-prime", "ready", 1, null, 0, 1, 4, 40]
 ];
