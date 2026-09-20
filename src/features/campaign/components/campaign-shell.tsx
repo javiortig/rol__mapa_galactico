@@ -91,7 +91,9 @@ export function CampaignShell() {
   const [attackTargetSystemId, setAttackTargetSystemId] = useState<string | null>(null);
   const { data, error } = useQuery({
     queryKey: ["campaign-snapshot"],
-    queryFn: getCampaignSnapshot
+    queryFn: getCampaignSnapshot,
+    refetchInterval: 30_000,
+    refetchIntervalInBackground: false
   });
   const eventsSeenStorageKey = data ? `rol40k.eventsSeenAt.${data.currentUser.id}` : null;
   const latestEventAt = data ? getLatestCampaignEventTimestamp(data.campaignEvents) : 0;

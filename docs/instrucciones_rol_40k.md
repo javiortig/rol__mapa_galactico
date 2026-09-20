@@ -485,8 +485,13 @@ Las rutas entre sistemas se dibujan con PixiJS:
 #### Movimiento de tropas
 
 - Pequeña partícula, icono o marcador viajando de origen a destino.
-- Solo visible para el jugador dueño de la tropa y admin, salvo que más adelante haya espionaje.
-- La animación direccional se reserva exclusivamente para `movement_orders` reales en estado `moving` que el usuario tenga permiso de ver.
+- La facción propietaria y admin ven la ruta completa de sus órdenes.
+- Los enemigos nunca reciben la ruta completa de un movimiento normal: solo pueden observar el tramo que se está recorriendo en ese instante.
+- El propietario de un sistema ve el tramo entrante o saliente conectado con ese sistema mientras las tropas lo atraviesan.
+- Una facción con tropas presentes en un sistema ajeno o compartido no ve el tramo de llegada, pero sí el tramo de salida mientras se recorre.
+- Esta inteligencia por tramos se aplica solo a movimientos normales; los ataques conservan sus reglas de visibilidad de operación y conflicto.
+- Las unidades enemigas que ya han partido no permanecen listadas como presentes en el sistema de origen.
+- La animación direccional se reserva exclusivamente para `movement_orders` reales en estado `moving` que el usuario tenga permiso de observar.
 
 ### 3.5 Estado inicial del mapa
 
@@ -1214,6 +1219,17 @@ Si todo es válido:
 - Se guarda `arrival_at`.
 - El frontend muestra cuenta atrás.
 - El mapa muestra animación direccional solo para órdenes de movimiento visibles por el usuario.
+
+### 8.3.1 Visión enemiga durante movimientos normales
+
+La ruta completa se considera información privada. El backend calcula el tramo actual a partir de `departure_at`, `arrival_at` y `path_system_ids`, y entrega a observadores enemigos una orden sintética limitada a dos sistemas:
+
+- Si la facción controla el origen o el destino del tramo actual, ve ese tramo mientras dure.
+- Si solo tiene tropas presentes, ve el tramo únicamente cuando sus tropas están en el sistema de origen del tramo.
+- Tener tropas en el destino no revela una llegada.
+- No se revelan tramos anteriores, siguientes ni el destino final de la orden.
+- Al cambiar de arista, el snapshot se refresca y la animación pasa al nuevo tramo solo si continúa siendo observable.
+- Las solicitudes de paso pendientes siguen mostrando la información necesaria para aceptar o rechazar el permiso.
 
 ### 8.4 Llegada
 
@@ -2705,7 +2721,9 @@ La aplicación carga Supabase si hay `.env.local` y una sesión autenticada. Si 
 RLS local:
 
 - Datos públicos del mapa visibles para `anon` y `authenticated`.
-- Recursos, unidades, colas y movimientos visibles solo para miembros de facción o admin.
+- Recursos y colas visibles solo para miembros de facción o admin.
+- Las unidades estacionadas se revelan por control o presencia; las unidades enemigas en estado `moving` no cuentan como estacionadas en su origen.
+- Los movimientos normales enemigos se consultan mediante RPC segura y se redactan al tramo actual observable; la ruta completa no llega al cliente.
 - Admin con acceso total.
 - Jugadores sin escritura directa sobre recursos, tropas o control territorial.
 - Mutaciones críticas solo mediante RPC segura.
