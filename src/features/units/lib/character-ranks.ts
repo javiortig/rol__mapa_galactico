@@ -5,6 +5,7 @@ export const unitKeywordLabels: Record<UnitKeyword, string> = {
   Caracter: "Car\u00e1cter",
   Infanteria: "Infanter\u00eda",
   Bestia: "Bestia",
+  Monstruo: "Monstruo",
   Montado: "Montado",
   Aeronave: "Aeronave",
   Fortificacion: "Fortificaci\u00f3n"
@@ -32,7 +33,14 @@ export function isCharacterUnit(unit: Pick<CampaignUnit, "unitKeywords" | "unitT
 }
 
 export function formatUnitKeywords(unit: Pick<CampaignUnit, "unitKeywords" | "unitType">) {
-  const fallbackKeywords: UnitKeyword[] = unit.unitType === "character" ? ["Infanteria", "Caracter"] : ["Infanteria"];
+  const fallbackKeywords: UnitKeyword[] =
+    unit.unitType === "character"
+      ? ["Infanteria", "Caracter"]
+      : unit.unitType === "monster"
+        ? ["Monstruo"]
+        : unit.unitType === "beast"
+          ? ["Bestia"]
+          : ["Infanteria"];
   const keywords: UnitKeyword[] = unit.unitKeywords.length > 0 ? unit.unitKeywords : fallbackKeywords;
 
   return keywords.map((keyword) => unitKeywordLabels[keyword]).join(" / ");

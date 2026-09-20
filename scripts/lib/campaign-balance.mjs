@@ -51,65 +51,27 @@ export function buildTechnologyAssignmentMap(troopTreeConfig) {
   return assignments;
 }
 
-export function applyUnitCostBalance(units, troopTreeConfig, balanceConfig) {
+export function applyUnitCostBalance(units, troopTreeConfig, balanceConfig, preservedCostsBySlug = new Map()) {
   const assignmentByUnit = buildTechnologyAssignmentMap(troopTreeConfig);
-  const targetRatioByType = Number(balanceConfig.targetGoldUnitRatioByType ?? balanceConfig.targetGoldUnitRatio ?? 0.25);
-  const basicSupplyOnlySlugs = selectBasicSupplyOnlyInfantrySlugs(units, assignmentByUnit, balanceConfig);
-  const unitsByFactionAndType = groupBy(units, (unit) => `${factionSlugForUnit(unit)}:${primaryUnitType(unit)}`);
-  const forcedGoldUnitSlugs = new Set(balanceConfig.forceGoldUnitSlugs ?? []);
-  const forcedNoGoldUnitSlugs = new Set(balanceConfig.forceNoGoldUnitSlugs ?? []);
+  const preservedFactionSlugs = new Set(balanceConfig.preserveFactionCostSlugs ?? []);
+  const rebalancedFactionSlugs = new Set(balanceConfig.rebalanceFactionSlugs ?? []);
   const goldUnitSlugs = new Set();
-
-  for (const slug of forcedGoldUnitSlugs) {
-    if (forcedNoGoldUnitSlugs.has(slug)) {
-      throw new Error(`${slug} no puede estar a la vez en forceGoldUnitSlugs y forceNoGoldUnitSlugs.`);
-    }
-  }
-
-  for (const typedUnits of unitsByFactionAndType.values()) {
-    const targetGoldUnits = Math.round(typedUnits.length * targetRatioByType);
-    const forcedTypedGoldUnits = typedUnits.filter((unit) => forcedGoldUnitSlugs.has(unitSlug(unit)) && !basicSupplyOnlySlugs.has(unitSlug(unit)));
-    for (const unit of forcedTypedGoldUnits) {
-      goldUnitSlugs.add(unitSlug(unit));
-    }
-
-    const scored = typedUnits
-      .map((unit) => {
-        const assignment = assignmentByUnit.get(unitSlug(unit)) ?? fallbackAssignment(unit);
-        return {
-          unit,
-          assignment,
-          score: goldCandidateScore(unit, assignment)
-        };
-      })
-      .filter((item) => !basicSupplyOnlySlugs.has(unitSlug(item.unit)))
-      .filter((item) => !forcedGoldUnitSlugs.has(unitSlug(item.unit)))
-      .filter((item) => !forcedNoGoldUnitSlugs.has(unitSlug(item.unit)))
-      .sort((left, right) => {
-        if (left.score !== right.score) {
-          return right.score - left.score;
-        }
-        if (left.assignment.tier !== right.assignment.tier) {
-          return right.assignment.tier - left.assignment.tier;
-        }
-        if (left.unit.points !== right.unit.points) {
-          return right.unit.points - left.unit.points;
-        }
-        return unitSlug(left.unit).localeCompare(unitSlug(right.unit));
-      });
-
-    const remainingTarget = Math.max(0, targetGoldUnits - forcedTypedGoldUnits.length);
-    for (const item of scored.slice(0, remainingTarget)) {
-      goldUnitSlugs.add(unitSlug(item.unit));
-    }
-  }
 
   const summaries = [];
 
   for (const unit of units) {
     const assignment = assignmentByUnit.get(unitSlug(unit)) ?? fallbackAssignment(unit);
-    const isBasicSupplyOnlyInfantry = basicSupplyOnlySlugs.has(unitSlug(unit));
-    const costs = computeBalancedUnitCosts(unit, assignment, goldUnitSlugs.has(unitSlug(unit)), isBasicSupplyOnlyInfantry);
+    const factionSlug = factionSlugForUnit(unit);
+    const shouldPreserve = preservedFactionSlugs.has(factionSlug) || !rebalancedFactionSlugs.has(factionSlug);
+    const preservedCosts = shouldPreserve ? preservedCostsBySlug.get(unitSlug(unit)) : null;
+    const rule = getUnitCostRule(unit, balanceConfig);
+    const costs = preservedCosts
+      ? pickUnitCosts(preservedCosts)
+      : computeBalancedUnitCosts(unit, assignment, balanceConfig);
+
+    if (shouldPreserve && !preservedCosts) {
+      throw new Error(`No hay costes preservados para ${unitSlug(unit)}.`);
+    }
 
     unit.supplyCost = costs.supplyCost;
     unit.mineralsCost = costs.mineralsCost;
@@ -119,17 +81,23 @@ export function applyUnitCostBalance(units, troopTreeConfig, balanceConfig) {
     unit.uridiumCost = 0;
     unit.technologyCost = 0;
 
+    if (unit.goldCost > 0) {
+      goldUnitSlugs.add(unitSlug(unit));
+    }
+
     summaries.push({
       slug: unitSlug(unit),
-      factionSlug: factionSlugForUnit(unit),
+      factionSlug,
       name: unit.name,
       points: unit.points,
       assignment,
       primaryType: primaryUnitType(unit),
       costs,
       hasGold: unit.goldCost > 0,
-      isInitialBasicInfantry: isBasicSupplyOnlyInfantry,
-      isBasicSupplyOnlyInfantry
+      goldShare: rule.goldShare,
+      isInitialBasicInfantry: rule.supplyOnly,
+      isBasicSupplyOnlyInfantry: rule.supplyOnly,
+      isPreserved: Boolean(preservedCosts)
     });
   }
 
@@ -144,15 +112,16 @@ export function applyUnitCostBalance(units, troopTreeConfig, balanceConfig) {
 export function computeBalancedUnitCosts(
   unit,
   assignment = fallbackAssignment(unit),
-  hasGold = false,
-  isBasicSupplyOnlyInfantry = isInitialBasicInfantry(unit, assignment)
+  balanceConfig = {}
 ) {
-  if (isBasicSupplyOnlyInfantry) {
+  void assignment;
+  const rule = getUnitCostRule(unit, balanceConfig);
+
+  if (rule.supplyOnly) {
     return emptyUnitCosts(unit.points);
   }
 
-  const profile = balanceProfileForUnit(unit, assignment, hasGold);
-  return costsFromProfile(unit.points, profile, hasGold, primaryUnitType(unit) === "Caracter");
+  return costsFromPointShares(unit.points, pointSharesForUnit(unit, rule, balanceConfig));
 }
 
 export function scaleCostsFromTemplate(template, selectedPoints) {
@@ -171,16 +140,44 @@ export function scaleCostsFromTemplate(template, selectedPoints) {
     };
   }
 
+  if (factionSlugForUnit(template) === "space-marines") {
+    return legacyScaleCostsFromTemplate(template, points, basePoints);
+  }
+
+  const baseCosts = pickUnitCosts(template);
+  const baseValue = warhammerPointValue(baseCosts);
+  const shares = Object.fromEntries(
+    COST_RESOURCE_KEYS.map((key) => [key, baseValue > 0 ? (baseCosts[key] * resourcePointValue(key)) / baseValue : 0])
+  );
+  const normalized = costsFromPointShares(points, shares);
+
+  return {
+    supply: normalized.supplyCost,
+    minerals: normalized.mineralsCost,
+    honor: normalized.honorCost,
+    gold: normalized.goldCost,
+    industrialMaterial: 0,
+    uridium: 0,
+    technology: 0
+  };
+}
+
+function legacyScaleCostsFromTemplate(template, points, basePoints) {
   const minerals = Math.floor(((points * Number(template.mineralsCost ?? 0) * 2) / basePoints) / 2);
   const honor = Math.floor(((points * Number(template.honorCost ?? 0) * 5) / basePoints) / 5);
   const rawGold = Math.floor(((points * Number(template.goldCost ?? 0) * 5) / basePoints) / 5);
   const gold = Number(template.goldCost ?? 0) > 0 && points >= 5 ? Math.max(1, rawGold) : rawGold;
-  const normalized = normalizeCosts(points, {
+  const normalized = {
     supplyCost: 0,
-    mineralsCost: minerals,
-    honorCost: honor,
-    goldCost: gold
-  });
+    mineralsCost: Math.max(0, minerals),
+    honorCost: Math.max(0, honor),
+    goldCost: Math.max(0, gold)
+  };
+
+  while (warhammerPointValue(normalized) > points && normalized.goldCost > 0) normalized.goldCost -= 1;
+  while (warhammerPointValue(normalized) > points && normalized.honorCost > 0) normalized.honorCost -= 1;
+  while (warhammerPointValue(normalized) > points && normalized.mineralsCost > 0) normalized.mineralsCost -= 1;
+  normalized.supplyCost = points - normalized.mineralsCost * 2 - normalized.honorCost * 5 - normalized.goldCost * 5;
 
   return {
     supply: normalized.supplyCost,
@@ -195,7 +192,7 @@ export function scaleCostsFromTemplate(template, selectedPoints) {
 
 export function buildFactionBalanceSummaries(units, balanceConfig) {
   const unitsByFaction = groupBy(units, factionSlugForUnit);
-  const targetRatioByType = Number(balanceConfig.targetGoldUnitRatioByType ?? balanceConfig.targetGoldUnitRatio ?? 0.25);
+  void balanceConfig;
 
   return [...unitsByFaction.entries()]
     .sort(([left], [right]) => left.localeCompare(right))
@@ -207,7 +204,7 @@ export function buildFactionBalanceSummaries(units, balanceConfig) {
           type,
           unitCount: typedUnits.length,
           goldUnits: typedUnits.filter((unit) => unit.goldCost > 0).length,
-          targetGoldUnits: Math.round(typedUnits.length * targetRatioByType)
+          targetGoldUnits: typedUnits.filter((unit) => unit.goldCost > 0).length
         }));
       const totals = factionUnits.reduce(
         (sum, unit) => ({
@@ -256,136 +253,155 @@ export function isInitialBasicInfantry(unit, assignment = fallbackAssignment(uni
 }
 
 export function selectBasicSupplyOnlyInfantrySlugs(units, assignmentByUnit, balanceConfig) {
-  const ratio = Number(balanceConfig.basicInfantrySupplyOnlyRatio ?? 0.25);
-  const selected = new Set();
-  const unitsByFaction = groupBy(units, factionSlugForUnit);
-
-  for (const factionUnits of unitsByFaction.values()) {
-    const candidates = factionUnits
-      .filter((unit) => primaryUnitType(unit) === "Infanteria")
-      .filter((unit) => unit.category !== "Aliada" && !unit.isAlliedUnit)
-      .map((unit) => ({
-        unit,
-        assignment: assignmentByUnit.get(unitSlug(unit)) ?? fallbackAssignment(unit)
-      }))
-      .sort((left, right) => basicInfantryScore(left.unit, left.assignment) - basicInfantryScore(right.unit, right.assignment));
-    const target = Math.ceil(candidates.length * ratio);
-
-    for (const item of candidates.slice(0, target)) {
-      selected.add(unitSlug(item.unit));
-    }
-  }
-
-  return selected;
+  void units;
+  void assignmentByUnit;
+  return new Set(balanceConfig.supplyOnlyUnitSlugs ?? []);
 }
 
 export function primaryUnitType(unit) {
   const keywords = unit.unitKeywords ?? [];
   if (keywords.includes("Caracter")) return "Caracter";
   if (keywords.includes("Vehiculo") || keywords.includes("Aeronave") || keywords.includes("Fortificacion")) return "Vehiculo";
+  if (keywords.includes("Monstruo")) return "Monstruo";
   if (keywords.includes("Bestia")) return "Bestia";
   if (keywords.includes("Montado")) return "Montado";
   if (keywords.includes("Infanteria")) return "Infanteria";
   return "Otro";
 }
 
-function balanceProfileForUnit(unit, assignment, hasGold) {
-  const keywords = unit.unitKeywords ?? [];
-  const tier = Number(assignment.tier ?? 3);
-  const isAdvanced = tier >= 3 || assignment.isBranchFinal || unit.points >= 200;
-  const isAllied = unit.category === "Aliada" || unit.isAlliedUnit;
-  const isCrucible = unit.name.includes("[Crucible]");
-  let minerals = 0.2;
-  let honor = 0;
-  let gold = 0;
-
-  if (keywords.includes("Caracter") && keywords.includes("Vehiculo")) {
-    minerals = 0.35;
-    honor = isAdvanced ? 0.35 : 0.3;
-  } else if (keywords.includes("Caracter")) {
-    minerals = isAdvanced ? 0.15 : 0.1;
-    honor = isAdvanced || isCrucible ? 0.45 : 0.35;
-  } else if (keywords.includes("Vehiculo") || keywords.includes("Aeronave") || keywords.includes("Fortificacion")) {
-    minerals = isAdvanced ? 0.75 : 0.65;
-    honor = 0;
-  } else if (keywords.includes("Bestia")) {
-    minerals = isAdvanced ? 0.2 : 0.12;
-    honor = 0;
-  } else if (keywords.includes("Montado")) {
-    minerals = isAdvanced ? 0.45 : 0.35;
-    honor = 0;
-  } else if (keywords.includes("Infanteria")) {
-    minerals = tier <= 2 ? 0.2 : 0.3;
-    honor = 0;
-  } else if (isAllied) {
-    minerals = 0.25;
-    honor = 0;
-  }
-
-  if (hasGold) {
-    if (isAllied || assignment.isBranchFinal || /titan|warlord|knight|silent king|c'tan|ctan|be'lakor|kairos/i.test(unit.name)) {
-      gold = 0.15;
-    } else if (keywords.includes("Caracter")) {
-      gold = 0.1;
-    } else if (keywords.includes("Vehiculo") || keywords.includes("Aeronave") || keywords.includes("Fortificacion")) {
-      gold = 0.08;
-    } else {
-      gold = 0.05;
-    }
-  }
-
-  return clampProfile({ minerals, honor, gold });
-}
-
-function costsFromProfile(points, profile, hasGold, isCharacter = false) {
-  const honor = isCharacter ? boundedResourceUnits(points, 0.45, 0.4, 0.5) : 0;
-  const gold = hasGold ? boundedResourceUnits(points, 0.25, 0.2, 0.3) : 0;
-  const remainingPoints = Math.max(0, points - honor * 5 - gold * 5);
-  const minerals = Math.min(
-    Math.floor((points * profile.minerals) / 2),
-    Math.floor(remainingPoints / 2)
+export function getUnitCostRule(unit, balanceConfig = {}) {
+  const slug = unitSlug(unit);
+  const factionSlug = factionSlugForUnit(unit);
+  const supplyOnly = new Set(balanceConfig.supplyOnlyUnitSlugs ?? []).has(slug);
+  const configuredGoldShare = Number(balanceConfig.goldShareByUnitSlug?.[slug] ?? 0);
+  const isNamedCharacter = Boolean(unit.isNamedCharacter) || new Set(balanceConfig.namedAlliedCharacterSlugs ?? []).has(slug);
+  const alliedGoldShare = configuredGoldShare <= 0 && alliedUnitQualifiesForGold(unit, isNamedCharacter) ? 0.2 : 0;
+  const goldShare = supplyOnly ? 0 : configuredGoldShare || alliedGoldShare;
+  const characterHonorShare = Number(
+    balanceConfig.characterHonorShareByFaction?.[factionSlug] ??
+      balanceConfig.characterHonorShareByFaction?.default ??
+      0.5
   );
 
-  return normalizeCosts(points, {
-    supplyCost: 0,
-    mineralsCost: minerals,
-    honorCost: honor,
-    goldCost: gold
-  });
-}
-
-function boundedResourceUnits(points, targetRatio, minRatio, maxRatio) {
-  const minUnits = Math.ceil((points * minRatio) / 5);
-  const maxUnits = Math.floor((points * maxRatio) / 5);
-  const targetUnits = Math.round((points * targetRatio) / 5);
-
-  if (minUnits <= maxUnits) {
-    return Math.max(minUnits, Math.min(maxUnits, targetUnits));
-  }
-
-  return Math.max(0, targetUnits);
-}
-
-function normalizeCosts(points, costs) {
-  const normalized = {
-    supplyCost: 0,
-    mineralsCost: Math.max(0, Math.trunc(costs.mineralsCost ?? 0)),
-    honorCost: Math.max(0, Math.trunc(costs.honorCost ?? 0)),
-    goldCost: Math.max(0, Math.trunc(costs.goldCost ?? 0))
+  return {
+    supplyOnly,
+    goldShare,
+    characterHonorShare,
+    isAllied: unit.category === "Aliada" || Boolean(unit.isAlliedUnit),
+    isNamedCharacter
   };
+}
 
-  while (warhammerPointValue(normalized) > points && normalized.goldCost > 0) {
-    normalized.goldCost -= 1;
-  }
-  while (warhammerPointValue(normalized) > points && normalized.honorCost > 0) {
-    normalized.honorCost -= 1;
-  }
-  while (warhammerPointValue(normalized) > points && normalized.mineralsCost > 0) {
-    normalized.mineralsCost -= 1;
+export function costsFromPointShares(points, shares) {
+  const safePoints = Math.max(0, Math.trunc(Number(points ?? 0)));
+  const normalizedShares = COST_RESOURCE_KEYS.reduce((result, key) => {
+    const share = Math.max(0, Number(shares?.[key] ?? 0));
+    if (share > 0) result[key] = share;
+    return result;
+  }, {});
+  const activeKeys = COST_RESOURCE_KEYS.filter((key) => normalizedShares[key] > 0);
+
+  if (activeKeys.length === 0 || safePoints === 0) {
+    return { supplyCost: safePoints, mineralsCost: 0, honorCost: 0, goldCost: 0 };
   }
 
-  normalized.supplyCost = points - normalized.mineralsCost * 2 - normalized.honorCost * 5 - normalized.goldCost * 5;
-  return normalized;
+  const shareTotal = activeKeys.reduce((sum, key) => sum + normalizedShares[key], 0);
+  const cheapestKey = [...activeKeys].sort((left, right) => resourcePointValue(left) - resourcePointValue(right))[0];
+  const result = { supplyCost: 0, mineralsCost: 0, honorCost: 0, goldCost: 0 };
+
+  for (const key of activeKeys) {
+    if (key === cheapestKey) continue;
+    const targetPoints = (safePoints * normalizedShares[key]) / shareTotal;
+    result[key] = Math.max(1, Math.floor(targetPoints / resourcePointValue(key)));
+  }
+
+  const allocatedPoints = warhammerPointValue(result);
+  const cheapestValue = resourcePointValue(cheapestKey);
+  result[cheapestKey] = Math.max(1, Math.ceil(Math.max(0, safePoints - allocatedPoints) / cheapestValue));
+  return result;
+}
+
+function pointSharesForUnit(unit, rule, balanceConfig) {
+  const type = primaryUnitType(unit);
+  const points = Number(unit.points ?? 0);
+  const factionSlug = factionSlugForUnit(unit);
+  let baseProfile;
+
+  if (type === "Caracter") {
+    const honor = rule.characterHonorShare;
+    const supplyToMinerals = points < 75 ? [0.7, 0.3] : [0.5, 0.5];
+    const nonHonorAndGold = Math.max(0, 1 - honor - rule.goldShare);
+    const characterGoldRatio = points < 75 ? [0.8, 0.2] : [0.6, 0.4];
+    const ratio = rule.goldShare > 0 ? characterGoldRatio : supplyToMinerals;
+    baseProfile = {
+      supplyCost: nonHonorAndGold * ratio[0],
+      mineralsCost: nonHonorAndGold * ratio[1],
+      honorCost: honor,
+      goldCost: rule.goldShare
+    };
+  } else {
+    const nonGoldProfile = nonCharacterPointShares(type, points, factionSlug);
+    const availableShare = Math.max(0, 1 - rule.goldShare);
+    baseProfile = {
+      supplyCost: nonGoldProfile.supply * availableShare,
+      mineralsCost: nonGoldProfile.minerals * availableShare,
+      honorCost: 0,
+      goldCost: rule.goldShare
+    };
+  }
+
+  void balanceConfig;
+  return baseProfile;
+}
+
+function nonCharacterPointShares(type, points, factionSlug) {
+  if (type === "Vehiculo") return { supply: 0, minerals: 1 };
+  if (type === "Monstruo") return { supply: 0.2, minerals: 0.8 };
+
+  if (factionSlug === "necrones" && ["Infanteria", "Bestia", "Montado"].includes(type)) {
+    if (type === "Bestia" && points >= 200) return { supply: 0, minerals: 1 };
+    if (points < 65) return { supply: 0.7, minerals: 0.3 };
+    if (points <= 115) return { supply: 0.5, minerals: 0.5 };
+    if (points <= 190) return { supply: 0.4, minerals: 0.6 };
+    return { supply: 0.1, minerals: 0.9 };
+  }
+
+  if (type === "Bestia" && points >= 200) return { supply: 0.5, minerals: 0.5 };
+  if (["Infanteria", "Bestia", "Montado", "Otro"].includes(type)) {
+    if (points < 65) return { supply: 0.9, minerals: 0.1 };
+    if (points <= 115) return { supply: 0.8, minerals: 0.2 };
+    if (points <= 190) return { supply: 0.7, minerals: 0.3 };
+    return { supply: 0.6, minerals: 0.4 };
+  }
+
+  return { supply: 1, minerals: 0 };
+}
+
+function alliedUnitQualifiesForGold(unit, isNamedCharacter) {
+  const isAllied = unit.category === "Aliada" || Boolean(unit.isAlliedUnit);
+  if (!isAllied) return false;
+
+  const type = primaryUnitType(unit);
+  const points = Number(unit.points ?? 0);
+  if (type === "Caracter") return points > 90 || isNamedCharacter;
+  if (type === "Infanteria" || type === "Montado") return points >= 120;
+  if (type === "Vehiculo" || type === "Monstruo") return points >= 170;
+  return false;
+}
+
+function pickUnitCosts(value) {
+  return {
+    supplyCost: Number(value.supplyCost ?? 0),
+    mineralsCost: Number(value.mineralsCost ?? 0),
+    honorCost: Number(value.honorCost ?? 0),
+    goldCost: Number(value.goldCost ?? 0)
+  };
+}
+
+function resourcePointValue(key) {
+  if (key === "supplyCost") return 1;
+  if (key === "mineralsCost") return 2;
+  return 5;
 }
 
 function emptyUnitCosts(points) {
@@ -395,36 +411,6 @@ function emptyUnitCosts(points) {
     honorCost: 0,
     goldCost: 0
   };
-}
-
-function goldCandidateScore(unit, assignment) {
-  const keywords = unit.unitKeywords ?? [];
-  let score = 0;
-
-  if (unit.category === "Aliada" || unit.isAlliedUnit) score += 120;
-  if (unit.name.includes("[Crucible]")) score += 95;
-  if (assignment.isBranchFinal) score += 85;
-  if (/titan|warlord|knight|silent king|c'tan|ctan|be'lakor|kairos|primarch|trajann/i.test(unit.name)) score += 70;
-  if (unit.points >= 300) score += 55;
-  else if (unit.points >= 200) score += 35;
-  if (keywords.includes("Caracter")) score += 35;
-  if (keywords.includes("Vehiculo") || keywords.includes("Aeronave") || keywords.includes("Fortificacion")) score += 30;
-  if (keywords.includes("Bestia")) score += 20;
-  score += Math.max(0, Number(assignment.tier ?? 1) - 1) * 10;
-
-  return score;
-}
-
-function basicInfantryScore(unit, assignment) {
-  let score = 0;
-  const tier = Number(assignment.tier ?? 3);
-
-  score += tier * 1000;
-  if (unit.category !== "Linea de batalla") score += 250;
-  if (assignment.isBranchFinal) score += 250;
-  score += Number(assignment.costTechnology ?? 0) * 50;
-  score += Number(unit.points ?? 0);
-  return score;
 }
 
 function fallbackAssignment(unit) {
@@ -455,20 +441,6 @@ function fallbackTier(unit) {
   if (keywords.includes("Caracter") || keywords.includes("Vehiculo") || keywords.includes("Aeronave") || keywords.includes("Fortificacion")) return 3;
   if (keywords.includes("Bestia") || keywords.includes("Montado")) return 2;
   return 2;
-}
-
-function clampProfile(profile) {
-  const total = profile.minerals + profile.honor + profile.gold;
-  if (total <= 0.9) {
-    return profile;
-  }
-
-  const factor = 0.9 / total;
-  return {
-    minerals: profile.minerals * factor,
-    honor: profile.honor * factor,
-    gold: profile.gold * factor
-  };
 }
 
 function groupBy(items, selector) {

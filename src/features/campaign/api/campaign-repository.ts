@@ -1095,7 +1095,11 @@ function mapNullableResourceKey(value: unknown): ResourceKey | null {
 function mapUnitType(value: unknown): UnitType {
   const normalized = String(value ?? "").toLowerCase();
 
-  if (normalized === "beast" || normalized === "monstruo" || normalized === "monster") {
+  if (normalized === "monster" || normalized === "monstruo") {
+    return "monster";
+  }
+
+  if (normalized === "beast" || normalized === "bestia") {
     return "beast";
   }
 
@@ -1142,6 +1146,14 @@ function mapUnitKeywords(value: unknown, fallback: unknown): UnitKeyword[] {
 function normalizeUnitKeyword(value: unknown): UnitKeyword | null {
   const normalized = String(value ?? "").toLowerCase();
 
+  if (normalized === "aeronave" || normalized === "aircraft" || normalized.includes("aeronav")) {
+    return "Aeronave";
+  }
+
+  if (normalized === "fortificacion" || normalized === "fortification" || normalized.includes("fortif")) {
+    return "Fortificacion";
+  }
+
   if (normalized === "vehiculo" || normalized === "vehicle" || normalized === "superpesado" || normalized.startsWith("veh")) {
     return "Vehiculo";
   }
@@ -1156,7 +1168,11 @@ function normalizeUnitKeyword(value: unknown): UnitKeyword | null {
     return "Caracter";
   }
 
-  if (normalized === "bestia" || normalized === "beast" || normalized === "monstruo" || normalized.includes("monstru")) {
+  if (normalized === "monstruo" || normalized === "monster" || normalized.includes("monstru")) {
+    return "Monstruo";
+  }
+
+  if (normalized === "bestia" || normalized === "beast") {
     return "Bestia";
   }
 

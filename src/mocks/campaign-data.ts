@@ -2243,7 +2243,7 @@ function getMockUnitType(category: CampaignSnapshot["unitTemplates"][number]["ca
   }
 
   if (category === "Monstruo") {
-    return "beast";
+    return "monster";
   }
 
   return "infantry";
@@ -2259,7 +2259,7 @@ function getMockUnitKeywords(category: CampaignSnapshot["unitTemplates"][number]
   }
 
   if (category === "Monstruo") {
-    return ["Bestia"];
+    return ["Monstruo"];
   }
 
   return ["Infanteria"];

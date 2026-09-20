@@ -170,7 +170,7 @@ Estado jugable actual:
 - Movimiento, reclutamiento e investigación funcionan por timestamps y resolvers backend/lazy processing.
 - Unidades jugables son `campaign_units`, no ejércitos abstractos.
 - Las unidades tienen miniaturas actuales, miniaturas iniciales y heridas agregadas; no pueden separarse al mover.
-- Las unidades tienen hasta dos `unit_keywords` Warhammer en espanol: `Infanteria`, `Caracter`, `Vehiculo`, `Bestia`, `Montado`, `Aeronave` o `Fortificacion`; `unit_type` queda como legacy técnico.
+- Las unidades tienen hasta dos `unit_keywords` Warhammer en español: `Infanteria`, `Caracter`, `Vehiculo`, `Bestia`, `Monstruo`, `Montado`, `Aeronave` o `Fortificacion`; `Bestia` y `Monstruo` son distintos y `unit_type` queda como legacy técnico derivado.
 - Las unidades con keyword `Caracter` usan `experience` como nivel directo `1..10`, con rangos militares y slots de reliquia por nivel.
 - Las reliquias v1 son narrativas: se guardan en Santuarios de Reliquias, se equipan a Caracteres veteranos y no aplican bonos automáticos.
 - Construcción planetaria con slots por sistema: 6 en capitales y 3 en el resto.
@@ -550,15 +550,17 @@ Uridium equivale a 2 puntos a efectos económicos/comerciales, pero no se usa pa
 
 Regla de balance vigente para unidades:
 
-- Toda unidad debe cumplir exactamente `Suministro + 2*Mineral + 5*Honor + 5*Oro = puntos Warhammer`.
+- Toda unidad debe cumplir `Suministro + 2*Mineral + 5*Honor + 5*Oro = puntos Warhammer`. Si un perfil sin Suministro no puede representar un coste impar, se redondea hacia arriba con el recurso más barato ya usado y puede exceder en 1 punto equivalente.
 - Las unidades no pueden costar Material Industrial ni Uridium.
-- Las primeras unidades de infantería desbloqueadas por cada árbol de tropas cuestan solo Suministro vital.
-- La infantería posterior mezcla Suministro y Mineral; si es élite puede incorporar Honor.
-- Los Caracteres tienen peso alto de Honor, y Oro solo si son avanzados, únicos, Crucible o final de rama.
-- Vehículos, Aeronaves y Fortificaciones tienen peso alto de Mineral.
-- Bestias mezclan Suministro y Honor. Montadas mezclan Suministro y Mineral.
-- Aproximadamente el 40% de las plantillas de cada facción jugable deben costar Oro, con tolerancia de una unidad.
-- Las unidades aliadas, Crucible, épicas, titánicas o últimos nodos de rama son candidatas prioritarias a Oro.
+- Por defecto una unidad no cuesta Oro. Las excepciones nominales cuestan un 25% en Oro, salvo los tres Shield-Captains Custodes y las unidades aliadas elegibles, que usan un 20%.
+- Todo `Caracter` paga un 50% en Honor; los Caracteres de Legiones Daemónicas y Cultos Genestealer pagan un 40%.
+- La Infantería, Bestia y Montado no character reparten el coste entre Suministro y Mineral por tramos de puntos. Necrones usa un perfil propio más intensivo en Mineral.
+- `Vehiculo`, `Aeronave` y `Fortificacion` no character cuestan solo Mineral, salvo la fracción de Oro de una excepción.
+- `Monstruo` no character cuesta 20% Suministro y 80% Mineral. `Bestia` es una etiqueta distinta y usa la progresión orgánica de Infantería/Montado.
+- Las unidades aliadas siguen el perfil de su categoría. Pagan 20% de Oro si superan su umbral o si son un personaje con nombre propio.
+- Las variantes de miniaturas y equipo conservan exactamente los mismos tipos de recursos que la configuración mínima; nunca añaden un recurso nuevo.
+- Los redondeos se completan usando el recurso de menor valor entre los que ya forman parte del perfil.
+- Los costes de Sombra del Emperador quedan preservados hasta su rebalance específico posterior.
 
 El balance se genera desde `scripts/generate-40k-unit-catalog.mjs` usando `data/balance/faction-balance.json` y los árboles de `data/technology/faction-troop-trees.json`. El informe de auditoría es `docs/generated/faction-balance-report.md` y la validación se ejecuta con `npm run balance:validate`.
 
@@ -989,7 +991,7 @@ Catálogo inicial:
 | Barracón de Infantería | Reclutamiento | Recluta Infantería y Élite compatible. |
 | Cuartel de Mando | Reclutamiento | Recluta Personajes. |
 | Taller de Guerra | Reclutamiento | Recluta Vehículos. |
-| Nido de Bestias | Reclutamiento | Recluta Monstruos. |
+| Nido de Bestias | Reclutamiento | Recluta Bestias y Monstruos. |
 | Cámara de Leyendas | Reclutamiento | Recluta unidades `[Crucible]`. Su tecnología existe tras Asamblea Planetaria, pero está bloqueada por ahora. |
 | Cámara de Comercio | Comercio | Abre Mercader y Comercio estelar. |
 | Nexo de Inteligencia | Inteligencia | Placeholder de espionaje futuro. |
@@ -1372,7 +1374,7 @@ Edificios de reclutamiento v1:
 | Barracón de Infantería | Infantería y élites de infantería. |
 | Cuartel de Mando | Personajes. |
 | Taller de Guerra | Vehículos. |
-| Nido de Bestias | Monstruos. |
+| Nido de Bestias | Bestias y Monstruos. |
 | Cámara de Leyendas | Unidades `[Crucible]`. Bloqueada por tecnología en v1. |
 
 ### 9.3 Datos de una unidad reclutable
@@ -1400,6 +1402,7 @@ Cada unidad debe tener:
   - `Caracter`
   - `Vehiculo`
   - `Bestia`
+  - `Monstruo`
   - `Montado`
 - Categoría:
   - Infantería.
@@ -1415,7 +1418,7 @@ Cada unidad debe tener:
 
 En el catálogo final importado desde `data/11th40kPoints.txt`, `category` se deriva de la linea `CharN`, de keywords reales BSData como `Battleline`/`Dedicated Transport` y de si la unidad viene de una fuente aliada. Se normaliza a: `Personaje`, `Linea de batalla`, `Transporte`, `Otras hojas de datos` o `Aliada`.
 
-Las etiquetas funcionales de unidad (`unit_keywords`) se cruzan con datos estructurados durante `npm run units:generate`. BSData se usa solo para tipos/keywords; los puntos y miniaturas vienen de `data/11th40kPoints.txt` y, para el añadido `Final Day`, de `data/11th-final-day-tyranids.json` con puntos MFM oficiales. El importador guarda hasta dos etiquetas reales relevantes para el rol, normalizadas al español: `Infanteria`, `Caracter`, `Vehiculo`, `Bestia`, `Montado`, `Aeronave` y `Fortificacion`. Ejemplos válidos: `Infanteria + Caracter`, `Vehiculo + Aeronave`, `Vehiculo + Caracter`. El informe `docs/generated/40k-unit-import-report.md` debe quedar con `Hojas de unidad importadas: 347`, `Adeptus Custodes: 51`, `Astra Militarum: 0`, `Unidades con keywords reales cruzadas: 347` y `Fallback heuristico: 0`.
+Las etiquetas funcionales de unidad (`unit_keywords`) se cruzan con datos estructurados durante `npm run units:generate`. BSData se usa solo para tipos/keywords; los puntos y miniaturas vienen de `data/11th40kPoints.txt` y, para el añadido `Final Day`, de `data/11th-final-day-tyranids.json` con puntos MFM oficiales. El importador guarda hasta dos etiquetas reales relevantes para el rol, normalizadas al español: `Infanteria`, `Caracter`, `Vehiculo`, `Bestia`, `Monstruo`, `Montado`, `Aeronave` y `Fortificacion`. `Bestia` y `Monstruo` son categorías funcionales distintas. Ejemplos válidos: `Infanteria + Caracter`, `Monstruo + Caracter`, `Vehiculo + Aeronave`, `Vehiculo + Caracter`. El informe `docs/generated/40k-unit-import-report.md` debe quedar con `Hojas de unidad importadas: 347`, `Adeptus Custodes: 51`, `Astra Militarum: 0`, `Unidades con keywords reales cruzadas: 347` y `Fallback heuristico: 0`.
 
 Las unidades se pagan solo con Suministro vital, Mineral, Honor y Oro. Material Industrial queda reservado para construcción y Uridium queda reservado para movimiento/comercio, no para generar tropas.
 
@@ -2304,8 +2307,8 @@ campaign_units
 - unit_template_id uuid nullable references unit_templates(id)
 - name text
 - category text
-- unit_type text check in ('beast', 'vehicle', 'character', 'infantry', 'mounted')
-- unit_keywords text[] check max 2 in ('Vehiculo', 'Caracter', 'Infanteria', 'Bestia', 'Montado', 'Aeronave', 'Fortificacion')
+- unit_type text check in ('beast', 'monster', 'vehicle', 'character', 'infantry', 'mounted')
+- unit_keywords text[] check max 2 in ('Vehiculo', 'Caracter', 'Infanteria', 'Bestia', 'Monstruo', 'Montado', 'Aeronave', 'Fortificacion')
 - points integer
 - quantity integer default 1 -- miniaturas actuales
 - starting_quantity integer default 1 -- tamaño completo de la unidad
@@ -2325,7 +2328,7 @@ campaign_units
 
 Cada fila representa una unidad Warhammer concreta movible en el mapa. Las unidades son indivisibles: no se separan miniaturas al mover y no se crean nuevas filas hijas en el flujo actual. La validación de heridas es `wounds_taken <= quantity * unit_templates.wounds_per_model`.
 
-`unit_keywords` es el campo funcional para reglas nuevas. Puede tener 1 o 2 valores y siempre usa nombres en espanol sin acento: `Vehiculo`, `Caracter`, `Infanteria`, `Bestia`, `Montado`, `Aeronave`, `Fortificacion`.
+`unit_keywords` es el campo funcional para reglas nuevas. Puede tener 1 o 2 valores y siempre usa nombres en español sin acento: `Vehiculo`, `Caracter`, `Infanteria`, `Bestia`, `Monstruo`, `Montado`, `Aeronave`, `Fortificacion`.
 
 `unit_type` queda como legacy derivado desde `unit_keywords`. Si `unit_keywords` contiene `Caracter`, `experience` se interpreta como nivel directo `1..10`, `rank` se sincroniza con el rango militar y los slots de reliquia se calculan desde ese nivel.
 
@@ -2348,8 +2351,8 @@ unit_templates
 - faction_id uuid references factions(id)
 - name text
 - category text
-- unit_type text check in ('beast', 'vehicle', 'character', 'infantry', 'mounted')
-- unit_keywords text[] check max 2 in ('Vehiculo', 'Caracter', 'Infanteria', 'Bestia', 'Montado', 'Aeronave', 'Fortificacion')
+- unit_type text check in ('beast', 'monster', 'vehicle', 'character', 'infantry', 'mounted')
+- unit_keywords text[] check max 2 in ('Vehiculo', 'Caracter', 'Infanteria', 'Bestia', 'Monstruo', 'Montado', 'Aeronave', 'Fortificacion')
 - points integer
 - default_quantity integer default 1
 - wounds_per_model integer default 1

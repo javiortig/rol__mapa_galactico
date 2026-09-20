@@ -187,11 +187,18 @@ export function computeRecruitmentCostsForPoints(template: UnitTemplate, points:
     } satisfies Record<ResourceKey, number>;
   }
 
-  const minerals = Math.floor(((safePoints * template.mineralsCost * 2) / basePoints) / 2);
-  const honor = Math.floor(((safePoints * template.honorCost * 5) / basePoints) / 5);
-  const rawGold = Math.floor(((safePoints * template.goldCost * 5) / basePoints) / 5);
-  const gold = template.goldCost > 0 && safePoints >= 5 ? Math.max(1, rawGold) : rawGold;
-  const normalized = normalizeRecruitmentCosts(safePoints, minerals, honor, gold);
+  if (template.factionId === "space-marines") {
+    return legacyRecruitmentCostsForPoints(template, safePoints, basePoints);
+  }
+
+  const baseCosts = {
+    supply: template.supplyCost,
+    minerals: template.mineralsCost,
+    honor: template.honorCost,
+    gold: template.goldCost
+  };
+  const baseValue = recruitmentPointValue(baseCosts);
+  const normalized = allocateVariantCosts(safePoints, baseCosts, baseValue);
 
   return {
     supply: normalized.supply,
@@ -295,31 +302,76 @@ function applyDiscount(cost: number, percent: number) {
   return Math.max(1, Math.floor((cost * (100 - percent)) / 100));
 }
 
-function normalizeRecruitmentCosts(points: number, minerals: number, honor: number, gold: number) {
-  const normalized = {
-    minerals: Math.max(0, Math.trunc(minerals)),
-    honor: Math.max(0, Math.trunc(honor)),
-    gold: Math.max(0, Math.trunc(gold))
-  };
+type RecruitmentResource = "supply" | "minerals" | "honor" | "gold";
 
-  while (resourcePointValue(normalized) > points && normalized.gold > 0) {
-    normalized.gold -= 1;
+const recruitmentResourceValues: Record<RecruitmentResource, number> = {
+  supply: 1,
+  minerals: 2,
+  honor: 5,
+  gold: 5
+};
+
+function allocateVariantCosts(
+  points: number,
+  baseCosts: Record<RecruitmentResource, number>,
+  baseValue: number
+) {
+  const resourceOrder: RecruitmentResource[] = ["supply", "minerals", "honor", "gold"];
+  const activeResources = resourceOrder.filter((resource) => baseCosts[resource] > 0);
+
+  if (activeResources.length === 0 || baseValue <= 0) {
+    return { supply: points, minerals: 0, honor: 0, gold: 0 };
   }
-  while (resourcePointValue(normalized) > points && normalized.honor > 0) {
-    normalized.honor -= 1;
+
+  const cheapestResource = [...activeResources].sort(
+    (left, right) => recruitmentResourceValues[left] - recruitmentResourceValues[right]
+  )[0];
+  const result: Record<RecruitmentResource, number> = { supply: 0, minerals: 0, honor: 0, gold: 0 };
+
+  for (const resource of activeResources) {
+    if (resource === cheapestResource) continue;
+    const baseContribution = baseCosts[resource] * recruitmentResourceValues[resource];
+    result[resource] = Math.max(
+      1,
+      Math.floor((points * baseContribution) / baseValue / recruitmentResourceValues[resource])
+    );
   }
-  while (resourcePointValue(normalized) > points && normalized.minerals > 0) {
-    normalized.minerals -= 1;
-  }
+
+  const allocated = recruitmentPointValue(result);
+  result[cheapestResource] = Math.max(
+    1,
+    Math.ceil(Math.max(0, points - allocated) / recruitmentResourceValues[cheapestResource])
+  );
+  return result;
+}
+
+function legacyRecruitmentCostsForPoints(template: UnitTemplate, points: number, basePoints: number) {
+  const minerals = Math.floor(((points * template.mineralsCost * 2) / basePoints) / 2);
+  const honor = Math.floor(((points * template.honorCost * 5) / basePoints) / 5);
+  const rawGold = Math.floor(((points * template.goldCost * 5) / basePoints) / 5);
+  const gold = template.goldCost > 0 && points >= 5 ? Math.max(1, rawGold) : rawGold;
+  const normalized = { minerals, honor, gold };
+
+  while (normalized.minerals * 2 + normalized.honor * 5 + normalized.gold * 5 > points && normalized.gold > 0) normalized.gold -= 1;
+  while (normalized.minerals * 2 + normalized.honor * 5 + normalized.gold * 5 > points && normalized.honor > 0) normalized.honor -= 1;
+  while (normalized.minerals * 2 + normalized.honor * 5 + normalized.gold * 5 > points && normalized.minerals > 0) normalized.minerals -= 1;
 
   return {
     supply: points - normalized.minerals * 2 - normalized.honor * 5 - normalized.gold * 5,
     minerals: normalized.minerals,
     honor: normalized.honor,
-    gold: normalized.gold
-  };
+    gold: normalized.gold,
+    industrialMaterial: 0,
+    uridium: 0,
+    technology: 0
+  } satisfies Record<ResourceKey, number>;
 }
 
-function resourcePointValue(costs: { minerals: number; honor: number; gold: number }) {
-  return costs.minerals * 2 + costs.honor * 5 + costs.gold * 5;
+function recruitmentPointValue(costs: Record<RecruitmentResource, number>) {
+  return (
+    costs.supply +
+    costs.minerals * recruitmentResourceValues.minerals +
+    costs.honor * recruitmentResourceValues.honor +
+    costs.gold * recruitmentResourceValues.gold
+  );
 }

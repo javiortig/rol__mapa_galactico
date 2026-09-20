@@ -21,7 +21,7 @@
       "defaultQuantity": 1,
       "points": 185,
       "category": "Aliada",
-      "unitKeywords": ["Bestia", "Caracter"]
+      "unitKeywords": ["Monstruo", "Caracter"]
     },
     {
       "name": "Winged Tyranid Prime",
@@ -37,7 +37,8 @@
       "defaultQuantity": 1,
       "points": 80,
       "category": "Aliada",
-      "unitKeywords": ["Infanteria", "Caracter"]
+      "unitKeywords": ["Infanteria", "Caracter"],
+      "isNamedCharacter": true
     },
     {
       "name": "Gargoyles",
@@ -69,7 +70,7 @@
       "defaultQuantity": 1,
       "points": 135,
       "category": "Aliada",
-      "unitKeywords": ["Bestia"]
+      "unitKeywords": ["Monstruo"]
     },
     {
       "name": "Neurolictor",
@@ -101,7 +102,7 @@
       "defaultQuantity": 1,
       "points": 140,
       "category": "Aliada",
-      "unitKeywords": ["Bestia"]
+      "unitKeywords": ["Monstruo"]
     },
     {
       "name": "Tyrannocyte",
@@ -109,7 +110,7 @@
       "defaultQuantity": 1,
       "points": 80,
       "category": "Aliada",
-      "unitKeywords": ["Bestia"]
+      "unitKeywords": ["Monstruo"]
     },
     {
       "name": "Von Ryan's Leapers",
@@ -125,7 +126,8 @@
       "defaultQuantity": 1,
       "points": 130,
       "category": "Aliada",
-      "unitKeywords": ["Bestia", "Caracter"]
+      "unitKeywords": ["Monstruo", "Caracter"],
+      "isNamedCharacter": true
     }
   ],
   "excludedUnits": [

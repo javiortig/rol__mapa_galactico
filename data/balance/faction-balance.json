@@ -1,15 +1,75 @@
 {
-  "version": 2,
-  "targetGoldUnitRatioByType": 0.25,
-  "goldUnitToleranceByType": 1,
-  "basicInfantrySupplyOnlyRatio": 0.25,
+  "version": 3,
+  "rebalanceFactionSlugs": [
+    "adeptus-custodes",
+    "legiones-daemonicas",
+    "cultos-genestealer",
+    "necrones"
+  ],
+  "preserveFactionCostSlugs": [
+    "space-marines"
+  ],
   "honorOnlyForKeyword": "Caracter",
-  "forceGoldUnitSlugs": [
-    "unit-adeptus-custodes-allarus-custodians"
+  "characterHonorShareByFaction": {
+    "default": 0.5,
+    "legiones-daemonicas": 0.4,
+    "cultos-genestealer": 0.4
+  },
+  "namedAlliedCharacterSlugs": [
+    "unit-adeptus-custodes-canis-rex",
+    "unit-cultos-genestealer-deathleaper",
+    "unit-cultos-genestealer-the-red-terror"
   ],
-  "forceNoGoldUnitSlugs": [
-    "unit-adeptus-custodes-venatari-custodians"
+  "supplyOnlyUnitSlugs": [
+    "unit-adeptus-custodes-custodian-guard",
+    "unit-adeptus-custodes-prosecutors",
+    "unit-adeptus-custodes-vigilators",
+    "unit-adeptus-custodes-witchseekers",
+    "unit-legiones-daemonicas-blue-horrors",
+    "unit-legiones-daemonicas-pink-horrors",
+    "unit-necrones-flayed-ones",
+    "unit-necrones-immortals",
+    "unit-necrones-necron-warriors",
+    "unit-cultos-genestealer-hybrid-metamorphs",
+    "unit-cultos-genestealer-neophyte-hybrids",
+    "unit-cultos-genestealer-acolyte-hybrids-with-autopistols"
   ],
+  "goldShareByUnitSlug": {
+    "unit-adeptus-custodes-trajann-valoris": 0.25,
+    "unit-adeptus-custodes-shield-captain": 0.2,
+    "unit-adeptus-custodes-shield-captain-in-allarus-terminator-armour": 0.2,
+    "unit-adeptus-custodes-shield-captain-on-dawneagle-jetbike": 0.2,
+    "unit-adeptus-custodes-allarus-custodians": 0.25,
+    "unit-adeptus-custodes-sagittarum-custodians": 0.25,
+    "unit-adeptus-custodes-orion-assault-dropship": 0.25,
+    "unit-adeptus-custodes-telemon-heavy-dreadnought": 0.25,
+    "unit-legiones-daemonicas-lord-of-change": 0.25,
+    "unit-legiones-daemonicas-kairos-fateweaver": 0.25,
+    "unit-legiones-daemonicas-daemon-prince-of-chaos": 0.25,
+    "unit-legiones-daemonicas-daemon-prince-of-chaos-with-wings": 0.25,
+    "unit-legiones-daemonicas-burning-chariot": 0.25,
+    "unit-legiones-daemonicas-belakor": 0.25,
+    "unit-necrones-ctan-shard-of-the-deceiver": 0.25,
+    "unit-necrones-ctan-shard-of-the-nightbringer": 0.25,
+    "unit-necrones-ctan-shard-of-the-void-dragon": 0.25,
+    "unit-necrones-the-silent-king": 0.25,
+    "unit-necrones-transcendent-ctan": 0.25,
+    "unit-necrones-triarchal-overseer-crucible": 0.25,
+    "unit-necrones-canoptek-wraiths": 0.25,
+    "unit-necrones-monolith": 0.25,
+    "unit-necrones-obelisk": 0.25,
+    "unit-necrones-ophydian-destroyers": 0.25,
+    "unit-necrones-seraptek-heavy-construct": 0.25,
+    "unit-necrones-skorpekh-destroyers": 0.25,
+    "unit-necrones-tesseract-vault": 0.25,
+    "unit-necrones-tomb-blades": 0.25,
+    "unit-cultos-genestealer-patriarch": 0.25,
+    "unit-cultos-genestealer-magus": 0.25,
+    "unit-cultos-genestealer-primus": 0.25,
+    "unit-cultos-genestealer-nexos": 0.25,
+    "unit-cultos-genestealer-acolyte-iconward": 0.25,
+    "unit-cultos-genestealer-aberrants": 0.25
+  },
   "dailyInitialPairRecruitmentPoints": 19.5,
   "weeklyInitialPairRecruitmentPoints": 136.5,
   "pointValues": {

@@ -16,6 +16,7 @@ const REPORT_PATH = "docs/generated/40k-unit-import-report.md";
 const BALANCE_CONFIG_PATH = "data/balance/faction-balance.json";
 const TROOP_TREE_CONFIG_PATH = "data/technology/faction-troop-trees.json";
 const BALANCE_REPORT_PATH = "docs/generated/faction-balance-report.md";
+const COST_MIGRATION_PATH = "supabase/migrations/0103_unit_cost_profiles_and_monsters.sql";
 const BSDATA_REPO_URL = "https://github.com/BSData/wh40k-10e.git";
 const BSDATA_PATH = ".tmp/wh40k-10e";
 
@@ -47,7 +48,7 @@ const REAL_KEYWORD_MAP = new Map([
   ["Fortification", "Fortificacion"],
   ["Mounted", "Montado"],
   ["Beast", "Bestia"],
-  ["Monster", "Bestia"],
+  ["Monster", "Monstruo"],
   ["Swarm", "Bestia"]
 ]);
 
@@ -223,14 +224,16 @@ function main() {
   const text = readFileSync(SOURCE_PATH, "utf8");
   const balanceConfig = readJson(BALANCE_CONFIG_PATH);
   const troopTreeConfig = readJson(TROOP_TREE_CONFIG_PATH);
+  const preservedCostsBySlug = readPreservedTemplateCosts(MOCK_PATH);
   const keywordSource = buildBsDataKeywordSource();
   const mfmBasePointOverrides = buildMfmBasePointOverrides();
   const catalog = parseCatalog(text, keywordSource, mfmBasePointOverrides);
-  const balance = applyUnitCostBalance(catalog.units, troopTreeConfig, balanceConfig);
+  const balance = applyUnitCostBalance(catalog.units, troopTreeConfig, balanceConfig, preservedCostsBySlug);
   const report = buildReport(catalog);
   writeText(REPORT_PATH, report);
   writeText(BALANCE_REPORT_PATH, buildBalanceReport(catalog, balance, balanceConfig));
   writeText(MOCK_PATH, buildMockFile(catalog.units));
+  writeText(COST_MIGRATION_PATH, buildUnitCostMigrationSql(catalog.units, balanceConfig));
   updateSeed(catalog.units);
 
   console.log(`Catalogo generado: ${catalog.units.length} unidades reales.`);
@@ -301,6 +304,7 @@ function parseCatalog(text, keywordSource, mfmBasePointOverrides) {
         isAlliedUnit,
         category,
         unitKeywords,
+        isNamedCharacter: keywordMatch.rawKeywords.includes("Epic Hero"),
         unitType: legacyUnitType(unitKeywords),
         points,
         defaultQuantity,
@@ -367,6 +371,7 @@ function appendFinalDayTyranidUnits(units, factionSummaries, keywordMatches) {
       isAlliedUnit: Boolean(finalDay.isAlliedUnit),
       category: entry.category ?? "Aliada",
       unitKeywords,
+      isNamedCharacter: Boolean(entry.isNamedCharacter),
       unitType: legacyUnitType(unitKeywords),
       points,
       defaultQuantity,
@@ -574,7 +579,7 @@ function normalizeUnitName(name) {
 }
 
 function sortUnitKeywords(keywords) {
-  const order = ["Infanteria", "Montado", "Bestia", "Vehiculo", "Aeronave", "Fortificacion", "Caracter"];
+  const order = ["Infanteria", "Montado", "Bestia", "Monstruo", "Vehiculo", "Aeronave", "Fortificacion", "Caracter"];
   return [...keywords].sort((a, b) => order.indexOf(a) - order.indexOf(b));
 }
 
@@ -709,7 +714,8 @@ function inferWoundsPerModel(name, unitKeywords) {
   const lower = name.toLowerCase();
   if (unitKeywords.includes("Fortificacion")) return 12;
   if (unitKeywords.includes("Vehiculo") || unitKeywords.includes("Aeronave")) return lower.includes("knight") || lower.includes("baneblade") ? 24 : 10;
-  if (unitKeywords.includes("Bestia")) return unitKeywords.includes("Caracter") ? 8 : 3;
+  if (unitKeywords.includes("Monstruo")) return unitKeywords.includes("Caracter") ? 10 : 8;
+  if (unitKeywords.includes("Bestia")) return unitKeywords.includes("Caracter") ? 6 : 3;
   if (unitKeywords.includes("Montado")) return 3;
   if (unitKeywords.includes("Caracter")) return 5;
   if (/\b(terminator|gravis|ogryn|bullgryn|wraith)\b/.test(lower)) return 3;
@@ -720,6 +726,7 @@ function inferWoundsPerModel(name, unitKeywords) {
 function legacyUnitType(unitKeywords) {
   if (unitKeywords.includes("Caracter")) return "character";
   if (unitKeywords.includes("Vehiculo") || unitKeywords.includes("Aeronave") || unitKeywords.includes("Fortificacion")) return "vehicle";
+  if (unitKeywords.includes("Monstruo")) return "monster";
   if (unitKeywords.includes("Bestia")) return "beast";
   if (unitKeywords.includes("Montado")) return "mounted";
   return "infantry";
@@ -729,7 +736,7 @@ function recruitmentBuildingType(name, unitKeywords) {
   if (name.includes("[Crucible]")) return "camara-leyendas";
   if (unitKeywords.includes("Caracter")) return "cuartel-mando";
   if (unitKeywords.includes("Vehiculo") || unitKeywords.includes("Aeronave") || unitKeywords.includes("Fortificacion")) return "taller-guerra";
-  if (unitKeywords.includes("Bestia")) return "nido-bestias";
+  if (unitKeywords.includes("Bestia") || unitKeywords.includes("Monstruo")) return "nido-bestias";
   return "barracon-infanteria";
 }
 
@@ -798,6 +805,308 @@ ${values}
 join public.factions on factions.slug = data.faction_slug
 on conflict (slug) do update
 set faction_id = excluded.faction_id, name = excluded.name, category = excluded.category, unit_type = excluded.unit_type, unit_keywords = excluded.unit_keywords, points = excluded.points, default_quantity = excluded.default_quantity, wounds_per_model = excluded.wounds_per_model, supply_cost = excluded.supply_cost, minerals_cost = excluded.minerals_cost, ancestral_stone_cost = excluded.ancestral_stone_cost, honor_cost = excluded.honor_cost, gold_cost = excluded.gold_cost, industrial_material_cost = excluded.industrial_material_cost, uridium_cost = excluded.uridium_cost, technology_cost = excluded.technology_cost, recruitment_time_seconds = excluded.recruitment_time_seconds, recruitment_building_type = excluded.recruitment_building_type, notes = excluded.notes, is_available = excluded.is_available, required_technology_node_id = excluded.required_technology_node_id, source_section = excluded.source_section, source_faction_name = excluded.source_faction_name, is_allied_unit = excluded.is_allied_unit;`;
+}
+
+function buildUnitCostMigrationSql(units, balanceConfig) {
+  const targetFactions = new Set(balanceConfig.rebalanceFactionSlugs ?? []);
+  const values = units
+    .filter((unit) => targetFactions.has(unit.factionSlug))
+    .map((unit) => (
+      `    (${sql(unit.slug)}, ${sql(unit.unitType)}, ${sqlArray(unit.unitKeywords)}, ${unit.supplyCost}, ${unit.mineralsCost}, ${unit.honorCost}, ${unit.goldCost}, ${sql(unit.recruitmentBuildingType)})`
+    ))
+    .join(",\n");
+
+  return `-- Generated by npm run units:generate.
+-- Rebalances only Custodes, Daemonic Legions, Genestealer Cults and Necrons.
+-- Space Marines and live campaign state are intentionally left untouched.
+
+do $$
+declare
+  v_constraint record;
+begin
+  for v_constraint in
+    select conname, conrelid::regclass as table_name
+    from pg_constraint
+    where conrelid in ('public.unit_templates'::regclass, 'public.campaign_units'::regclass)
+      and pg_get_constraintdef(oid) ilike '%unit_type%'
+  loop
+    execute format('alter table %s drop constraint %I', v_constraint.table_name, v_constraint.conname);
+  end loop;
+end;
+$$;
+
+alter table public.unit_templates
+  add constraint unit_templates_unit_type_check
+  check (unit_type in ('beast', 'monster', 'vehicle', 'character', 'infantry', 'mounted'));
+
+alter table public.campaign_units
+  add constraint campaign_units_unit_type_check
+  check (unit_type in ('beast', 'monster', 'vehicle', 'character', 'infantry', 'mounted'));
+
+create or replace function public.normalize_unit_keyword(keyword text)
+returns text
+language sql
+immutable
+set search_path = public
+as $$
+  select case
+    when lower(coalesce(keyword, '')) in ('vehiculo', 'vehicle', 'vehiculos', 'superpesado') then 'Vehiculo'
+    when lower(coalesce(keyword, '')) in ('aeronave', 'aeronaves', 'aircraft', 'flyer', 'flyers') then 'Aeronave'
+    when lower(coalesce(keyword, '')) in ('fortificacion', 'fortificaciones', 'fortification', 'fortifications') then 'Fortificacion'
+    when lower(coalesce(keyword, '')) in ('caracter', 'character', 'characters', 'personaje', 'personajes') then 'Caracter'
+    when lower(coalesce(keyword, '')) in ('infanteria', 'infantry', 'elite', 'elites') then 'Infanteria'
+    when lower(coalesce(keyword, '')) in ('monstruo', 'monster', 'monsters') then 'Monstruo'
+    when lower(coalesce(keyword, '')) in ('bestia', 'beast', 'swarm') then 'Bestia'
+    when lower(coalesce(keyword, '')) in ('montado', 'montada', 'montados', 'montadas', 'mounted') then 'Montado'
+    when lower(coalesce(keyword, '')) like '%fortif%' then 'Fortificacion'
+    when lower(coalesce(keyword, '')) like '%aircraft%' or lower(coalesce(keyword, '')) like '%aeronav%' then 'Aeronave'
+    when lower(coalesce(keyword, '')) like '%veh%' then 'Vehiculo'
+    when lower(coalesce(keyword, '')) like '%character%' or lower(coalesce(keyword, '')) like '%person%' or lower(coalesce(keyword, '')) like '%caracter%' then 'Caracter'
+    when lower(coalesce(keyword, '')) like '%monstru%' or lower(coalesce(keyword, '')) like '%monster%' then 'Monstruo'
+    when lower(coalesce(keyword, '')) like '%beast%' then 'Bestia'
+    when lower(coalesce(keyword, '')) like '%mount%' or lower(coalesce(keyword, '')) like '%montad%' then 'Montado'
+    when lower(coalesce(keyword, '')) like '%infan%' or lower(coalesce(keyword, '')) like '%elite%' then 'Infanteria'
+    else null
+  end;
+$$;
+
+create or replace function public.unit_keywords_are_valid(keywords text[])
+returns boolean
+language sql
+immutable
+set search_path = public
+as $$
+  select coalesce(array_length(keywords, 1), 0) between 1 and 2
+    and not exists (
+      select 1
+      from unnest(coalesce(keywords, array[]::text[])) as item(keyword)
+      where item.keyword not in ('Vehiculo', 'Caracter', 'Infanteria', 'Bestia', 'Monstruo', 'Montado', 'Aeronave', 'Fortificacion')
+    )
+    and cardinality(keywords) = (select count(distinct item.keyword) from unnest(keywords) as item(keyword));
+$$;
+
+create or replace function public.unit_keywords_from_category(category text, legacy_unit_type text default null)
+returns text[]
+language sql
+immutable
+set search_path = public
+as $$
+  select case
+    when public.normalize_unit_keyword(legacy_unit_type) = 'Caracter'
+      or public.normalize_unit_keyword(category) = 'Caracter'
+      then array['Infanteria', 'Caracter']::text[]
+    when public.normalize_unit_keyword(legacy_unit_type) = 'Fortificacion'
+      or public.normalize_unit_keyword(category) = 'Fortificacion'
+      then array['Fortificacion']::text[]
+    when public.normalize_unit_keyword(legacy_unit_type) = 'Aeronave'
+      or public.normalize_unit_keyword(category) = 'Aeronave'
+      then array['Vehiculo', 'Aeronave']::text[]
+    when public.normalize_unit_keyword(legacy_unit_type) = 'Vehiculo'
+      or public.normalize_unit_keyword(category) = 'Vehiculo'
+      then array['Vehiculo']::text[]
+    when public.normalize_unit_keyword(legacy_unit_type) = 'Monstruo'
+      or public.normalize_unit_keyword(category) = 'Monstruo'
+      then array['Monstruo']::text[]
+    when public.normalize_unit_keyword(legacy_unit_type) = 'Bestia'
+      or public.normalize_unit_keyword(category) = 'Bestia'
+      then array['Bestia']::text[]
+    when public.normalize_unit_keyword(legacy_unit_type) = 'Montado'
+      or public.normalize_unit_keyword(category) = 'Montado'
+      then array['Montado']::text[]
+    else array['Infanteria']::text[]
+  end;
+$$;
+
+create or replace function public.legacy_unit_type_from_keywords(keywords text[])
+returns text
+language sql
+immutable
+set search_path = public
+as $$
+  select case
+    when 'Caracter' = any(coalesce(keywords, array[]::text[])) then 'character'
+    when 'Vehiculo' = any(coalesce(keywords, array[]::text[]))
+      or 'Aeronave' = any(coalesce(keywords, array[]::text[]))
+      or 'Fortificacion' = any(coalesce(keywords, array[]::text[])) then 'vehicle'
+    when 'Monstruo' = any(coalesce(keywords, array[]::text[])) then 'monster'
+    when 'Bestia' = any(coalesce(keywords, array[]::text[])) then 'beast'
+    when 'Montado' = any(coalesce(keywords, array[]::text[])) then 'mounted'
+    else 'infantry'
+  end;
+$$;
+
+create or replace function public.map_unit_category_to_type(category text)
+returns text
+language sql
+immutable
+set search_path = public
+as $$
+  select case
+    when lower(coalesce(category, '')) in ('monster', 'monstruo', 'monsters') then 'monster'
+    when lower(coalesce(category, '')) in ('beast', 'bestia', 'swarm') then 'beast'
+    when lower(coalesce(category, '')) in ('vehicle', 'vehiculo', 'vehiculos', 'superpesado') then 'vehicle'
+    when lower(coalesce(category, '')) in ('character', 'characters', 'personaje', 'personajes') then 'character'
+    when lower(coalesce(category, '')) in ('mounted', 'montada', 'montado', 'montados', 'montadas') then 'mounted'
+    when lower(coalesce(category, '')) like '%veh%' then 'vehicle'
+    when lower(coalesce(category, '')) like '%person%' or lower(coalesce(category, '')) like '%character%' then 'character'
+    when lower(coalesce(category, '')) like '%monstru%' or lower(coalesce(category, '')) like '%monster%' then 'monster'
+    when lower(coalesce(category, '')) like '%beast%' then 'beast'
+    when lower(coalesce(category, '')) like '%mount%' or lower(coalesce(category, '')) like '%montad%' then 'mounted'
+    else 'infantry'
+  end;
+$$;
+
+with desired_costs(slug, unit_type, unit_keywords, supply_cost, minerals_cost, honor_cost, gold_cost, recruitment_building_type) as (
+  values
+${values}
+)
+update public.unit_templates
+set
+  unit_type = desired_costs.unit_type,
+  unit_keywords = desired_costs.unit_keywords,
+  supply_cost = desired_costs.supply_cost,
+  minerals_cost = desired_costs.minerals_cost,
+  honor_cost = desired_costs.honor_cost,
+  gold_cost = desired_costs.gold_cost,
+  industrial_material_cost = 0,
+  uridium_cost = 0,
+  technology_cost = 0,
+  recruitment_building_type = desired_costs.recruitment_building_type
+from desired_costs
+where unit_templates.slug = desired_costs.slug;
+
+update public.campaign_units
+set
+  unit_type = unit_templates.unit_type,
+  unit_keywords = unit_templates.unit_keywords
+from public.unit_templates
+join public.factions on factions.id = unit_templates.faction_id
+where campaign_units.unit_template_id = unit_templates.id
+  and factions.slug in ('adeptus-custodes', 'legiones-daemonicas', 'cultos-genestealer', 'necrones');
+
+create or replace function public.recruitment_cost_bundle_for_template(
+  target_unit_template_id uuid,
+  selected_points integer
+)
+returns table (
+  supply_cost integer,
+  minerals_cost integer,
+  honor_cost integer,
+  gold_cost integer,
+  industrial_material_cost integer,
+  uridium_cost integer,
+  technology_cost integer
+)
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_template public.unit_templates%rowtype;
+  v_faction_slug text;
+  v_points integer;
+  v_base_value integer;
+  v_allocated integer;
+begin
+  select * into v_template
+  from public.unit_templates
+  where id = target_unit_template_id;
+
+  if not found then
+    raise exception 'Unidad no encontrada';
+  end if;
+
+  select factions.slug into v_faction_slug
+  from public.factions
+  where factions.id = v_template.faction_id;
+
+  v_points := greatest(coalesce(selected_points, v_template.points, 0), 0);
+
+  if v_points = v_template.points then
+    supply_cost := coalesce(v_template.supply_cost, 0);
+    minerals_cost := coalesce(v_template.minerals_cost, 0);
+    honor_cost := coalesce(v_template.honor_cost, 0);
+    gold_cost := coalesce(v_template.gold_cost, 0);
+  elsif v_faction_slug = 'space-marines' then
+    minerals_cost := floor(((v_points::numeric * coalesce(v_template.minerals_cost, 0) * 2) / greatest(v_template.points, 1)) / 2)::integer;
+    honor_cost := floor(((v_points::numeric * coalesce(v_template.honor_cost, 0) * 5) / greatest(v_template.points, 1)) / 5)::integer;
+    gold_cost := floor(((v_points::numeric * coalesce(v_template.gold_cost, 0) * 5) / greatest(v_template.points, 1)) / 5)::integer;
+    if coalesce(v_template.gold_cost, 0) > 0 and v_points >= 5 then
+      gold_cost := greatest(1, gold_cost);
+    end if;
+    while minerals_cost * 2 + honor_cost * 5 + gold_cost * 5 > v_points and gold_cost > 0 loop
+      gold_cost := gold_cost - 1;
+    end loop;
+    while minerals_cost * 2 + honor_cost * 5 + gold_cost * 5 > v_points and honor_cost > 0 loop
+      honor_cost := honor_cost - 1;
+    end loop;
+    while minerals_cost * 2 + honor_cost * 5 + gold_cost * 5 > v_points and minerals_cost > 0 loop
+      minerals_cost := minerals_cost - 1;
+    end loop;
+    supply_cost := v_points - minerals_cost * 2 - honor_cost * 5 - gold_cost * 5;
+  else
+    v_base_value := coalesce(v_template.supply_cost, 0)
+      + coalesce(v_template.minerals_cost, 0) * 2
+      + coalesce(v_template.honor_cost, 0) * 5
+      + coalesce(v_template.gold_cost, 0) * 5;
+
+    supply_cost := 0;
+    minerals_cost := 0;
+    honor_cost := 0;
+    gold_cost := 0;
+
+    if v_base_value <= 0 then
+      supply_cost := v_points;
+    elsif coalesce(v_template.supply_cost, 0) > 0 then
+      if coalesce(v_template.minerals_cost, 0) > 0 then
+        minerals_cost := greatest(1, floor((v_points::numeric * v_template.minerals_cost) / v_base_value)::integer);
+      end if;
+      if coalesce(v_template.honor_cost, 0) > 0 then
+        honor_cost := greatest(1, floor((v_points::numeric * v_template.honor_cost) / v_base_value)::integer);
+      end if;
+      if coalesce(v_template.gold_cost, 0) > 0 then
+        gold_cost := greatest(1, floor((v_points::numeric * v_template.gold_cost) / v_base_value)::integer);
+      end if;
+      v_allocated := minerals_cost * 2 + honor_cost * 5 + gold_cost * 5;
+      supply_cost := greatest(1, v_points - v_allocated);
+    elsif coalesce(v_template.minerals_cost, 0) > 0 then
+      if coalesce(v_template.honor_cost, 0) > 0 then
+        honor_cost := greatest(1, floor((v_points::numeric * v_template.honor_cost) / v_base_value)::integer);
+      end if;
+      if coalesce(v_template.gold_cost, 0) > 0 then
+        gold_cost := greatest(1, floor((v_points::numeric * v_template.gold_cost) / v_base_value)::integer);
+      end if;
+      v_allocated := honor_cost * 5 + gold_cost * 5;
+      minerals_cost := greatest(1, ceil(greatest(0, v_points - v_allocated)::numeric / 2)::integer);
+    elsif coalesce(v_template.honor_cost, 0) > 0 then
+      if coalesce(v_template.gold_cost, 0) > 0 then
+        gold_cost := greatest(1, floor((v_points::numeric * v_template.gold_cost) / v_base_value)::integer);
+      end if;
+      honor_cost := greatest(1, ceil(greatest(0, v_points - gold_cost * 5)::numeric / 5)::integer);
+    else
+      gold_cost := greatest(1, ceil(v_points::numeric / 5)::integer);
+    end if;
+  end if;
+
+  industrial_material_cost := 0;
+  uridium_cost := 0;
+  technology_cost := 0;
+  return next;
+end;
+$$;
+
+insert into public.campaign_logs (action_type, payload)
+values (
+  'unit_cost_profiles_rebalanced',
+  jsonb_build_object(
+    'factions', array['adeptus-custodes', 'legiones-daemonicas', 'cultos-genestealer', 'necrones'],
+    'space_marines_preserved', true,
+    'monster_keyword_separated', true,
+    'changed_at', now()
+  )
+);
+`;
 }
 
 function buildInitialUnitsSql(units) {
@@ -1048,17 +1357,17 @@ function buildReport(catalog) {
 }
 
 function buildBalanceReport(catalog, balance, balanceConfig) {
-  const targetFactionSlugs = new Set(balanceConfig.targetFactionSlugs ?? []);
+  const targetFactionSlugs = new Set(balanceConfig.rebalanceFactionSlugs ?? []);
   const summaryLines = balance.factionSummaries
     .filter((summary) => targetFactionSlugs.has(summary.factionSlug))
     .map((summary) => {
       const values = summary.totals;
-      return `| ${summary.factionSlug} | ${summary.unitCount} | ${summary.goldUnits}/${summary.targetGoldUnits} (${summary.goldUnitPercent}%) | ${values.points} | ${values.supply} | ${values.minerals} | ${values.honor} | ${values.gold} |`;
+      return `| ${summary.factionSlug} | ${summary.unitCount} | ${summary.goldUnits} (${summary.goldUnitPercent}%) | ${values.points} | ${values.supply} | ${values.minerals} | ${values.honor} | ${values.gold} |`;
     });
   const typeGoldLines = balance.factionSummaries
     .filter((summary) => targetFactionSlugs.has(summary.factionSlug))
     .flatMap((summary) => summary.byType.map((typeSummary) => (
-      `| ${summary.factionSlug} | ${typeSummary.type} | ${typeSummary.unitCount} | ${typeSummary.goldUnits} | ${typeSummary.targetGoldUnits} |`
+      `| ${summary.factionSlug} | ${typeSummary.type} | ${typeSummary.unitCount} | ${typeSummary.goldUnits} |`
     )));
 
   const initialInfantry = balance.summaries
@@ -1068,18 +1377,15 @@ function buildBalanceReport(catalog, balance, balanceConfig) {
     .filter((unit) => targetFactionSlugs.has(unit.factionSlug) && unit.honorCost > 0)
     .map((unit) => `- ${unit.factionSlug}: ${unit.name} -> ${unit.honorCost} Honor (${Math.round(resourceShare(unit.honorCost, unit.points) * 100)}%, ${unit.unitKeywords.join(", ")})`);
 
-  const invalidPointValues = balance.summaries.filter((item) => warhammerPointValue(item.costs) !== item.points);
+  const invalidPointValues = balance.summaries.filter((item) => {
+    const value = warhammerPointValue(item.costs);
+    return value !== item.points && !(value === item.points + 1 && item.costs.supplyCost === 0 && item.costs.mineralsCost > 0);
+  });
   const invalidMilitaryCosts = balance.summaries.filter(
     (item) => (item.costs.industrialMaterialCost ?? 0) !== 0 || (item.costs.uridiumCost ?? 0) !== 0
   );
   const invalidHonorCosts = catalog.units.filter(
     (unit) => unit.honorCost > 0 && !unit.unitKeywords.includes(balanceConfig.honorOnlyForKeyword ?? "Caracter")
-  );
-  const invalidCharacterHonorRange = catalog.units.filter(
-    (unit) => targetFactionSlugs.has(unit.factionSlug) && unit.unitKeywords.includes("Caracter") && !isBetween(resourceShare(unit.honorCost, unit.points), 0.4, 0.5)
-  );
-  const invalidGoldRange = catalog.units.filter(
-    (unit) => targetFactionSlugs.has(unit.factionSlug) && unit.goldCost > 0 && !isBetween(resourceShare(unit.goldCost, unit.points), 0.2, 0.3)
   );
   const pairLines = (balanceConfig.initialPairs ?? []).map((pair) => {
     const capital = balanceConfig.systemCapacities?.[pair.capitalSlug] ?? {};
@@ -1099,12 +1405,14 @@ function buildBalanceReport(catalog, balance, balanceConfig) {
     `- Capital + adyacente objetivo: ${balanceConfig.dailyInitialPairRecruitmentPoints} puntos de reclutamiento/dia.`,
     "- Uridium y Material Industrial tienen economia separada.",
     "- La campana empieza sin edificios construidos.",
-    `- Objetivo de unidades con oro: ${Math.round(Number(balanceConfig.targetGoldUnitRatioByType ?? 0.25) * 100)}% por tipo principal y faccion.`,
-    "- Las unidades con Oro tienen entre 20% y 30% de su coste equivalente en Oro.",
-    `- Objetivo de infanteria no character solo Suministro: ${Math.round(Number(balanceConfig.basicInfantrySupplyOnlyRatio ?? 0.25) * 100)}% por faccion.`,
+    "- Por defecto ninguna unidad cuesta Oro; solo lo hacen las excepciones de faccion y las aliadas que cumplen su umbral.",
+    "- El Oro ocupa un 25% del coste indicado, o un 20% para Shield-Captains y unidades aliadas elegibles.",
+    "- Las excepciones de infanteria basica indicadas cuestan exclusivamente Suministro vital.",
     `- Honor solo aparece en unidades con keyword ${balanceConfig.honorOnlyForKeyword ?? "Caracter"}.`,
-    "- Los Characters tienen entre 40% y 50% de su coste equivalente en Honor.",
-    "- Las variantes de miniaturas/equipo escalan desde el perfil de coste de la plantilla base.",
+    "- Los Characters usan 50% de Honor; Legiones Daemonicas y Cultos Genestealer usan 40%.",
+    "- Vehiculos usan Mineral; Monstruos usan 80% Mineral y 20% Suministro; Bestias conservan su perfil de tropas organicas.",
+    "- Las variantes conservan exactamente los mismos tipos de recurso que su configuracion minima.",
+    "- Los redondeos se completan con el recurso mas barato ya presente en el perfil.",
     "",
     "## Resumen por faccion jugable",
     "",
@@ -1112,10 +1420,10 @@ function buildBalanceReport(catalog, balance, balanceConfig) {
     "|---|---:|---:|---:|---:|---:|---:|---:|",
     ...summaryLines,
     "",
-    "## Oro por tipo principal",
+    "## Distribucion de Oro por tipo principal",
     "",
-    "| Faccion | Tipo | Unidades | Con oro | Objetivo |",
-    "|---|---|---:|---:|---:|",
+    "| Faccion | Tipo | Unidades | Con oro |",
+    "|---|---|---:|---:|",
     ...typeGoldLines,
     "",
     "## Infanteria inicial solo suministro",
@@ -1137,8 +1445,7 @@ function buildBalanceReport(catalog, balance, balanceConfig) {
     `- Unidades con conversion de puntos invalida: ${invalidPointValues.length}.`,
     `- Unidades con Material Industrial o Uridium: ${invalidMilitaryCosts.length}.`,
     `- Unidades no character con Honor: ${invalidHonorCosts.length}.`,
-    `- Characters fuera de rango 40%-50% Honor: ${invalidCharacterHonorRange.length}.`,
-    `- Unidades con Oro fuera de rango 20%-30%: ${invalidGoldRange.length}.`,
+    "- Sombra del Emperador: costes preservados sin cambios.",
     `- Facciones importadas desde catalogo: ${catalog.factionSummaries.length}.`
   ];
 
@@ -1149,13 +1456,29 @@ function resourceShare(resourceAmount, points) {
   return (Number(resourceAmount ?? 0) * 5) / Math.max(1, Number(points ?? 0));
 }
 
-function isBetween(value, min, max) {
-  const epsilon = 0.0001;
-  return value + epsilon >= min && value - epsilon <= max;
-}
-
 function readJson(path) {
   return JSON.parse(readFileSync(path, "utf8"));
+}
+
+function readPreservedTemplateCosts(path) {
+  let source;
+  try {
+    source = execSync(`git show HEAD:${path.replaceAll("\\", "/")}`, { encoding: "utf8" });
+  } catch {
+    if (!existsSync(path)) return new Map();
+    source = readFileSync(path, "utf8");
+  }
+  const marker = "export const generated40kUnitTemplates = ";
+  const markerIndex = source.indexOf(marker);
+  const arrayStart = source.indexOf("[", markerIndex + marker.length);
+  const arrayEnd = source.indexOf("] satisfies CampaignSnapshot[\"unitTemplates\"]", arrayStart);
+
+  if (markerIndex < 0 || arrayStart < 0 || arrayEnd < 0) {
+    throw new Error(`No se pudieron leer los costes existentes de ${path}.`);
+  }
+
+  const templates = JSON.parse(source.slice(arrayStart, arrayEnd + 1));
+  return new Map(templates.map((template) => [template.id, template]));
 }
 
 function buildMfmBasePointOverrides() {

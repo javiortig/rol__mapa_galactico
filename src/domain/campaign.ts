@@ -64,9 +64,9 @@ export type UnitCategory =
   | "Superpesado"
   | "Otro";
 
-export type UnitType = "beast" | "vehicle" | "character" | "infantry" | "mounted";
+export type UnitType = "beast" | "monster" | "vehicle" | "character" | "infantry" | "mounted";
 
-export type UnitKeyword = "Vehiculo" | "Caracter" | "Infanteria" | "Bestia" | "Montado" | "Aeronave" | "Fortificacion";
+export type UnitKeyword = "Vehiculo" | "Caracter" | "Infanteria" | "Bestia" | "Monstruo" | "Montado" | "Aeronave" | "Fortificacion";
 
 export type ResourceKey = "supply" | "minerals" | "honor" | "gold" | "industrialMaterial" | "uridium" | "technology";
 

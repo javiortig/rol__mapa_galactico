@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import {
   buildTechnologyAssignmentMap,
-  primaryUnitType,
+  computeBalancedUnitCosts,
+  getUnitCostRule,
   selectBasicSupplyOnlyInfantrySlugs,
   scaleCostsFromTemplate,
   systemWarhammerPointValue,
@@ -14,16 +15,24 @@ const unitTemplates = readGeneratedUnitTemplates("src/mocks/generated/40k-unit-t
 const assignmentByUnit = buildTechnologyAssignmentMap(troopTreeConfig);
 const errors = [];
 const targetFactionSlugs = new Set(balanceConfig.targetFactionSlugs ?? []);
-const goldToleranceByType = Number(balanceConfig.goldUnitToleranceByType ?? balanceConfig.goldUnitTolerance ?? 1);
-const targetGoldRatioByType = Number(balanceConfig.targetGoldUnitRatioByType ?? balanceConfig.targetGoldUnitRatio ?? 0.25);
-const basicInfantrySupplyOnlyRatio = Number(balanceConfig.basicInfantrySupplyOnlyRatio ?? 0.25);
+const rebalanceFactionSlugs = new Set(balanceConfig.rebalanceFactionSlugs ?? []);
+const preservedFactionSlugs = new Set(balanceConfig.preserveFactionCostSlugs ?? []);
 const honorKeyword = balanceConfig.honorOnlyForKeyword ?? "Caracter";
 const basicSupplyOnlySlugs = selectBasicSupplyOnlyInfantrySlugs(unitTemplates, assignmentByUnit, balanceConfig);
+const templateById = new Map(unitTemplates.map((template) => [template.id, template]));
+
+for (const slug of balanceConfig.supplyOnlyUnitSlugs ?? []) {
+  if (!templateById.has(slug)) errors.push(`${slug}: excepcion de Suministro no encontrada en el catalogo.`);
+}
+
+for (const slug of Object.keys(balanceConfig.goldShareByUnitSlug ?? {})) {
+  if (!templateById.has(slug)) errors.push(`${slug}: excepcion de Oro no encontrada en el catalogo.`);
+}
 
 for (const template of unitTemplates) {
   const pointValue = warhammerPointValue(template);
 
-  if (pointValue !== template.points) {
+  if (!isValidRoundedPointValue(template, pointValue)) {
     errors.push(`${template.id}: coste ${pointValue} no coincide con ${template.points} pts.`);
   }
 
@@ -31,58 +40,57 @@ for (const template of unitTemplates) {
     errors.push(`${template.id}: Material Industrial y Uridium deben ser 0.`);
   }
 
+  if (template.unitType === "monster" && !(template.unitKeywords ?? []).includes("Monstruo")) {
+    errors.push(`${template.id}: unit_type monster requiere keyword Monstruo.`);
+  }
+
+  if ((template.unitKeywords ?? []).includes("Monstruo") && (template.unitKeywords ?? []).includes("Bestia")) {
+    errors.push(`${template.id}: Bestia y Monstruo no deben fusionarse en la misma clasificacion.`);
+  }
+
   if (template.honorCost > 0 && !(template.unitKeywords ?? []).includes(honorKeyword)) {
     errors.push(`${template.id}: solo las unidades con ${honorKeyword} pueden costar Honor.`);
   }
 
-  if ((template.unitKeywords ?? []).includes(honorKeyword)) {
-    const honorShare = resourceShare(template.honorCost, template.points);
-    if (!isBetween(honorShare, 0.4, 0.5)) {
-      errors.push(`${template.id}: los Characters deben tener 40%-50% de coste en Honor; recibido ${Math.round(honorShare * 100)}%.`);
+  if (rebalanceFactionSlugs.has(template.factionId)) {
+    const expected = computeBalancedUnitCosts(
+      template,
+      assignmentByUnit.get(template.id),
+      balanceConfig
+    );
+    for (const key of ["supplyCost", "mineralsCost", "honorCost", "goldCost"]) {
+      if (Number(template[key]) !== Number(expected[key])) {
+        errors.push(`${template.id}: ${key}=${template[key]}, esperado ${expected[key]}.`);
+      }
     }
-  }
 
-  if (template.goldCost > 0) {
-    const goldShare = resourceShare(template.goldCost, template.points);
-    if (!isBetween(goldShare, 0.2, 0.3)) {
-      errors.push(`${template.id}: las unidades con Oro deben tener 20%-30% de coste en Oro; recibido ${Math.round(goldShare * 100)}%.`);
+    const rule = getUnitCostRule(template, balanceConfig);
+    if (rule.supplyOnly && template.supplyCost !== template.points) {
+      errors.push(`${template.id}: la excepcion de Suministro debe pagar todos sus puntos con Suministro.`);
     }
   }
 
   const scaled = scaleCostsFromTemplate(template, template.points);
   const scaledValue = scaled.supply + scaled.minerals * 2 + scaled.honor * 5 + scaled.gold * 5;
-  if (scaledValue !== template.points) {
+  if (!isValidRoundedPointValue(template, scaledValue)) {
     errors.push(`${template.id}: escalado de variantes invalido para puntos base.`);
   }
 }
 
-for (const factionSlug of targetFactionSlugs) {
+for (const factionSlug of rebalanceFactionSlugs) {
   const factionUnits = unitTemplates.filter((template) => template.factionId === factionSlug);
-  const unitsByType = groupBy(factionUnits, primaryUnitType);
-
-  for (const [type, typedUnits] of unitsByType.entries()) {
-    const goldUnits = typedUnits.filter((template) => template.goldCost > 0).length;
-    const targetGoldUnits = Math.round(typedUnits.length * targetGoldRatioByType);
-
-    if (Math.abs(goldUnits - targetGoldUnits) > goldToleranceByType) {
-      errors.push(`${factionSlug}/${type}: ${goldUnits} unidades con oro, objetivo ${targetGoldUnits} +/- ${goldToleranceByType}.`);
-    }
-  }
-
-  const basicInfantryCandidates = factionUnits
-    .filter((template) => primaryUnitType(template) === "Infanteria")
-    .filter((template) => template.category !== "Aliada" && !template.isAlliedUnit);
-  const targetBasicSupplyOnly = Math.ceil(basicInfantryCandidates.length * basicInfantrySupplyOnlyRatio);
-  const basicSupplyOnlyUnits = basicInfantryCandidates.filter((template) => basicSupplyOnlySlugs.has(template.id));
-
-  if (basicSupplyOnlyUnits.length < targetBasicSupplyOnly) {
-    errors.push(`${factionSlug}: ${basicSupplyOnlyUnits.length} infanterias basicas solo Suministro, minimo ${targetBasicSupplyOnly}.`);
-  }
+  const basicSupplyOnlyUnits = factionUnits.filter((template) => basicSupplyOnlySlugs.has(template.id));
 
   for (const template of basicSupplyOnlyUnits) {
     if (template.supplyCost !== template.points || template.mineralsCost > 0 || template.honorCost > 0 || template.goldCost > 0) {
       errors.push(`${template.id}: la infanteria basica seleccionada debe costar solo Suministro vital.`);
     }
+  }
+}
+
+for (const factionSlug of preservedFactionSlugs) {
+  if (!targetFactionSlugs.has(factionSlug)) {
+    errors.push(`${factionSlug}: una faccion preservada debe seguir formando parte del catalogo objetivo.`);
   }
 }
 
@@ -160,13 +168,12 @@ function almostEqual(left, right) {
   return Math.abs(left - right) < 0.0001;
 }
 
-function resourceShare(resourceAmount, points) {
-  return (Number(resourceAmount ?? 0) * 5) / Math.max(1, Number(points ?? 0));
-}
-
-function isBetween(value, min, max) {
-  const epsilon = 0.0001;
-  return value + epsilon >= min && value - epsilon <= max;
+function isValidRoundedPointValue(template, value) {
+  return value === template.points || (
+    value === template.points + 1 &&
+    Number(template.supplyCost ?? 0) === 0 &&
+    Number(template.mineralsCost ?? 0) > 0
+  );
 }
 
 function readGeneratedUnitTemplates(path) {
@@ -181,15 +188,4 @@ function readGeneratedUnitTemplates(path) {
   }
 
   return JSON.parse(source.slice(arrayStart, arrayEnd + 1));
-}
-
-function groupBy(items, selector) {
-  const grouped = new Map();
-  for (const item of items) {
-    const key = selector(item);
-    const group = grouped.get(key) ?? [];
-    group.push(item);
-    grouped.set(key, group);
-  }
-  return grouped;
 }
