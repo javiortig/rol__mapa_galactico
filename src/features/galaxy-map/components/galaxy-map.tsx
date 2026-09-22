@@ -96,12 +96,20 @@ const neutralSystemColors = {
   gaseousInner: 0xc8d0da
 };
 
-const necronAccessibleFactionVisuals: Record<string, FactionMapVisual> = {
-  necrones: { color: "#22c55e", markerShape: "triangle" },
-  "adeptus-custodes": { color: "#facc15", markerShape: "hexagon" },
-  "space-marines": { color: "#3b82f6", markerShape: "pentagon" },
-  "cultos-genestealer": { color: "#22d3ee", markerShape: "cross" },
-  "legiones-daemonicas": { color: "#ef4444", markerShape: "star" }
+const factionMarkerShapes: Record<string, FactionMarkerShape> = {
+  necrones: "triangle",
+  "adeptus-custodes": "hexagon",
+  "space-marines": "pentagon",
+  "cultos-genestealer": "cross",
+  "legiones-daemonicas": "star"
+};
+
+const necronAccessibleFactionColors: Record<string, string> = {
+  necrones: "#22c55e",
+  "adeptus-custodes": "#facc15",
+  "space-marines": "#3b82f6",
+  "cultos-genestealer": "#22d3ee",
+  "legiones-daemonicas": "#ef4444"
 };
 
 export function GalaxyMap({
@@ -131,10 +139,12 @@ export function GalaxyMap({
 
     return new Map(
       factions.map((faction) => {
-        const accessibleVisual = faction.slug ? necronAccessibleFactionVisuals[faction.slug] : undefined;
-        const visual = useNecronAccessibleVisuals && accessibleVisual
-          ? accessibleVisual
-          : { color: faction.color, markerShape: "circle" as const };
+        const markerShape = faction.slug ? factionMarkerShapes[faction.slug] ?? "circle" : "circle";
+        const accessibleColor = faction.slug ? necronAccessibleFactionColors[faction.slug] : undefined;
+        const visual: FactionMapVisual = {
+          color: useNecronAccessibleVisuals && accessibleColor ? accessibleColor : faction.color,
+          markerShape
+        };
 
         return [faction.id, visual] as const;
       })

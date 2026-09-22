@@ -455,17 +455,17 @@ Los sistemas NO se representarán como planetas grandes. Se representarán como 
 
 Nota implementada: en el mapa actual, si un sistema tiene algún `specialObjects` público, PixiJS dibuja un pequeño diamante bajo la estrella. Ese diamante significa objeto especial, reliquia, anomalía o punto narrativo público; no representa control, capital, bloqueo ni tropas.
 
-#### Perfil visual accesible de Necrones
+#### Formas de facción y perfil visual accesible de Necrones
 
-El usuario de Necrones utiliza una codificación política propia en el mapa para evitar depender de distinguir rosa y rojo. Este perfil solo cambia la representación gráfica de su sesión; no modifica permisos, visión ni datos:
+Todos los usuarios distinguen las facciones jugables mediante una forma estable, además de su color político:
 
-- Necrones: triángulo verde.
-- Adeptus Custodes: hexágono amarillo.
-- Sombra del Emperador: pentágono azul.
-- Cultos Genestealer: cruz cian.
-- El Caos: estrella roja.
+- Necrones: triángulo.
+- Adeptus Custodes: hexágono.
+- Sombra del Emperador: pentágono.
+- Cultos Genestealer: cruz.
+- El Caos: estrella.
 
-Los mismos colores accesibles se reutilizan en rutas de control y movimientos visibles. Los demás jugadores conservan la presentación normal del mapa.
+Para los jugadores que no sean Necrones, estas formas se combinan con los colores políticos normales de la campaña. El usuario necrón utiliza además una paleta accesible propia para evitar depender de distinguir rosa y rojo: verde, amarillo, azul, cian y rojo respectivamente. La codificación también se aplica a movimientos visibles y marcos de control. Solo cambia la representación gráfica de la sesión; no modifica permisos, visión ni datos.
 
 ### 3.4 Rutas/aristas
 
