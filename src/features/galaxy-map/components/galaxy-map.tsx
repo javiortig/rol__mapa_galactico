@@ -10,9 +10,17 @@ interface GalaxyMapProps {
   edges: SystemEdge[];
   factions: Faction[];
   movements: MovementOrder[];
+  viewerFactionSlug?: string | null;
   movementPlanning?: MovementPlanning;
   onSystemPointerTap?: () => void;
 }
+
+type FactionMarkerShape = "circle" | "triangle" | "pentagon" | "hexagon" | "cross" | "star";
+
+type FactionMapVisual = {
+  color: string;
+  markerShape: FactionMarkerShape;
+};
 
 type MovementPlanning = {
   active: boolean;
@@ -30,6 +38,7 @@ type ViewState = {
 
 type MapData = GalaxyMapProps & {
   factionColorById: Map<string, string>;
+  factionMarkerShapeById: Map<string, FactionMarkerShape>;
 };
 
 type MapLayers = {
@@ -87,7 +96,23 @@ const neutralSystemColors = {
   gaseousInner: 0xc8d0da
 };
 
-export function GalaxyMap({ systems, edges, factions, movements, movementPlanning, onSystemPointerTap }: GalaxyMapProps) {
+const necronAccessibleFactionVisuals: Record<string, FactionMapVisual> = {
+  necrones: { color: "#22c55e", markerShape: "triangle" },
+  "adeptus-custodes": { color: "#facc15", markerShape: "hexagon" },
+  "space-marines": { color: "#3b82f6", markerShape: "pentagon" },
+  "cultos-genestealer": { color: "#22d3ee", markerShape: "cross" },
+  "legiones-daemonicas": { color: "#ef4444", markerShape: "star" }
+};
+
+export function GalaxyMap({
+  systems,
+  edges,
+  factions,
+  movements,
+  viewerFactionSlug,
+  movementPlanning,
+  onSystemPointerTap
+}: GalaxyMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const pixiStateRef = useRef<PixiMapState | null>(null);
   const dataRef = useRef<MapData | null>(null);
@@ -101,9 +126,27 @@ export function GalaxyMap({ systems, edges, factions, movements, movementPlannin
   const selectedSystemIdRef = useRef(selectedSystemId);
   const hoveredSystemIdRef = useRef(hoveredSystemId);
   const movementOriginSystemIdRef = useRef(movementOriginSystemId);
+  const factionVisualById = useMemo(() => {
+    const useNecronAccessibleVisuals = viewerFactionSlug === "necrones";
+
+    return new Map(
+      factions.map((faction) => {
+        const accessibleVisual = faction.slug ? necronAccessibleFactionVisuals[faction.slug] : undefined;
+        const visual = useNecronAccessibleVisuals && accessibleVisual
+          ? accessibleVisual
+          : { color: faction.color, markerShape: "circle" as const };
+
+        return [faction.id, visual] as const;
+      })
+    );
+  }, [factions, viewerFactionSlug]);
   const factionColorById = useMemo(
-    () => new Map(factions.map((faction) => [faction.id, faction.color])),
-    [factions]
+    () => new Map(Array.from(factionVisualById, ([factionId, visual]) => [factionId, visual.color])),
+    [factionVisualById]
+  );
+  const factionMarkerShapeById = useMemo(
+    () => new Map(Array.from(factionVisualById, ([factionId, visual]) => [factionId, visual.markerShape])),
+    [factionVisualById]
   );
 
   useEffect(() => {
@@ -131,7 +174,7 @@ export function GalaxyMap({ systems, edges, factions, movements, movementPlannin
   }, [movementPlanning]);
 
   useEffect(() => {
-    dataRef.current = { systems, edges, factions, movements, factionColorById };
+    dataRef.current = { systems, edges, factions, movements, viewerFactionSlug, factionColorById, factionMarkerShapeById };
 
     if (pixiStateRef.current) {
       renderStaticMap(pixiStateRef.current, dataRef.current, {
@@ -142,7 +185,7 @@ export function GalaxyMap({ systems, edges, factions, movements, movementPlannin
         onSystemPointerTap
       });
     }
-  }, [edges, factionColorById, factions, movements, onSystemPointerTap, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems]);
+  }, [edges, factionColorById, factionMarkerShapeById, factions, movements, onSystemPointerTap, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems, viewerFactionSlug]);
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -216,7 +259,7 @@ export function GalaxyMap({ systems, edges, factions, movements, movementPlannin
       });
       state.cleanup = cleanupInput;
 
-      renderStaticMap(state, dataRef.current ?? { systems, edges, factions, movements, factionColorById }, {
+      renderStaticMap(state, dataRef.current ?? { systems, edges, factions, movements, viewerFactionSlug, factionColorById, factionMarkerShapeById }, {
         setHoveredSystem,
         setSelectedSystem,
         setTooltipPosition,
@@ -231,7 +274,7 @@ export function GalaxyMap({ systems, edges, factions, movements, movementPlannin
         animateCamera(state);
         renderDynamicLayers({
           state,
-          data: dataRef.current ?? { systems, edges, factions, movements, factionColorById },
+          data: dataRef.current ?? { systems, edges, factions, movements, viewerFactionSlug, factionColorById, factionMarkerShapeById },
           time,
           selectedSystemId: selectedSystemIdRef.current,
           hoveredSystemId: hoveredSystemIdRef.current,
@@ -262,7 +305,7 @@ export function GalaxyMap({ systems, edges, factions, movements, movementPlannin
         app.destroy(true, { children: true });
       }
     };
-  }, [edges, factionColorById, factions, movements, onSystemPointerTap, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems]);
+  }, [edges, factionColorById, factionMarkerShapeById, factions, movements, onSystemPointerTap, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems, viewerFactionSlug]);
 
   return <div className="absolute inset-0 touch-none" ref={containerRef} />;
 }
@@ -463,6 +506,7 @@ function renderStaticMap(
     labels: state.labels,
     systems: data.systems,
     factionColorById: data.factionColorById,
+    factionMarkerShapeById: data.factionMarkerShapeById,
     setSelectedSystem: handlers.setSelectedSystem,
     setHoveredSystem: handlers.setHoveredSystem,
     setTooltipPosition: handlers.setTooltipPosition,
@@ -512,7 +556,14 @@ function renderDynamicLayers({
     movementOriginSystemId,
     time
   });
-  drawMovements(state.layers.movement, data.systems, data.movements, data.factionColorById, time);
+  drawMovements(
+    state.layers.movement,
+    data.systems,
+    data.movements,
+    data.factionColorById,
+    data.factionMarkerShapeById,
+    time
+  );
   updateLabels(state.labels, state.view.scale, selectedSystemId, hoveredSystemId);
 }
 
@@ -610,6 +661,7 @@ function drawSystems({
   labels,
   systems,
   factionColorById,
+  factionMarkerShapeById,
   setSelectedSystem,
   setHoveredSystem,
   setTooltipPosition,
@@ -621,6 +673,7 @@ function drawSystems({
   labels: LabelRecord[];
   systems: StarSystem[];
   factionColorById: Map<string, string>;
+  factionMarkerShapeById: Map<string, FactionMarkerShape>;
   setSelectedSystem: (systemId: string | null) => void;
   setHoveredSystem: (systemId: string | null) => void;
   setTooltipPosition: (position: { x: number; y: number } | null) => void;
@@ -636,7 +689,11 @@ function drawSystems({
     const neutralRingColor = isGaseous ? neutralSystemColors.gaseousOuter : neutralSystemColors.ring;
     const neutralCoreColor = neutralSystemColors.core;
     const neutralCoronaColor = neutralSystemColors.corona;
-    const controlColor = system.status === "war" ? 0xfb7185 : factionColor ?? 0x94a3b8;
+    const factionMarkerShape = system.controllerFactionId
+      ? factionMarkerShapeById.get(system.controllerFactionId) ?? "circle"
+      : "circle";
+    const controlColor =
+      system.status === "war" && factionMarkerShape === "circle" ? 0xfb7185 : factionColor ?? 0x94a3b8;
     const radius = 8.4 * system.size;
     const node = new PIXI.Container();
     node.position.set(system.x, system.y);
@@ -691,11 +748,19 @@ function drawSystems({
 
     if (system.controllerFactionId && system.status !== "neutral") {
       const factionGlow = new PIXI.Graphics();
-      factionGlow.circle(0, 0, radius * 2.55);
+      drawMarkerPath(factionGlow, factionMarkerShape, 0, 0, radius * 2.55);
       factionGlow.stroke({ color: controlColor, alpha: 0.26, width: 5.4 });
-      factionGlow.circle(0, 0, radius * 2.92);
+      drawMarkerPath(factionGlow, factionMarkerShape, 0, 0, radius * 2.92);
       factionGlow.stroke({ color: controlColor, alpha: 0.16, width: 1.2 });
       node.addChild(factionGlow);
+
+      if (factionMarkerShape !== "circle") {
+        const factionFrame = new PIXI.Graphics();
+        drawMarkerPath(factionFrame, factionMarkerShape, 0, 0, radius * 2.48);
+        factionFrame.fill({ color: controlColor, alpha: 0.035 });
+        factionFrame.stroke({ color: controlColor, alpha: 0.92, width: 1.8 });
+        node.addChild(factionFrame);
+      }
     }
 
     if (system.status === "war") {
@@ -965,6 +1030,7 @@ function drawMovements(
   systems: StarSystem[],
   movements: MovementOrder[],
   factionColorById: Map<string, string>,
+  factionMarkerShapeById: Map<string, FactionMarkerShape>,
   time: number
 ) {
   const systemById = new Map(systems.map((system) => [system.id, system]));
@@ -982,6 +1048,7 @@ function drawMovements(
     }
 
     const movementColor = toPixiColor(factionColorById.get(movement.factionId) ?? "#fef08a");
+    const markerShape = factionMarkerShapeById.get(movement.factionId) ?? "circle";
     const started = new Date(movement.departureAt ?? movement.startedAt).getTime();
     const arrival = movement.arrivalAt ? new Date(movement.arrivalAt).getTime() : started;
     const progress =
@@ -1014,9 +1081,9 @@ function drawMovements(
 
     const marker = new PIXI.Graphics();
     const pulse = 1 + Math.sin(time * 0.16) * 0.16;
-    marker.circle(point.x, point.y, 4.8 * pulse);
+    drawMarkerPath(marker, markerShape, point.x, point.y, 5.8 * pulse);
     marker.fill({ color: movementColor, alpha: 0.96 });
-    marker.circle(point.x, point.y, 12 * pulse);
+    drawMarkerPath(marker, markerShape, point.x, point.y, 12 * pulse);
     marker.stroke({ color: movementColor, alpha: 0.34, width: 1.7 });
     const angle = Math.atan2(point.y - trailStart.y, point.x - trailStart.x);
     marker.moveTo(point.x + Math.cos(angle) * 10, point.y + Math.sin(angle) * 10);
@@ -1074,6 +1141,66 @@ function getFocusView(app: PIXI.Application, system: StarSystem, currentView: Vi
     x: app.renderer.width * 0.42 - system.x * scale,
     y: app.renderer.height * 0.52 - system.y * scale
   };
+}
+
+function drawMarkerPath(
+  graphics: PIXI.Graphics,
+  shape: FactionMarkerShape,
+  centerX: number,
+  centerY: number,
+  radius: number
+) {
+  if (shape === "circle") {
+    graphics.circle(centerX, centerY, radius);
+    return;
+  }
+
+  if (shape === "cross") {
+    const arm = radius * 0.38;
+    const points = [
+      [-arm, -radius],
+      [arm, -radius],
+      [arm, -arm],
+      [radius, -arm],
+      [radius, arm],
+      [arm, arm],
+      [arm, radius],
+      [-arm, radius],
+      [-arm, arm],
+      [-radius, arm],
+      [-radius, -arm],
+      [-arm, -arm]
+    ] as const;
+    drawClosedPoints(graphics, points.map(([x, y]) => ({ x: centerX + x, y: centerY + y })));
+    return;
+  }
+
+  const sides = shape === "triangle" ? 3 : shape === "pentagon" ? 5 : shape === "hexagon" ? 6 : 10;
+  const points = Array.from({ length: sides }, (_, index) => {
+    const isStar = shape === "star";
+    const pointRadius = isStar && index % 2 === 1 ? radius * 0.46 : radius;
+    const angle = -Math.PI / 2 + (Math.PI * 2 * index) / sides;
+
+    return {
+      x: centerX + Math.cos(angle) * pointRadius,
+      y: centerY + Math.sin(angle) * pointRadius
+    };
+  });
+  drawClosedPoints(graphics, points);
+}
+
+function drawClosedPoints(graphics: PIXI.Graphics, points: Array<{ x: number; y: number }>) {
+  const first = points[0];
+
+  if (!first) {
+    return;
+  }
+
+  graphics.moveTo(first.x, first.y);
+  for (const point of points.slice(1)) {
+    graphics.lineTo(point.x, point.y);
+  }
+  graphics.closePath();
 }
 
 function drawSoftCircle(

@@ -455,6 +455,18 @@ Los sistemas NO se representarán como planetas grandes. Se representarán como 
 
 Nota implementada: en el mapa actual, si un sistema tiene algún `specialObjects` público, PixiJS dibuja un pequeño diamante bajo la estrella. Ese diamante significa objeto especial, reliquia, anomalía o punto narrativo público; no representa control, capital, bloqueo ni tropas.
 
+#### Perfil visual accesible de Necrones
+
+El usuario de Necrones utiliza una codificación política propia en el mapa para evitar depender de distinguir rosa y rojo. Este perfil solo cambia la representación gráfica de su sesión; no modifica permisos, visión ni datos:
+
+- Necrones: triángulo verde.
+- Adeptus Custodes: hexágono amarillo.
+- Sombra del Emperador: pentágono azul.
+- Cultos Genestealer: cruz cian.
+- El Caos: estrella roja.
+
+Los mismos colores accesibles se reutilizan en rutas de control y movimientos visibles. Los demás jugadores conservan la presentación normal del mapa.
+
 ### 3.4 Rutas/aristas
 
 Las rutas entre sistemas se dibujan con PixiJS:
@@ -1902,6 +1914,8 @@ Puede:
 - Añadir XP.
 - Añadir enhancements.
 - Ver toda la niebla de guerra.
+- Abrir desde su consola un mapa estratégico completo con todos los sistemas, tropas, edificios y movimientos.
+- La visión completa se concede en backend exclusivamente mediante `public.is_admin()` y RLS/RPC; no es un ajuste de interfaz accesible para jugadores.
 - Configurar cadencia de producción.
 - Ver logs.
 

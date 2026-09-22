@@ -339,6 +339,7 @@ export function CampaignShell() {
             : undefined
         }
         systems={data.systems}
+        viewerFactionSlug={data.factions.find((faction) => faction.id === data.currentUser.factionId)?.slug ?? null}
       />
 
       {mobileTapShieldActive ? <div aria-hidden="true" className="pointer-events-auto absolute inset-0 z-[35] touch-none" /> : null}

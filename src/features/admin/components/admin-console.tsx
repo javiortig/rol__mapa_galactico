@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Ban,
@@ -10,6 +10,7 @@ import {
   Eye,
   EyeOff,
   Factory,
+  Map as MapIcon,
   MapPin,
   Megaphone,
   Save,
@@ -30,6 +31,7 @@ import { ResourceIcon, resourceLabels } from "@/components/ui/resource-icon";
 import { formatCountdown } from "@/lib/time";
 import { adminConfirmBattleReport } from "@/features/battle-reports/api/battle-report-api";
 import { AdminFactionSummary } from "@/features/admin/components/admin-faction-summary";
+import { AdminGalaxyMapModal } from "@/features/admin/components/admin-galaxy-map-modal";
 import {
   adminConstructBuilding,
   adminCreateCampaignEvent,
@@ -90,6 +92,8 @@ type BuildingEditDraft = {
 export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
   const queryClient = useQueryClient();
   const rpcReady = canUseAdminRpc();
+  const [adminMapOpen, setAdminMapOpen] = useState(false);
+  const closeAdminMap = useCallback(() => setAdminMapOpen(false), []);
 
   const [unitFactionId, setUnitFactionId] = useState(snapshot.factions.find((faction) => !faction.isNarrative)?.id ?? "");
   const [unitSystemId, setUnitSystemId] = useState(snapshot.systems[0]?.id ?? "");
@@ -499,6 +503,12 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
           <p className="mt-2 text-sm text-slate-300">
             Este modo no usa comercio ni árbol tecnológico de jugador. Todas las acciones se aplican a facciones y sistemas objetivo.
           </p>
+          <div className="mt-4 flex justify-end">
+            <Button onClick={() => setAdminMapOpen(true)}>
+              <MapIcon size={16} />
+              Mapa completo
+            </Button>
+          </div>
           {!rpcReady ? (
             <p className="mt-3 rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-100">
               Supabase no está configurado. La consola no puede ejecutar cambios.
@@ -1447,6 +1457,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
           </Panel>
         </div>
       </div>
+      {adminMapOpen ? <AdminGalaxyMapModal onClose={closeAdminMap} snapshot={snapshot} /> : null}
     </main>
   );
 }
