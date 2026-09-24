@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AlertTriangle, Bell, Building2, Check, Clock3, Cpu, Crosshair, Factory, Gem, HandCoins, Hammer, Landmark, Megaphone, Minus, MousePointer2, Plus, RadioTower, Route, Shield, Swords, Undo2, X } from "lucide-react";
+import { AlertTriangle, Bell, Building2, Check, Clock3, Cpu, Crosshair, Factory, Gem, HandCoins, Hammer, Landmark, MapPin, Megaphone, Minus, MousePointer2, Plus, RadioTower, Route, Shield, Swords, Undo2, X } from "lucide-react";
 import { getCampaignSnapshot, isCampaignAuthRequiredError } from "@/features/campaign/api/campaign-repository";
 import { useCampaignUiStore } from "@/features/campaign/store/campaign-ui-store";
 import { Badge } from "@/components/ui/badge";
@@ -28,8 +28,10 @@ import { TradeModal } from "@/features/trade/components/trade-modal";
 import { ConstructionModal } from "@/features/buildings/components/construction-modal";
 import { BuildingActionModal } from "@/features/buildings/components/building-action-modal";
 import { retireCampaignUnit } from "@/features/units/api/unit-api";
+import { TroopRosterModal } from "@/features/units/components/troop-roster-modal";
 import { formatUnitKeywords, getCharacterLevel, getCharacterRank, isCharacterUnit } from "@/features/units/lib/character-ranks";
-import { formatCompactOwnedResourceValue, formatOwnedResourceValue } from "@/lib/resource-format";
+import { getUnitOperationalState } from "@/features/units/lib/unit-operational-status";
+import { formatCompactOwnedResourceValue, formatExactResourceValue } from "@/lib/resource-format";
 import { formatCountdown } from "@/lib/time";
 import { useMediaQuery, useViewportHeightCssVar } from "@/lib/use-media-query";
 import type {
@@ -72,6 +74,7 @@ export function CampaignShell() {
   const [tradeOpen, setTradeOpen] = useState(false);
   const [tradeLockedReason, setTradeLockedReason] = useState<string | null>(null);
   const [eventsOpen, setEventsOpen] = useState(false);
+  const [troopsOpen, setTroopsOpen] = useState(false);
   const [missionBriefSystemId, setMissionBriefSystemId] = useState<string | null>(null);
   const [technologyOpen, setTechnologyOpen] = useState(false);
   const [battleOperationsOpen, setBattleOperationsOpen] = useState(false);
@@ -177,6 +180,7 @@ export function CampaignShell() {
       attackOriginSystemId ||
       tradeOpen ||
       eventsOpen ||
+      troopsOpen ||
       missionBriefSystemId ||
       technologyOpen ||
       battleOperationsOpen ||
@@ -354,6 +358,7 @@ export function CampaignShell() {
             <CommandDock
               onOpenBattles={() => setBattleOperationsOpen(true)}
               onOpenEvents={() => setEventsOpen(true)}
+              onOpenTroops={() => setTroopsOpen(true)}
               onOpenTechnology={() => setTechnologyOpen(true)}
               snapshot={data}
               unreadEventsCount={unreadEventsCount}
@@ -402,6 +407,7 @@ export function CampaignShell() {
       />
       <TradeModal lockedReason={tradeLockedReason} onClose={() => setTradeOpen(false)} open={tradeOpen} snapshot={data} />
       <EventsModal onClose={() => setEventsOpen(false)} open={eventsOpen} snapshot={data} />
+      <TroopRosterModal onClose={() => setTroopsOpen(false)} open={troopsOpen} snapshot={data} />
       <MissionBriefModal
         onClose={() => setMissionBriefSystemId(null)}
         open={Boolean(missionBriefSystem)}
@@ -504,13 +510,13 @@ function ResourceBar({ snapshot }: { snapshot: CampaignSnapshot }) {
   );
 
   return (
-    <Panel className="mx-auto w-full max-w-[27rem] overflow-hidden px-1.5 py-1.5 sm:max-w-xl md:w-fit md:max-w-full md:px-4 md:py-3">
+    <Panel className="mx-auto w-full max-w-[27rem] overflow-visible px-1.5 py-1.5 sm:max-w-xl md:w-fit md:max-w-full md:px-4 md:py-3">
       <div className="grid grid-cols-6 gap-1 sm:gap-2">
         {mainResources.map((key) => (
           <div
-            className="min-w-0 rounded-md border border-cyan-200/15 bg-slate-950/45 px-1.5 py-1.5 text-center md:min-w-24 md:px-3 md:py-2 md:text-left"
+            aria-label={`${resourceLabels[key]}: ${formatExactResourceValue(currentResources?.[key] ?? 0)}`}
+            className="group relative min-w-0 rounded-md border border-cyan-200/15 bg-slate-950/45 px-1.5 py-1.5 text-center md:min-w-24 md:px-3 md:py-2 md:text-left"
             key={key}
-            title={`${resourceLabels[key]}: ${formatOwnedResourceValue(currentResources?.[key] ?? 0)}`}
           >
             <div className="mb-0.5 flex items-center justify-center gap-1 text-[10px] text-slate-400 md:mb-1 md:justify-start md:gap-2 md:text-[11px]">
               <ResourceIcon className="size-4 shrink-0" resource={key} />
@@ -518,6 +524,12 @@ function ResourceBar({ snapshot }: { snapshot: CampaignSnapshot }) {
             </div>
             <div className="truncate text-[clamp(0.68rem,2.7vw,0.9rem)] font-semibold tabular-nums text-cyan-50 md:text-sm">
               {formatCompactOwnedResourceValue(currentResources?.[key] ?? 0)}
+            </div>
+            <div className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 hidden min-w-max -translate-x-1/2 rounded-md border border-cyan-200/20 bg-slate-950/95 px-3 py-2 text-center opacity-0 shadow-[0_12px_36px_rgba(0,0,0,0.55)] transition-opacity group-hover:opacity-100 md:block">
+              <div className="text-[10px] uppercase tracking-[0.14em] text-slate-400">{resourceLabels[key]}</div>
+              <div className="mt-0.5 font-semibold tabular-nums text-cyan-50">
+                {formatExactResourceValue(currentResources?.[key] ?? 0)}
+              </div>
             </div>
           </div>
         ))}
@@ -643,12 +655,14 @@ function CommandDock({
   unreadEventsCount,
   onOpenBattles,
   onOpenEvents,
+  onOpenTroops,
   onOpenTechnology
 }: {
   snapshot: CampaignSnapshot;
   unreadEventsCount: number;
   onOpenBattles: () => void;
   onOpenEvents: () => void;
+  onOpenTroops: () => void;
   onOpenTechnology: () => void;
 }) {
   const currentFactionId = snapshot.currentUser.factionId;
@@ -692,7 +706,7 @@ function CommandDock({
             <Megaphone size={16} />
             Eventos
           </Button>
-          <Button className="h-12 flex-col gap-1 px-1 text-[11px]" size="sm" variant="ghost">
+          <Button className="h-12 flex-col gap-1 px-1 text-[11px]" onClick={onOpenTroops} size="sm" variant="ghost">
             <Shield size={16} />
             Tropas
           </Button>
@@ -722,7 +736,7 @@ function CommandDock({
             <Megaphone size={15} />
             Eventos
           </Button>
-          <Button size="sm" variant="ghost">
+          <Button onClick={onOpenTroops} size="sm" variant="ghost">
             <Shield size={15} />
             Tropas
           </Button>
@@ -736,6 +750,20 @@ function CommandDock({
             {pendingCount > 0 ? `${pendingCount} avisos` : "Operaciones"}
           </Button>
         </div>
+        {snapshot.battleLimits?.monthEnd ? (
+          <div
+            className="mt-3 flex items-center justify-between gap-3 border-t border-cyan-200/10 pt-3 text-xs"
+            title={new Date(snapshot.battleLimits.monthEnd).toLocaleString("es-ES")}
+          >
+            <span className="inline-flex min-w-0 items-center gap-2 text-slate-400">
+              <Clock3 className="shrink-0 text-cyan-300/70" size={14} />
+              Renovación de operaciones
+            </span>
+            <span className="shrink-0 font-medium tabular-nums text-cyan-100">
+              {formatCountdown(snapshot.battleLimits.monthEnd)}
+            </span>
+          </div>
+        ) : null}
       </Panel>
     </div>
     </>
@@ -1294,8 +1322,8 @@ function SystemPanel({
                       canRetire
                       faction={snapshot.factions.find((item) => item.id === snapshot.currentUser.factionId) ?? null}
                       onRetireUnit={handleRetireUnit}
-                      relics={snapshot.relics}
                       retirePendingUnitId={retireUnitMutation.isPending ? retireUnitMutation.variables : null}
+                      snapshot={snapshot}
                       title="Aliadas"
                       units={alliedUnits}
                     />
@@ -1308,7 +1336,7 @@ function SystemPanel({
                           canRetire={false}
                           faction={group.faction}
                           key={group.faction.id}
-                          relics={snapshot.relics}
+                          snapshot={snapshot}
                           title={group.faction.name}
                           units={group.units}
                         />
@@ -1470,7 +1498,7 @@ function UnitGroup({
   title,
   faction,
   units,
-  relics,
+  snapshot,
   canRetire,
   retirePendingUnitId,
   onRetireUnit
@@ -1478,7 +1506,7 @@ function UnitGroup({
   title: string;
   faction: Faction | null;
   units: CampaignUnit[];
-  relics: CampaignSnapshot["relics"];
+  snapshot: CampaignSnapshot;
   canRetire: boolean;
   retirePendingUnitId?: string | null;
   onRetireUnit?: (unit: CampaignUnit) => void;
@@ -1496,8 +1524,9 @@ function UnitGroup({
         {units.length > 0 ? (
           units.map((unit) => {
             const canRetireUnit = canRetire && unit.status === "ready";
-            const equippedRelics = relics.filter((relic) => relic.equippedUnitId === unit.id);
+            const equippedRelics = snapshot.relics.filter((relic) => relic.equippedUnitId === unit.id);
             const characterRank = getCharacterRank(unit);
+            const operationalState = getUnitOperationalState(snapshot, unit);
 
             return (
               <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={unit.id}>
@@ -1507,6 +1536,18 @@ function UnitGroup({
                     <div className="mt-1 text-xs text-slate-400">
                       {formatUnitStrength(unit)} - {formatUnitKeywords(unit)}
                     </div>
+                    {operationalState.priority < 3 ? (
+                      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+                        <span className="inline-flex items-center gap-1.5 text-cyan-100/80">
+                          <MapPin size={13} /> {operationalState.detail}
+                        </span>
+                        {operationalState.targetAt ? (
+                          <span className="inline-flex items-center gap-1.5 tabular-nums text-amber-100">
+                            <Clock3 size={13} /> {formatCountdown(operationalState.targetAt)}
+                          </span>
+                        ) : null}
+                      </div>
+                    ) : null}
                     {characterRank ? (
                       <div className="mt-1 text-xs text-amber-100">
                         Nivel {getCharacterLevel(unit)} - {characterRank}
@@ -1526,7 +1567,7 @@ function UnitGroup({
                     ) : null}
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
-                    <Badge tone={getUnitStatusTone(unit.status)}>{getUnitStatusLabel(unit.status)}</Badge>
+                    <Badge tone={operationalState.tone}>{operationalState.label}</Badge>
                     {canRetire ? (
                       <Button
                         disabled={!canRetireUnit || retirePendingUnitId === unit.id}
@@ -2824,39 +2865,6 @@ function getUnitRosterPoints(unit: CampaignUnit) {
   }
 
   return Math.max(0, unit.points);
-}
-
-function getUnitStatusLabel(status: CampaignUnit["status"]) {
-  const labels: Record<CampaignUnit["status"], string> = {
-    ready: "Lista",
-    moving: "En movimiento",
-    in_war: "En guerra",
-    destroyed: "Destruida",
-    retreat_pending: "Retirada",
-    recovering: "Curandose"
-  };
-
-  return labels[status];
-}
-
-function getUnitStatusTone(status: CampaignUnit["status"]): "cyan" | "rose" | "amber" | "slate" | "violet" {
-  if (status === "ready") {
-    return "cyan";
-  }
-
-  if (status === "moving") {
-    return "amber";
-  }
-
-  if (status === "in_war") {
-    return "rose";
-  }
-
-  if (status === "retreat_pending" || status === "recovering") {
-    return "violet";
-  }
-
-  return "slate";
 }
 
 function getUnitCompatibilityKey(unit: CampaignUnit) {

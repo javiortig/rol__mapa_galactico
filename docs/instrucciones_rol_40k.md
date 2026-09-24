@@ -188,7 +188,8 @@ Estado jugable actual:
 - Componentes tecnológicos son un recurso especial del árbol tecnológico; no aparecen en la barra superior y no se producen en planetas ni por edificios de producción.
 - Honor sustituye a Piedra ancestral como recurso especial visible; las columnas SQL legacy `ancestral_stone` pueden existir temporalmente solo por compatibilidad de migraciones.
 - El panel de mando operativo tiene entrada `Eventos`, no `Comercio` ni `Recursos`; Comercio se abre desde una `Cámara de Comercio` activa.
-- El botón `Operaciones` abre avisos pendientes: permisos de paso/estancia, batallas pendientes y reportes pendientes, con contador de disponibilidad de batalla de la ventana vigente de 35 días.
+- El botón `Tropas` abre el registro completo de fuerzas propias, ordenado por estado: tránsito, batalla, reabastecimiento, despliegue y reclutamiento. Cada entrada muestra ubicación o destino y el tiempo restante cuando existe un crono.
+- El botón `Operaciones` abre avisos pendientes: permisos de paso/estancia, batallas pendientes y reportes pendientes, con contador de disponibilidad de batalla y tiempo restante hasta renovar la ventana vigente de 35 días.
 - Batallas se juegan fuera de la app; la web gestiona conflicto, bloqueo, reportes, supervivientes, heridas restantes y control final.
 - Las batallas entre facciones jugadoras tienen límite de 500 puntos por bando. Las batallas narrativas contra `Orcos` o `Tiranidos` no usan ese límite.
 - `Ver misión` abre el briefing estándar de Combat Patrol equilibrada: máximo 500 puntos por bando y misiones de combat patrol.
@@ -206,7 +207,7 @@ Estado visual actual:
 - La animación direccional de aristas se reserva solo para movimientos reales visibles para el usuario o admin.
 - Capitales no tienen animación ni marcador especial en el mapa; se distinguen en datos y panel.
 - Sistemas con `specialObjects` públicos muestran un pequeño diamante/marcador bajo la estrella.
-- La barra superior de recursos está centrada y compacta; en móvil muestra icono + número.
+- La barra superior de recursos está centrada y compacta; en móvil muestra icono + número entero y en escritorio revela al pasar el ratón la cantidad exacta con dos decimales.
 
 Estado móvil actual:
 
@@ -221,6 +222,8 @@ Estado móvil actual:
 Archivos clave actuales:
 
 - `src/features/campaign/components/campaign-shell.tsx`: shell principal, recursos, panel sistema, movimiento y reportes.
+- `src/features/units/components/troop-roster-modal.tsx`: registro visual de tropas, destinos, estados y colas activas.
+- `src/features/units/lib/unit-operational-status.ts`: interpretación compartida del estado operativo de cada unidad.
 - `src/features/galaxy-map/components/galaxy-map.tsx`: render PixiJS del mapa, rutas, sistemas, marcadores, movimientos y efectos.
 - `src/features/buildings/components/construction-modal.tsx`: construcción de edificios.
 - `src/features/buildings/components/building-action-modal.tsx`: acciónes de edificio, reclutamiento, curación, cola y placeholders.

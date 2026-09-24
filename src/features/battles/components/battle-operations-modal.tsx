@@ -26,6 +26,7 @@ import {
 import { canUseMovementRpc, respondMovementPassageRequest } from "@/features/movement/api/movement-api";
 import { findCheapestRoute, formatTravelDuration } from "@/features/movement/lib/pathfinding";
 import { formatOwnedResourceValue } from "@/lib/resource-format";
+import { formatCountdown } from "@/lib/time";
 
 type ActionInput =
   | { kind: "invite"; operationId: string; factionId: string; side: BattleSide }
@@ -164,14 +165,14 @@ export function BattleOperationsModal({
   });
 
   useEffect(() => {
-    if (!open || !supportOperation?.attackArrivalAt) {
+    if (!open) {
       return;
     }
 
     const intervalId = window.setInterval(() => setClockMs(Date.now()), 1000);
 
     return () => window.clearInterval(intervalId);
-  }, [open, supportOperation?.attackArrivalAt]);
+  }, [open]);
 
   if (!open) {
     return null;
@@ -196,6 +197,17 @@ export function BattleOperationsModal({
             <TimingItem label="Defensas disponibles" value={formatBattleAvailability(snapshot.battleLimits, "defender")} />
             <TimingItem label="Total disponible" value={formatBattleAvailability(snapshot.battleLimits, "total")} />
           </div>
+          {snapshot.battleLimits?.monthEnd ? (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-md border border-cyan-200/15 bg-cyan-300/8 px-3 py-2.5 text-xs">
+              <span className="inline-flex items-center gap-2 text-slate-300">
+                <Clock3 className="text-cyan-300/75" size={15} />
+                Renovación de ataques y defensas
+              </span>
+              <span className="font-semibold tabular-nums text-cyan-50">
+                {formatCountdown(snapshot.battleLimits.monthEnd, clockMs)}
+              </span>
+            </div>
+          ) : null}
 
           {supportOperation && supportMember?.side === "attacker" ? (
             <SupportComposer

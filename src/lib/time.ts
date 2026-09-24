@@ -1,9 +1,9 @@
-export function formatCountdown(targetIso?: string | null) {
+export function formatCountdown(targetIso?: string | null, nowMs = Date.now()) {
   if (!targetIso) {
     return "sin crono";
   }
 
-  const diff = new Date(targetIso).getTime() - Date.now();
+  const diff = new Date(targetIso).getTime() - nowMs;
 
   if (diff <= 0) {
     return "listo";

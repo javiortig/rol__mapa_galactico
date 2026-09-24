@@ -17,6 +17,15 @@ export function formatCompactOwnedResourceValue(value: number) {
   return floored.toLocaleString("es-ES");
 }
 
+export function formatExactResourceValue(value: number) {
+  const safeValue = Number.isFinite(value) ? value : 0;
+
+  return safeValue.toLocaleString("es-ES", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
 function floorResource(value: number) {
   return Math.floor(Number.isFinite(value) ? value : 0);
 }
