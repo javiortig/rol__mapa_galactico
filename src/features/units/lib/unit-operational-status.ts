@@ -134,6 +134,10 @@ function getMovementLabel(movement: MovementOrder) {
     return "En retirada";
   }
 
+  if (movement.movementPurpose === "route_fallback") {
+    return "Replegándose por la ruta";
+  }
+
   if (movement.movementPurpose === "coalition_staging") {
     return "Reuniéndose para atacar";
   }

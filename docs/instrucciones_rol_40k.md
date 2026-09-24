@@ -1264,12 +1264,18 @@ Cuando `now() >= arrival_at`, backend procesa la llegada.
 
 #### Si llega a sistema neutral
 
-- Sistema pasa a `war`.
-- Queda bloqueado mientras haya batalla pendiente.
-- Se crea conflicto pendiente.
-- Las unidades quedan `in_war`.
-- Los participantes juegan la batalla en la vida real si corresponde.
-- Los jugadores participantes o el admin reportan el resultado.
+- Una orden normal de `Mover` conquista el sistema directamente.
+- El sistema pasa a `controlled` y las unidades quedan `ready`.
+- Esta conquista logística no concede escudo de protección.
+- Si existe una misión o conflicto narrativo, se aplican sus reglas específicas en lugar de la conquista directa.
+
+#### Si la ruta cambia durante el movimiento
+
+- Un cambio de control, guerra o bloqueo no teletransporta las unidades al origen de la orden.
+- Cuando la fuerza alcanza el destino que ha dejado de ser válido, inicia un repliegue gratuito de una arista hacia el último sistema que ya había atravesado.
+- El repliegue usa el tiempo vigente de movimiento por arista y se muestra como una orden en curso.
+- Al terminar, las unidades quedan `ready` en ese sistema. Si era neutral y conquistable, pasa a estar controlado por su facción sin recibir escudo.
+- Esta regla solo se aplica a movimientos normales; ataques, apoyos y retiradas de batalla conservan sus resoluciones específicas.
 
 #### Si llega a sistema enemigo
 
@@ -3063,6 +3069,7 @@ Evitar collage visual.
 - Las capitales no pueden ser atacadas por jugadores ni por amenazas narrativas. La UI no debe ofrecerlas como destino y el backend debe rechazar cualquier intento de crear ataque, coalición, conflicto pendiente o ataque narrativo contra una capital.
 - Un ataque puede salir desde cualquier sistema no bloqueado donde la facción tenga unidades propias listas. Esto incluye sistemas enemigos si el jugador llegó allí mediante permiso de paso/estancia.
 - El escudo posterior estándar tras aplicar una batalla es de 8 días.
+- Una conquista neutral mediante movimiento normal no aplica escudo; el escudo de 8 días corresponde a la resolución de una batalla.
 - El informe compartido se confirma automáticamente cuando todos los participantes validan la misma revision.
 - Si hay discrepancia, cualquier participante edita el informe y se reinician las validaciónes.
 - El admin puede corregir control/bloqueo si es necesario.
@@ -3084,11 +3091,8 @@ Si las tropas llegan con una orden de `Mover` autorizada por el propietario, no 
 
 Cuando tropas llegan a neutral:
 
-- Puede crearse conflicto o evento de conquista.
-- El sistema queda bloqueado si requiere batalla.
-- Los participantes o el admin reportan el resultado.
-- El admin decide si hay discrepancias.
-- En primera versión, tratar como `war` pendiente si requiere batalla.
+- Una orden normal de movimiento conquista el sistema, deja las unidades disponibles y no aplica escudo.
+- Las misiones, ataques narrativos y conflictos declarados siguen sus propias reglas de batalla y bloqueo.
 
 ### 20.4 Bajas
 

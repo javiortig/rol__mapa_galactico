@@ -181,6 +181,8 @@ Antes de desplegar frontend que lea estos campos, aplica migraciones Supabase in
 - Las batallas entre facciones jugadoras tienen límite de 500 puntos por bando. Las batallas narrativas contra `Orcos` o `Tiranidos` quedan fuera de ese límite.
 - El botón `Ver misión` abre el briefing estándar de Combat Patrol equilibrada: máximo 500 puntos por bando y misiones de combat patrol.
 - Los escudos de protección vencidos no se muestran en el mapa ni en el panel del sistema.
+- Conquistar un sistema neutral mediante `Mover` no concede escudo de protección; los escudos de 8 días se reservan para victorias de batalla.
+- Si el destino o la ruta de un movimiento normal cambia de control o queda bloqueado antes de la llegada, la fuerza no se teletransporta al origen: inicia un repliegue gratuito de una arista hasta el último sistema atravesado.
 - `resolve_movement_orders()` sigue siendo el resolver temporal central. Es idempotente para ataques porque vincula el conflicto generado con `movement_order_id`.
 - Las incursiones narrativas de `Orcos` y `Tiranidos` se programan desde `/admin`: el admin elige sistema, descripción pública y días hasta llegada. Hasta que llega se muestra como amenaza entrante; al resolver, crea conflicto pendiente y bloquea el sistema como guerra.
 - El admin puede crear misiones temporales controladas por `Orcos` o `Tiranidos`: aparecen como sistemas especiales conectados a un sistema normal, se colocan automáticamente en una zona libre del grafo para evitar colisiones visuales, pueden ser atacadas individualmente o en coalición, no sirven como rutas logísticas normales y pueden mostrar u ocultar una lista manual de tropas enemigas.

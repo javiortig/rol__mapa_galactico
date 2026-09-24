@@ -12,7 +12,13 @@ export type MovementStatus = "pending_approval" | "moving" | "arrived" | "in_bat
 
 export type MovementType = "move" | "attack";
 
-export type MovementPurpose = "normal" | "attack" | "coalition_staging" | "defense_support" | "battle_return";
+export type MovementPurpose =
+  | "normal"
+  | "attack"
+  | "coalition_staging"
+  | "defense_support"
+  | "battle_return"
+  | "route_fallback";
 
 export type PassageRequestStatus = "pending" | "accepted" | "rejected";
 
