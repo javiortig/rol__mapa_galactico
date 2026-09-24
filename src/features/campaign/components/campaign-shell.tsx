@@ -750,20 +750,6 @@ function CommandDock({
             {pendingCount > 0 ? `${pendingCount} avisos` : "Operaciones"}
           </Button>
         </div>
-        {snapshot.battleLimits?.monthEnd ? (
-          <div
-            className="mt-3 flex items-center justify-between gap-3 border-t border-cyan-200/10 pt-3 text-xs"
-            title={new Date(snapshot.battleLimits.monthEnd).toLocaleString("es-ES")}
-          >
-            <span className="inline-flex min-w-0 items-center gap-2 text-slate-400">
-              <Clock3 className="shrink-0 text-cyan-300/70" size={14} />
-              Renovación de operaciones
-            </span>
-            <span className="shrink-0 font-medium tabular-nums text-cyan-100">
-              {formatCountdown(snapshot.battleLimits.monthEnd)}
-            </span>
-          </div>
-        ) : null}
       </Panel>
     </div>
     </>
