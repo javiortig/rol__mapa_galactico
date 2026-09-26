@@ -14,7 +14,8 @@ where jobname in (
   'rol40k-resolve-temporary-missions',
   'rol40k-resolve-recruitment-queue',
   'rol40k-resolve-unit-recovery-queue',
-  'rol40k-resolve-technology-research'
+  'rol40k-resolve-technology-research',
+  'rol40k-capture-daily-faction-strength'
 );
 
 select cron.schedule(
@@ -63,4 +64,12 @@ select cron.schedule(
   'rol40k-resolve-technology-research',
   '* * * * *',
   $$select public.resolve_technology_research();$$
+);
+
+-- 00:15 UTC is 01:15/02:15 in Europe/Madrid. The function stores the
+-- Europe/Madrid calendar date and is idempotent for each faction/day.
+select cron.schedule(
+  'rol40k-capture-daily-faction-strength',
+  '15 0 * * *',
+  $$select public.capture_daily_faction_strength_snapshot();$$
 );
