@@ -179,7 +179,7 @@ Estado jugable actual:
 - La campaña real arranca en modo `campaign`; desde `/admin` solo se puede reaplicar el perfil de tiempos de campaña.
 - Las unidades importadas quedan inicialmente bloqueadas (`is_available = false`) hasta que los árboles tecnológicos por facción las asignen a nodos concretos.
 - Reabastecimiento completo de unidades dañadas desde edificios militares compatibles a mitad del coste completo de la unidad.
-- Cancelar reclutamiento, reabastecimiento o movimiento devuelve el 50% de los recursos gastados, redondeando hacia arriba.
+- Cancelar reclutamiento o reabastecimiento devuelve el 50% de los recursos gastados, redondeando hacia arriba. Cancelar un movimiento inicia el regreso por la arista actual y solo devuelve el Uridium si se hace durante su primera hora.
 - Árbol tecnológico común `common-v1` con progreso independiente por facción. Incluye rama `Progreso` funcional, rama `Inteligencia` visible pero bloqueada como contenido futuro y tecnologías comunes.
 - Los árboles militares específicos usan la convención `troops-{faction_slug}-v1`. Cada jugador solo ve/investiga `common-v1` y el árbol militar de su facción; admin puede inspeccionar facciones desde el selector del árbol.
 - Las facciones objetivo para árboles de tropas son El Caos, Adeptus Custodes, Space Marines, Cultos Genestealer y Necrones.
@@ -722,15 +722,16 @@ El mercader:
 - No comercia Material Industrial, Uridium ni Componentes tecnológicos.
 - Requiere que la facción tenga al menos una `Cámara de Comercio` activa.
 - Requiere tecnología `Contactos Económicos` para operar.
-- Vende recursos al doble de su valor por defecto.
-- Compra recursos a mitad de precio por defecto, redondeando hacia arriba.
-- Con `Tratos Preferentes`, vende a 1.5x y compra a 0.75x del valor.
+- Vende recursos al jugador al 150% de su valor por defecto.
+- Compra recursos al jugador al 60% de su valor por defecto.
+- Con `Tratos Preferentes`, vende al 135% y compra al 70% del valor.
+- Los pagos se redondean hacia arriba y los cobros hacia abajo en pasos de 0,5 de Oro.
 
 Ejemplos de fórmulas:
 
 ```text
-Compra al mercader = ceil(valor_puntos_recurso * cantidad * multiplicador_compra / 5) Oro
-Venta al mercader = ceil(valor_puntos_recurso * cantidad * multiplicador_venta / 5) Oro
+Compra al mercader = ceil_a_0.5(valor_puntos_recurso * cantidad * multiplicador_compra / 5) Oro
+Venta al mercader = floor_a_0.5(valor_puntos_recurso * cantidad * multiplicador_venta / 5) Oro
 ```
 
 #### Comercio estelar entre jugadores
@@ -744,9 +745,11 @@ El comercio entre jugadores usa ofertas abiertas de recurso contra Oro:
 - No se comercian Honor ni Componentes tecnológicos entre jugadores; Honor es exclusivo del Mercader.
 - Requiere que la facción tenga al menos una `Cámara de Comercio` activa.
 - Requiere tecnología `Mercado Galactico`.
-- Cada transacción cobra una comisión del 30% del Oro de la oferta, redondeada hacia arriba.
+- Cada transacción cobra una comisión del 15% del Oro de la oferta, redondeada hacia arriba en pasos de 0,5.
 - Cada jugador paga su propia comisión en Oro.
-- Con `Aranceles Privilegiados`, la comisión propia baja al 10%, mínimo 1 Oro.
+- La comisión mínima es 0,5 de Oro por jugador.
+- Con `Aranceles Privilegiados`, la comisión propia baja al 5%, mínimo 0,5 de Oro.
+- Las ofertas usan importes de Oro en pasos de 0,5 y requieren un precio mínimo de 0,5 Oro.
 
 Regla vigente: el comercio estelar reserva recursos al publicar.
 
@@ -1104,10 +1107,12 @@ Cancelación de movimiento:
 
 - RPC: `cancel_movement_order(order_id)`.
 - Solo puede cancelar el propietario de la facción o un admin.
-- Solo se puede cancelar si la orden sigue en estado `moving` y `arrival_at` no ha vencido.
-- Al cancelar, las unidades vuelven completas al sistema de origen en estado `ready`.
-- Se devuelve el 50% del `uridium_cost`, redondeado hacia arriba.
-- El UI debe mostrar el reembolso previsto antes de confirmar la cancelación.
+- Solo se pueden cancelar movimientos normales en estado `pending_approval` o `moving`; ataques, apoyos, retiradas y retornos automáticos no se cancelan desde esta acción.
+- Si aún espera permisos, la orden se anula sin llegar a salir y devuelve todo su Uridium.
+- Si ya está viajando, las unidades dan media vuelta en la arista actual y regresan al último sistema atravesado. No se teletransportan ni vuelven necesariamente al origen completo.
+- El regreso tarda lo mismo que el tramo de la arista ya recorrido.
+- Si se cancela durante la primera hora desde `departure_at`, se devuelve todo el `uridium_cost`; después no existe reembolso.
+- El panel `Tropas` muestra el destino de regreso, su duración y el reembolso antes de confirmar.
 
 ### 8.3 Flujo de interfaz para mover tropas
 
@@ -1268,6 +1273,14 @@ Cuando `now() >= arrival_at`, backend procesa la llegada.
 - El sistema pasa a `controlled` y las unidades quedan `ready`.
 - Esta conquista logística no concede escudo de protección.
 - Si existe una misión o conflicto narrativo, se aplican sus reglas específicas en lugar de la conquista directa.
+
+#### Cancelación voluntaria de movimiento
+
+- El jugador puede cancelar desde `Tropas` únicamente órdenes de movimiento normal; no ataques ni movimientos operativos ligados a una batalla.
+- Las unidades dan media vuelta sobre la arista actual y regresan al último sistema atravesado, empleando exactamente el tiempo necesario para desandar el tramo recorrido.
+- Una orden aún pendiente de permisos se cancela antes de partir y devuelve todo el Uridium.
+- Una orden que ya partió devuelve todo el Uridium si se cancela durante la primera hora desde la salida real. Después de esa hora no hay reembolso.
+- El regreso se registra como una nueva orden `cancel_return`, visible y resuelta por `resolve_movement_orders()`.
 
 #### Si la ruta cambia durante el movimiento
 
@@ -1637,7 +1650,7 @@ Regla vigente de árboles tecnológicos:
 - `contactos-económicos` desbloquea el Mercader.
 - `tratos-preferentes` mejora precios del Mercader.
 - `mercado-galactico` desbloquea Comercio Estelar.
-- `aranceles-privilegiados` baja la comisión propia de Comercio Estelar al 10%, mínimo 1 Oro.
+- `aranceles-privilegiados` baja la comisión propia de Comercio Estelar al 5%, mínimo 0,5 de Oro.
 - La pantalla abre como constelación radial simple con núcleo central de facción, ramas saliendo desde el centro y sin nodo seleccionado por defecto.
 - No hay zoom ni pan custom: la navegacion usa scroll nativo para ser fluida en desktop, Android e iPhone Safari.
 - Los nodos usan iconos Lucide simples en círculos pequeños para evitar el coste de decodificar PNGs pesados dentro del árbol.
@@ -1827,9 +1840,10 @@ Mercader:
 - Comercia Suministro vital, Mineral y Honor; no comercia Componentes tecnológicos, Material Industrial ni Uridium.
 - Requiere al menos una Cámara de Comercio activa de la facción.
 - Requiere `Contactos Económicos`.
-- Vende al doble de valor por defecto.
-- Compra a mitad de valor por defecto, redondeando hacia arriba.
-- `Tratos Preferentes` mejora precios: compra a 1.5x y venta a 0.75x.
+- Vende al jugador al 150% del valor por defecto.
+- Compra al jugador al 60% del valor por defecto.
+- `Tratos Preferentes` mejora precios: venta al jugador al 135% y compra al jugador al 70%.
+- Todos los importes se calculan en pasos de 0,5 de Oro.
 
 Comercio estelar:
 
@@ -1840,8 +1854,8 @@ Comercio estelar:
 - No se comercian Honor ni Componentes tecnológicos.
 - Requiere al menos una Cámara de Comercio activa de la facción.
 - Requiere `Mercado Galactico`.
-- Cada transacción cobra una comisión en Oro del 30%, redondeada hacia arriba, a cada jugador por separado.
-- `Aranceles Privilegiados` reduce la comisión propia al 10%, mínimo 1 Oro.
+- Cada transacción cobra una comisión en Oro del 15%, redondeada hacia arriba a pasos de 0,5, a cada jugador por separado.
+- `Aranceles Privilegiados` reduce la comisión propia al 5%, mínimo 0,5 de Oro.
 - Publicar una oferta reserva inmediatamente los recursos/oro comprometidos y la comisión del creador.
 - Cancelar una oferta devuelve la reserva completa.
 
@@ -2049,7 +2063,7 @@ Para comercio:
 - `Mercado Galactico` para Comercio Estelar.
 - Oro suficiente para compras y comisiones.
 - Recursos suficientes para ventas.
-- Comisión calculada por backend: 30% por defecto, 10% mínimo 1 Oro con `Aranceles Privilegiados`.
+- Comisión calculada por backend: 15% por defecto, 5% mínimo 0,5 de Oro con `Aranceles Privilegiados`.
 - Aceptacion atomica: se revalidan recursos antes de aplicar transferencia.
 - Un jugador no puede aceptar su propia oferta.
 
@@ -3152,7 +3166,7 @@ Cuando tropas llegan a neutral:
 - `Operaciones` es el panel de avisos acciónables del jugador.
 - En la parte superior muestra la disponibilidad de batalla de la ventana vigente: ataques disponibles, defensas disponibles y total disponible. Los cupos se recargan cada 35 días. La regla vigente es máximo 3 participaciones por ventana según backend, sin poder consumirlas todas como atacante o todas como defensor.
 - Muestra `movement_passage_requests` pendientes para permitir o rechazar que otra facción atraviese sistemas propios o termine el movimiento dentro de ellos.
-- Si se rechaza un permiso de paso/estancia, el movimiento se cancela y se aplican las reglas de reembolso de movimiento.
+- Si se rechaza un permiso de paso/estancia, el movimiento se cancela antes de partir y se devuelve todo su Uridium.
 - Muestra batallas pendientes en las que la facción participa como atacante o defensor.
 - Muestra reportes de batalla pendientes de confirmacion o discrepantes relacionados con la facción.
 - El bando atacante no puede sumar refuerzos cuando el ataque ya salio; el defensor sí puede traer tropas cercanas si llegan antes del cierre del plantel.

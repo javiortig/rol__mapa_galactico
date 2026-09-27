@@ -18,7 +18,8 @@ export type MovementPurpose =
   | "coalition_staging"
   | "defense_support"
   | "battle_return"
-  | "route_fallback";
+  | "route_fallback"
+  | "cancel_return";
 
 export type PassageRequestStatus = "pending" | "accepted" | "rejected";
 

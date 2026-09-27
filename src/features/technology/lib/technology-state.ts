@@ -142,11 +142,11 @@ export function getMerchantTradeRates(snapshot: CampaignSnapshot) {
   const buyMultiplier = effects.reduce((current, effect) => {
     const value = Number(effect.payload.buyMultiplier ?? effect.payload.buy_multiplier ?? current);
     return Number.isFinite(value) && value > 0 ? Math.min(current, value) : current;
-  }, 2);
+  }, 1.5);
   const sellMultiplier = effects.reduce((current, effect) => {
     const value = Number(effect.payload.sellMultiplier ?? effect.payload.sell_multiplier ?? current);
     return Number.isFinite(value) && value > 0 ? Math.max(current, value) : current;
-  }, 0.5);
+  }, 0.6);
 
   return { buyMultiplier, sellMultiplier };
 }
@@ -155,17 +155,17 @@ export function getStellarTradeFeePercent(snapshot: CampaignSnapshot) {
   return getUnlockedEffects(snapshot, "stellar_trade_fee_discount").reduce((current, effect) => {
     const value = Number(effect.payload.percent ?? current);
     return Number.isFinite(value) && value > 0 ? Math.min(current, value) : current;
-  }, 30);
+  }, 15);
 }
 
 export function getStellarTradeFee(snapshot: CampaignSnapshot, goldAmount: number) {
-  const amount = Math.max(0, Math.trunc(goldAmount));
+  const amount = Math.max(0, Number.isFinite(goldAmount) ? goldAmount : 0);
 
   if (amount <= 0) {
     return 0;
   }
 
-  return Math.max(1, Math.ceil((amount * getStellarTradeFeePercent(snapshot)) / 100));
+  return Math.max(0.5, Math.ceil(((amount * getStellarTradeFeePercent(snapshot)) / 100) * 2) / 2);
 }
 
 export function getBaseRecruitmentCost(template: UnitTemplate, resource: ResourceKey) {

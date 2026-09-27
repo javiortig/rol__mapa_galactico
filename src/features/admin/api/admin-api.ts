@@ -72,7 +72,7 @@ export async function adminSetFactionResources(input: {
     supply: toNonNegativeInteger(input.resources.supply),
     minerals: toNonNegativeInteger(input.resources.minerals),
     honor: toNonNegativeDecimal(input.resources.honor),
-    gold: toNonNegativeInteger(input.resources.gold),
+    gold: toNonNegativeHalf(input.resources.gold),
     industrial_material: toNonNegativeInteger(input.resources.industrialMaterial),
     uridium: toNonNegativeDecimal(input.resources.uridium),
     technology: toNonNegativeInteger(input.resources.technology)
@@ -111,6 +111,11 @@ function toNonNegativeInteger(value: number) {
 function toNonNegativeDecimal(value: number) {
   const safeValue = Math.max(0, Number.isFinite(value) ? value : 0);
   return Math.round(safeValue * 100) / 100;
+}
+
+function toNonNegativeHalf(value: number) {
+  const safeValue = Math.max(0, Number.isFinite(value) ? value : 0);
+  return Math.floor(safeValue * 2) / 2;
 }
 
 export async function adminSetCampaignLimits(input: {

@@ -23,7 +23,7 @@ import {
   getStellarTradeFeePercent,
   hasUnlockedTechnologyEffect
 } from "@/features/technology/lib/technology-state";
-import { formatCompactOwnedResourceValue, formatOwnedResourceValue } from "@/lib/resource-format";
+import { formatCompactOwnedResourceValue } from "@/lib/resource-format";
 import type {
   CampaignSnapshot,
   FactionResources,
@@ -131,7 +131,7 @@ function MerchantPanel({ snapshot }: { snapshot: CampaignSnapshot }) {
   const ownedResource = resources?.[resourceKey] ?? 0;
   const ownedGold = resources?.gold ?? 0;
   const canBuy = rpcReady && merchantUnlocked && ownedGold >= merchantBuyCost;
-  const canSell = rpcReady && merchantUnlocked && ownedResource >= quantity;
+  const canSell = rpcReady && merchantUnlocked && ownedResource >= quantity && merchantSellPayout >= 0.5;
   const mutation = useMutation({
     mutationFn: ({ direction }: { direction: MerchantTradeDirection }) => merchantTrade(resourceKey, direction, quantity),
     onSuccess: () => {
@@ -151,10 +151,7 @@ function MerchantPanel({ snapshot }: { snapshot: CampaignSnapshot }) {
         </p>
         <div className="mt-4 rounded-md border border-amber-200/15 bg-slate-950/45 p-3">
           <div className="mb-2 text-xs uppercase tracking-[0.18em] text-amber-200/70">Caja disponible</div>
-          <span className="inline-flex items-center gap-1.5 tabular-nums text-slate-100">
-            <ResourceIcon className="size-4" resource="gold" />
-            {formatOwnedResourceValue(ownedGold)}
-          </span>
+          <ResourceAmount resource="gold" value={ownedGold} />
         </div>
       </aside>
 
@@ -291,7 +288,7 @@ function StellarTradePanel({ snapshot }: { snapshot: CampaignSnapshot }) {
       <aside className="rounded-lg border border-cyan-200/15 bg-slate-950/38 p-4">
         <h3 className="text-lg font-semibold text-cyan-50">Publicar oferta</h3>
         <p className="mt-2 text-sm leading-6 text-slate-300">
-          Las ofertas son recurso contra oro. Tu comisión actual es del {feePercent}% en oro, mínimo 1.
+          Las ofertas son recurso contra oro. Tu comisión actual es del {feePercent}% en oro, mínimo 0,5.
         </p>
 
         <ResourceStrip className="mt-4" resources={resources} />
@@ -327,7 +324,7 @@ function StellarTradePanel({ snapshot }: { snapshot: CampaignSnapshot }) {
         </fieldset>
 
         <NumberField label="Cantidad de recurso" onChange={setResourceAmount} value={resourceAmount} />
-        <NumberField label="Oro ofertado" onChange={setGoldAmount} value={goldAmount} />
+        <NumberField label="Oro ofertado" min={0.5} onChange={setGoldAmount} step={0.5} value={goldAmount} />
 
         <div className="mt-4 rounded-md border border-amber-200/15 bg-amber-300/8 p-3 text-sm text-amber-50">
           Comisión por jugador: <ResourceAmount resource="gold" value={feeGold} />
@@ -354,7 +351,7 @@ function StellarTradePanel({ snapshot }: { snapshot: CampaignSnapshot }) {
 
         <Button
           className="mt-4 w-full"
-          disabled={!canCreate || createMutation.isPending || resourceAmount < 1 || goldAmount < 1}
+          disabled={!canCreate || createMutation.isPending || resourceAmount < 1 || goldAmount < 0.5}
           onClick={() => createMutation.mutate()}
         >
           {createMutation.isPending ? "Creando..." : "Crear oferta"}
@@ -568,19 +565,24 @@ function TradeCostLine({
 function NumberField({
   label,
   value,
-  onChange
+  onChange,
+  min = 1,
+  step = 1
 }: {
   label: string;
   value: number;
   onChange: (value: number) => void;
+  min?: number;
+  step?: number;
 }) {
   return (
     <label className="mt-4 block text-sm">
       <span className="mb-2 block text-slate-300">{label}</span>
       <input
         className="w-full rounded-md border border-cyan-200/15 bg-slate-950/70 px-3 py-2 text-sm text-cyan-50 outline-none"
-        min={1}
-        onChange={(event) => onChange(clampInteger(Number(event.target.value), 1, 9999))}
+        min={min}
+        onChange={(event) => onChange(clampNumberStep(Number(event.target.value), min, 9999, step))}
+        step={step}
         type="number"
         value={value}
       />
@@ -597,11 +599,11 @@ function ownedResourceFor(resources: FactionResources | undefined, resource: Tra
 }
 
 function getMerchantBuyCost(resource: MerchantTradeResourceKey, quantity: number, buyMultiplier: number) {
-  return Math.ceil((resourcePointValues[resource] * quantity * buyMultiplier) / resourcePointValues.gold);
+  return roundGoldUp((resourcePointValues[resource] * quantity * buyMultiplier) / resourcePointValues.gold);
 }
 
 function getMerchantSellPayout(resource: MerchantTradeResourceKey, quantity: number, sellMultiplier: number) {
-  return Math.ceil((resourcePointValues[resource] * quantity * sellMultiplier) / resourcePointValues.gold);
+  return roundGoldDown((resourcePointValues[resource] * quantity * sellMultiplier) / resourcePointValues.gold);
 }
 
 function getOfferPublishCosts(
@@ -649,6 +651,19 @@ function hasEnoughTradeResources(
 
 function clampInteger(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, Math.trunc(Number.isFinite(value) ? value : min)));
+}
+
+function clampNumberStep(value: number, min: number, max: number, step: number) {
+  const safeValue = Number.isFinite(value) ? value : min;
+  return Math.max(min, Math.min(max, Math.round(safeValue / step) * step));
+}
+
+function roundGoldUp(value: number) {
+  return Math.ceil(value * 2) / 2;
+}
+
+function roundGoldDown(value: number) {
+  return Math.floor(value * 2) / 2;
 }
 
 function formatRate(value: number) {

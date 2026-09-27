@@ -494,9 +494,9 @@ values
   (public.seed_uuid('technology_node', 'fiebre-oro'), 'fiebre-oro', 'common-v1', 'La Fiebre del Oro', 'Prospeccion avanzada para localizar y explotar yacimientos preciosos.', 'Progreso', 3, 86, 55, 1, 30, 'gold', 'Permite construir Minas de Oro.', false, 'active'),
   (public.seed_uuid('technology_node', 'pactos-mercantiles'), 'pactos-mercantiles', 'common-v1', 'Pactos Mercantiles', 'Acuerdos y garantias para atraer camaras de comercio al frente.', 'Progreso', 4, 91, 40, 1, 30, 'commerce', 'Permite construir Camaras de Comercio.', false, 'active'),
   (public.seed_uuid('technology_node', 'contactos-economicos'), 'contactos-economicos', 'common-v1', 'Contactos Economicos', 'Red de intermediarios y agentes comerciales con acceso al mercader.', 'Progreso', 5, 96, 30, 0, 30, 'merchant', 'Permite comerciar con el Mercader.', false, 'active'),
-  (public.seed_uuid('technology_node', 'tratos-preferentes'), 'tratos-preferentes', 'common-v1', 'Tratos Preferentes', 'Credenciales, favores y rutas protegidas que reducen las tasas del mercader.', 'Progreso', 6, 96, 18, 2, 30, 'trade_discount', 'Mejora precios del Mercader: compra a 1.5x y venta a 0.75x del valor.', false, 'active'),
+  (public.seed_uuid('technology_node', 'tratos-preferentes'), 'tratos-preferentes', 'common-v1', 'Tratos Preferentes', 'Credenciales, favores y rutas protegidas que reducen las tasas del mercader.', 'Progreso', 6, 96, 18, 2, 30, 'trade_discount', 'Mejora los precios del Mercader: compras al 135% y vendes al 70% del valor.', false, 'active'),
   (public.seed_uuid('technology_node', 'mercado-galactico'), 'mercado-galactico', 'common-v1', 'Mercado Galactico', 'Acceso a tablones de oferta y rutas de intercambio entre jugadores.', 'Progreso', 5, 96, 52, 0, 30, 'market', 'Permite usar el Comercio Estelar.', false, 'active'),
-  (public.seed_uuid('technology_node', 'aranceles-privilegiados'), 'aranceles-privilegiados', 'common-v1', 'Aranceles Privilegiados', 'Tratados fiscales que reducen la comision del comercio estelar.', 'Progreso', 6, 96, 64, 2, 30, 'tariff', 'Reduce tu comision de Comercio Estelar al 10%, minimo 1 oro.', false, 'active'),
+  (public.seed_uuid('technology_node', 'aranceles-privilegiados'), 'aranceles-privilegiados', 'common-v1', 'Aranceles Privilegiados', 'Tratados fiscales que reducen la comision del comercio estelar.', 'Progreso', 6, 96, 64, 2, 30, 'tariff', 'Reduce tu comisión de Comercio Estelar al 5%, mínimo 0,5 de Oro.', false, 'active'),
   (public.seed_uuid('technology_node', 'oficina-inteligencia'), 'oficina-inteligencia', 'common-v1', 'Oficina de Inteligencia', 'Primer nucleo burocratico para futuras operaciones de espionaje.', 'Inteligencia', 1, 18, 58, 0, 30, 'intelligence', 'Proximamente: desbloqueara Nexos de Inteligencia.', false, 'planned'),
   (public.seed_uuid('technology_node', 'celulas-informacion'), 'celulas-informacion', 'common-v1', 'Celulas de Informacion', 'Redes discretas de observadores, informadores y escuchas.', 'Inteligencia', 2, 14, 70, 2, 30, 'cells', 'Proximamente: produccion de espionaje y Antenas de Reconocimiento.', false, 'planned'),
   (public.seed_uuid('technology_node', 'doctrina-clandestina'), 'doctrina-clandestina', 'common-v1', 'Doctrina Clandestina', 'Protocolos de infiltracion sostenida para operaciones encubiertas.', 'Inteligencia', 3, 8, 82, 1, 30, 'cloak', 'Proximamente: mejora de produccion de espionaje.', false, 'planned'),
@@ -611,9 +611,9 @@ from (
     ('fiebre-oro-building', 'fiebre-oro', 'unlock_building_template', '{"building_template_slugs":["mina-oro"]}'),
     ('pactos-building', 'pactos-mercantiles', 'unlock_building_template', '{"building_template_slugs":["camara-comercio"]}'),
     ('contactos-merchant', 'contactos-economicos', 'unlock_merchant_trade', '{}'),
-    ('tratos-merchant-rates', 'tratos-preferentes', 'merchant_rate_modifier', '{"buy_multiplier":1.5,"sell_multiplier":0.75}'),
+    ('tratos-merchant-rates', 'tratos-preferentes', 'merchant_rate_modifier', '{"buy_multiplier":1.35,"sell_multiplier":0.70}'),
     ('mercado-stellar', 'mercado-galactico', 'unlock_stellar_trade', '{}'),
-    ('aranceles-fee', 'aranceles-privilegiados', 'stellar_trade_fee_discount', '{"percent":10,"minimum_gold":1}')
+    ('aranceles-fee', 'aranceles-privilegiados', 'stellar_trade_fee_discount', '{"percent":5,"minimum_gold":0.5}')
 ) as data(effect_slug, technology_slug, effect_type, payload)
 join public.technology_nodes nodes on nodes.slug = data.technology_slug
 on conflict (id) do update

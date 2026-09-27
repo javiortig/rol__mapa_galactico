@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Clock3, Factory, MapPin, Route, Shield, Swords, Timer, UsersRound, Wrench, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Clock3, Factory, MapPin, RotateCcw, Route, Shield, Swords, Timer, UsersRound, Wrench, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
-import type { CampaignSnapshot, CampaignUnit, RecruitmentQueueItem } from "@/domain/campaign";
+import type { CampaignSnapshot, CampaignUnit, MovementOrder, RecruitmentQueueItem } from "@/domain/campaign";
+import { cancelMovementOrder, canUseMovementRpc } from "@/features/movement/api/movement-api";
 import { formatUnitKeywords } from "@/features/units/lib/character-ranks";
 import {
   buildActiveMovementByUnitId,
@@ -13,7 +15,7 @@ import {
   getUnitOperationalState,
   type UnitOperationalState
 } from "@/features/units/lib/unit-operational-status";
-import { formatCountdown } from "@/lib/time";
+import { formatCountdown, formatDurationSeconds } from "@/lib/time";
 
 type TroopRosterModalProps = {
   open: boolean;
@@ -29,7 +31,13 @@ type UnitRosterEntry = {
 const sectionOrder = [0, 1, 2, 3] as const;
 
 export function TroopRosterModal({ open, snapshot, onClose }: TroopRosterModalProps) {
+  const queryClient = useQueryClient();
   const [nowMs, setNowMs] = useState(() => Date.now());
+  const [confirmCancellationId, setConfirmCancellationId] = useState<string | null>(null);
+  const handleClose = useCallback(() => {
+    setConfirmCancellationId(null);
+    onClose();
+  }, [onClose]);
   const currentFactionId = snapshot.currentUser.factionId;
   const activeMovementByUnitId = useMemo(
     () => buildActiveMovementByUnitId(snapshot.movements),
@@ -71,6 +79,26 @@ export function TroopRosterModal({ open, snapshot, onClose }: TroopRosterModalPr
   const totalPoints = entries.reduce((total, entry) => total + entry.unit.points, 0);
   const totalModels = entries.reduce((total, entry) => total + entry.unit.quantity, 0);
   const activeCount = entries.filter((entry) => entry.operationalState.priority < 3).length + recruitmentQueue.length;
+  const cancellableMovements = useMemo(
+    () =>
+      snapshot.movements
+        .filter(
+          (movement) =>
+            movement.factionId === currentFactionId &&
+            movement.movementType === "move" &&
+            movement.movementPurpose === "normal" &&
+            ["pending_approval", "moving"].includes(movement.status)
+        )
+        .sort((left, right) => Date.parse(left.startedAt) - Date.parse(right.startedAt)),
+    [currentFactionId, snapshot.movements]
+  );
+  const cancelMutation = useMutation({
+    mutationFn: cancelMovementOrder,
+    onSuccess: () => {
+      setConfirmCancellationId(null);
+      void queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
+  });
 
   useEffect(() => {
     if (!open) {
@@ -88,13 +116,13 @@ export function TroopRosterModal({ open, snapshot, onClose }: TroopRosterModalPr
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        onClose();
+        handleClose();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onClose, open]);
+  }, [handleClose, open]);
 
   if (!open) {
     return null;
@@ -108,7 +136,7 @@ export function TroopRosterModal({ open, snapshot, onClose }: TroopRosterModalPr
             <div className="text-xs uppercase tracking-[0.2em] text-cyan-200/70">Registro de fuerzas</div>
             <h2 className="mt-1 text-xl font-semibold text-cyan-50">Tropas</h2>
           </div>
-          <Button aria-label="Cerrar tropas" onClick={onClose} size="icon" title="Cerrar" variant="ghost">
+          <Button aria-label="Cerrar tropas" onClick={handleClose} size="icon" title="Cerrar" variant="ghost">
             <X size={18} />
           </Button>
         </header>
@@ -122,6 +150,20 @@ export function TroopRosterModal({ open, snapshot, onClose }: TroopRosterModalPr
           </div>
 
           <div className="mt-5 space-y-5">
+            {cancellableMovements.length > 0 ? (
+              <MovementCancellationSection
+                confirmCancellationId={confirmCancellationId}
+                movements={cancellableMovements}
+                mutationError={cancelMutation.error?.message ?? null}
+                mutationPendingId={cancelMutation.isPending ? cancelMutation.variables : null}
+                nowMs={nowMs}
+                onCancel={(movementId) => cancelMutation.mutate(movementId)}
+                onConfirmChange={setConfirmCancellationId}
+                rpcReady={canUseMovementRpc()}
+                snapshot={snapshot}
+              />
+            ) : null}
+
             {groupedEntries.map((group) =>
               group.entries.length > 0 ? (
                 <TroopSection entries={group.entries} key={group.priority} nowMs={nowMs} priority={group.priority} />
@@ -149,6 +191,121 @@ export function TroopRosterModal({ open, snapshot, onClose }: TroopRosterModalPr
       </Panel>
     </div>
   );
+}
+
+function MovementCancellationSection({
+  movements,
+  snapshot,
+  nowMs,
+  confirmCancellationId,
+  mutationPendingId,
+  mutationError,
+  rpcReady,
+  onConfirmChange,
+  onCancel
+}: {
+  movements: MovementOrder[];
+  snapshot: CampaignSnapshot;
+  nowMs: number;
+  confirmCancellationId: string | null;
+  mutationPendingId: string | null;
+  mutationError: string | null;
+  rpcReady: boolean;
+  onConfirmChange: (movementId: string | null) => void;
+  onCancel: (movementId: string) => void;
+}) {
+  return (
+    <section>
+      <SectionHeading count={movements.length} icon={RotateCcw} title="Órdenes de movimiento" />
+      <div className="mt-2 space-y-2">
+        {movements.map((movement) => {
+          const estimate = getTurnbackEstimate(snapshot, movement, nowMs);
+          const isConfirming = confirmCancellationId === movement.id;
+          const isPending = mutationPendingId === movement.id;
+
+          return (
+            <article className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 md:p-4" key={movement.id}>
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="text-sm font-semibold text-cyan-50">{estimate.routeLabel}</h3>
+                    <Badge tone={movement.status === "pending_approval" ? "amber" : "cyan"}>
+                      {movement.status === "pending_approval" ? "Esperando autorización" : "En marcha"}
+                    </Badge>
+                  </div>
+                  <p className="mt-1 text-xs text-slate-300">
+                    {movement.unitIds.length} {movement.unitIds.length === 1 ? "unidad" : "unidades"} · Regreso a {estimate.returnSystemName}
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                    <span className="text-slate-400">
+                      Regreso: <strong className="font-medium text-slate-200">{formatDurationSeconds(estimate.returnSeconds)}</strong>
+                    </span>
+                    <span className={estimate.refundUridium > 0 ? "text-emerald-200" : "text-slate-500"}>
+                      {estimate.refundUridium > 0
+                        ? `Reembolso: ${estimate.refundUridium} Uridium`
+                        : "Sin reembolso de Uridium"}
+                    </span>
+                  </div>
+                </div>
+
+                {isConfirming ? (
+                  <div className="flex shrink-0 gap-2">
+                    <Button disabled={isPending} onClick={() => onConfirmChange(null)} size="sm" variant="ghost">
+                      Mantener ruta
+                    </Button>
+                    <Button disabled={!rpcReady || isPending} onClick={() => onCancel(movement.id)} size="sm" variant="danger">
+                      <RotateCcw size={14} />
+                      {isPending ? "Ordenando..." : "Confirmar regreso"}
+                    </Button>
+                  </div>
+                ) : (
+                  <Button className="shrink-0" onClick={() => onConfirmChange(movement.id)} size="sm" variant="ghost">
+                    <RotateCcw size={14} /> Dar media vuelta
+                  </Button>
+                )}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+      {mutationError ? <p className="mt-2 text-sm text-rose-200">{mutationError}</p> : null}
+    </section>
+  );
+}
+
+function getTurnbackEstimate(snapshot: CampaignSnapshot, movement: MovementOrder, nowMs: number) {
+  const systemById = new Map(snapshot.systems.map((system) => [system.id, system]));
+  const originName = systemById.get(movement.fromSystemId)?.name ?? "Origen desconocido";
+  const destinationName = systemById.get(movement.toSystemId)?.name ?? "Destino desconocido";
+
+  if (movement.status === "pending_approval" || !movement.departureAt || !movement.arrivalAt) {
+    return {
+      routeLabel: `${originName} → ${destinationName}`,
+      returnSystemName: originName,
+      returnSeconds: 0,
+      refundUridium: movement.uridiumCost
+    };
+  }
+
+  const path = movement.pathSystemIds.length > 1
+    ? movement.pathSystemIds
+    : [movement.fromSystemId, movement.toSystemId];
+  const edgeCount = Math.max(path.length - 1, 1);
+  const departureMs = Date.parse(movement.departureAt);
+  const arrivalMs = Date.parse(movement.arrivalAt);
+  const totalMs = Math.max(arrivalMs - departureMs, 1);
+  const edgeMs = totalMs / edgeCount;
+  const elapsedMs = Math.min(Math.max(nowMs - departureMs, 0), totalMs);
+  const edgeIndex = Math.min(Math.floor(elapsedMs / edgeMs), edgeCount - 1);
+  const elapsedInEdgeMs = Math.max(elapsedMs - edgeIndex * edgeMs, 0);
+  const returnSystemId = path[edgeIndex] ?? movement.fromSystemId;
+
+  return {
+    routeLabel: `${originName} → ${destinationName}`,
+    returnSystemName: systemById.get(returnSystemId)?.name ?? "último sistema atravesado",
+    returnSeconds: Math.ceil(elapsedInEdgeMs / 1000),
+    refundUridium: nowMs <= departureMs + 60 * 60 * 1000 ? movement.uridiumCost : 0
+  };
 }
 
 function TroopSection({

@@ -43,7 +43,8 @@ begin
       and movement_purpose = 'normal'
       and battle_operation_id is null
   ) then
-    raise exception 'La orden necrona hacia Nadir Kappa ya no coincide con el estado inspeccionado';
+    raise notice 'Se omite la corrección histórica de Nadir Kappa: la orden necrona inspeccionada no existe en este estado';
+    return;
   end if;
 
   if not exists (
@@ -58,7 +59,8 @@ begin
       and movement_purpose = 'normal'
       and battle_operation_id is null
   ) then
-    raise exception 'La orden del Caos hacia Nadir Kappa ya no coincide con el estado inspeccionado';
+    raise notice 'Se omite la corrección histórica de Nadir Kappa: la orden del Caos inspeccionada no existe en este estado';
+    return;
   end if;
 
   select count(*) into v_unit_count

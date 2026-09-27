@@ -66,7 +66,8 @@ begin
       and controller_faction_id = v_chaos_id
       and status = 'controlled'
   ) then
-    raise exception 'Corona Voss ya no está controlada por El Caos o no está en estado controlado';
+    raise notice 'Se omite la operación histórica de Corona Voss: el estado de campaña esperado ya no está presente';
+    return;
   end if;
 
   if exists (

@@ -243,7 +243,7 @@ queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] })
 - Selecciónas unidades completas.
 - Trazas ruta óptima o manual.
 - Pagas Uridium.
-- Puedes cancelar movimiento con 50% de reembolso.
+- Los movimientos normales pueden cancelarse desde `Tropas`: la fuerza da media vuelta hasta el último sistema atravesado. Solo se devuelve el Uridium si se cancela durante la primera hora desde la salida.
 
 **Batallas**
 

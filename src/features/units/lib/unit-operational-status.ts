@@ -138,6 +138,10 @@ function getMovementLabel(movement: MovementOrder) {
     return "Replegándose por la ruta";
   }
 
+  if (movement.movementPurpose === "cancel_return") {
+    return "Regresando";
+  }
+
   if (movement.movementPurpose === "coalition_staging") {
     return "Reuniéndose para atacar";
   }

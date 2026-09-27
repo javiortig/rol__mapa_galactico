@@ -1391,7 +1391,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
               </select>
 
               <ResourceEditorGrid
-                decimalKeys={["honor", "uridium"]}
+                decimalKeys={["honor", "gold", "uridium"]}
                 keys={factionResourceKeys}
                 value={resourceDraft}
                 onChange={(resourceKey, nextValue) =>

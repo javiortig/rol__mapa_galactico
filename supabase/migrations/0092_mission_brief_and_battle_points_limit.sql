@@ -94,12 +94,8 @@ begin
   if position('public.validate_tabletop_battle_side_points(' in v_definition) = 0 then
     v_patched := replace(
       v_definition,
-      '  perform public.validate_attack_limits(v_faction_id, v_target.controller_faction_id);
-
-  select attack_duration_seconds',
-      '  perform public.validate_attack_limits(v_faction_id, v_target.controller_faction_id);
-
-  perform public.validate_tabletop_battle_side_points(
+      '  select attack_duration_seconds',
+      '  perform public.validate_tabletop_battle_side_points(
     v_faction_id,
     v_target.controller_faction_id,
     public.selected_units_roster_points(v_selected_unit_ids),
@@ -198,12 +194,8 @@ begin
   if position('public.validate_tabletop_battle_side_points(' in v_definition) = 0 then
     v_patched := replace(
       v_definition,
-      '  perform public.validate_attack_limits(v_operation.leader_faction_id, v_operation.defender_faction_id);
-
-  select attack_duration_seconds',
-      '  perform public.validate_attack_limits(v_operation.leader_faction_id, v_operation.defender_faction_id);
-
-  perform public.validate_tabletop_battle_side_points(
+      '  select attack_duration_seconds',
+      '  perform public.validate_tabletop_battle_side_points(
     v_operation.leader_faction_id,
     v_operation.defender_faction_id,
     coalesce((

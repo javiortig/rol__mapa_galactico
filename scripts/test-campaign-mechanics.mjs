@@ -573,26 +573,37 @@ async function main() {
     "El descuento de Uridium no coincide con unidades movidas"
   );
   await forceArrival(unitCostMoveId);
-  const conqueredNeutralShield = await must(
-    "escudo conquista neutral",
+  const conqueredNeutralSystem = await must(
+    "conquista neutral sin escudo",
     service
       .from("systems")
       .select("status,controller_faction_id,blocked_until")
       .eq("id", maps.systemBySlug["helios-drift"].id)
       .single()
   );
-  assert(conqueredNeutralShield.status === "controlled", "Helios debia quedar conquistado tras el movimiento");
+  assert(conqueredNeutralSystem.status === "controlled", "Helios debia quedar conquistado tras el movimiento");
   assert(
-    conqueredNeutralShield.controller_faction_id === maps.factionBySlug["adeptus-custodes"].id,
+    conqueredNeutralSystem.controller_faction_id === maps.factionBySlug["adeptus-custodes"].id,
     "Helios debia quedar bajo control Custodes"
   );
   assert(
-    conqueredNeutralShield.blocked_until && Date.parse(conqueredNeutralShield.blocked_until) > Date.now(),
-    "La conquista neutral debe activar el escudo de proteccion"
+    conqueredNeutralSystem.blocked_until === null,
+    "La conquista neutral por movimiento normal no debe activar un escudo"
   );
-  recordCheck("escudo conquista neutral", "conquistar neutral aplica proteccion temporal");
+  recordCheck("conquista neutral sin escudo", "conquistar neutral no aplica proteccion temporal");
   recordCheck("movimiento coste por unidad", `ruta ${kharonHeliosEdge.uridium_cost} x 2 unidades`);
 
+  await must(
+    "ruta fixture ataque gaseoso",
+    service.from("system_edges").upsert({
+      id: "00000000-0000-0000-0000-000000000055",
+      slug: "route-test-maelstrom-nexus",
+      from_system_id: maps.systemBySlug["maelstrom-gas"].id,
+      to_system_id: maps.systemBySlug["nexus-aster"].id,
+      uridium_cost: 1,
+      is_blocked: false
+    })
+  );
   await must(
     "preparar gaseoso para ataque",
     service
@@ -1029,7 +1040,17 @@ async function main() {
     "create_movement_order",
     {
       unit_selections: [{ unit_id: intercessor.id, quantity: intercessor.quantity }],
-      path_system_ids: ["sa-cea-gate", "lyra-terminus", "maelstrom-gas", "nexus-aster", "voidmist-basin", "helios-drift"].map(
+      path_system_ids: [
+        "sa-cea-gate",
+        "lyra-terminus",
+        "maelstrom-gas",
+        "nexus-aster",
+        "voidmist-basin",
+        "nadir-kappa",
+        "nebulosa-caronte",
+        "helios-drift",
+        "kharon-prime"
+      ].map(
         (slug) => maps.systemBySlug[slug].id
       )
     },
@@ -1190,7 +1211,7 @@ async function main() {
     marines.client.rpc("join_battle_operation", {
       operation_id: operationId,
       unit_selections: [{ unit_id: rhino.id, quantity: rhino.quantity }],
-      path_system_ids: ["lyra-terminus", "maelstrom-gas", "nexus-aster", "voidmist-basin", "helios-drift"].map(
+      path_system_ids: ["lyra-terminus", "maelstrom-gas", "nadir-kappa", "nebulosa-caronte", "helios-drift"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     }),
@@ -1201,7 +1222,7 @@ async function main() {
     "create_movement_order",
     {
       unit_selections: [{ unit_id: rhino.id, quantity: rhino.quantity }],
-      path_system_ids: ["lyra-terminus", "maelstrom-gas", "nexus-aster", "voidmist-basin", "helios-drift"].map(
+      path_system_ids: ["lyra-terminus", "maelstrom-gas", "nadir-kappa", "nebulosa-caronte", "helios-drift"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     },
@@ -1307,7 +1328,7 @@ async function main() {
     "create_movement_order",
     {
       unit_selections: [{ unit_id: primus.id, quantity: primus.quantity }],
-      path_system_ids: ["red-sabbath", "maelstrom-gas", "nexus-aster", "voidmist-basin", "novem"].map(
+      path_system_ids: ["red-sabbath", "voidmist-basin", "novem"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     },
@@ -1318,7 +1339,7 @@ async function main() {
     "create_movement_order",
     {
       unit_selections: [{ unit_id: horrors.id, quantity: horrors.quantity }],
-      path_system_ids: ["drusus", "maelstrom-gas", "nexus-aster", "voidmist-basin", "novem"].map(
+      path_system_ids: ["drusus", "nebulosa-caronte", "nadir-kappa", "voidmist-basin", "novem"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     },
@@ -1498,6 +1519,29 @@ async function main() {
     autoResolvedConflict.status === "resolved" && autoResolvedConflict.winner_faction_id === maps.factionBySlug["adeptus-custodes"].id,
     "La autoconfirmacion no resolvio el conflicto"
   );
+  const retreatingWarriors = await must(
+    "perdedor inicia retirada",
+    service.from("campaign_units").select("current_system_id,status,quantity,wounds_taken").eq("id", autoReportWarriors.id).single()
+  );
+  assert(
+    retreatingWarriors.status === "moving" &&
+      retreatingWarriors.quantity === autoSurvivors[autoReportWarriors.id] &&
+      retreatingWarriors.wounds_taken === 0,
+    "El perdedor superviviente no inició su retirada"
+  );
+  const retreatLink = await must(
+    "orden retirada perdedor",
+    service.from("movement_order_units").select("movement_order_id").eq("unit_id", autoReportWarriors.id).order("created_at", { ascending: false }).limit(1).single()
+  );
+  const retreatOrder = await must(
+    "duración retirada perdedor",
+    service.from("movement_orders").select("status,movement_purpose,duration_seconds").eq("id", retreatLink.movement_order_id).single()
+  );
+  assert(
+    retreatOrder.status === "moving" && retreatOrder.movement_purpose === "battle_return" && retreatOrder.duration_seconds === 86400,
+    "La retirada del perdedor debe durar exactamente un día"
+  );
+  await forceArrival(retreatLink.movement_order_id);
   const retreatedWarriors = await must(
     "perdedor retirado seguro",
     service.from("campaign_units").select("current_system_id,status,quantity,wounds_taken").eq("id", autoReportWarriors.id).single()
@@ -1516,7 +1560,7 @@ async function main() {
       (!retreatSystem.blocked_until || Date.parse(retreatSystem.blocked_until) <= Date.now()),
     "El perdedor superviviente no se retiro al aliado seguro mas cercano"
   );
-  recordCheck("reportes auto", "doble validacion aplica resultado y retira perdedor a aliado seguro");
+  recordCheck("reportes auto", "doble validacion aplica resultado y retira perdedor durante un día a un sistema seguro");
 
   const necronVisibleEnemyUnitsAfterReport = await must(
     "niebla tras reporte",
@@ -1583,7 +1627,7 @@ async function main() {
     "create_movement_order",
     {
       unit_selections: [{ unit_id: postBattleBladeChampion.id, quantity: postBattleBladeChampion.quantity }],
-      path_system_ids: ["kharon-prime", "helios-drift", "voidmist-basin", "novem"].map(
+      path_system_ids: ["kharon-prime", "helios-drift", "nebulosa-caronte", "nadir-kappa", "voidmist-basin", "novem"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     },
@@ -1601,6 +1645,21 @@ async function main() {
     "orden cancelada por bloqueo intermedio",
     service.from("movement_orders").select("status,cancellation_reason").eq("id", blockedRouteMoveId).single()
   );
+  const fallbackLink = await must(
+    "orden de regreso por bloqueo intermedio",
+    service.from("movement_order_units").select("movement_order_id").eq("unit_id", postBattleBladeChampion.id).order("created_at", { ascending: false }).limit(1).single()
+  );
+  const fallbackOrder = await must(
+    "regreso activo por bloqueo intermedio",
+    service.from("movement_orders").select("status,movement_purpose,to_system_id").eq("id", fallbackLink.movement_order_id).single()
+  );
+  assert(
+    fallbackOrder.status === "moving" &&
+      fallbackOrder.movement_purpose === "route_fallback" &&
+      fallbackOrder.to_system_id !== maps.systemBySlug.novem.id,
+    "El bloqueo intermedio no inició el regreso a un sistema anterior"
+  );
+  await forceArrival(fallbackLink.movement_order_id);
   const blockedRouteUnit = await must(
     "unidad no atraviesa frente bloqueado",
     service.from("campaign_units").select("current_system_id,status").eq("id", postBattleBladeChampion.id).single()
@@ -1633,7 +1692,7 @@ async function main() {
     "create_movement_order",
     {
       unit_selections: [{ unit_id: postBattleBladeChampion.id, quantity: postBattleBladeChampion.quantity }],
-      path_system_ids: ["kharon-prime", "helios-drift", "voidmist-basin", "novem"].map(
+      path_system_ids: ["kharon-prime", "helios-drift", "nebulosa-caronte", "nadir-kappa", "voidmist-basin", "novem"].map(
         (slug) => maps.systemBySlug[slug].id
       )
     },
