@@ -621,6 +621,7 @@ export interface CampaignSnapshot {
   resources: FactionResources[];
   units: CampaignUnit[];
   movements: MovementOrder[];
+  incomingAttackAlerts: { systemId: string; attackerFactionIds: string[] }[];
   passageRequests: MovementPassageRequest[];
   battleLimits: BattleLimitSummary | null;
   battleOperations: BattleOperation[];

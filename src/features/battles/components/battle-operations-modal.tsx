@@ -317,6 +317,10 @@ function OperationCard({
   const members = snapshot.battleOperationMembers.filter((member) => member.operationId === operation.id);
   const commitments = snapshot.battleUnitCommitments.filter((item) => item.operationId === operation.id);
   const currentMember = members.find((member) => member.factionId === currentFactionId) ?? null;
+  const attackForceHidden =
+    operation.status === "moving" &&
+    currentMember?.side === "defender" &&
+    !snapshot.movements.some((movement) => movement.id === operation.attackMovementOrderId);
   const origin = snapshot.systems.find((system) => system.id === operation.originSystemId);
   const target = snapshot.systems.find((system) => system.id === operation.targetSystemId);
   const defenderFaction = snapshot.factions.find((faction) => faction.id === operation.defenderFactionId);
@@ -415,8 +419,14 @@ function OperationCard({
           </p>
         </div>
         <div className="shrink-0 text-left text-xs text-slate-400 sm:text-right">
-          <div>{commitments.length} unidades comprometidas</div>
-          <div>{commitments.reduce((total, item) => total + item.pointsAtCommitment, 0)} pts de ficha</div>
+          {attackForceHidden ? (
+            <div>Fuerza atacante sin identificar</div>
+          ) : (
+            <>
+              <div>{commitments.length} unidades comprometidas</div>
+              <div>{commitments.reduce((total, item) => total + item.pointsAtCommitment, 0)} pts de ficha</div>
+            </>
+          )}
         </div>
       </div>
 

@@ -2269,6 +2269,7 @@ export const mockCampaignSnapshot: CampaignSnapshot = {
   battleOperations: [],
   battleOperationMembers: [],
   battleUnitCommitments: [],
+  incomingAttackAlerts: [],
   unitTemplates,
   recruitmentQueue: [],
   technologyNodes,

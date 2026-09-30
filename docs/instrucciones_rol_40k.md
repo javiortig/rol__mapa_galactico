@@ -906,6 +906,14 @@ La información pública de un sistema incluye:
 
 ### 6.5 Información privada / niebla de guerra
 
+El backend distingue `movement_type = move` de `movement_type = attack` (solo o coalición):
+
+- En movimientos normales, el propietario de un sistema solo ve el tramo actual si la arista entra o sale de su sistema. La facción y el desplazamiento son visibles, pero no las unidades, los puntos ni el resto de la ruta.
+- Una facción con tropas en un sistema ajeno solo ve movimientos normales en el tramo que sale de ese sistema; no ve el tramo de llegada. Tampoco conoce unidades ni puntos del movimiento.
+- Los ataques en camino se señalan con un círculo rojo público desde su salida, sin bloquear todavía el sistema. El defensor ve las facciones atacantes, pero no unidades ni puntos hasta que llegan las tropas.
+- El dueño o una facción con tropas en el sistema desde el que sale un ataque sí ve la fuerza atacante completa. Admin mantiene visión total.
+- La consulta pública `get_public_incoming_attack_alerts()` solo devuelve identificadores de facción atacante al dueño del sistema y al admin. `get_visible_movement_order_units()` nunca revela unidades de tramos enemigos.
+
 La información oculta incluye:
 
 - Tropas presentes enemigas.

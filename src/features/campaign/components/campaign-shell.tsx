@@ -98,6 +98,10 @@ export function CampaignShell() {
     refetchInterval: 30_000,
     refetchIntervalInBackground: false
   });
+  const incomingAttackSystemIds = useMemo(
+    () => data?.incomingAttackAlerts.map((alert) => alert.systemId) ?? [],
+    [data]
+  );
   const eventsSeenStorageKey = data ? `rol40k.eventsSeenAt.${data.currentUser.id}` : null;
   const latestEventAt = data ? getLatestCampaignEventTimestamp(data.campaignEvents) : 0;
   const eventsSeenAt = readStoredTimestamp(eventsSeenStorageKey);
@@ -330,6 +334,7 @@ export function CampaignShell() {
         edges={data.edges}
         factions={data.factions}
         movements={data.movements}
+        incomingAttackSystemIds={incomingAttackSystemIds}
         onSystemPointerTap={armMobileTapShield}
         movementPlanning={
           movementOriginSystemId && (!isMobile || movementMobileStage === "route")
@@ -594,17 +599,8 @@ function formatBlockCountdown(blockedUntil?: string | null) {
 function hasUnresolvedBattleBlock(snapshot: CampaignSnapshot, systemId: string) {
   return (
     snapshot.conflicts.some((conflict) => conflict.systemId === systemId && conflict.status === "pending") ||
-    snapshot.narrativeAttacks.some((attack) => attack.systemId === systemId && attack.status === "incoming") ||
     snapshot.battleOperations.some(
-      (operation) =>
-        operation.targetSystemId === systemId &&
-        ["assembling", "moving", "in_battle"].includes(operation.status)
-    ) ||
-    snapshot.movements.some(
-      (movement) =>
-        movement.toSystemId === systemId &&
-        movement.movementType === "attack" &&
-        ["pending_approval", "moving"].includes(movement.status)
+      (operation) => operation.targetSystemId === systemId && operation.status === "in_battle"
     )
   );
 }
@@ -1015,6 +1011,10 @@ function SystemPanel({
   const incomingNarrativeAttack = snapshot.narrativeAttacks.find(
     (item) => item.systemId === system.id && item.status === "incoming"
   );
+  const incomingAttackAlert = snapshot.incomingAttackAlerts.find((item) => item.systemId === system.id);
+  const attackingFactions = incomingAttackAlert?.attackerFactionIds
+    .map((id) => snapshot.factions.find((item) => item.id === id)?.name)
+    .filter((name): name is string => Boolean(name)) ?? [];
   const mission = system.isTemporaryMission
     ? snapshot.missions.find((item) => item.systemId === system.id) ?? null
     : null;
@@ -1128,7 +1128,7 @@ function SystemPanel({
               <p className="mt-1 text-sm text-slate-300">{system.type}</p>
             </div>
             <div className="flex items-center gap-2">
-              {system.status === "war" ? (
+              {system.status === "war" || incomingAttackAlert ? (
                 <div className="grid size-11 place-items-center rounded-md border border-rose-300/30 bg-rose-400/12 text-rose-100">
                   <AlertTriangle size={20} />
                 </div>
@@ -1395,6 +1395,18 @@ function SystemPanel({
                 </div>
                 <p>{incomingNarrativeAttack.description}</p>
               </div>
+            </section>
+          ) : null}
+
+          {incomingAttackAlert && !incomingNarrativeAttack && system.status !== "war" ? (
+            <section className="rounded-md border border-rose-300/25 bg-rose-400/10 p-3 text-sm text-rose-50">
+              <div className="flex flex-wrap items-center gap-2">
+                <AlertTriangle size={16} />
+                <span className="font-semibold">Ataque en camino</span>
+              </div>
+              {attackingFactions.length > 0 ? (
+                <p className="mt-2">Atacantes: {attackingFactions.join(", ")}</p>
+              ) : null}
             </section>
           ) : null}
 

@@ -10,6 +10,7 @@ interface GalaxyMapProps {
   edges: SystemEdge[];
   factions: Faction[];
   movements: MovementOrder[];
+  incomingAttackSystemIds: string[];
   viewerFactionSlug?: string | null;
   movementPlanning?: MovementPlanning;
   onSystemPointerTap?: () => void;
@@ -117,6 +118,7 @@ export function GalaxyMap({
   edges,
   factions,
   movements,
+  incomingAttackSystemIds,
   viewerFactionSlug,
   movementPlanning,
   onSystemPointerTap
@@ -184,7 +186,7 @@ export function GalaxyMap({
   }, [movementPlanning]);
 
   useEffect(() => {
-    dataRef.current = { systems, edges, factions, movements, viewerFactionSlug, factionColorById, factionMarkerShapeById };
+    dataRef.current = { systems, edges, factions, movements, incomingAttackSystemIds, viewerFactionSlug, factionColorById, factionMarkerShapeById };
 
     if (pixiStateRef.current) {
       renderStaticMap(pixiStateRef.current, dataRef.current, {
@@ -195,7 +197,7 @@ export function GalaxyMap({
         onSystemPointerTap
       });
     }
-  }, [edges, factionColorById, factionMarkerShapeById, factions, movements, onSystemPointerTap, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems, viewerFactionSlug]);
+  }, [edges, factionColorById, factionMarkerShapeById, factions, incomingAttackSystemIds, movements, onSystemPointerTap, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems, viewerFactionSlug]);
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -269,7 +271,7 @@ export function GalaxyMap({
       });
       state.cleanup = cleanupInput;
 
-      renderStaticMap(state, dataRef.current ?? { systems, edges, factions, movements, viewerFactionSlug, factionColorById, factionMarkerShapeById }, {
+      renderStaticMap(state, dataRef.current ?? { systems, edges, factions, movements, incomingAttackSystemIds, viewerFactionSlug, factionColorById, factionMarkerShapeById }, {
         setHoveredSystem,
         setSelectedSystem,
         setTooltipPosition,
@@ -284,7 +286,7 @@ export function GalaxyMap({
         animateCamera(state);
         renderDynamicLayers({
           state,
-          data: dataRef.current ?? { systems, edges, factions, movements, viewerFactionSlug, factionColorById, factionMarkerShapeById },
+          data: dataRef.current ?? { systems, edges, factions, movements, incomingAttackSystemIds, viewerFactionSlug, factionColorById, factionMarkerShapeById },
           time,
           selectedSystemId: selectedSystemIdRef.current,
           hoveredSystemId: hoveredSystemIdRef.current,
@@ -315,7 +317,7 @@ export function GalaxyMap({
         app.destroy(true, { children: true });
       }
     };
-  }, [edges, factionColorById, factionMarkerShapeById, factions, movements, onSystemPointerTap, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems, viewerFactionSlug]);
+  }, [edges, factionColorById, factionMarkerShapeById, factions, incomingAttackSystemIds, movements, onSystemPointerTap, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems, viewerFactionSlug]);
 
   return <div className="absolute inset-0 touch-none" ref={containerRef} />;
 }
@@ -515,6 +517,7 @@ function renderStaticMap(
     labelsLayer: state.layers.labels,
     labels: state.labels,
     systems: data.systems,
+    incomingAttackSystemIds: data.incomingAttackSystemIds,
     factionColorById: data.factionColorById,
     factionMarkerShapeById: data.factionMarkerShapeById,
     setSelectedSystem: handlers.setSelectedSystem,
@@ -560,6 +563,7 @@ function renderDynamicLayers({
   drawSystemEffects({
     layer: state.layers.effects,
     systems: data.systems,
+    incomingAttackSystemIds: data.incomingAttackSystemIds,
     factionColorById: data.factionColorById,
     selectedSystemId,
     hoveredSystemId,
@@ -670,6 +674,7 @@ function drawSystems({
   labelsLayer,
   labels,
   systems,
+  incomingAttackSystemIds,
   factionColorById,
   factionMarkerShapeById,
   setSelectedSystem,
@@ -682,6 +687,7 @@ function drawSystems({
   labelsLayer: PIXI.Container;
   labels: LabelRecord[];
   systems: StarSystem[];
+  incomingAttackSystemIds: string[];
   factionColorById: Map<string, string>;
   factionMarkerShapeById: Map<string, FactionMarkerShape>;
   setSelectedSystem: (systemId: string | null) => void;
@@ -773,7 +779,7 @@ function drawSystems({
       }
     }
 
-    if (system.status === "war") {
+    if (system.status === "war" || incomingAttackSystemIds.includes(system.id)) {
       const alert = new PIXI.Graphics();
       alert.moveTo(0, -radius * 3.7);
       alert.lineTo(radius * 0.8, -radius * 2.35);
@@ -940,6 +946,7 @@ function drawRouteEffects({
 function drawSystemEffects({
   layer,
   systems,
+  incomingAttackSystemIds,
   factionColorById,
   selectedSystemId,
   hoveredSystemId,
@@ -948,6 +955,7 @@ function drawSystemEffects({
 }: {
   layer: PIXI.Container;
   systems: StarSystem[];
+  incomingAttackSystemIds: string[];
   factionColorById: Map<string, string>;
   selectedSystemId: string | null;
   hoveredSystemId: string | null;
@@ -957,7 +965,7 @@ function drawSystemEffects({
   for (const system of systems) {
     const radius = 8.4 * system.size;
 
-    if (system.status === "war") {
+    if (system.status === "war" || incomingAttackSystemIds.includes(system.id)) {
       const pulse = new PIXI.Graphics();
       const pulseRadius = radius * 3.25 + Math.sin(time * 0.09) * radius * 0.58;
       pulse.circle(system.x, system.y, pulseRadius);

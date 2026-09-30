@@ -122,6 +122,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       unitsResult,
       movementsResult,
       movementUnitsResult,
+      incomingAttackAlertsResult,
       passageRequestsResult,
       battleOperationsResult,
       battleOperationMembersResult,
@@ -159,6 +160,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       supabase.from("campaign_units").select("*").order("name"),
       supabase.rpc("get_visible_movement_orders"),
       supabase.rpc("get_visible_movement_order_units"),
+      supabase.rpc("get_public_incoming_attack_alerts"),
       supabase.from("movement_passage_requests").select("*").order("created_at", { ascending: false }),
       supabase.from("battle_operations").select("*").order("created_at", { ascending: false }),
       supabase.from("battle_operation_members").select("*").order("created_at"),
@@ -279,6 +281,10 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       movements: getRows(movementsResult, "movement_orders").map((row) =>
         mapMovement(row, unitIdsByMovement.get(row.id as string))
       ),
+      incomingAttackAlerts: getRows(incomingAttackAlertsResult, "incoming_attack_alerts").map((row) => ({
+        systemId: row.system_id as string,
+        attackerFactionIds: Array.isArray(row.attacker_faction_ids) ? row.attacker_faction_ids as string[] : []
+      })),
       passageRequests: getRows(passageRequestsResult, "movement_passage_requests").map(mapPassageRequest),
       battleLimits,
       battleOperations: getRows(battleOperationsResult, "battle_operations").map(mapBattleOperation),
