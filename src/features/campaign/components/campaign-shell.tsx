@@ -999,7 +999,10 @@ function SystemPanel({
   const queryClient = useQueryClient();
   const faction = snapshot.factions.find((item) => item.id === system.controllerFactionId);
   const relatedUnits = snapshot.units.filter(
-    (unit) => unit.currentSystemId === system.id && unit.status !== "destroyed" && unit.quantity > 0
+    (unit) => unit.currentSystemId === system.id
+      && unit.status !== "destroyed"
+      && unit.status !== "moving"
+      && unit.quantity > 0
   );
   const hasOwnPresence = relatedUnits.some((unit) => unit.factionId === snapshot.currentUser.factionId);
   const ownReadyUnits = relatedUnits.filter(

@@ -112,4 +112,21 @@ select pg_temp.assert_true(not exists (select 1 from public.get_visible_movement
 select set_config('request.jwt.claim.sub', :'observer_user', true);
 select pg_temp.assert_true(exists (select 1 from public.get_public_incoming_attack_alerts() where system_id = :'target_system' and cardinality(attacker_faction_ids) = 0), 'Unrelated faction cannot see a redacted public attack alert');
 
+-- Arriving at the origin after departure must not reveal the attack force.
+reset role;
+update public.campaign_units
+set current_system_id = :'origin_system', status = 'moving'
+where id = :'attacker_unit';
+update public.campaign_units
+set current_system_id = :'origin_system', status = 'ready'
+where id = :'observer_unit';
+set local role authenticated;
+select set_config('request.jwt.claim.sub', :'observer_user', true);
+select pg_temp.assert_true(public.user_has_presence_in_system(:'origin_system'), 'Late observer is not present at the origin');
+select pg_temp.assert_true(not exists (select 1 from public.movement_orders where id = :'attack_id'), 'Late observer can read attack order');
+select pg_temp.assert_true(not exists (select 1 from public.get_visible_movement_orders() where id = :'attack_id'), 'Late observer can read attack through visible orders');
+select pg_temp.assert_true(not exists (select 1 from public.get_visible_movement_order_units() where movement_order_id = :'attack_id'), 'Late observer can read attack unit links');
+select pg_temp.assert_true(not exists (select 1 from public.battle_unit_commitments where operation_id = :'operation_id' and side = 'attacker'), 'Late observer can read attack points');
+select pg_temp.assert_true(not exists (select 1 from public.campaign_units where id = :'attacker_unit'), 'Late observer can read moving attacker as garrison');
+
 rollback;
