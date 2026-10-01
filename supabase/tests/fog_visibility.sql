@@ -16,6 +16,7 @@ select id as cult_faction from public.factions where slug = 'cultos-genestealer'
 select id as attacker_user from auth.users where email = 'adeptus-custodes@rol40k.local' \gset
 select id as defender_user from auth.users where email = 'legiones-daemonicas@rol40k.local' \gset
 select id as observer_user from auth.users where email = 'necrones@rol40k.local' \gset
+select id as cult_user from auth.users where email = 'cultos-genestealer@rol40k.local' \gset
 select id as origin_system from public.systems where slug = 'kharon-prime' \gset
 select id as target_system from public.systems where slug = 'drusus' \gset
 select id as presence_system from public.systems where slug = 'helios-drift' \gset
@@ -23,6 +24,7 @@ select id as necron_origin from public.systems where slug = 'thokt-vault' \gset
 select id as other_target from public.systems where slug = 'red-sabbath' \gset
 select id as attacker_unit from public.campaign_units where faction_id = :'attacker_faction' and status = 'ready' limit 1 \gset
 select id as observer_unit from public.campaign_units where faction_id = :'observer_faction' and status = 'ready' limit 1 \gset
+select id as cult_unit from public.campaign_units where faction_id = :'cult_faction' and status = 'ready' limit 1 \gset
 select id as attack_id from (select gen_random_uuid() as id) ids \gset
 select id as movement_id from (select gen_random_uuid() as id) ids \gset
 select id as inbound_id from (select gen_random_uuid() as id) ids \gset
@@ -98,6 +100,7 @@ select pg_temp.assert_true(not exists (select 1 from public.battle_unit_commitme
 select pg_temp.assert_true(not exists (select 1 from public.campaign_units where id = :'attacker_unit'), 'Defender can read attacker unit directly');
 select pg_temp.assert_true(exists (select 1 from public.get_visible_movement_orders() where id = :'movement_id' and cardinality(path_system_ids) = 2), 'System owner cannot see the adjacent movement edge');
 select pg_temp.assert_true(exists (select 1 from public.get_public_incoming_attack_alerts() where system_id = :'target_system' and :'attacker_faction'::uuid = any(attacker_faction_ids)), 'Defender cannot see attacker faction');
+select pg_temp.assert_true(exists (select 1 from public.get_defender_incoming_attack_routes() where from_system_id = :'origin_system' and to_system_id = :'target_system'), 'Defender cannot see redacted incoming attack route');
 
 select set_config('request.jwt.claim.sub', :'attacker_user', true);
 select pg_temp.assert_true(exists (select 1 from public.get_visible_movement_orders() where id = :'attack_id' and cardinality(path_system_ids) = 2), 'Attack owner cannot see full order');
@@ -111,6 +114,30 @@ select pg_temp.assert_true(not exists (select 1 from public.get_visible_movement
 
 select set_config('request.jwt.claim.sub', :'observer_user', true);
 select pg_temp.assert_true(exists (select 1 from public.get_public_incoming_attack_alerts() where system_id = :'target_system' and cardinality(attacker_faction_ids) = 0), 'Unrelated faction cannot see a redacted public attack alert');
+select pg_temp.assert_true(not exists (select 1 from public.get_defender_incoming_attack_routes() where to_system_id = :'target_system'), 'Unrelated faction can inspect defender attack route');
+
+-- A joined attacker sees the complete coalition roster, not only the leader's units.
+reset role;
+update public.battle_operations set mode = 'coalition' where id = :'operation_id';
+insert into public.battle_operation_members
+  (operation_id, faction_id, side, role, invitation_status)
+values (:'operation_id', :'cult_faction', 'attacker', 'supporter', 'accepted');
+update public.campaign_units set current_system_id = :'origin_system', status = 'moving' where id = :'cult_unit';
+insert into public.movement_order_units (movement_order_id, unit_id, quantity_at_departure)
+values (:'attack_id', :'cult_unit', 1);
+insert into public.battle_unit_commitments
+  (operation_id, unit_id, faction_id, side, role, home_system_id,
+   staging_system_id, outbound_path_system_ids, quantity_at_commitment,
+   points_at_commitment, status)
+values (:'operation_id', :'cult_unit', :'cult_faction', 'attacker', 'supporter',
+  :'origin_system', :'target_system', array[:'origin_system'::uuid, :'target_system'::uuid],
+  1, 77, 'en_route');
+set local role authenticated;
+select set_config('request.jwt.claim.sub', :'cult_user', true);
+select pg_temp.assert_true(exists (select 1 from public.get_visible_movement_orders() where id = :'attack_id'), 'Accepted coalition supporter cannot see the attack order');
+select pg_temp.assert_true((select count(*) from public.get_visible_movement_order_units() where movement_order_id = :'attack_id') = 2, 'Accepted coalition supporter cannot see every attack unit link');
+select pg_temp.assert_true(exists (select 1 from public.campaign_units where id = :'attacker_unit'), 'Accepted coalition supporter cannot see leader unit');
+select pg_temp.assert_true(exists (select 1 from public.campaign_units where id = :'cult_unit'), 'Accepted coalition supporter cannot see own unit');
 
 -- Arriving at the origin after departure must not reveal the attack force.
 reset role;

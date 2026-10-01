@@ -335,6 +335,7 @@ export function CampaignShell() {
         factions={data.factions}
         movements={data.movements}
         incomingAttackSystemIds={incomingAttackSystemIds}
+        defenderIncomingAttackRoutes={data.defenderIncomingAttackRoutes}
         onSystemPointerTap={armMobileTapShield}
         movementPlanning={
           movementOriginSystemId && (!isMobile || movementMobileStage === "route")
@@ -1005,6 +1006,24 @@ function SystemPanel({
       && unit.quantity > 0
   );
   const joinedCoalitionAttackOrderIds = getJoinedCoalitionAttackOrderIds(snapshot, snapshot.currentUser.factionId);
+  const coalitionUnitIds = new Set(
+    snapshot.movements
+      .filter((movement) =>
+        joinedCoalitionAttackOrderIds.has(movement.id)
+        && movement.status === "moving"
+        && (movement.fromSystemId === system.id || movement.toSystemId === system.id)
+      )
+      .flatMap((movement) => movement.unitIds)
+  );
+  const coalitionUnits = snapshot.units.filter(
+    (unit) => coalitionUnitIds.has(unit.id) && unit.status === "moving" && unit.quantity > 0
+  );
+  const coalitionGroups = snapshot.factions
+    .map((coalitionFaction) => ({
+      faction: coalitionFaction,
+      units: coalitionUnits.filter((unit) => unit.factionId === coalitionFaction.id)
+    }))
+    .filter((group) => group.units.length > 0);
   const outgoingUnitIds = new Set(
     snapshot.movements
       .filter((movement) =>
@@ -1019,6 +1038,7 @@ function SystemPanel({
       && unit.status === "moving"
       && unit.quantity > 0
       && outgoingUnitIds.has(unit.id)
+      && !coalitionUnitIds.has(unit.id)
   );
   const hasOwnPresence = relatedUnits.some((unit) => unit.factionId === snapshot.currentUser.factionId);
   const ownReadyUnits = relatedUnits.filter(
@@ -1031,6 +1051,7 @@ function SystemPanel({
     (item) => item.systemId === system.id && item.status === "incoming"
   );
   const incomingAttackAlert = snapshot.incomingAttackAlerts.find((item) => item.systemId === system.id);
+  const defenderIncomingRoute = snapshot.defenderIncomingAttackRoutes.find((route) => route.toSystemId === system.id);
   const attackingFactions = incomingAttackAlert?.attackerFactionIds
     .map((id) => snapshot.factions.find((item) => item.id === id)?.name)
     .filter((name): name is string => Boolean(name)) ?? [];
@@ -1320,7 +1341,7 @@ function SystemPanel({
           <section>
             <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Tropas visibles</h2>
             <div className="space-y-3">
-              {visibleUnits.length > 0 || ownOutgoingUnits.length > 0 || missionEnemyUnits.length > 0 || system.isTemporaryMission ? (
+              {visibleUnits.length > 0 || ownOutgoingUnits.length > 0 || coalitionUnits.length > 0 || missionEnemyUnits.length > 0 || system.isTemporaryMission ? (
                 <>
                   {alliedUnits.length > 0 ? (
                     <UnitGroup
@@ -1341,6 +1362,23 @@ function SystemPanel({
                       title="En tránsito desde aquí"
                       units={ownOutgoingUnits}
                     />
+                  ) : null}
+                  {coalitionGroups.length > 0 ? (
+                    <div className="space-y-2">
+                      <h3 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-rose-200/80">
+                        Coalición en tránsito
+                      </h3>
+                      {coalitionGroups.map((group) => (
+                        <UnitGroup
+                          canRetire={false}
+                          faction={group.faction}
+                          key={group.faction.id}
+                          snapshot={snapshot}
+                          title={group.faction.name}
+                          units={group.units}
+                        />
+                      ))}
+                    </div>
                   ) : null}
                   {enemyUnitsByFaction.length > 0 || missionEnemyUnits.length > 0 || system.isTemporaryMission ? (
                     <div className="space-y-2">
@@ -1431,6 +1469,9 @@ function SystemPanel({
               <div className="flex flex-wrap items-center gap-2">
                 <AlertTriangle size={16} />
                 <span className="font-semibold">Ataque en camino</span>
+                {defenderIncomingRoute ? (
+                  <Badge tone="rose">Llega en {formatCountdown(defenderIncomingRoute.arrivalAt)}</Badge>
+                ) : null}
               </div>
               {attackingFactions.length > 0 ? (
                 <p className="mt-2">Atacantes: {attackingFactions.join(", ")}</p>

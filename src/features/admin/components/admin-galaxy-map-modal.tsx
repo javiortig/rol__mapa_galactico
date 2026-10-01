@@ -108,6 +108,7 @@ export function AdminGalaxyMapModal({ snapshot, onClose }: AdminGalaxyMapModalPr
           factions={snapshot.factions}
           movements={snapshot.movements}
           incomingAttackSystemIds={snapshot.incomingAttackAlerts.map((alert) => alert.systemId)}
+          defenderIncomingAttackRoutes={[]}
           systems={snapshot.systems}
         />
 

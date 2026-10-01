@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import * as PIXI from "pixi.js";
-import type { Faction, MovementOrder, StarClass, StarSystem, SystemEdge } from "@/domain/campaign";
+import type { CampaignSnapshot, Faction, MovementOrder, StarClass, StarSystem, SystemEdge } from "@/domain/campaign";
 import { useCampaignUiStore } from "@/features/campaign/store/campaign-ui-store";
 
 interface GalaxyMapProps {
@@ -11,6 +11,7 @@ interface GalaxyMapProps {
   factions: Faction[];
   movements: MovementOrder[];
   incomingAttackSystemIds: string[];
+  defenderIncomingAttackRoutes: CampaignSnapshot["defenderIncomingAttackRoutes"];
   viewerFactionSlug?: string | null;
   movementPlanning?: MovementPlanning;
   onSystemPointerTap?: () => void;
@@ -119,6 +120,7 @@ export function GalaxyMap({
   factions,
   movements,
   incomingAttackSystemIds,
+  defenderIncomingAttackRoutes,
   viewerFactionSlug,
   movementPlanning,
   onSystemPointerTap
@@ -186,7 +188,7 @@ export function GalaxyMap({
   }, [movementPlanning]);
 
   useEffect(() => {
-    dataRef.current = { systems, edges, factions, movements, incomingAttackSystemIds, viewerFactionSlug, factionColorById, factionMarkerShapeById };
+    dataRef.current = { systems, edges, factions, movements, incomingAttackSystemIds, defenderIncomingAttackRoutes, viewerFactionSlug, factionColorById, factionMarkerShapeById };
 
     if (pixiStateRef.current) {
       renderStaticMap(pixiStateRef.current, dataRef.current, {
@@ -197,7 +199,7 @@ export function GalaxyMap({
         onSystemPointerTap
       });
     }
-  }, [edges, factionColorById, factionMarkerShapeById, factions, incomingAttackSystemIds, movements, onSystemPointerTap, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems, viewerFactionSlug]);
+  }, [edges, factionColorById, factionMarkerShapeById, factions, incomingAttackSystemIds, defenderIncomingAttackRoutes, movements, onSystemPointerTap, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems, viewerFactionSlug]);
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -271,7 +273,7 @@ export function GalaxyMap({
       });
       state.cleanup = cleanupInput;
 
-      renderStaticMap(state, dataRef.current ?? { systems, edges, factions, movements, incomingAttackSystemIds, viewerFactionSlug, factionColorById, factionMarkerShapeById }, {
+      renderStaticMap(state, dataRef.current ?? { systems, edges, factions, movements, incomingAttackSystemIds, defenderIncomingAttackRoutes, viewerFactionSlug, factionColorById, factionMarkerShapeById }, {
         setHoveredSystem,
         setSelectedSystem,
         setTooltipPosition,
@@ -286,7 +288,7 @@ export function GalaxyMap({
         animateCamera(state);
         renderDynamicLayers({
           state,
-          data: dataRef.current ?? { systems, edges, factions, movements, incomingAttackSystemIds, viewerFactionSlug, factionColorById, factionMarkerShapeById },
+          data: dataRef.current ?? { systems, edges, factions, movements, incomingAttackSystemIds, defenderIncomingAttackRoutes, viewerFactionSlug, factionColorById, factionMarkerShapeById },
           time,
           selectedSystemId: selectedSystemIdRef.current,
           hoveredSystemId: hoveredSystemIdRef.current,
@@ -317,7 +319,7 @@ export function GalaxyMap({
         app.destroy(true, { children: true });
       }
     };
-  }, [edges, factionColorById, factionMarkerShapeById, factions, incomingAttackSystemIds, movements, onSystemPointerTap, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems, viewerFactionSlug]);
+  }, [edges, factionColorById, factionMarkerShapeById, factions, incomingAttackSystemIds, defenderIncomingAttackRoutes, movements, onSystemPointerTap, setHoveredSystem, setSelectedSystem, setTooltipPosition, systems, viewerFactionSlug]);
 
   return <div className="absolute inset-0 touch-none" ref={containerRef} />;
 }
@@ -578,6 +580,7 @@ function renderDynamicLayers({
     data.factionMarkerShapeById,
     time
   );
+  drawDefenderIncomingAttackRoutes(state.layers.movement, data.systems, data.defenderIncomingAttackRoutes, time);
   updateLabels(state.labels, state.view.scale, selectedSystemId, hoveredSystemId);
 }
 
@@ -1159,6 +1162,47 @@ function getFocusView(app: PIXI.Application, system: StarSystem, currentView: Vi
     x: app.renderer.width * 0.42 - system.x * scale,
     y: app.renderer.height * 0.52 - system.y * scale
   };
+}
+
+function drawDefenderIncomingAttackRoutes(
+  layer: PIXI.Container,
+  systems: StarSystem[],
+  routes: CampaignSnapshot["defenderIncomingAttackRoutes"],
+  time: number
+) {
+  const systemById = new Map(systems.map((system) => [system.id, system]));
+  const now = Date.now();
+
+  for (const route of routes) {
+    const origin = systemById.get(route.fromSystemId);
+    const target = systemById.get(route.toSystemId);
+    if (!origin || !target) {
+      continue;
+    }
+
+    const progress = clamp(
+      (now - Date.parse(route.departureAt)) / Math.max(Date.parse(route.arrivalAt) - Date.parse(route.departureAt), 1),
+      0,
+      1
+    );
+    const position = pointOnLine(origin, target, progress);
+    const trailStart = pointOnLine(origin, target, Math.max(progress - 0.07, 0));
+    const routeLine = new PIXI.Graphics();
+    routeLine.moveTo(origin.x, origin.y);
+    routeLine.lineTo(target.x, target.y);
+    routeLine.stroke({ color: 0xfb7185, alpha: 0.35, width: 2.2 });
+    layer.addChild(routeLine);
+
+    const marker = new PIXI.Graphics();
+    marker.moveTo(trailStart.x, trailStart.y);
+    marker.lineTo(position.x, position.y);
+    marker.stroke({ color: 0xfb7185, alpha: 0.85, width: 4 });
+    marker.circle(position.x, position.y, 5.5);
+    marker.fill({ color: 0xfb7185, alpha: 0.95 });
+    marker.circle(position.x, position.y, 10 + Math.sin(time * 0.15) * 1.8);
+    marker.stroke({ color: 0xfb7185, alpha: 0.68, width: 1.6 });
+    layer.addChild(marker);
+  }
 }
 
 function drawMarkerPath(

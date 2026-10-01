@@ -622,6 +622,12 @@ export interface CampaignSnapshot {
   units: CampaignUnit[];
   movements: MovementOrder[];
   incomingAttackAlerts: { systemId: string; attackerFactionIds: string[] }[];
+  defenderIncomingAttackRoutes: {
+    fromSystemId: string;
+    toSystemId: string;
+    departureAt: string;
+    arrivalAt: string;
+  }[];
   passageRequests: MovementPassageRequest[];
   battleLimits: BattleLimitSummary | null;
   battleOperations: BattleOperation[];

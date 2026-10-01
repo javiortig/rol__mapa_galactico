@@ -910,9 +910,10 @@ El backend distingue `movement_type = move` de `movement_type = attack` (solo o 
 
 - En movimientos normales, el propietario de un sistema solo ve el tramo actual si la arista entra o sale de su sistema. La facción y el desplazamiento son visibles, pero no las unidades, los puntos ni el resto de la ruta.
 - Una facción con tropas en un sistema ajeno solo ve movimientos normales en el tramo que sale de ese sistema; no ve el tramo de llegada. Tampoco conoce unidades ni puntos del movimiento.
-- Los ataques en camino se señalan con un círculo rojo público desde su salida, sin bloquear todavía el sistema. El defensor ve las facciones atacantes, pero no unidades ni puntos hasta que llegan las tropas.
+- Los ataques en camino se señalan con un círculo rojo público desde su salida, sin bloquear todavía el sistema. El defensor ve las facciones atacantes, una ruta de aproximación y el tiempo restante, pero no unidades ni puntos hasta que llegan las tropas. La ruta usa `get_defender_incoming_attack_routes()` y no concede acceso a la orden real.
+- Cada participante atacante que haya aceptado una coalición ve la orden en Tropas, con todas las unidades de las facciones aliadas, aunque no haya creado la coalición. La fuerza conjunta también se muestra como grupo en tránsito al inspeccionar el origen o el objetivo.
 - El dueño o una facción con tropas presentes en el sistema desde el que sale un ataque ve la fuerza atacante completa si estaba allí cuando partió. Esta información se fija al lanzar el ataque: llegar al origen después no revela unidades ni puntos retroactivamente. Admin mantiene visión total.
-- Las tropas que ya están moviéndose no cuentan como guarnición del sistema de origen, aunque su última ubicación almacenada siga siendo ese sistema. Se consultan en Tropas y en la operación correspondiente, no en la lista de tropas presentes.
+- Las tropas que ya están moviéndose no cuentan como guarnición del sistema de origen, aunque su última ubicación almacenada siga siendo ese sistema. El dueño las ve en un grupo separado de tránsito y en Tropas; no se presentan como unidades estacionadas.
 - La consulta pública `get_public_incoming_attack_alerts()` solo devuelve identificadores de facción atacante al dueño del sistema y al admin. `get_visible_movement_order_units()` nunca revela unidades de tramos enemigos.
 
 La información oculta incluye:

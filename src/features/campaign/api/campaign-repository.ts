@@ -123,6 +123,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       movementsResult,
       movementUnitsResult,
       incomingAttackAlertsResult,
+      defenderIncomingAttackRoutesResult,
       passageRequestsResult,
       battleOperationsResult,
       battleOperationMembersResult,
@@ -161,6 +162,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       supabase.rpc("get_visible_movement_orders"),
       supabase.rpc("get_visible_movement_order_units"),
       supabase.rpc("get_public_incoming_attack_alerts"),
+      supabase.rpc("get_defender_incoming_attack_routes"),
       supabase.from("movement_passage_requests").select("*").order("created_at", { ascending: false }),
       supabase.from("battle_operations").select("*").order("created_at", { ascending: false }),
       supabase.from("battle_operation_members").select("*").order("created_at"),
@@ -284,6 +286,12 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       incomingAttackAlerts: getRows(incomingAttackAlertsResult, "incoming_attack_alerts").map((row) => ({
         systemId: row.system_id as string,
         attackerFactionIds: Array.isArray(row.attacker_faction_ids) ? row.attacker_faction_ids as string[] : []
+      })),
+      defenderIncomingAttackRoutes: getRows(defenderIncomingAttackRoutesResult, "defender_incoming_attack_routes").map((row) => ({
+        fromSystemId: row.from_system_id as string,
+        toSystemId: row.to_system_id as string,
+        departureAt: row.departure_at as string,
+        arrivalAt: row.arrival_at as string
       })),
       passageRequests: getRows(passageRequestsResult, "movement_passage_requests").map(mapPassageRequest),
       battleLimits,
