@@ -27,7 +27,7 @@ import type {
 } from "@/domain/campaign";
 import { cancelMovementOrder, canUseMovementRpc } from "@/features/movement/api/movement-api";
 import { formatUnitKeywords } from "@/features/units/lib/character-ranks";
-import { getRecruitmentSystemName } from "@/features/units/lib/unit-operational-status";
+import { getJoinedCoalitionAttackOrderIds, getRecruitmentSystemName } from "@/features/units/lib/unit-operational-status";
 import { formatCountdown, formatDurationSeconds } from "@/lib/time";
 
 type TroopRosterModalProps = {
@@ -75,16 +75,26 @@ export function TroopRosterModal({ open, snapshot, onClose }: TroopRosterModalPr
     [currentFactionId, snapshot.units]
   );
   const unitById = useMemo(() => new Map(units.map((unit) => [unit.id, unit])), [units]);
+  const visibleUnitById = useMemo(
+    () => new Map(snapshot.units.map((unit) => [unit.id, unit])),
+    [snapshot.units]
+  );
+  const joinedCoalitionAttackOrderIds = useMemo(
+    () => getJoinedCoalitionAttackOrderIds(snapshot, currentFactionId),
+    [currentFactionId, snapshot]
+  );
   const activeMovements = useMemo(
     () =>
       snapshot.movements
         .filter(
           (movement) =>
-            movement.factionId === currentFactionId &&
+            (movement.factionId === currentFactionId || (
+              movement.movementType === "attack" && joinedCoalitionAttackOrderIds.has(movement.id)
+            )) &&
             activeMovementStatuses.has(movement.status)
         )
         .sort(compareMovements),
-    [currentFactionId, snapshot.movements]
+    [currentFactionId, joinedCoalitionAttackOrderIds, snapshot.movements]
   );
   const combatMovements = useMemo(
     () => activeMovements.filter(isCombatMovement),
@@ -245,7 +255,7 @@ export function TroopRosterModal({ open, snapshot, onClose }: TroopRosterModalPr
                 movements={combatMovements}
                 nowMs={nowMs}
                 snapshot={snapshot}
-                unitById={unitById}
+                unitById={visibleUnitById}
               />
             ) : null}
 
@@ -457,6 +467,9 @@ function MovementOrderCard({
   const movementUnits = movement.unitIds
     .map((unitId) => unitById.get(unitId))
     .filter((unit): unit is CampaignUnit => Boolean(unit));
+  const isCoalitionAttack = movement.movementType === "attack" && snapshot.battleOperations.some(
+    (operation) => operation.mode === "coalition" && operation.attackMovementOrderId === movement.id
+  );
   const points = movementUnits.reduce((total, unit) => total + unit.points, 0);
   const models = movementUnits.reduce((total, unit) => total + unit.quantity, 0);
   const canCancel =
@@ -503,7 +516,7 @@ function MovementOrderCard({
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-2">
           <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
-            Fuerzas asignadas
+            {isCoalitionAttack ? "Fuerzas de la coalición" : "Fuerzas asignadas"}
           </span>
           <span className="text-xs tabular-nums text-slate-400">
             {movementUnits.length} {movementUnits.length === 1 ? "unidad" : "unidades"} · {models} miniaturas · {points} pts
@@ -511,7 +524,13 @@ function MovementOrderCard({
         </div>
         <div className="divide-y divide-slate-800/80">
           {movementUnits.length > 0
-            ? movementUnits.map((unit) => <UnitLine key={unit.id} unit={unit} />)
+            ? movementUnits.map((unit) => (
+                <UnitLine
+                  factionName={isCoalitionAttack ? snapshot.factions.find((faction) => faction.id === unit.factionId)?.name : undefined}
+                  key={unit.id}
+                  unit={unit}
+                />
+              ))
             : <p className="py-3 text-sm text-slate-500">No hay información disponible de las unidades asignadas.</p>}
         </div>
 
@@ -636,11 +655,14 @@ function SystemUnitPanel({ group, badge, tone }: { group: SystemUnitGroup; badge
   );
 }
 
-function UnitLine({ unit }: { unit: CampaignUnit }) {
+function UnitLine({ unit, factionName }: { unit: CampaignUnit; factionName?: string }) {
   return (
     <div className="flex flex-col gap-1 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
       <div className="min-w-0">
-        <div className="truncate text-sm font-medium text-slate-100">{unit.name}</div>
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+          <span className="truncate text-sm font-medium text-slate-100">{unit.name}</span>
+          {factionName ? <span className="text-[11px] text-cyan-200/70">{factionName}</span> : null}
+        </div>
         <div className="mt-0.5 text-[11px] text-slate-500">{formatUnitKeywords(unit)}</div>
       </div>
       <div className="shrink-0 text-xs tabular-nums text-slate-400">

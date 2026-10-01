@@ -30,7 +30,7 @@ import { BuildingActionModal } from "@/features/buildings/components/building-ac
 import { retireCampaignUnit } from "@/features/units/api/unit-api";
 import { TroopRosterModal } from "@/features/units/components/troop-roster-modal";
 import { formatUnitKeywords, getCharacterLevel, getCharacterRank, isCharacterUnit } from "@/features/units/lib/character-ranks";
-import { getUnitOperationalState } from "@/features/units/lib/unit-operational-status";
+import { getJoinedCoalitionAttackOrderIds, getUnitOperationalState } from "@/features/units/lib/unit-operational-status";
 import { formatCompactOwnedResourceValue, formatExactResourceValue } from "@/lib/resource-format";
 import { formatCountdown } from "@/lib/time";
 import { useMediaQuery, useViewportHeightCssVar } from "@/lib/use-media-query";
@@ -1004,11 +1004,12 @@ function SystemPanel({
       && unit.status !== "moving"
       && unit.quantity > 0
   );
+  const joinedCoalitionAttackOrderIds = getJoinedCoalitionAttackOrderIds(snapshot, snapshot.currentUser.factionId);
   const outgoingUnitIds = new Set(
     snapshot.movements
       .filter((movement) =>
         movement.fromSystemId === system.id
-        && movement.factionId === snapshot.currentUser.factionId
+        && (movement.factionId === snapshot.currentUser.factionId || joinedCoalitionAttackOrderIds.has(movement.id))
         && movement.status === "moving"
       )
       .flatMap((movement) => movement.unitIds)

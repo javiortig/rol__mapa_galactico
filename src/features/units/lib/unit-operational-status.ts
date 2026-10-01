@@ -12,6 +12,29 @@ export type UnitOperationalState = {
 
 const activeMovementStatuses = new Set<MovementOrder["status"]>(["pending_approval", "moving"]);
 
+export function getJoinedCoalitionAttackOrderIds(snapshot: CampaignSnapshot, factionId: string | null) {
+  if (!factionId) {
+    return new Set<string>();
+  }
+
+  const joinedOperationIds = new Set(
+    snapshot.battleOperationMembers
+      .filter((member) =>
+        member.factionId === factionId
+        && member.side === "attacker"
+        && member.invitationStatus === "accepted"
+      )
+      .map((member) => member.operationId)
+  );
+
+  return new Set(
+    snapshot.battleOperations
+      .filter((operation) => operation.mode === "coalition" && joinedOperationIds.has(operation.id))
+      .map((operation) => operation.attackMovementOrderId)
+      .filter((orderId): orderId is string => Boolean(orderId))
+  );
+}
+
 export function buildActiveMovementByUnitId(movements: MovementOrder[]) {
   const result = new Map<string, MovementOrder>();
   const activeMovements = movements
