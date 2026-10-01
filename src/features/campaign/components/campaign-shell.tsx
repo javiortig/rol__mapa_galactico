@@ -1004,6 +1004,21 @@ function SystemPanel({
       && unit.status !== "moving"
       && unit.quantity > 0
   );
+  const outgoingUnitIds = new Set(
+    snapshot.movements
+      .filter((movement) =>
+        movement.fromSystemId === system.id
+        && movement.factionId === snapshot.currentUser.factionId
+        && movement.status === "moving"
+      )
+      .flatMap((movement) => movement.unitIds)
+  );
+  const ownOutgoingUnits = snapshot.units.filter(
+    (unit) => unit.factionId === snapshot.currentUser.factionId
+      && unit.status === "moving"
+      && unit.quantity > 0
+      && outgoingUnitIds.has(unit.id)
+  );
   const hasOwnPresence = relatedUnits.some((unit) => unit.factionId === snapshot.currentUser.factionId);
   const ownReadyUnits = relatedUnits.filter(
     (unit) => unit.factionId === snapshot.currentUser.factionId && unit.status === "ready" && unit.quantity > 0
@@ -1304,9 +1319,9 @@ function SystemPanel({
           <section>
             <h2 className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">Tropas visibles</h2>
             <div className="space-y-3">
-              {visibleUnits.length > 0 || missionEnemyUnits.length > 0 || system.isTemporaryMission ? (
+              {visibleUnits.length > 0 || ownOutgoingUnits.length > 0 || missionEnemyUnits.length > 0 || system.isTemporaryMission ? (
                 <>
-                  {visibleUnits.length > 0 ? (
+                  {alliedUnits.length > 0 ? (
                     <UnitGroup
                       canRetire
                       faction={snapshot.factions.find((item) => item.id === snapshot.currentUser.factionId) ?? null}
@@ -1315,6 +1330,15 @@ function SystemPanel({
                       snapshot={snapshot}
                       title="Aliadas"
                       units={alliedUnits}
+                    />
+                  ) : null}
+                  {ownOutgoingUnits.length > 0 ? (
+                    <UnitGroup
+                      canRetire={false}
+                      faction={snapshot.factions.find((item) => item.id === snapshot.currentUser.factionId) ?? null}
+                      snapshot={snapshot}
+                      title="En tránsito desde aquí"
+                      units={ownOutgoingUnits}
                     />
                   ) : null}
                   {enemyUnitsByFaction.length > 0 || missionEnemyUnits.length > 0 || system.isTemporaryMission ? (
