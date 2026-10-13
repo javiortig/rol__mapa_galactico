@@ -39,6 +39,21 @@ const [beforeUnits, beforeQueues, beforeTemplates, afterUnits, afterQueues, afte
   backupTable("campaign_units"), backupTable("recruitment_queue"), backupTable("unit_templates"),
   currentTable("campaign_units"), currentTable("recruitment_queue"), currentTable("unit_templates")
 ]);
+const { data: otherTemplates, error: otherTemplatesError } = await supabase
+  .from("unit_templates").select("id, points, supply_cost, minerals_cost, honor_cost, gold_cost")
+  .neq("faction_id", faction.id);
+if (otherTemplatesError) throw otherTemplatesError;
+const beforeOtherTemplates = new Map(beforeTemplates.filter((item) => item.faction_id !== faction.id)
+  .map((item) => [item.id, item]));
+for (const template of otherTemplates) {
+  const previous = beforeOtherTemplates.get(template.id);
+  if (!previous) throw new Error(`Plantilla ajena creada: ${template.id}`);
+  for (const field of ["points", "supply_cost", "minerals_cost", "honor_cost", "gold_cost"]) {
+    if (template[field] !== previous[field]) {
+      throw new Error(`Plantilla ajena modificada: ${template.id}.${field}`);
+    }
+  }
+}
 const oldUnits = beforeUnits.filter((unit) => unit.faction_id === faction.id);
 const oldQueues = beforeQueues.filter((queue) => queue.faction_id === faction.id);
 const oldTemplates = beforeTemplates.filter((template) => template.faction_id === faction.id);
@@ -111,6 +126,7 @@ console.log(JSON.stringify({
   faction: faction.name,
   officialMfmSheetsVerified: refreshedUnits.length,
   officialModelOptionsVerified: refreshedUnits.reduce((sum, unit) => sum + unit.modelOptions.length, 0),
+  otherFactionTemplatesUnchanged: otherTemplates.length,
   templateCount: { before: oldTemplates.length, after: afterTemplates.length },
   unitCount: { before: oldUnits.length, after: afterUnits.length },
   queuedRecruitmentCount: oldQueues.filter((queue) => queue.status === "queued").length,
