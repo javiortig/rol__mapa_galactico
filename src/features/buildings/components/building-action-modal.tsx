@@ -230,6 +230,7 @@ function RecruitTab({
 }) {
   const queryClient = useQueryClient();
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
+  const [selectedEnchanted, setSelectedEnchanted] = useState(false);
   const [selectedModelCounts, setSelectedModelCounts] = useState<Record<string, number>>({});
   const [selectedWargearQuantities, setSelectedWargearQuantities] = useState<Record<string, Record<string, number>>>({});
   const resources = getCurrentResources(snapshot);
@@ -245,6 +246,7 @@ function RecruitTab({
     [snapshot.currentUser.factionId, snapshot.unitTemplates, template.allowedUnitCategories, template.slug]
   );
   const selectedTemplate = templates.find((item) => item.id === selectedTemplateId) ?? templates[0] ?? null;
+  const enchanted = Boolean(selectedTemplate && isCharacterUnit(selectedTemplate) && selectedEnchanted);
   const selectedModelChoices = selectedTemplate ? getModelChoices(selectedTemplate) : [];
   const selectedModelCount = selectedTemplate
     ? selectedModelCounts[selectedTemplate.id] ?? selectedModelChoices[0]?.models ?? selectedTemplate.defaultQuantity
@@ -255,10 +257,15 @@ function RecruitTab({
     : 0;
   const selectedPoints = selectedTemplate ? getVariantPoints(selectedTemplate, selectedModelCount, selectedWargearForTemplate) : 0;
   const selectedUnlocked = selectedTemplate ? isUnitTemplateUnlocked(snapshot, selectedTemplate) : false;
-  const selectedResources = selectedTemplate
-    ? getVisibleRecruitmentVariantCostResources(snapshot, selectedTemplate, selectedPoints)
+  const selectedResources: ResourceKey[] = selectedTemplate
+    ? Array.from(new Set([
+        ...getVisibleRecruitmentVariantCostResources(snapshot, selectedTemplate, selectedPoints),
+        ...(enchanted ? ["honor" as ResourceKey] : [])
+      ]))
     : [];
-  const hasResources = selectedTemplate && resources ? canAffordRecruitmentVariant(snapshot, resources, selectedTemplate, selectedPoints) : false;
+  const hasResources = selectedTemplate && resources
+    ? canAffordRecruitmentVariant(snapshot, resources, selectedTemplate, selectedPoints, enchanted ? 4 : 0)
+    : false;
   const activeQueue = getActiveBuildingQueue(snapshot, building.id);
   const currentArmyPoints = getFactionArmyPoints(snapshot, snapshot.currentUser.factionId);
   const exceedsArmyLimit = currentArmyPoints + selectedPoints > snapshot.maxArmyPoints;
@@ -272,7 +279,8 @@ function RecruitTab({
         systemBuildingId: building.id,
         unitTemplateId: selectedTemplate.id,
         modelCount: selectedModelCount,
-        wargearSelections: getWargearSelectionsForRpc(selectedTemplate, selectedWargearForTemplate, selectedModelCount)
+        wargearSelections: getWargearSelectionsForRpc(selectedTemplate, selectedWargearForTemplate, selectedModelCount),
+        enchanted
       });
     },
     onSuccess: () => {
@@ -326,7 +334,12 @@ function RecruitTab({
                         : "border-violet-300/18 bg-slate-950/45 hover:border-violet-200/45"
                   }`}
                   key={unitTemplate.id}
-                  onClick={() => setSelectedTemplateId(unitTemplate.id)}
+                  onClick={() => {
+                    if (unitTemplate.id !== selectedTemplate?.id) {
+                      setSelectedTemplateId(unitTemplate.id);
+                      setSelectedEnchanted(false);
+                    }
+                  }}
                   type="button"
                 >
                   {!unlocked ? (
@@ -463,6 +476,27 @@ function RecruitTab({
               </div>
             ) : null}
 
+            {isCharacterUnit(selectedTemplate) ? (
+              <button
+                aria-pressed={enchanted}
+                className={`flex w-full items-center justify-between gap-3 rounded-md border px-3 py-2.5 text-left transition-colors ${
+                  enchanted
+                    ? "border-violet-300/55 bg-violet-400/12 text-violet-50"
+                    : "border-slate-600/45 bg-slate-950/45 text-slate-300 hover:border-violet-300/35"
+                }`}
+                disabled={mutation.isPending}
+                onClick={() => setSelectedEnchanted((value) => !value)}
+                type="button"
+              >
+                <span className="inline-flex items-center gap-2 text-sm font-medium">
+                  <Sparkles size={16} /> Encantado
+                </span>
+                <span className="inline-flex items-center gap-2 text-xs tabular-nums">
+                  <ResourceIcon className="size-4" resource="honor" /> +4
+                </span>
+              </button>
+            ) : null}
+
             {!selectedUnlocked ? (
               <div className="overflow-hidden rounded-md border border-violet-300/30 bg-slate-950/55 text-sm text-violet-100">
                 <div className="flex items-center gap-2 border-b border-violet-300/15 bg-violet-400/10 px-3 py-2 text-xs uppercase tracking-[0.18em] text-violet-100/80">
@@ -499,7 +533,8 @@ function RecruitTab({
             ) : null}
 
             <CostSummary
-              getValue={(resource) => getRecruitmentVariantCost(snapshot, selectedTemplate, selectedPoints, resource)}
+              getValue={(resource) => getRecruitmentVariantCost(snapshot, selectedTemplate, selectedPoints, resource) +
+                (resource === "honor" && enchanted ? 4 : 0)}
               resources={resources}
               visibleResources={selectedResources}
             />
@@ -701,7 +736,7 @@ function QueueTab({ snapshot, building }: { snapshot: CampaignSnapshot; building
           items={recruitmentQueue.map((item) => ({
             id: item.id,
             title: item.unitName,
-            detail: getRecruitmentQueueDetail(snapshot, item),
+            detail: `${getRecruitmentQueueDetail(snapshot, item)}${item.isEnchanted ? " · Encantado" : ""}`,
             finishesAt: item.finishesAt,
             refund: getQueueRefund(item)
           }))}
@@ -1167,10 +1202,15 @@ function canAffordRecruitmentVariant(
   snapshot: CampaignSnapshot,
   resources: FactionResources,
   template: UnitTemplate,
-  points: number
+  points: number,
+  extraHonor = 0
 ) {
-  return getVisibleRecruitmentVariantCostResources(snapshot, template, points).every((resource) =>
-    resources[resource] >= getRecruitmentVariantCost(snapshot, template, points, resource)
+  const visibleResources: ResourceKey[] = extraHonor > 0
+    ? Array.from(new Set([...getVisibleRecruitmentVariantCostResources(snapshot, template, points), "honor" as ResourceKey]))
+    : getVisibleRecruitmentVariantCostResources(snapshot, template, points);
+  return visibleResources.every((resource) =>
+    resources[resource] >= getRecruitmentVariantCost(snapshot, template, points, resource) +
+      (resource === "honor" ? extraHonor : 0)
   );
 }
 

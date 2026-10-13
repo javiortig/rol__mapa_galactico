@@ -193,6 +193,7 @@ export interface CampaignUnit {
   destroyedAt?: string | null;
   rank?: string | null;
   enhancementText?: string | null;
+  isEnchanted?: boolean;
   notes?: string | null;
   selectedModelOptionId?: string | null;
   selectedWargearPoints?: number;
@@ -330,6 +331,7 @@ export interface RecruitmentQueueItem {
   selectedWargearPoints?: number;
   selectedWargearOptions?: RecruitmentWargearSelection[];
   pointCostBreakdown?: Record<string, unknown>;
+  isEnchanted?: boolean;
 }
 
 export interface UnitTemplateModelOption {

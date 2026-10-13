@@ -9,6 +9,7 @@ import {
   RotateCcw,
   Route,
   Shield,
+  Sparkles,
   Swords,
   Timer,
   UsersRound,
@@ -26,7 +27,7 @@ import type {
   UnitRecoveryQueueItem
 } from "@/domain/campaign";
 import { cancelMovementOrder, canUseMovementRpc } from "@/features/movement/api/movement-api";
-import { formatUnitKeywords } from "@/features/units/lib/character-ranks";
+import { formatUnitKeywords, isCharacterUnit } from "@/features/units/lib/character-ranks";
 import { getJoinedCoalitionAttackOrderIds, getRecruitmentSystemName } from "@/features/units/lib/unit-operational-status";
 import { formatCountdown, formatDurationSeconds } from "@/lib/time";
 
@@ -656,14 +657,27 @@ function SystemUnitPanel({ group, badge, tone }: { group: SystemUnitGroup; badge
 }
 
 function UnitLine({ unit, factionName }: { unit: CampaignUnit; factionName?: string }) {
+  const [expanded, setExpanded] = useState(false);
+
   return (
     <div className="flex flex-col gap-1 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-          <span className="truncate text-sm font-medium text-slate-100">{unit.name}</span>
+          {isCharacterUnit(unit) ? (
+            <button
+              aria-expanded={expanded}
+              className="flex min-h-8 min-w-0 items-center gap-1.5 text-left text-sm font-medium text-slate-100 hover:text-cyan-100"
+              onClick={() => setExpanded((current) => !current)}
+              type="button"
+            >
+              <span className="truncate">{unit.name}</span>
+              {unit.isEnchanted ? <Sparkles aria-label="Encantado" className="shrink-0 text-amber-300" size={14} /> : null}
+            </button>
+          ) : <span className="truncate text-sm font-medium text-slate-100">{unit.name}</span>}
           {factionName ? <span className="text-[11px] text-cyan-200/70">{factionName}</span> : null}
         </div>
         <div className="mt-0.5 text-[11px] text-slate-500">{formatUnitKeywords(unit)}</div>
+        {expanded ? <div className="mt-1 inline-flex items-center gap-1.5 text-xs text-amber-200"><Sparkles size={13} />{unit.isEnchanted ? "Encantado" : "Sin encantamiento"}</div> : null}
       </div>
       <div className="shrink-0 text-xs tabular-nums text-slate-400">
         {unit.quantity}/{unit.startingQuantity} miniaturas · {unit.woundsTaken} heridas · {unit.points} pts
@@ -686,6 +700,7 @@ function RecruitmentRow({ item, snapshot, nowMs }: { item: RecruitmentQueueItem;
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="truncate text-sm font-semibold text-slate-100">{item.unitName}</h3>
             <Badge tone="violet">Reclutando</Badge>
+            {item.isEnchanted ? <Sparkles aria-label="Encantado" className="text-amber-300" size={14} /> : null}
           </div>
           <p className="mt-1 text-xs text-slate-400">
             {item.quantity} {item.quantity === 1 ? "unidad" : "unidades"} · {totalModels}{" "}

@@ -66,7 +66,7 @@ export function applyUnitCostBalance(units, troopTreeConfig, balanceConfig, pres
     const preservedCosts = shouldPreserve ? preservedCostsBySlug.get(unitSlug(unit)) : null;
     const rule = getUnitCostRule(unit, balanceConfig);
     const costs = preservedCosts
-      ? pickUnitCosts(preservedCosts)
+      ? preservedFactionCosts(preservedCosts, unit.points, factionSlug)
       : computeBalancedUnitCosts(unit, assignment, balanceConfig);
 
     if (shouldPreserve && !preservedCosts) {
@@ -106,6 +106,20 @@ export function applyUnitCostBalance(units, troopTreeConfig, balanceConfig, pres
     goldUnitSlugs,
     summaries,
     factionSummaries: buildFactionBalanceSummaries(units, balanceConfig)
+  };
+}
+
+function preservedFactionCosts(template, points, factionSlug) {
+  if (factionSlug !== "space-marines" || Number(template.points) === Number(points)) {
+    return pickUnitCosts(template);
+  }
+
+  const scaled = scaleCostsFromTemplate(template, points);
+  return {
+    supplyCost: scaled.supply,
+    mineralsCost: scaled.minerals,
+    honorCost: scaled.honor,
+    goldCost: scaled.gold
   };
 }
 

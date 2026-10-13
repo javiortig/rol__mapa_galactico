@@ -62,6 +62,11 @@ const SOURCE_NOTE =
   "MFM oficial 11th edition. No se usa BSData/wh40k-10e como fuente de puntos, tamanos ni opciones.";
 
 async function main() {
+  if (process.argv.includes("--refresh-space-marines")) {
+    await refreshSpaceMarines();
+    return;
+  }
+
   if (process.argv.includes("--from-cache")) {
     const output = readJson(OUTPUT_PATH);
     const variableUnits = output.units.filter(
@@ -195,6 +200,75 @@ async function main() {
   console.log(`Unidades variables/opciones: ${variableUnits.length}`);
   console.log(`Conflictos con el TXT aportado: ${conflicts.length}`);
   console.log(`Unidades no encontradas: ${unmatched.length}`);
+}
+
+async function refreshSpaceMarines() {
+  const output = readJson(OUTPUT_PATH);
+  const previousCount = output.units.length;
+  const fetchedAt = new Date().toISOString();
+  const source = await loadMfmSource(new Map(), "space-marines", "Space Marines");
+  const changes = [];
+  const unavailable = [];
+
+  output.units = output.units.map((unit) => {
+    if (unit.factionSlug !== "space-marines") {
+      return unit;
+    }
+
+    const current = source.unitsByName.get(resolveMatchKey(unit))?.unit;
+    if (!current) {
+      unavailable.push(unit.name);
+      return unit;
+    }
+
+    const refreshed = buildUnitEntry({
+      provided: {
+        factionSlug: unit.factionSlug,
+        factionName: unit.factionName,
+        unitSlug: unit.unitSlug,
+        name: unit.name,
+        models: unit.provided.models,
+        points: unit.provided.points
+      },
+      mfmUnit: current,
+      mfmSource: source,
+      fetchedAt
+    });
+    const oldBase = findCostForProvidedModels(unit.modelOptions, unit.provided.models);
+    const newBase = findCostForProvidedModels(refreshed.modelOptions, unit.provided.models);
+    if (oldBase?.points !== newBase?.points) {
+      changes.push({ name: unit.name, before: oldBase?.points ?? null, after: newBase?.points ?? null });
+    }
+    return refreshed;
+  });
+
+  if (output.units.length !== previousCount || unavailable.length > 25) {
+    throw new Error("El catalogo Space Marines no se pudo cruzar con MFM de forma segura");
+  }
+
+  output.source.spaceMarinesRefreshedAt = fetchedAt;
+  writeText(OUTPUT_PATH, `${JSON.stringify(output, null, 2)}\n`);
+  updateSeedCostOptions(output.units);
+  writeText("docs/generated/space-marines-mfm-refresh.md", [
+    "# Space Marines: actualizacion MFM",
+    "",
+    `Fuente: ${source.url}`,
+    `Consultada: ${fetchedAt}`,
+    "",
+    "Las fichas ausentes en MFM conservan sus valores previos; no se inventan puntos.",
+    "",
+    "## Cambios de la configuracion base",
+    "",
+    "| Unidad | Antes | Ahora |",
+    "|---|---:|---:|",
+    ...changes.map((item) => `| ${item.name} | ${item.before ?? "sin opcion"} | ${item.after ?? "sin opcion"} |`),
+    "",
+    "## Sin ficha vigente en MFM",
+    "",
+    ...unavailable.map((name) => `- ${name}`),
+    ""
+  ].join("\n"));
+  console.log(`Space Marines: ${source.unitCount} fichas MFM, ${changes.length} bases cambiadas, ${unavailable.length} sin ficha vigente`);
 }
 
 function buildCachedReport(output, variableUnits, unmatched) {

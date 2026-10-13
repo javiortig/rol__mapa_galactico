@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AlertTriangle, Bell, Building2, Check, Clock3, Cpu, Crosshair, Factory, Gem, HandCoins, Hammer, Landmark, MapPin, Megaphone, Minus, MousePointer2, Plus, RadioTower, Route, Shield, Swords, Undo2, X } from "lucide-react";
+import { AlertTriangle, Bell, Building2, Check, Clock3, Cpu, Crosshair, Factory, Gem, HandCoins, Hammer, Landmark, MapPin, Megaphone, Minus, MousePointer2, Plus, RadioTower, Route, Shield, Sparkles, Swords, Undo2, X } from "lucide-react";
 import { getCampaignSnapshot, isCampaignAuthRequiredError } from "@/features/campaign/api/campaign-repository";
 import { useCampaignUiStore } from "@/features/campaign/store/campaign-ui-store";
 import { Badge } from "@/components/ui/badge";
@@ -1578,6 +1578,8 @@ function UnitGroup({
   retirePendingUnitId?: string | null;
   onRetireUnit?: (unit: CampaignUnit) => void;
 }) {
+  const [expandedCharacterId, setExpandedCharacterId] = useState<string | null>(null);
+
   return (
     <div className="rounded-md border border-cyan-200/12 bg-slate-950/22 p-2.5">
       <div className="mb-2 flex items-center justify-between gap-2">
@@ -1599,7 +1601,19 @@ function UnitGroup({
               <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3" key={unit.id}>
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="truncate text-sm font-medium text-slate-100">{unit.name}</div>
+                    {isCharacterUnit(unit) ? (
+                      <button
+                        aria-expanded={expandedCharacterId === unit.id}
+                        className="flex min-h-8 max-w-full items-center gap-1.5 text-left text-sm font-medium text-slate-100 hover:text-cyan-100"
+                        onClick={() => setExpandedCharacterId((current) => current === unit.id ? null : unit.id)}
+                        type="button"
+                      >
+                        <span className="truncate">{unit.name}</span>
+                        {unit.isEnchanted ? <Sparkles aria-label="Encantado" className="shrink-0 text-amber-300" size={14} /> : null}
+                      </button>
+                    ) : (
+                      <div className="truncate text-sm font-medium text-slate-100">{unit.name}</div>
+                    )}
                     <div className="mt-1 text-xs text-slate-400">
                       {formatUnitStrength(unit)} - {formatUnitKeywords(unit)}
                     </div>
@@ -1618,6 +1632,11 @@ function UnitGroup({
                     {characterRank ? (
                       <div className="mt-1 text-xs text-amber-100">
                         Nivel {getCharacterLevel(unit)} - {characterRank}
+                      </div>
+                    ) : null}
+                    {expandedCharacterId === unit.id ? (
+                      <div className="mt-2 inline-flex items-center gap-1.5 text-xs text-amber-200">
+                        <Sparkles size={13} /> {unit.isEnchanted ? "Encantado" : "Sin encantamiento"}
                       </div>
                     ) : null}
                     {equippedRelics.length > 0 ? (

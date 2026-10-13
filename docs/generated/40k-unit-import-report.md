@@ -12,7 +12,7 @@ Generado por `npm run units:generate` desde `data/11th40kPoints.txt`.
 - Unidades con keywords reales cruzadas: 362.
 - Cruces BSData faltantes: 0.
 - Fallback heuristico: 0.
-- Puntos base actualizados desde MFM: 149.
+- Puntos base actualizados desde MFM: 167.
 - Material Industrial y Uridium: siempre 0 en costes de unidades.
 - Disponibilidad inicial: todas las plantillas importadas quedan bloqueadas (`is_available = false`).
 
@@ -23,7 +23,7 @@ Generado por `npm run units:generate` desde `data/11th40kPoints.txt`.
 - Imperium - Agents of the Imperium: 32/32 unidades, 2800/2860 puntos.
 - Xenos - Aeldari: 64/64 unidades, 9860/10200 puntos.
 - Xenos - Genestealer Cults: 27/27 unidades, 1945/1910 puntos.
-- Imperium - Adeptus Astartes - Space Marines: 85/85 unidades, 10565/10785 puntos.
+- Imperium - Adeptus Astartes - Space Marines: 85/85 unidades, 10890/10785 puntos.
 - Imperium - Adeptus Custodes: 51/51 unidades, 16160/16160 puntos.
 - Cultos Genestealer - FINAL DAY TYRANIDS: 14/14 unidades, 1450/1450 puntos.
 - El Caos - Death Guard: 15/15 unidades, 1940/1940 puntos.
@@ -142,42 +142,60 @@ Generado por `npm run units:generate` desde `data/11th40kPoints.txt`.
 - Xenos - Genestealer Cults: Goliath Truck (1 modelos) 85 -> 75 pts
 - Xenos - Genestealer Cults: Hybrid Metamorphs (5 modelos) 70 -> 75 pts
 - Imperium - Adeptus Astartes - Space Marines: Ancient (1 modelos) 50 -> 40 pts
-- Imperium - Adeptus Astartes - Space Marines: Ancient in Terminator Armor (1 modelos) 75 -> 65 pts
-- Imperium - Adeptus Astartes - Space Marines: Bladeguard Ancient (1 modelos) 45 -> 40 pts
-- Imperium - Adeptus Astartes - Space Marines: Captain in Terminator Armour (1 modelos) 95 -> 85 pts
-- Imperium - Adeptus Astartes - Space Marines: Chaplain on Bike (1 modelos) 75 -> 70 pts
-- Imperium - Adeptus Astartes - Space Marines: Judiciar (1 modelos) 70 -> 55 pts
-- Imperium - Adeptus Astartes - Space Marines: Librarian (1 modelos) 65 -> 70 pts
-- Imperium - Adeptus Astartes - Space Marines: Lieutenant (1 modelos) 55 -> 45 pts
-- Imperium - Adeptus Astartes - Space Marines: Lieutenant in Phobos Armour (1 modelos) 55 -> 45 pts
+- Imperium - Adeptus Astartes - Space Marines: Apothecary (1 modelos) 50 -> 45 pts
+- Imperium - Adeptus Astartes - Space Marines: Apothecary Biologis (1 modelos) 70 -> 60 pts
+- Imperium - Adeptus Astartes - Space Marines: Bladeguard Ancient (1 modelos) 45 -> 70 pts
+- Imperium - Adeptus Astartes - Space Marines: Captain (1 modelos) 80 -> 90 pts
+- Imperium - Adeptus Astartes - Space Marines: Captain in Gravis Armour (1 modelos) 80 -> 90 pts
+- Imperium - Adeptus Astartes - Space Marines: Captain in Phobos Armour (1 modelos) 70 -> 75 pts
+- Imperium - Adeptus Astartes - Space Marines: Captain in Terminator Armour (1 modelos) 95 -> 90 pts
+- Imperium - Adeptus Astartes - Space Marines: Captain with Jump Pack (1 modelos) 75 -> 90 pts
+- Imperium - Adeptus Astartes - Space Marines: Judiciar (1 modelos) 70 -> 50 pts
+- Imperium - Adeptus Astartes - Space Marines: Librarian (1 modelos) 65 -> 75 pts
+- Imperium - Adeptus Astartes - Space Marines: Librarian in Phobos Armour (1 modelos) 70 -> 75 pts
+- Imperium - Adeptus Astartes - Space Marines: Librarian in Terminator Armour (1 modelos) 75 -> 80 pts
+- Imperium - Adeptus Astartes - Space Marines: Lieutenant (1 modelos) 55 -> 50 pts
+- Imperium - Adeptus Astartes - Space Marines: Lieutenant in Phobos Armour (1 modelos) 55 -> 40 pts
 - Imperium - Adeptus Astartes - Space Marines: Lieutenant in Reiver Armour (1 modelos) 55 -> 45 pts
-- Imperium - Adeptus Astartes - Space Marines: Lieutenant with Combi-weapon (1 modelos) 85 -> 95 pts
-- Imperium - Adeptus Astartes - Space Marines: Aggressor Squad (3 modelos) 95 -> 80 pts
-- Imperium - Adeptus Astartes - Space Marines: Assault Intercessors with Jump Packs (5 modelos) 90 -> 85 pts
-- Imperium - Adeptus Astartes - Space Marines: Brutalis Dreadnought (1 modelos) 160 -> 150 pts
-- Imperium - Adeptus Astartes - Space Marines: Desolation Squad (5 modelos) 200 -> 180 pts
+- Imperium - Adeptus Astartes - Space Marines: Assault Intercessor Squad (5 modelos) 75 -> 85 pts
+- Imperium - Adeptus Astartes - Space Marines: Heavy Intercessor Squad (5 modelos) 100 -> 115 pts
+- Imperium - Adeptus Astartes - Space Marines: Intercessor Squad (5 modelos) 80 -> 85 pts
+- Imperium - Adeptus Astartes - Space Marines: Aggressor Squad (3 modelos) 95 -> 90 pts
+- Imperium - Adeptus Astartes - Space Marines: Assault Intercessors with Jump Packs (5 modelos) 90 -> 95 pts
+- Imperium - Adeptus Astartes - Space Marines: Astraeus (1 modelos) 525 -> 550 pts
+- Imperium - Adeptus Astartes - Space Marines: Bladeguard Veteran Squad (3 modelos) 80 -> 90 pts
+- Imperium - Adeptus Astartes - Space Marines: Company Heroes (4 modelos) 105 -> 125 pts
+- Imperium - Adeptus Astartes - Space Marines: Desolation Squad (5 modelos) 200 -> 140 pts
 - Imperium - Adeptus Astartes - Space Marines: Drop Pod (1 modelos) 70 -> 60 pts
-- Imperium - Adeptus Astartes - Space Marines: Eliminator Squad (3 modelos) 85 -> 75 pts
+- Imperium - Adeptus Astartes - Space Marines: Firestrike Servo-Turrets (1 modelos) 75 -> 80 pts
+- Imperium - Adeptus Astartes - Space Marines: Gladiator Reaper (1 modelos) 160 -> 165 pts
+- Imperium - Adeptus Astartes - Space Marines: Gladiator Valiant (1 modelos) 150 -> 165 pts
+- Imperium - Adeptus Astartes - Space Marines: Hellblaster Squad (5 modelos) 110 -> 115 pts
 - Imperium - Adeptus Astartes - Space Marines: Impulsor (1 modelos) 80 -> 70 pts
-- Imperium - Adeptus Astartes - Space Marines: Inceptor Squad (3 modelos) 120 -> 125 pts
-- Imperium - Adeptus Astartes - Space Marines: Incursor Squad (5 modelos) 80 -> 85 pts
-- Imperium - Adeptus Astartes - Space Marines: Infernus Squad (5 modelos) 90 -> 85 pts
-- Imperium - Adeptus Astartes - Space Marines: Infiltrator Squad (5 modelos) 100 -> 110 pts
-- Imperium - Adeptus Astartes - Space Marines: Land Raider Redeemer (1 modelos) 270 -> 250 pts
-- Imperium - Adeptus Astartes - Space Marines: Outrider Squad (3 modelos) 80 -> 70 pts
+- Imperium - Adeptus Astartes - Space Marines: Inceptor Squad (3 modelos) 120 -> 130 pts
+- Imperium - Adeptus Astartes - Space Marines: Incursor Squad (5 modelos) 80 -> 90 pts
+- Imperium - Adeptus Astartes - Space Marines: Infernus Squad (5 modelos) 90 -> 95 pts
+- Imperium - Adeptus Astartes - Space Marines: Infiltrator Squad (5 modelos) 100 -> 85 pts
+- Imperium - Adeptus Astartes - Space Marines: Invictor Tactical Warsuit (1 modelos) 125 -> 135 pts
+- Imperium - Adeptus Astartes - Space Marines: Land Raider (1 modelos) 220 -> 245 pts
+- Imperium - Adeptus Astartes - Space Marines: Land Raider Crusader (1 modelos) 220 -> 230 pts
+- Imperium - Adeptus Astartes - Space Marines: Land Raider Redeemer (1 modelos) 270 -> 245 pts
 - Imperium - Adeptus Astartes - Space Marines: Razorback (1 modelos) 95 -> 85 pts
-- Imperium - Adeptus Astartes - Space Marines: Redemptor Dreadnought (1 modelos) 205 -> 195 pts
-- Imperium - Adeptus Astartes - Space Marines: Reiver Squad (5 modelos) 80 -> 75 pts
-- Imperium - Adeptus Astartes - Space Marines: Repulsor (1 modelos) 180 -> 170 pts
-- Imperium - Adeptus Astartes - Space Marines: Repulsor Executioner (1 modelos) 230 -> 255 pts
-- Imperium - Adeptus Astartes - Space Marines: Rhino (1 modelos) 75 -> 65 pts
+- Imperium - Adeptus Astartes - Space Marines: Redemptor Dreadnought (1 modelos) 205 -> 170 pts
+- Imperium - Adeptus Astartes - Space Marines: Reiver Squad (5 modelos) 80 -> 85 pts
+- Imperium - Adeptus Astartes - Space Marines: Repulsor (1 modelos) 180 -> 190 pts
+- Imperium - Adeptus Astartes - Space Marines: Repulsor Executioner (1 modelos) 230 -> 260 pts
+- Imperium - Adeptus Astartes - Space Marines: Rhino (1 modelos) 75 -> 70 pts
 - Imperium - Adeptus Astartes - Space Marines: Scout Squad (5 modelos) 70 -> 65 pts
-- Imperium - Adeptus Astartes - Space Marines: Storm Speeder Hailstrike (1 modelos) 115 -> 105 pts
+- Imperium - Adeptus Astartes - Space Marines: Sternguard Veteran Squad (5 modelos) 100 -> 105 pts
+- Imperium - Adeptus Astartes - Space Marines: Storm Speeder Hailstrike (1 modelos) 115 -> 110 pts
 - Imperium - Adeptus Astartes - Space Marines: Storm Speeder Hammerstrike (1 modelos) 125 -> 140 pts
+- Imperium - Adeptus Astartes - Space Marines: Storm Speeder Thunderstrike (1 modelos) 135 -> 140 pts
 - Imperium - Adeptus Astartes - Space Marines: Suppressor Squad (3 modelos) 75 -> 85 pts
-- Imperium - Adeptus Astartes - Space Marines: Terminator Assault Squad (5 modelos) 180 -> 155 pts
-- Imperium - Adeptus Astartes - Space Marines: Terminator Squad (5 modelos) 170 -> 160 pts
-- Imperium - Adeptus Astartes - Space Marines: Vanguard Veteran Squad with Jump Packs (5 modelos) 100 -> 105 pts
+- Imperium - Adeptus Astartes - Space Marines: Terminator Assault Squad (5 modelos) 180 -> 170 pts
+- Imperium - Adeptus Astartes - Space Marines: Terminator Squad (5 modelos) 170 -> 190 pts
+- Imperium - Adeptus Astartes - Space Marines: Thunderhawk Gunship (1 modelos) 840 -> 850 pts
+- Imperium - Adeptus Astartes - Space Marines: Vanguard Veteran Squad with Jump Packs (5 modelos) 100 -> 110 pts
 - Imperium - Adeptus Astartes - Space Marines: Whirlwind (1 modelos) 190 -> 175 pts
 - Imperium - Adeptus Custodes: Aleya (1 modelos) 65 -> 55 pts
 - Imperium - Adeptus Custodes: Blade Champion (1 modelos) 120 -> 110 pts

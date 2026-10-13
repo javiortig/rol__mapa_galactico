@@ -44,12 +44,14 @@ export async function recruitUnitVariantAtBuilding({
   systemBuildingId,
   unitTemplateId,
   modelCount,
-  wargearSelections
+  wargearSelections,
+  enchanted = false
 }: {
   systemBuildingId: string;
   unitTemplateId: string;
   modelCount: number;
   wargearSelections: { slug: string; quantity: number }[];
+  enchanted?: boolean;
 }) {
   const supabase = getSupabaseBrowserClient();
 
@@ -61,7 +63,8 @@ export async function recruitUnitVariantAtBuilding({
     system_building_id: systemBuildingId,
     unit_template_id: unitTemplateId,
     model_count: modelCount,
-    wargear_selections: wargearSelections
+    wargear_selections: wargearSelections,
+    enchanted
   });
 
   if (error) {

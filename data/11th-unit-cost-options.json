@@ -4,7 +4,8 @@
     "kind": "mfm",
     "url": "https://mfm.warhammer-community.com/en",
     "fetchedAt": "2026-09-20T19:59:25.284Z",
-    "note": "MFM oficial 11th edition. No se usa BSData/wh40k-10e como fuente de puntos, tamanos ni opciones. El catálogo previo se conserva y Death Guard se extrajo de /death-guard."
+    "note": "MFM oficial 11th edition. No se usa BSData/wh40k-10e como fuente de puntos, tamanos ni opciones. El catálogo previo se conserva y Death Guard se extrajo de /death-guard.",
+    "spaceMarinesRefreshedAt": "2026-10-13T13:34:51.173Z"
   },
   "summary": {
     "providedUnits": 362,
@@ -9069,7 +9070,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9088,14 +9089,17 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 65,
+          "points": 75,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         }
       ],
       "wargearOptions": [],
@@ -9105,7 +9109,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9118,7 +9122,25 @@
         "models": 1,
         "points": 50
       },
-      "modelOptions": [],
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 45,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
+        }
+      ],
       "wargearOptions": [],
       "rosterModifiers": [],
       "matchStatus": "matched",
@@ -9126,7 +9148,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9145,14 +9167,17 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 70,
+          "points": 60,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "down",
+            "amount": -10
+          }
         }
       ],
       "wargearOptions": [],
@@ -9162,7 +9187,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9181,14 +9206,17 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 40,
+          "points": 70,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 30
+          }
         }
       ],
       "wargearOptions": [],
@@ -9198,7 +9226,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9217,14 +9245,17 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 80,
+          "points": 90,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         }
       ],
       "wargearOptions": [],
@@ -9234,7 +9265,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9253,14 +9284,17 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 80,
+          "points": 90,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         }
       ],
       "wargearOptions": [],
@@ -9270,7 +9304,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9289,14 +9323,17 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 70,
+          "points": 75,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         }
       ],
       "wargearOptions": [],
@@ -9306,7 +9343,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9325,14 +9362,17 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 85,
+          "points": 90,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         }
       ],
       "wargearOptions": [],
@@ -9342,7 +9382,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9361,14 +9401,17 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 75,
+          "points": 90,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 15
+          }
         }
       ],
       "wargearOptions": [],
@@ -9378,7 +9421,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9435,7 +9478,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9471,7 +9514,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9490,14 +9533,17 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 70,
+          "points": 75,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         }
       ],
       "wargearOptions": [],
@@ -9507,7 +9553,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9543,7 +9589,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9562,14 +9608,17 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 55,
+          "points": 50,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "down",
+            "amount": -5
+          }
         }
       ],
       "wargearOptions": [],
@@ -9579,7 +9628,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9598,48 +9647,27 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 70,
+          "points": 75,
           "copyRange": {
             "from": 1,
-            "to": 2,
-            "label": "1-2"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 80,
-          "copyRange": {
-            "from": 3,
             "to": null,
-            "label": "3+"
+            "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         }
       ],
       "wargearOptions": [],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 3,
-          "points": 10,
-          "resultingPoints": 80,
-          "minModels": 1,
-          "maxModels": 1,
-          "source": "mfm"
-        }
-      ],
+      "rosterModifiers": [],
       "matchStatus": "matched",
       "source": {
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9658,14 +9686,17 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 70,
+          "points": 75,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         }
       ],
       "wargearOptions": [],
@@ -9675,7 +9706,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9694,14 +9725,17 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 75,
+          "points": 80,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "down",
+            "amount": -5
+          }
         }
       ],
       "wargearOptions": [],
@@ -9711,7 +9745,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9751,14 +9785,17 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 45,
+          "points": 50,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         }
       ],
       "wargearOptions": [],
@@ -9768,7 +9805,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9787,14 +9824,17 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 45,
+          "points": 40,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "down",
+            "amount": -5
+          }
         }
       ],
       "wargearOptions": [],
@@ -9804,7 +9844,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9859,14 +9899,17 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 95,
+          "points": 85,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "down",
+            "amount": -10
+          }
         }
       ],
       "wargearOptions": [],
@@ -9876,7 +9919,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9912,7 +9955,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -9952,28 +9995,34 @@
           "minModels": 5,
           "maxModels": 5,
           "label": "5 models",
-          "points": 75,
+          "points": 85,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         },
         {
           "models": 10,
           "minModels": 10,
           "maxModels": 10,
           "label": "10 models",
-          "points": 150,
+          "points": 170,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 20
+          }
         }
       ],
       "wargearOptions": [],
@@ -9983,7 +10032,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -10002,28 +10051,34 @@
           "minModels": 5,
           "maxModels": 5,
           "label": "5 models",
-          "points": 100,
+          "points": 115,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 15
+          }
         },
         {
           "models": 10,
           "minModels": 10,
           "maxModels": 10,
           "label": "10 models",
-          "points": 200,
+          "points": 230,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 30
+          }
         }
       ],
       "wargearOptions": [],
@@ -10033,7 +10088,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -10052,28 +10107,34 @@
           "minModels": 5,
           "maxModels": 5,
           "label": "5 models",
-          "points": 80,
+          "points": 85,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         },
         {
           "models": 10,
           "minModels": 10,
           "maxModels": 10,
           "label": "10 models",
-          "points": 150,
+          "points": 170,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 20
+          }
         }
       ],
       "wargearOptions": [],
@@ -10083,7 +10144,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -10138,85 +10199,44 @@
           "minModels": 3,
           "maxModels": 3,
           "label": "3 models",
-          "points": 80,
-          "copyRange": {
-            "from": 1,
-            "to": 2,
-            "label": "1-2"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 6,
-          "minModels": 6,
-          "maxModels": 6,
-          "label": "6 models",
-          "points": 165,
-          "copyRange": {
-            "from": 1,
-            "to": 2,
-            "label": "1-2"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 3,
-          "minModels": 3,
-          "maxModels": 3,
-          "label": "3 models",
           "points": 90,
           "copyRange": {
-            "from": 3,
+            "from": 1,
             "to": null,
-            "label": "3+"
+            "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         },
         {
           "models": 6,
           "minModels": 6,
           "maxModels": 6,
           "label": "6 models",
-          "points": 175,
+          "points": 180,
           "copyRange": {
-            "from": 3,
+            "from": 1,
             "to": null,
-            "label": "3+"
+            "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 15
+          }
         }
       ],
       "wargearOptions": [],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 3,
-          "points": 10,
-          "resultingPoints": 90,
-          "minModels": 3,
-          "maxModels": 3,
-          "source": "mfm"
-        },
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 3,
-          "points": 10,
-          "resultingPoints": 175,
-          "minModels": 6,
-          "maxModels": 6,
-          "source": "mfm"
-        }
-      ],
+      "rosterModifiers": [],
       "matchStatus": "matched",
       "source": {
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -10235,56 +10255,68 @@
           "minModels": 5,
           "maxModels": 5,
           "label": "5 models",
-          "points": 85,
+          "points": 95,
           "copyRange": {
             "from": 1,
             "to": 2,
             "label": "1-2"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         },
         {
           "models": 10,
           "minModels": 10,
           "maxModels": 10,
           "label": "10 models",
-          "points": 160,
+          "points": 190,
           "copyRange": {
             "from": 1,
             "to": 2,
             "label": "1-2"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 30
+          }
         },
         {
           "models": 5,
           "minModels": 5,
           "maxModels": 5,
           "label": "5 models",
-          "points": 95,
+          "points": 105,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         },
         {
           "models": 10,
           "minModels": 10,
           "maxModels": 10,
           "label": "10 models",
-          "points": 170,
+          "points": 200,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 30
+          }
         }
       ],
       "wargearOptions": [],
@@ -10293,7 +10325,7 @@
           "type": "nth_copy_surcharge",
           "threshold": 3,
           "points": 10,
-          "resultingPoints": 95,
+          "resultingPoints": 105,
           "minModels": 5,
           "maxModels": 5,
           "source": "mfm"
@@ -10302,7 +10334,7 @@
           "type": "nth_copy_surcharge",
           "threshold": 3,
           "points": 10,
-          "resultingPoints": 170,
+          "resultingPoints": 200,
           "minModels": 10,
           "maxModels": 10,
           "source": "mfm"
@@ -10313,7 +10345,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -10332,28 +10364,34 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 525,
+          "points": 550,
           "copyRange": {
             "from": 1,
             "to": 1,
             "label": "1"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 25
+          }
         },
         {
           "models": 1,
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 575,
+          "points": 650,
           "copyRange": {
             "from": 2,
             "to": null,
             "label": "2+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 75
+          }
         }
       ],
       "wargearOptions": [],
@@ -10361,8 +10399,8 @@
         {
           "type": "nth_copy_surcharge",
           "threshold": 2,
-          "points": 50,
-          "resultingPoints": 575,
+          "points": 100,
+          "resultingPoints": 650,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -10373,7 +10411,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -10406,14 +10444,17 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 160,
+          "points": 170,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         }
       ],
       "wargearOptions": [],
@@ -10421,8 +10462,8 @@
         {
           "type": "nth_copy_surcharge",
           "threshold": 3,
-          "points": 10,
-          "resultingPoints": 160,
+          "points": 20,
+          "resultingPoints": 170,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -10433,7 +10474,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -10452,56 +10493,68 @@
           "minModels": 3,
           "maxModels": 3,
           "label": "3 models",
-          "points": 80,
+          "points": 90,
           "copyRange": {
             "from": 1,
             "to": 2,
             "label": "1-2"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         },
         {
           "models": 6,
           "minModels": 6,
           "maxModels": 6,
           "label": "6 models",
-          "points": 160,
+          "points": 180,
           "copyRange": {
             "from": 1,
             "to": 2,
             "label": "1-2"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 20
+          }
         },
         {
           "models": 3,
           "minModels": 3,
           "maxModels": 3,
           "label": "3 models",
-          "points": 90,
+          "points": 110,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 20
+          }
         },
         {
           "models": 6,
           "minModels": 6,
           "maxModels": 6,
           "label": "6 models",
-          "points": 170,
+          "points": 200,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 30
+          }
         }
       ],
       "wargearOptions": [],
@@ -10509,8 +10562,8 @@
         {
           "type": "nth_copy_surcharge",
           "threshold": 3,
-          "points": 10,
-          "resultingPoints": 90,
+          "points": 20,
+          "resultingPoints": 110,
           "minModels": 3,
           "maxModels": 3,
           "source": "mfm"
@@ -10518,8 +10571,8 @@
         {
           "type": "nth_copy_surcharge",
           "threshold": 3,
-          "points": 10,
-          "resultingPoints": 170,
+          "points": 20,
+          "resultingPoints": 200,
           "minModels": 6,
           "maxModels": 6,
           "source": "mfm"
@@ -10530,7 +10583,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -10549,28 +10602,34 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 150,
+          "points": 160,
           "copyRange": {
             "from": 1,
             "to": 2,
             "label": "1-2"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         },
         {
           "models": 1,
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 160,
+          "points": 180,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 20
+          }
         }
       ],
       "wargearOptions": [],
@@ -10578,8 +10637,8 @@
         {
           "type": "nth_copy_surcharge",
           "threshold": 3,
-          "points": 10,
-          "resultingPoints": 160,
+          "points": 20,
+          "resultingPoints": 180,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -10590,7 +10649,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -10718,24 +10777,51 @@
           "minModels": 4,
           "maxModels": 4,
           "label": "4 models",
-          "points": 105,
+          "points": 125,
           "copyRange": {
             "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 20
+          }
+        },
+        {
+          "models": 4,
+          "minModels": 4,
+          "maxModels": 4,
+          "label": "4 models",
+          "points": 145,
+          "copyRange": {
+            "from": 3,
             "to": null,
-            "label": "default"
+            "label": "3+"
           },
           "source": "mfm",
           "change": null
         }
       ],
       "wargearOptions": [],
-      "rosterModifiers": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 20,
+          "resultingPoints": 145,
+          "minModels": 4,
+          "maxModels": 4,
+          "source": "mfm"
+        }
+      ],
       "matchStatus": "matched",
       "source": {
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -10754,37 +10840,49 @@
           "minModels": 5,
           "maxModels": 5,
           "label": "5 models",
-          "points": 180,
+          "points": 140,
           "copyRange": {
             "from": 1,
-            "to": 1,
-            "label": "1"
+            "to": 2,
+            "label": "1-2"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "down",
+            "amount": -40
+          }
         },
         {
           "models": 5,
           "minModels": 5,
           "maxModels": 5,
           "label": "5 models",
-          "points": 210,
+          "points": 150,
           "copyRange": {
-            "from": 2,
+            "from": 3,
             "to": null,
-            "label": "2+"
+            "label": "3+"
           },
           "source": "mfm",
           "change": null
         }
       ],
-      "wargearOptions": [],
+      "wargearOptions": [
+        {
+          "slug": "vengor-launcher",
+          "name": "Vengor Launcher",
+          "points": 5,
+          "pricing": "per_option",
+          "source": "mfm",
+          "change": null
+        }
+      ],
       "rosterModifiers": [
         {
           "type": "nth_copy_surcharge",
-          "threshold": 2,
-          "points": 30,
-          "resultingPoints": 210,
+          "threshold": 3,
+          "points": 10,
+          "resultingPoints": 150,
           "minModels": 5,
           "maxModels": 5,
           "source": "mfm"
@@ -10795,7 +10893,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -10941,7 +11039,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -10960,14 +11058,17 @@
           "minModels": 3,
           "maxModels": 3,
           "label": "3 models",
-          "points": 75,
+          "points": 85,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         }
       ],
       "wargearOptions": [],
@@ -10977,7 +11078,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -11093,28 +11194,34 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 75,
+          "points": 80,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         },
         {
           "models": 2,
           "minModels": 2,
           "maxModels": 2,
           "label": "2 models",
-          "points": 150,
+          "points": 160,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         }
       ],
       "wargearOptions": [],
@@ -11124,7 +11231,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -11157,14 +11264,17 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 170,
+          "points": 180,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         }
       ],
       "wargearOptions": [],
@@ -11172,8 +11282,8 @@
         {
           "type": "nth_copy_surcharge",
           "threshold": 3,
-          "points": 10,
-          "resultingPoints": 170,
+          "points": 20,
+          "resultingPoints": 180,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -11184,7 +11294,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -11203,28 +11313,34 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 160,
+          "points": 165,
           "copyRange": {
             "from": 1,
             "to": 2,
             "label": "1-2"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         },
         {
           "models": 1,
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 170,
+          "points": 185,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 15
+          }
         }
       ],
       "wargearOptions": [],
@@ -11232,8 +11348,8 @@
         {
           "type": "nth_copy_surcharge",
           "threshold": 3,
-          "points": 10,
-          "resultingPoints": 170,
+          "points": 20,
+          "resultingPoints": 185,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -11244,7 +11360,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -11263,28 +11379,34 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 150,
+          "points": 165,
           "copyRange": {
             "from": 1,
             "to": 2,
             "label": "1-2"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 15
+          }
         },
         {
           "models": 1,
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 160,
+          "points": 185,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 25
+          }
         }
       ],
       "wargearOptions": [],
@@ -11292,8 +11414,8 @@
         {
           "type": "nth_copy_surcharge",
           "threshold": 3,
-          "points": 10,
-          "resultingPoints": 160,
+          "points": 20,
+          "resultingPoints": 185,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -11304,7 +11426,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -11359,11 +11481,45 @@
           "minModels": 5,
           "maxModels": 5,
           "label": "5 models",
-          "points": 110,
+          "points": 115,
           "copyRange": {
             "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
+        },
+        {
+          "models": 10,
+          "minModels": 10,
+          "maxModels": 10,
+          "label": "10 models",
+          "points": 230,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
+        },
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 130,
+          "copyRange": {
+            "from": 3,
             "to": null,
-            "label": "default"
+            "label": "3+"
           },
           "source": "mfm",
           "change": null
@@ -11373,24 +11529,43 @@
           "minModels": 10,
           "maxModels": 10,
           "label": "10 models",
-          "points": 220,
+          "points": 245,
           "copyRange": {
-            "from": 1,
+            "from": 3,
             "to": null,
-            "label": "default"
+            "label": "3+"
           },
           "source": "mfm",
           "change": null
         }
       ],
       "wargearOptions": [],
-      "rosterModifiers": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 15,
+          "resultingPoints": 130,
+          "minModels": 5,
+          "maxModels": 5,
+          "source": "mfm"
+        },
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 15,
+          "resultingPoints": 245,
+          "minModels": 10,
+          "maxModels": 10,
+          "source": "mfm"
+        }
+      ],
       "matchStatus": "matched",
       "source": {
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -11433,7 +11608,16 @@
           "change": null
         }
       ],
-      "wargearOptions": [],
+      "wargearOptions": [
+        {
+          "slug": "orbital-comms-array",
+          "name": "Orbital Comms Array",
+          "points": 10,
+          "pricing": "per_option",
+          "source": "mfm",
+          "change": null
+        }
+      ],
       "rosterModifiers": [
         {
           "type": "nth_copy_surcharge",
@@ -11450,7 +11634,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -11469,56 +11653,68 @@
           "minModels": 3,
           "maxModels": 3,
           "label": "3 models",
-          "points": 125,
+          "points": 130,
           "copyRange": {
             "from": 1,
             "to": 2,
             "label": "1-2"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         },
         {
           "models": 6,
           "minModels": 6,
           "maxModels": 6,
           "label": "6 models",
-          "points": 250,
+          "points": 260,
           "copyRange": {
             "from": 1,
             "to": 2,
             "label": "1-2"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         },
         {
           "models": 3,
           "minModels": 3,
           "maxModels": 3,
           "label": "3 models",
-          "points": 140,
+          "points": 150,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         },
         {
           "models": 6,
           "minModels": 6,
           "maxModels": 6,
           "label": "6 models",
-          "points": 265,
+          "points": 280,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 15
+          }
         }
       ],
       "wargearOptions": [],
@@ -11526,8 +11722,8 @@
         {
           "type": "nth_copy_surcharge",
           "threshold": 3,
-          "points": 15,
-          "resultingPoints": 140,
+          "points": 20,
+          "resultingPoints": 150,
           "minModels": 3,
           "maxModels": 3,
           "source": "mfm"
@@ -11535,8 +11731,8 @@
         {
           "type": "nth_copy_surcharge",
           "threshold": 3,
-          "points": 15,
-          "resultingPoints": 265,
+          "points": 20,
+          "resultingPoints": 280,
           "minModels": 6,
           "maxModels": 6,
           "source": "mfm"
@@ -11547,7 +11743,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -11566,56 +11762,68 @@
           "minModels": 5,
           "maxModels": 5,
           "label": "5 models",
-          "points": 85,
+          "points": 90,
           "copyRange": {
             "from": 1,
             "to": 2,
             "label": "1-2"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         },
         {
           "models": 10,
           "minModels": 10,
           "maxModels": 10,
           "label": "10 models",
-          "points": 150,
+          "points": 170,
           "copyRange": {
             "from": 1,
             "to": 2,
             "label": "1-2"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 20
+          }
         },
         {
           "models": 5,
           "minModels": 5,
           "maxModels": 5,
           "label": "5 models",
-          "points": 95,
+          "points": 100,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         },
         {
           "models": 10,
           "minModels": 10,
           "maxModels": 10,
           "label": "10 models",
-          "points": 160,
+          "points": 180,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 20
+          }
         }
       ],
       "wargearOptions": [],
@@ -11624,7 +11832,7 @@
           "type": "nth_copy_surcharge",
           "threshold": 3,
           "points": 10,
-          "resultingPoints": 95,
+          "resultingPoints": 100,
           "minModels": 5,
           "maxModels": 5,
           "source": "mfm"
@@ -11633,7 +11841,7 @@
           "type": "nth_copy_surcharge",
           "threshold": 3,
           "points": 10,
-          "resultingPoints": 160,
+          "resultingPoints": 180,
           "minModels": 10,
           "maxModels": 10,
           "source": "mfm"
@@ -11644,7 +11852,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -11663,11 +11871,45 @@
           "minModels": 5,
           "maxModels": 5,
           "label": "5 models",
-          "points": 85,
+          "points": 95,
           "copyRange": {
             "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
+        },
+        {
+          "models": 10,
+          "minModels": 10,
+          "maxModels": 10,
+          "label": "10 models",
+          "points": 190,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
+        },
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 105,
+          "copyRange": {
+            "from": 3,
             "to": null,
-            "label": "default"
+            "label": "3+"
           },
           "source": "mfm",
           "change": null
@@ -11677,24 +11919,43 @@
           "minModels": 10,
           "maxModels": 10,
           "label": "10 models",
-          "points": 180,
+          "points": 200,
           "copyRange": {
-            "from": 1,
+            "from": 3,
             "to": null,
-            "label": "default"
+            "label": "3+"
           },
           "source": "mfm",
           "change": null
         }
       ],
       "wargearOptions": [],
-      "rosterModifiers": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 10,
+          "resultingPoints": 105,
+          "minModels": 5,
+          "maxModels": 5,
+          "source": "mfm"
+        },
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 10,
+          "resultingPoints": 200,
+          "minModels": 10,
+          "maxModels": 10,
+          "source": "mfm"
+        }
+      ],
       "matchStatus": "matched",
       "source": {
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -11713,85 +11974,44 @@
           "minModels": 5,
           "maxModels": 5,
           "label": "5 models",
-          "points": 110,
+          "points": 85,
           "copyRange": {
             "from": 1,
-            "to": 2,
-            "label": "1-2"
+            "to": null,
+            "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "down",
+            "amount": -25
+          }
         },
         {
           "models": 10,
           "minModels": 10,
           "maxModels": 10,
           "label": "10 models",
-          "points": 180,
+          "points": 150,
           "copyRange": {
             "from": 1,
-            "to": 2,
-            "label": "1-2"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 5,
-          "minModels": 5,
-          "maxModels": 5,
-          "label": "5 models",
-          "points": 120,
-          "copyRange": {
-            "from": 3,
             "to": null,
-            "label": "3+"
+            "label": "default"
           },
           "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 10,
-          "minModels": 10,
-          "maxModels": 10,
-          "label": "10 models",
-          "points": 190,
-          "copyRange": {
-            "from": 3,
-            "to": null,
-            "label": "3+"
-          },
-          "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "down",
+            "amount": -30
+          }
         }
       ],
       "wargearOptions": [],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 3,
-          "points": 10,
-          "resultingPoints": 120,
-          "minModels": 5,
-          "maxModels": 5,
-          "source": "mfm"
-        },
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 3,
-          "points": 10,
-          "resultingPoints": 190,
-          "minModels": 10,
-          "maxModels": 10,
-          "source": "mfm"
-        }
-      ],
+      "rosterModifiers": [],
       "matchStatus": "matched",
       "source": {
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -11846,24 +12066,51 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 125,
+          "points": 135,
           "copyRange": {
             "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 150,
+          "copyRange": {
+            "from": 3,
             "to": null,
-            "label": "default"
+            "label": "3+"
           },
           "source": "mfm",
           "change": null
         }
       ],
       "wargearOptions": [],
-      "rosterModifiers": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 15,
+          "resultingPoints": 150,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
       "matchStatus": "matched",
       "source": {
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -11882,25 +12129,28 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 220,
+          "points": 245,
           "copyRange": {
             "from": 1,
-            "to": 2,
-            "label": "1-2"
+            "to": 1,
+            "label": "1"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 25
+          }
         },
         {
           "models": 1,
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 240,
+          "points": 265,
           "copyRange": {
-            "from": 3,
+            "from": 2,
             "to": null,
-            "label": "3+"
+            "label": "2+"
           },
           "source": "mfm",
           "change": null
@@ -11910,9 +12160,9 @@
       "rosterModifiers": [
         {
           "type": "nth_copy_surcharge",
-          "threshold": 3,
+          "threshold": 2,
           "points": 20,
-          "resultingPoints": 240,
+          "resultingPoints": 265,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -11923,7 +12173,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -11942,25 +12192,28 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 220,
+          "points": 230,
           "copyRange": {
             "from": 1,
-            "to": 2,
-            "label": "1-2"
+            "to": 1,
+            "label": "1"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         },
         {
           "models": 1,
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 240,
+          "points": 250,
           "copyRange": {
-            "from": 3,
+            "from": 2,
             "to": null,
-            "label": "3+"
+            "label": "2+"
           },
           "source": "mfm",
           "change": null
@@ -11970,9 +12223,9 @@
       "rosterModifiers": [
         {
           "type": "nth_copy_surcharge",
-          "threshold": 3,
+          "threshold": 2,
           "points": 20,
-          "resultingPoints": 240,
+          "resultingPoints": 250,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -11983,7 +12236,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -12002,25 +12255,28 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 250,
+          "points": 245,
           "copyRange": {
             "from": 1,
-            "to": 2,
-            "label": "1-2"
+            "to": 1,
+            "label": "1"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "down",
+            "amount": -15
+          }
         },
         {
           "models": 1,
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 270,
+          "points": 265,
           "copyRange": {
-            "from": 3,
+            "from": 2,
             "to": null,
-            "label": "3+"
+            "label": "2+"
           },
           "source": "mfm",
           "change": null
@@ -12030,9 +12286,9 @@
       "rosterModifiers": [
         {
           "type": "nth_copy_surcharge",
-          "threshold": 3,
+          "threshold": 2,
           "points": 20,
-          "resultingPoints": 270,
+          "resultingPoints": 265,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -12043,7 +12299,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -12062,28 +12318,34 @@
           "minModels": 3,
           "maxModels": 3,
           "label": "3 models",
-          "points": 70,
+          "points": 80,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         },
         {
           "models": 6,
           "minModels": 6,
           "maxModels": 6,
           "label": "6 models",
-          "points": 140,
+          "points": 160,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 20
+          }
         }
       ],
       "wargearOptions": [],
@@ -12093,7 +12355,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -12292,28 +12554,34 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 195,
+          "points": 170,
           "copyRange": {
             "from": 1,
             "to": 2,
             "label": "1-2"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "down",
+            "amount": -25
+          }
         },
         {
           "models": 1,
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 210,
+          "points": 190,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "down",
+            "amount": -20
+          }
         }
       ],
       "wargearOptions": [
@@ -12330,8 +12598,8 @@
         {
           "type": "nth_copy_surcharge",
           "threshold": 3,
-          "points": 15,
-          "resultingPoints": 210,
+          "points": 20,
+          "resultingPoints": 190,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -12342,7 +12610,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -12361,28 +12629,34 @@
           "minModels": 5,
           "maxModels": 5,
           "label": "5 models",
-          "points": 75,
+          "points": 85,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
         },
         {
           "models": 10,
           "minModels": 10,
           "maxModels": 10,
           "label": "10 models",
-          "points": 150,
+          "points": 165,
           "copyRange": {
             "from": 1,
             "to": null,
             "label": "default"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 15
+          }
         }
       ],
       "wargearOptions": [],
@@ -12392,7 +12666,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -12411,28 +12685,34 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 170,
+          "points": 190,
           "copyRange": {
             "from": 1,
             "to": 2,
             "label": "1-2"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 20
+          }
         },
         {
           "models": 1,
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 190,
+          "points": 210,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 20
+          }
         }
       ],
       "wargearOptions": [],
@@ -12441,7 +12721,7 @@
           "type": "nth_copy_surcharge",
           "threshold": 3,
           "points": 20,
-          "resultingPoints": 190,
+          "resultingPoints": 210,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -12452,7 +12732,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -12471,28 +12751,34 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 255,
+          "points": 260,
           "copyRange": {
             "from": 1,
             "to": 2,
             "label": "1-2"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         },
         {
           "models": 1,
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 275,
+          "points": 280,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         }
       ],
       "wargearOptions": [
@@ -12510,7 +12796,7 @@
           "type": "nth_copy_surcharge",
           "threshold": 3,
           "points": 20,
-          "resultingPoints": 275,
+          "resultingPoints": 280,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -12521,7 +12807,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -12540,28 +12826,34 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 65,
+          "points": 70,
           "copyRange": {
             "from": 1,
             "to": 3,
             "label": "1-3"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         },
         {
           "models": 1,
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 75,
+          "points": 80,
           "copyRange": {
             "from": 4,
             "to": null,
             "label": "4+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         }
       ],
       "wargearOptions": [],
@@ -12570,7 +12862,7 @@
           "type": "nth_copy_surcharge",
           "threshold": 4,
           "points": 10,
-          "resultingPoints": 75,
+          "resultingPoints": 80,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -12581,7 +12873,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -12603,8 +12895,8 @@
           "points": 65,
           "copyRange": {
             "from": 1,
-            "to": 2,
-            "label": "1-2"
+            "to": null,
+            "label": "default"
           },
           "source": "mfm",
           "change": null
@@ -12617,68 +12909,21 @@
           "points": 120,
           "copyRange": {
             "from": 1,
-            "to": 2,
-            "label": "1-2"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 5,
-          "minModels": 5,
-          "maxModels": 5,
-          "label": "5 models",
-          "points": 75,
-          "copyRange": {
-            "from": 3,
             "to": null,
-            "label": "3+"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 10,
-          "minModels": 10,
-          "maxModels": 10,
-          "label": "10 models",
-          "points": 130,
-          "copyRange": {
-            "from": 3,
-            "to": null,
-            "label": "3+"
+            "label": "default"
           },
           "source": "mfm",
           "change": null
         }
       ],
       "wargearOptions": [],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 3,
-          "points": 10,
-          "resultingPoints": 75,
-          "minModels": 5,
-          "maxModels": 5,
-          "source": "mfm"
-        },
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 3,
-          "points": 10,
-          "resultingPoints": 130,
-          "minModels": 10,
-          "maxModels": 10,
-          "source": "mfm"
-        }
-      ],
+      "rosterModifiers": [],
       "matchStatus": "matched",
       "source": {
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -12697,11 +12942,45 @@
           "minModels": 5,
           "maxModels": 5,
           "label": "5 models",
-          "points": 100,
+          "points": 105,
           "copyRange": {
             "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
+        },
+        {
+          "models": 10,
+          "minModels": 10,
+          "maxModels": 10,
+          "label": "10 models",
+          "points": 210,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
+        },
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 120,
+          "copyRange": {
+            "from": 3,
             "to": null,
-            "label": "default"
+            "label": "3+"
           },
           "source": "mfm",
           "change": null
@@ -12711,24 +12990,43 @@
           "minModels": 10,
           "maxModels": 10,
           "label": "10 models",
-          "points": 200,
+          "points": 225,
           "copyRange": {
-            "from": 1,
+            "from": 3,
             "to": null,
-            "label": "default"
+            "label": "3+"
           },
           "source": "mfm",
           "change": null
         }
       ],
       "wargearOptions": [],
-      "rosterModifiers": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 15,
+          "resultingPoints": 120,
+          "minModels": 5,
+          "maxModels": 5,
+          "source": "mfm"
+        },
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 15,
+          "resultingPoints": 225,
+          "minModels": 10,
+          "maxModels": 10,
+          "source": "mfm"
+        }
+      ],
       "matchStatus": "matched",
       "source": {
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -12747,28 +13045,34 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 105,
+          "points": 110,
           "copyRange": {
             "from": 1,
             "to": 2,
             "label": "1-2"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         },
         {
           "models": 1,
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 115,
+          "points": 120,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         }
       ],
       "wargearOptions": [],
@@ -12777,7 +13081,7 @@
           "type": "nth_copy_surcharge",
           "threshold": 3,
           "points": 10,
-          "resultingPoints": 115,
+          "resultingPoints": 120,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -12788,7 +13092,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -12848,7 +13152,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -12867,28 +13171,34 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 135,
+          "points": 140,
           "copyRange": {
             "from": 1,
             "to": 2,
             "label": "1-2"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         },
         {
           "models": 1,
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 145,
+          "points": 150,
           "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         }
       ],
       "wargearOptions": [],
@@ -12897,7 +13207,7 @@
           "type": "nth_copy_surcharge",
           "threshold": 3,
           "points": 10,
-          "resultingPoints": 145,
+          "resultingPoints": 150,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -12908,7 +13218,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -13095,11 +13405,45 @@
           "minModels": 5,
           "maxModels": 5,
           "label": "5 models",
-          "points": 155,
+          "points": 170,
           "copyRange": {
             "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 15
+          }
+        },
+        {
+          "models": 10,
+          "minModels": 10,
+          "maxModels": 10,
+          "label": "10 models",
+          "points": 340,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 30
+          }
+        },
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 210,
+          "copyRange": {
+            "from": 3,
             "to": null,
-            "label": "default"
+            "label": "3+"
           },
           "source": "mfm",
           "change": null
@@ -13109,11 +13453,11 @@
           "minModels": 10,
           "maxModels": 10,
           "label": "10 models",
-          "points": 310,
+          "points": 380,
           "copyRange": {
-            "from": 1,
+            "from": 3,
             "to": null,
-            "label": "default"
+            "label": "3+"
           },
           "source": "mfm",
           "change": null
@@ -13121,21 +13465,40 @@
       ],
       "wargearOptions": [
         {
-          "slug": "thunder-hammer",
-          "name": "Thunder Hammer",
+          "slug": "storm-shield",
+          "name": "Storm Shield",
           "points": 5,
           "pricing": "per_option",
           "source": "mfm",
           "change": null
         }
       ],
-      "rosterModifiers": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 40,
+          "resultingPoints": 210,
+          "minModels": 5,
+          "maxModels": 5,
+          "source": "mfm"
+        },
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 40,
+          "resultingPoints": 380,
+          "minModels": 10,
+          "maxModels": 10,
+          "source": "mfm"
+        }
+      ],
       "matchStatus": "matched",
       "source": {
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -13154,11 +13517,45 @@
           "minModels": 5,
           "maxModels": 5,
           "label": "5 models",
-          "points": 160,
+          "points": 190,
           "copyRange": {
             "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 30
+          }
+        },
+        {
+          "models": 10,
+          "minModels": 10,
+          "maxModels": 10,
+          "label": "10 models",
+          "points": 380,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 60
+          }
+        },
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 230,
+          "copyRange": {
+            "from": 3,
             "to": null,
-            "label": "default"
+            "label": "3+"
           },
           "source": "mfm",
           "change": null
@@ -13168,24 +13565,52 @@
           "minModels": 10,
           "maxModels": 10,
           "label": "10 models",
-          "points": 320,
+          "points": 420,
           "copyRange": {
-            "from": 1,
+            "from": 3,
             "to": null,
-            "label": "default"
+            "label": "3+"
           },
           "source": "mfm",
           "change": null
         }
       ],
-      "wargearOptions": [],
-      "rosterModifiers": [],
+      "wargearOptions": [
+        {
+          "slug": "cyclone-missile-launcher",
+          "name": "Cyclone Missile Launcher",
+          "points": 10,
+          "pricing": "per_option",
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 40,
+          "resultingPoints": 230,
+          "minModels": 5,
+          "maxModels": 5,
+          "source": "mfm"
+        },
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 40,
+          "resultingPoints": 420,
+          "minModels": 10,
+          "maxModels": 10,
+          "source": "mfm"
+        }
+      ],
       "matchStatus": "matched",
       "source": {
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -13204,24 +13629,51 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 840,
+          "points": 850,
           "copyRange": {
             "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 950,
+          "copyRange": {
+            "from": 2,
             "to": null,
-            "label": "default"
+            "label": "2+"
           },
           "source": "mfm",
           "change": null
         }
       ],
       "wargearOptions": [],
-      "rosterModifiers": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 100,
+          "resultingPoints": 950,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
       "matchStatus": "matched",
       "source": {
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {
@@ -13240,42 +13692,17 @@
           "minModels": 5,
           "maxModels": 5,
           "label": "5 models",
-          "points": 105,
+          "points": 110,
           "copyRange": {
             "from": 1,
             "to": 2,
             "label": "1-2"
           },
           "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 10,
-          "minModels": 10,
-          "maxModels": 10,
-          "label": "10 models",
-          "points": 210,
-          "copyRange": {
-            "from": 1,
-            "to": 2,
-            "label": "1-2"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 5,
-          "minModels": 5,
-          "maxModels": 5,
-          "label": "5 models",
-          "points": 115,
-          "copyRange": {
-            "from": 3,
-            "to": null,
-            "label": "3+"
-          },
-          "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 5
+          }
         },
         {
           "models": 10,
@@ -13284,12 +13711,49 @@
           "label": "10 models",
           "points": 220,
           "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 10
+          }
+        },
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 130,
+          "copyRange": {
             "from": 3,
             "to": null,
             "label": "3+"
           },
           "source": "mfm",
-          "change": null
+          "change": {
+            "direction": "up",
+            "amount": 15
+          }
+        },
+        {
+          "models": 10,
+          "minModels": 10,
+          "maxModels": 10,
+          "label": "10 models",
+          "points": 240,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 20
+          }
         }
       ],
       "wargearOptions": [],
@@ -13297,8 +13761,8 @@
         {
           "type": "nth_copy_surcharge",
           "threshold": 3,
-          "points": 10,
-          "resultingPoints": 115,
+          "points": 20,
+          "resultingPoints": 130,
           "minModels": 5,
           "maxModels": 5,
           "source": "mfm"
@@ -13306,8 +13770,8 @@
         {
           "type": "nth_copy_surcharge",
           "threshold": 3,
-          "points": 10,
-          "resultingPoints": 220,
+          "points": 20,
+          "resultingPoints": 240,
           "minModels": 10,
           "maxModels": 10,
           "source": "mfm"
@@ -13318,7 +13782,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/space-marines",
         "pageSlug": "space-marines",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-13T13:34:51.173Z"
       }
     },
     {

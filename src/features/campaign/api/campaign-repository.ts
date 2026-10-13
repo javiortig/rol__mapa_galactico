@@ -649,6 +649,7 @@ function mapCampaignUnit(row: Record<string, unknown>): CampaignUnit {
     unitTemplateId: (row.unit_template_id as string | null) ?? null,
     rank: fixOptionalSpanishText((row.rank as string | null) ?? null),
     enhancementText: fixOptionalSpanishText((row.enhancement_text as string | null) ?? null),
+    isEnchanted: Boolean(row.is_enchanted),
     notes: fixOptionalSpanishText((row.notes as string | null) ?? null),
     selectedModelOptionId: (row.selected_model_option_id as string | null) ?? null,
     selectedWargearPoints: Number(row.selected_wargear_points ?? 0),
@@ -1022,7 +1023,8 @@ function mapRecruitmentQueueItem(row: Record<string, unknown>): RecruitmentQueue
     selectedModelOptionId: (row.selected_model_option_id as string | null) ?? null,
     selectedWargearPoints: Number(row.selected_wargear_points ?? 0),
     selectedWargearOptions: mapWargearSelections(row.selected_wargear_options),
-    pointCostBreakdown: mapObject(row.point_cost_breakdown)
+    pointCostBreakdown: mapObject(row.point_cost_breakdown),
+    isEnchanted: Boolean(row.is_enchanted)
   };
 }
 
