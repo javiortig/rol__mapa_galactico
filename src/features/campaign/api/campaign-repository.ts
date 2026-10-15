@@ -115,6 +115,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       settingsResult,
       factionsResult,
       systemsResult,
+      systemBattleLimitsResult,
       edgesResult,
       productionResult,
       specialObjectsResult,
@@ -154,6 +155,7 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       supabase.from("campaign_settings").select("*").eq("id", "default").maybeSingle(),
       supabase.from("factions").select("*").order("name"),
       supabase.rpc("get_visible_systems"),
+      supabase.from("systems").select("id,battle_points_limit"),
       supabase.from("system_edges").select("*").order("slug"),
       supabase.from("system_production").select("*"),
       supabase.from("system_special_objects").select("id, system_id, name, type, is_public").eq("is_public", true),
@@ -224,6 +226,12 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
       getRows(specialObjectsResult, "system_special_objects").map(mapSpecialObject),
       (item) => item.systemId
     );
+    const battlePointsLimitBySystem = new Map(
+      getRows(systemBattleLimitsResult, "system_battle_limits").map((row) => [
+        row.id as string,
+        Number(row.battle_points_limit ?? 500)
+      ])
+    );
     const unitIdsByMovement = groupBy(
       getRows(movementUnitsResult, "movement_order_units").map(mapMovementUnit),
       (item) => item.movementOrderId
@@ -274,7 +282,8 @@ export async function getCampaignSnapshot(): Promise<CampaignSnapshot> {
         mapSystem(
           row,
           productionBySystem.get(row.id as string),
-          specialObjectsBySystem.get(row.id as string)
+          specialObjectsBySystem.get(row.id as string),
+          battlePointsLimitBySystem.get(row.id as string)
         )
       ),
       edges: getRows(edgesResult, "system_edges").map(mapEdge),
@@ -512,11 +521,13 @@ function mapFaction(row: Record<string, unknown>): Faction {
 function mapSystem(
   row: Record<string, unknown>,
   production: ResourceBundle = emptyResources,
-  specialObjects: SystemSpecialObject[] = []
+  specialObjects: SystemSpecialObject[] = [],
+  battlePointsLimit = 500
 ): StarSystem {
   return {
     id: row.id as string,
     name: fixSpanishText(row.name as string),
+    battlePointsLimit,
     x: Number(row.x),
     y: Number(row.y),
     size: Number(row.size ?? 1),
@@ -1075,6 +1086,7 @@ function mapCampaignRelic(row: Record<string, unknown>): CampaignRelic {
 function mapConflict(row: Record<string, unknown>): Conflict {
   return {
     id: row.id as string,
+    battlePointsLimit: Number(row.battle_points_limit ?? 500),
     battleOperationId: (row.battle_operation_id as string | null) ?? null,
     systemId: row.system_id as string,
     attackerFactionId: row.attacker_faction_id as string,
@@ -1089,6 +1101,7 @@ function mapConflict(row: Record<string, unknown>): Conflict {
 function mapNarrativeAttack(row: Record<string, unknown>): NarrativeAttack {
   return {
     id: row.id as string,
+    battlePointsLimit: Number(row.battle_points_limit ?? 500),
     systemId: row.system_id as string,
     narrativeFactionId: row.narrative_faction_id as string,
     description: fixSpanishText(row.description as string),

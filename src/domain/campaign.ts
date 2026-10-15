@@ -119,6 +119,7 @@ export interface Faction {
 export interface StarSystem {
   id: string;
   name: string;
+  battlePointsLimit?: number;
   x: number;
   y: number;
   size: number;
@@ -533,6 +534,7 @@ export interface CampaignRelic {
 
 export interface Conflict {
   id: string;
+  battlePointsLimit?: number;
   battleOperationId?: string | null;
   systemId: string;
   attackerFactionId: string;
@@ -569,6 +571,7 @@ export interface BattleReportValidation {
 
 export interface NarrativeAttack {
   id: string;
+  battlePointsLimit?: number;
   systemId: string;
   narrativeFactionId: string;
   description: string;

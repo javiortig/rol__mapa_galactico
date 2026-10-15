@@ -191,8 +191,9 @@ Estado jugable actual:
 - El botón `Tropas` abre el registro completo de fuerzas propias, ordenado por estado: tránsito, batalla, reabastecimiento, despliegue y reclutamiento. Cada entrada muestra ubicación o destino y el tiempo restante cuando existe un crono.
 - El botón `Operaciones` abre avisos pendientes: permisos de paso/estancia, batallas pendientes y reportes pendientes, con contador de disponibilidad de batalla y tiempo restante hasta renovar la ventana vigente de 35 días.
 - Batallas se juegan fuera de la app; la web gestiona conflicto, bloqueo, reportes, supervivientes, heridas restantes y control final.
-- Las batallas entre facciones jugadoras tienen límite de 500 puntos por bando. Las batallas narrativas contra `Orcos` o `Tiranidos` no usan ese límite.
-- `Ver misión` abre el briefing estándar de Combat Patrol equilibrada: máximo 500 puntos por bando y misiones de combat patrol.
+- Cada sistema tiene `battle_points_limit` visible en su panel (500 puntos por bando por defecto). El admin puede editarlo por sistema; los conflictos ya iniciados conservan su límite fijado al comenzar.
+- El límite se valida en backend tanto para ataques de jugadores como para ataques a facciones narrativas. Las incursiones de `Orcos` y `Tiranidos` y las misiones temporales pueden definir un límite propio al crearlas; la interfaz muestra el límite efectivo de la amenaza, misión o conflicto.
+- `Ver misión` muestra el máximo efectivo por bando. Con el valor estándar de 500 puntos se conserva el briefing de Combat Patrol.
 - Los escudos de protección vencidos no se muestran en el mapa ni en el panel del sistema; un bloqueo expirado no debe aparecer como estado visible de juego.
 - Facciones narrativas de admin: `Orcos` y `Tiranidos` son amenazas no jugables (`is_narrative = true`), sin capital, usuarios, recursos ni tropas iniciales. Desde `/admin`, el admin puede programar incursiones narrativas con descripción pública y días hasta llegada, darles control inmediato de sistemas conquistables o crear misiones temporales atacables.
 - Si un sistema normal controlado por una facción narrativa pasa a una facción jugadora, se limpian sus metadatos narrativos y vuelve a funcionar como un sistema normal.

@@ -15,6 +15,7 @@ import { canUseMovementRpc, createAttackOrder, createMovementOrder } from "@/fea
 import { adminConfirmBattleReport, canUseBattleReportRpc, submitBattleReport, validateBattleReport } from "@/features/battle-reports/api/battle-report-api";
 import { createCoalitionAttackDraft } from "@/features/battles/api/battle-operation-api";
 import { BattleOperationsModal } from "@/features/battles/components/battle-operations-modal";
+import { getVisibleBattlePointsLimit } from "@/features/battles/lib/battle-points-limit";
 import {
   calculateRoutePlan,
   canAppendManualStep,
@@ -417,6 +418,7 @@ export function CampaignShell() {
       <MissionBriefModal
         onClose={() => setMissionBriefSystemId(null)}
         open={Boolean(missionBriefSystem)}
+        snapshot={data}
         system={missionBriefSystem}
       />
       <TechnologyTreeModal onClose={() => setTechnologyOpen(false)} open={technologyOpen} snapshot={data} />
@@ -841,15 +843,19 @@ function EventsModal({
 function MissionBriefModal({
   open,
   system,
+  snapshot,
   onClose
 }: {
   open: boolean;
   system: StarSystem | null;
+  snapshot: CampaignSnapshot;
   onClose: () => void;
 }) {
   if (!open || !system) {
     return null;
   }
+
+  const battlePointsLimit = getVisibleBattlePointsLimit(snapshot, system.id);
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/80 p-0 backdrop-blur-sm md:p-4">
@@ -857,7 +863,9 @@ function MissionBriefModal({
         <header className="flex shrink-0 items-center justify-between gap-3 border-b border-cyan-200/15 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] md:p-5">
           <div>
             <div className="text-xs uppercase tracking-[0.22em] text-cyan-200/70">{system.name}</div>
-            <h2 className="mt-1 text-xl font-semibold text-cyan-50">Combat Patrol equilibrada</h2>
+            <h2 className="mt-1 text-xl font-semibold text-cyan-50">
+              {battlePointsLimit === 500 ? "Combat Patrol equilibrada" : "Orden de batalla"}
+            </h2>
           </div>
           <Button aria-label="Cerrar misión" onClick={onClose} size="icon" variant="ghost">
             <X size={17} />
@@ -866,7 +874,8 @@ function MissionBriefModal({
 
         <div className="mobile-scroll min-h-0 flex-1 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:p-5">
           <div className="rounded-md border border-cyan-200/15 bg-slate-950/45 p-4 text-sm leading-6 text-slate-200 shadow-[0_0_28px_rgba(8,145,178,0.1)]">
-            Se permiten un máximo de 500 puntos por bando. Se deben usar misiones de combat patrol.
+            Máximo de {battlePointsLimit} puntos por bando.
+            {battlePointsLimit === 500 ? " Se deben usar misiones de Combat Patrol." : null}
           </div>
         </div>
       </Panel>
@@ -1050,6 +1059,7 @@ function SystemPanel({
   const incomingNarrativeAttack = snapshot.narrativeAttacks.find(
     (item) => item.systemId === system.id && item.status === "incoming"
   );
+  const battlePointsLimit = getVisibleBattlePointsLimit(snapshot, system.id);
   const incomingAttackAlert = snapshot.incomingAttackAlerts.find((item) => item.systemId === system.id);
   const defenderIncomingRoute = snapshot.defenderIncomingAttackRoutes.find((route) => route.toSystemId === system.id);
   const attackingFactions = incomingAttackAlert?.attackerFactionIds
@@ -1166,6 +1176,10 @@ function SystemPanel({
               </div>
               <h1 className="text-xl font-semibold text-cyan-50 md:text-2xl">{system.name}</h1>
               <p className="mt-1 text-sm text-slate-300">{system.type}</p>
+              <div className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium tabular-nums text-cyan-100/80">
+                <Swords size={13} aria-hidden="true" />
+                {battlePointsLimit} pts por bando
+              </div>
             </div>
             <div className="flex items-center gap-2">
               {system.status === "war" || incomingAttackAlert ? (
@@ -1453,6 +1467,7 @@ function SystemPanel({
               <div className="rounded-md border border-amber-300/25 bg-amber-300/10 p-3 text-sm text-amber-50">
                 <div className="mb-2 flex flex-wrap items-center gap-2">
                   <Badge tone="amber">Llega en {formatCountdown(incomingNarrativeAttack.arrivalAt)}</Badge>
+                  <Badge tone="slate">{incomingNarrativeAttack.battlePointsLimit ?? battlePointsLimit} pts por bando</Badge>
                   {snapshot.factions.find((item) => item.id === incomingNarrativeAttack.narrativeFactionId) ? (
                     <Badge tone="rose">
                       {snapshot.factions.find((item) => item.id === incomingNarrativeAttack.narrativeFactionId)?.name}
@@ -2125,9 +2140,10 @@ function AttackPlanner({
   );
   const targetSystem = targetSystems.find((system) => system.id === targetSystemId) ?? null;
   const targetFaction = snapshot.factions.find((faction) => faction.id === targetSystem?.controllerFactionId) ?? null;
-  const battlePointsLimit = snapshot.battlePointsLimit || 500;
-  const usesBattlePointsLimit = Boolean(targetSystem && !targetFaction?.isNarrative);
-  const battlePointsExceeded = usesBattlePointsLimit && selectedPoints > battlePointsLimit;
+  const battlePointsLimit = targetSystem
+    ? getVisibleBattlePointsLimit(snapshot, targetSystem.id)
+    : snapshot.battlePointsLimit;
+  const battlePointsExceeded = selectedPoints > battlePointsLimit;
   const supportFactions = snapshot.factions.filter(
     (faction) =>
       !faction.isNarrative &&
@@ -2326,11 +2342,9 @@ function AttackPlanner({
           {selectedSelections.length > 0
             ? `${selectedSelections.length} unidades seleccionadas - ${selectedMiniatures} miniaturas - ${selectedPoints} pts`
             : "Sin unidades seleccionadas"}
-          {usesBattlePointsLimit ? (
-            <div className={battlePointsExceeded ? "mt-1 text-rose-200" : "mt-1 text-cyan-100"}>
-              Límite de batalla: {battlePointsLimit} pts por bando.
-            </div>
-          ) : null}
+          <div className={battlePointsExceeded ? "mt-1 text-rose-200" : "mt-1 text-cyan-100"}>
+            Límite de batalla: {battlePointsLimit} pts por bando.
+          </div>
         </div>
 
         {limits ? (

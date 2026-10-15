@@ -45,6 +45,7 @@ import {
   adminSetFactionResources,
   adminSetNarrativeControl,
   adminSetSystemBlock,
+  adminSetSystemBattlePointsLimit,
   adminSetSystemResourceCapabilities,
   adminUpdateCampaignUnit,
   adminUpdateSystemBuilding,
@@ -113,6 +114,9 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
   const [maxArmyPointsDraft, setMaxArmyPointsDraft] = useState(snapshot.maxArmyPoints);
   const [blockSystemId, setBlockSystemId] = useState(snapshot.systems[0]?.id ?? "");
   const [blockDays, setBlockDays] = useState(14);
+  const [systemBattleLimitDraft, setSystemBattleLimitDraft] = useState(
+    snapshot.systems[0]?.battlePointsLimit ?? snapshot.battlePointsLimit
+  );
   const [eventTitle, setEventTitle] = useState("Comúnicado del sector");
   const [eventContent, setEventContent] = useState(
     "Los canales de astrópatas transmiten nuevas órdenes. Todas las facciones deben reajustar sus planes de campaña."
@@ -127,6 +131,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
     "Una amenaza xenos emerge en el sistema. Preparad una defensa narrativa."
   );
   const [narrativeArrivalDays, setNarrativeArrivalDays] = useState(1);
+  const [narrativeBattlePointsLimit, setNarrativeBattlePointsLimit] = useState(snapshot.battlePointsLimit);
   const [narrativeMode, setNarrativeMode] = useState<"attack" | "control">("attack");
   const [missionAnchorSystemId, setMissionAnchorSystemId] = useState(
     snapshot.systems.find((system) => system.systemKind !== "gaseous" && !system.isTemporaryMission)?.id ?? ""
@@ -141,6 +146,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
     "20 Termagantes - biomasa ligera visible\n1 Carnifex - monstruo pesado detectado"
   );
   const [missionDurationDays, setMissionDurationDays] = useState(7);
+  const [missionBattlePointsLimit, setMissionBattlePointsLimit] = useState(snapshot.battlePointsLimit);
   const [missionExpiresAfterBattle, setMissionExpiresAfterBattle] = useState(true);
   const [editUnitSystemId, setEditUnitSystemId] = useState(snapshot.systems[0]?.id ?? "");
   const [unitDrafts, setUnitDrafts] = useState<Record<string, UnitEditDraft>>({});
@@ -334,6 +340,16 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
     }
   });
 
+  const setSystemBattleLimitMutation = useMutation({
+    mutationFn: () => adminSetSystemBattlePointsLimit({
+      systemId: blockSystemId,
+      pointsLimit: systemBattleLimitDraft
+    }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
+    }
+  });
+
   const createCampaignEventMutation = useMutation({
     mutationFn: () =>
       adminCreateCampaignEvent({
@@ -353,7 +369,8 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
         systemId: effectiveNarrativeSystemId,
         narrativeFactionId: effectiveNarrativeFactionId,
         description: narrativeDescription.trim(),
-        arrivalAt: new Date(Date.now() + Math.max(1, narrativeArrivalDays) * 24 * 60 * 60 * 1000).toISOString()
+        arrivalAt: new Date(Date.now() + Math.max(1, narrativeArrivalDays) * 24 * 60 * 60 * 1000).toISOString(),
+        pointsLimit: narrativeBattlePointsLimit
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
@@ -370,7 +387,8 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
         enemyUnitsVisible: missionEnemyUnitsVisible,
         enemyUnits: parsedMissionEnemyUnits,
         durationDays: Math.max(1, missionDurationDays),
-        expiresAfterBattle: missionExpiresAfterBattle
+        expiresAfterBattle: missionExpiresAfterBattle,
+        pointsLimit: missionBattlePointsLimit
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["campaign-snapshot"] });
@@ -687,7 +705,11 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                 <select
                   className="rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm"
                   disabled={narrativeTargetSystems.length === 0}
-                  onChange={(event) => setNarrativeSystemId(event.target.value)}
+                  onChange={(event) => {
+                    setNarrativeSystemId(event.target.value);
+                    const target = snapshot.systems.find((system) => system.id === event.target.value);
+                    setNarrativeBattlePointsLimit(target?.battlePointsLimit ?? snapshot.battlePointsLimit);
+                  }}
                   value={effectiveNarrativeSystemId}
                 >
                   {narrativeTargetSystems.map((system) => (
@@ -725,16 +747,29 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
               />
 
               {narrativeMode === "attack" ? (
-                <label className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-2">
-                  <div className="mb-1 text-[11px] text-slate-400">Dias hasta que llega el ataque</div>
-                  <input
-                    className="w-full rounded-md border border-cyan-200/15 bg-slate-950/50 px-2 py-1.5 text-sm text-cyan-50"
-                    min={1}
-                    onChange={(event) => setNarrativeArrivalDays(Math.max(1, toInt(event.target.value, 1)))}
-                    type="number"
-                    value={narrativeArrivalDays}
-                  />
-                </label>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <label className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-2">
+                    <div className="mb-1 text-[11px] text-slate-400">Días hasta la llegada</div>
+                    <input
+                      className="w-full rounded-md border border-cyan-200/15 bg-slate-950/50 px-2 py-1.5 text-sm text-cyan-50"
+                      min={1}
+                      onChange={(event) => setNarrativeArrivalDays(Math.max(1, toInt(event.target.value, 1)))}
+                      type="number"
+                      value={narrativeArrivalDays}
+                    />
+                  </label>
+                  <label className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-2">
+                    <div className="mb-1 text-[11px] text-slate-400">Puntos por bando</div>
+                    <input
+                      className="w-full rounded-md border border-cyan-200/15 bg-slate-950/50 px-2 py-1.5 text-sm text-cyan-50"
+                      min={1}
+                      max={5000}
+                      onChange={(event) => setNarrativeBattlePointsLimit(toInt(event.target.value, 500))}
+                      type="number"
+                      value={narrativeBattlePointsLimit}
+                    />
+                  </label>
+                </div>
               ) : null}
 
               <div className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-xs text-slate-300">
@@ -760,6 +795,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                   !effectiveNarrativeFactionId ||
                   !effectiveNarrativeSystemId ||
                   narrativeDescription.trim().length < 8 ||
+                  (narrativeMode === "attack" && (narrativeBattlePointsLimit < 1 || narrativeBattlePointsLimit > 5000)) ||
                   createNarrativeAttackMutation.isPending ||
                   setNarrativeControlMutation.isPending ||
                   (narrativeMode === "attack" && Boolean(selectedNarrativeConflict || selectedNarrativeIncomingAttack))
@@ -819,7 +855,11 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                 <select
                   className="rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm"
                   disabled={missionAnchorSystems.length === 0}
-                  onChange={(event) => setMissionAnchorSystemId(event.target.value)}
+                  onChange={(event) => {
+                    setMissionAnchorSystemId(event.target.value);
+                    const anchor = snapshot.systems.find((system) => system.id === event.target.value);
+                    setMissionBattlePointsLimit(anchor?.battlePointsLimit ?? snapshot.battlePointsLimit);
+                  }}
                   value={effectiveMissionAnchorSystemId}
                 >
                   {missionAnchorSystems.map((system) => (
@@ -868,6 +908,18 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                   />
                 </label>
 
+                <label className="rounded-md border border-cyan-200/15 bg-slate-950/35 p-2">
+                  <div className="mb-1 text-[11px] text-slate-400">Puntos por bando</div>
+                  <input
+                    className="w-full rounded-md border border-cyan-200/15 bg-slate-950/50 px-2 py-1.5 text-sm text-cyan-50"
+                    min={1}
+                    max={5000}
+                    onChange={(event) => setMissionBattlePointsLimit(toInt(event.target.value, 500))}
+                    type="number"
+                    value={missionBattlePointsLimit}
+                  />
+                </label>
+
                 <label className="flex items-center justify-between gap-3 rounded-md border border-cyan-200/15 bg-slate-950/35 p-3 text-sm text-slate-200">
                   <span>Cerrar al resolver batalla</span>
                   <input
@@ -907,6 +959,8 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                   !effectiveMissionAnchorSystemId ||
                   missionName.trim().length < 3 ||
                   missionDescription.trim().length < 8 ||
+                  missionBattlePointsLimit < 1 ||
+                  missionBattlePointsLimit > 5000 ||
                   createNarrativeMissionMutation.isPending
                 }
                 onClick={() => createNarrativeMissionMutation.mutate()}
@@ -1033,7 +1087,11 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
               <h2 className="text-base font-semibold text-cyan-50">Bloquear o desbloquear sistema</h2>
             </div>
             <div className="grid gap-3">
-              <select className="rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm" onChange={(event) => setBlockSystemId(event.target.value)} value={blockSystemId}>
+              <select className="rounded-md border border-cyan-200/15 bg-slate-950/40 px-3 py-2 text-sm" onChange={(event) => {
+                setBlockSystemId(event.target.value);
+                const selected = snapshot.systems.find((system) => system.id === event.target.value);
+                setSystemBattleLimitDraft(selected?.battlePointsLimit ?? snapshot.battlePointsLimit);
+              }} value={blockSystemId}>
                 {snapshot.systems.map((system) => (
                   <option key={system.id} value={system.id}>
                     {system.name}
@@ -1072,6 +1130,29 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                   <CheckCircle2 size={16} />
                   Desbloquear
                 </Button>
+              </div>
+              <div className="border-t border-cyan-200/10 pt-3">
+                <label className="text-xs text-slate-400">
+                  Límite de batalla por bando
+                  <input
+                    className="mt-2 w-full rounded-md border border-cyan-200/15 bg-slate-950/50 px-3 py-2 text-sm text-cyan-50"
+                    min={1}
+                    max={5000}
+                    onChange={(event) => setSystemBattleLimitDraft(toInt(event.target.value, 500))}
+                    type="number"
+                    value={systemBattleLimitDraft}
+                  />
+                </label>
+                <Button
+                  className="mt-2 w-full"
+                  disabled={!rpcReady || !blockSystemId || systemBattleLimitDraft < 1 || systemBattleLimitDraft > 5000 || setSystemBattleLimitMutation.isPending}
+                  onClick={() => setSystemBattleLimitMutation.mutate()}
+                  size="sm"
+                >
+                  <Save size={15} />
+                  Guardar límite
+                </Button>
+                {setSystemBattleLimitMutation.error ? <p className="mt-2 text-sm text-rose-200">{setSystemBattleLimitMutation.error.message}</p> : null}
               </div>
               {setSystemBlockMutation.error ? <p className="text-sm text-rose-200">{setSystemBlockMutation.error.message}</p> : null}
             </div>

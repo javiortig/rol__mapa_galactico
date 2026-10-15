@@ -25,6 +25,7 @@ import {
 } from "@/features/battles/api/battle-operation-api";
 import { canUseMovementRpc, respondMovementPassageRequest } from "@/features/movement/api/movement-api";
 import { findCheapestRoute, formatTravelDuration } from "@/features/movement/lib/pathfinding";
+import { getVisibleBattlePointsLimit } from "@/features/battles/lib/battle-points-limit";
 import { formatOwnedResourceValue } from "@/lib/resource-format";
 import { formatCountdown } from "@/lib/time";
 
@@ -650,11 +651,6 @@ function SupportComposer({
   const currentResources = snapshot.resources.find((item) => item.factionId === snapshot.currentUser.factionId);
   const totalUridiumCost = route ? route.uridiumCost * selectedUnitCount : 0;
   const hasEnoughUridium = Boolean(route && currentResources && currentResources.uridium >= totalUridiumCost);
-  const attackingFaction = snapshot.factions.find((faction) => faction.id === operation.leaderFactionId);
-  const defendingFaction = snapshot.factions.find((faction) => faction.id === operation.defenderFactionId);
-  const usesBattlePointsLimit = Boolean(
-    attackingFaction && defendingFaction && !attackingFaction.isNarrative && !defendingFaction.isNarrative
-  );
   const committedSidePoints = snapshot.battleUnitCommitments.reduce(
     (total, commitment) =>
       commitment.operationId === operation.id &&
@@ -664,9 +660,9 @@ function SupportComposer({
         : total,
     0
   );
-  const battlePointsLimit = snapshot.battlePointsLimit || 500;
+  const battlePointsLimit = getVisibleBattlePointsLimit(snapshot, operation.targetSystemId);
   const projectedSidePoints = committedSidePoints + selectedPoints;
-  const battlePointsExceeded = usesBattlePointsLimit && projectedSidePoints > battlePointsLimit;
+  const battlePointsExceeded = projectedSidePoints > battlePointsLimit;
 
   return (
     <div>
@@ -721,11 +717,9 @@ function SupportComposer({
                 Ruta {route.uridiumCost} x {selectedUnitCount} unidades
               </div>
             ) : null}
-            {usesBattlePointsLimit ? (
-              <div className={battlePointsExceeded ? "mt-2 text-rose-200" : "mt-2 text-cyan-100"}>
-                Fuerza: {projectedSidePoints} / {battlePointsLimit} pts
-              </div>
-            ) : null}
+            <div className={battlePointsExceeded ? "mt-2 text-rose-200" : "mt-2 text-cyan-100"}>
+              Fuerza: {projectedSidePoints} / {battlePointsLimit} pts
+            </div>
             {operation.attackArrivalAt && side === "defender" ? (
               <div className="mt-1 text-slate-400">
                 Plantel cierra en: {formatTravelDuration(secondsRemaining ?? 0)}
@@ -776,7 +770,7 @@ function SupportComposer({
           {error ? <p className="mt-3 text-sm text-rose-200">{error}</p> : null}
           {battlePointsExceeded ? (
             <p className="mt-3 text-sm text-rose-200">
-              Este bando supera el límite de {battlePointsLimit} puntos para una batalla equilibrada.
+              Este bando supera el límite de {battlePointsLimit} puntos.
             </p>
           ) : null}
 

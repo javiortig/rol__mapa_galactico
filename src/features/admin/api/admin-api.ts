@@ -167,6 +167,18 @@ export async function adminSetSystemBlock(input: { systemId: string; blockedUnti
   }
 }
 
+export async function adminSetSystemBattlePointsLimit(input: { systemId: string; pointsLimit: number }) {
+  const supabase = getAdminClient();
+  const { error } = await supabase.rpc("admin_set_system_battle_points_limit", {
+    target_system_id: input.systemId,
+    points_limit: input.pointsLimit
+  });
+
+  if (error) {
+    throw new Error(fixSpanishText(error.message));
+  }
+}
+
 export async function adminCreateCampaignEvent(input: { title: string; content: string }) {
   const supabase = getAdminClient();
 
@@ -187,6 +199,7 @@ export async function adminCreateNarrativeAttack(input: {
   narrativeFactionId: string;
   description: string;
   arrivalAt: string;
+  pointsLimit: number;
 }) {
   const supabase = getAdminClient();
 
@@ -194,7 +207,8 @@ export async function adminCreateNarrativeAttack(input: {
     target_system_id: input.systemId,
     narrative_faction_id: input.narrativeFactionId,
     attack_description: input.description,
-    arrival_at: input.arrivalAt
+    arrival_at: input.arrivalAt,
+    points_limit: input.pointsLimit
   });
 
   if (error) {
@@ -213,6 +227,7 @@ export async function adminCreateNarrativeMission(input: {
   enemyUnits: NarrativeMissionEnemyUnit[];
   durationDays: number;
   expiresAfterBattle: boolean;
+  pointsLimit: number;
 }) {
   const supabase = getAdminClient();
 
@@ -224,7 +239,8 @@ export async function adminCreateNarrativeMission(input: {
     enemy_units_visible: input.enemyUnitsVisible,
     enemy_units: input.enemyUnits,
     duration_days: input.durationDays,
-    expires_after_battle: input.expiresAfterBattle
+    expires_after_battle: input.expiresAfterBattle,
+    points_limit: input.pointsLimit
   });
 
   if (error) {
