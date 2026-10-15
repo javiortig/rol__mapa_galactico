@@ -1211,7 +1211,7 @@ select
   false
 from (
   values
-    ('necron-plasmancer', 'necrones', 'unit-necrones-plasmancer', 'Plasmancer', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 60, 1, 1, 0, 2, null, 'thokt-vault', 'ready'),
+    ('necron-plasmancer', 'necrones', 'unit-necrones-plasmancer', 'Plasmancer', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 60, 1, 1, 0, 3, null, 'thokt-vault', 'ready'),
     ('necron-immortals-damaged', 'necrones', 'unit-necrones-immortals', 'Immortals', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 65, 4, 5, 0, 1, null, 'thokt-vault', 'ready'),
     ('necron-warriors', 'necrones', 'unit-necrones-necron-warriors', 'Necron Warriors', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 85, 10, 10, 0, 1, null, 'thokt-vault', 'ready'),
     ('necron-tomb-blades-damaged', 'necrones', 'unit-necrones-tomb-blades', 'Tomb Blades', 'Otras hojas de datos', 'mounted', array['Montado']::text[], 70, 2, 3, 0, 1, null, 'thokt-vault', 'ready'),
@@ -1225,7 +1225,7 @@ from (
     ('sombra-intercessors-large-damaged', 'space-marines', 'unit-space-marines-intercessor-squad', 'Intercessor Squad', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 150, 7, 10, 0, 1, null, 'sa-cea-gate', 'ready'),
     ('sombra-lieutenant', 'space-marines', 'unit-space-marines-lieutenant', 'Lieutenant', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 50, 1, 1, 0, 2, null, 'sa-cea-gate', 'ready'),
     ('sombra-bladeguard-damaged', 'space-marines', 'unit-space-marines-bladeguard-veteran-squad', 'Bladeguard Veteran Squad', 'Otras hojas de datos', 'infantry', array['Infanteria']::text[], 90, 1, 3, 0, 1, null, 'sa-cea-gate', 'ready'),
-    ('custodes-blade-champion', 'adeptus-custodes', 'unit-adeptus-custodes-blade-champion', 'Blade Champion', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 110, 1, 1, 0, 2, null, 'kharon-prime', 'ready'),
+    ('custodes-blade-champion', 'adeptus-custodes', 'unit-adeptus-custodes-blade-champion', 'Blade Champion', 'Personaje', 'character', array['Infanteria', 'Caracter']::text[], 110, 1, 1, 0, 3, null, 'kharon-prime', 'ready'),
     ('custodes-guard-damaged', 'adeptus-custodes', 'unit-adeptus-custodes-custodian-guard', 'Custodian Guard', 'Linea de batalla', 'infantry', array['Infanteria']::text[], 170, 3, 4, 0, 1, null, 'kharon-prime', 'ready'),
     ('custodes-prosecutor-damaged', 'adeptus-custodes', 'unit-adeptus-custodes-prosecutors', 'Prosecutors', 'Otras hojas de datos', 'infantry', array['Infanteria']::text[], 45, 1, 4, 0, 1, null, 'kharon-prime', 'ready')
 ) as data(slug, faction_slug, template_slug, name, category, unit_type, unit_keywords, points, quantity, starting_quantity, wounds_taken, experience, rank, system_slug, status)
