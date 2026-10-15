@@ -63,7 +63,18 @@ const SOURCE_NOTE =
 
 async function main() {
   if (process.argv.includes("--refresh-space-marines")) {
-    await refreshSpaceMarines();
+    await refreshFactionMfm({
+      factionSlug: "space-marines", mfmSlug: "space-marines", factionName: "Space Marines",
+      refreshedAtKey: "spaceMarinesRefreshedAt", reportPath: "docs/generated/space-marines-mfm-refresh.md"
+    });
+    return;
+  }
+
+  if (process.argv.includes("--refresh-necrons")) {
+    await refreshFactionMfm({
+      factionSlug: "necrones", mfmSlug: "necrons", factionName: "Necrones",
+      refreshedAtKey: "necronsRefreshedAt", reportPath: "docs/generated/necrons-mfm-refresh.md"
+    });
     return;
   }
 
@@ -202,16 +213,16 @@ async function main() {
   console.log(`Unidades no encontradas: ${unmatched.length}`);
 }
 
-async function refreshSpaceMarines() {
+async function refreshFactionMfm({ factionSlug, mfmSlug, factionName, refreshedAtKey, reportPath }) {
   const output = readJson(OUTPUT_PATH);
   const previousCount = output.units.length;
   const fetchedAt = new Date().toISOString();
-  const source = await loadMfmSource(new Map(), "space-marines", "Space Marines");
+  const source = await loadMfmSource(new Map(), mfmSlug, factionName);
   const changes = [];
   const unavailable = [];
 
   output.units = output.units.map((unit) => {
-    if (unit.factionSlug !== "space-marines") {
+    if (unit.factionSlug !== factionSlug) {
       return unit;
     }
 
@@ -243,14 +254,14 @@ async function refreshSpaceMarines() {
   });
 
   if (output.units.length !== previousCount || unavailable.length > 25) {
-    throw new Error("El catalogo Space Marines no se pudo cruzar con MFM de forma segura");
+    throw new Error(`El catalogo ${factionName} no se pudo cruzar con MFM de forma segura`);
   }
 
-  output.source.spaceMarinesRefreshedAt = fetchedAt;
+  output.source[refreshedAtKey] = fetchedAt;
   writeText(OUTPUT_PATH, `${JSON.stringify(output, null, 2)}\n`);
   updateSeedCostOptions(output.units);
-  writeText("docs/generated/space-marines-mfm-refresh.md", [
-    "# Space Marines: actualizacion MFM",
+  writeText(reportPath, [
+    `# ${factionName}: actualizacion MFM`,
     "",
     `Fuente: ${source.url}`,
     `Consultada: ${fetchedAt}`,
@@ -268,7 +279,7 @@ async function refreshSpaceMarines() {
     ...unavailable.map((name) => `- ${name}`),
     ""
   ].join("\n"));
-  console.log(`Space Marines: ${source.unitCount} fichas MFM, ${changes.length} bases cambiadas, ${unavailable.length} sin ficha vigente`);
+  console.log(`${factionName}: ${source.unitCount} fichas MFM, ${changes.length} bases cambiadas, ${unavailable.length} sin ficha vigente`);
 }
 
 function buildCachedReport(output, variableUnits, unmatched) {

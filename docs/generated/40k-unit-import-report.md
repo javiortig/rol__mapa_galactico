@@ -12,13 +12,13 @@ Generado por `npm run units:generate` desde `data/11th40kPoints.txt`.
 - Unidades con keywords reales cruzadas: 362.
 - Cruces BSData faltantes: 0.
 - Fallback heuristico: 0.
-- Puntos base actualizados desde MFM: 167.
+- Puntos base actualizados desde MFM: 172.
 - Material Industrial y Uridium: siempre 0 en costes de unidades.
 - Disponibilidad inicial: todas las plantillas importadas quedan bloqueadas (`is_available = false`).
 
 ## Validacion por bloque
 
-- Xenos - Necrons: 55/55 unidades, 7570/7575 puntos.
+- Xenos - Necrons: 55/55 unidades, 7600/7575 puntos.
 - Chaos - Chaos Daemons: 19/19 unidades, 2720/2655 puntos.
 - Imperium - Agents of the Imperium: 32/32 unidades, 2800/2860 puntos.
 - Xenos - Aeldari: 64/64 unidades, 9860/10200 puntos.
@@ -59,20 +59,25 @@ Generado por `npm run units:generate` desde `data/11th40kPoints.txt`.
 - Xenos - Necrons: C'tan Shard of the Void Dragon (1 modelos) 330 -> 345 pts
 - Xenos - Necrons: Chronomancer (1 modelos) 65 -> 70 pts
 - Xenos - Necrons: Illuminor Szeras (1 modelos) 165 -> 175 pts
-- Xenos - Necrons: Lokhust Lord (1 modelos) 80 -> 70 pts
+- Xenos - Necrons: Nekrosor Ammentar (1 modelos) 185 -> 195 pts
 - Xenos - Necrons: Orikan the Diviner (1 modelos) 80 -> 90 pts
 - Xenos - Necrons: Overlord (1 modelos) 85 -> 90 pts
 - Xenos - Necrons: Overlord with Translocation Shroud (1 modelos) 85 -> 90 pts
+- Xenos - Necrons: Plasmancer (1 modelos) 55 -> 60 pts
+- Xenos - Necrons: Psychomancer (1 modelos) 55 -> 65 pts
+- Xenos - Necrons: Skorpekh Lord (1 modelos) 90 -> 95 pts
 - Xenos - Necrons: The Silent King (3 modelos) 400 -> 420 pts
 - Xenos - Necrons: Transcendent C'tan (1 modelos) 325 -> 340 pts
-- Xenos - Necrons: Trazyn the Infinite (1 modelos) 75 -> 65 pts
-- Xenos - Necrons: Necron Warriors (10 modelos) 90 -> 80 pts
-- Xenos - Necrons: Annihilation Barge (1 modelos) 105 -> 95 pts
+- Xenos - Necrons: Trazyn the Infinite (1 modelos) 75 -> 60 pts
+- Xenos - Necrons: Immortals (5 modelos) 70 -> 65 pts
+- Xenos - Necrons: Necron Warriors (10 modelos) 90 -> 85 pts
+- Xenos - Necrons: Annihilation Barge (1 modelos) 105 -> 100 pts
+- Xenos - Necrons: Canoptek Doomstalker (1 modelos) 140 -> 130 pts
 - Xenos - Necrons: Canoptek Macrocytes (5 modelos) 85 -> 70 pts
 - Xenos - Necrons: Canoptek Spyders (1 modelos) 75 -> 65 pts
+- Xenos - Necrons: Canoptek Tomb Crawlers (2 modelos) 50 -> 60 pts
 - Xenos - Necrons: Canoptek Wraiths (3 modelos) 110 -> 95 pts
 - Xenos - Necrons: Doom Scythe (1 modelos) 230 -> 200 pts
-- Xenos - Necrons: Doomsday Ark (1 modelos) 200 -> 210 pts
 - Xenos - Necrons: Flayed Ones (5 modelos) 60 -> 55 pts
 - Xenos - Necrons: Ghost Ark (1 modelos) 115 -> 100 pts
 - Xenos - Necrons: Lokhust Heavy Destroyers (1 modelos) 55 -> 50 pts

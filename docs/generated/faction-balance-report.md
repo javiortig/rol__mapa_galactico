@@ -25,7 +25,7 @@ Generado por `npm run units:generate`.
 | adeptus-custodes | 51 | 23 (45%) | 16160 | 2107 | 4468 | 535 | 489 |
 | cultos-genestealer | 41 | 11 (27%) | 3395 | 1501 | 503 | 131 | 47 |
 | legiones-daemonicas | 34 | 10 (29%) | 4660 | 1460 | 779 | 221 | 108 |
-| necrones | 55 | 14 (25%) | 7570 | 1462 | 1677 | 357 | 195 |
+| necrones | 55 | 14 (25%) | 7600 | 1471 | 1677 | 361 | 195 |
 
 ## Distribucion de Oro por tipo principal
 
@@ -52,8 +52,8 @@ Generado por `npm run units:generate`.
 
 ## Infanteria inicial solo suministro
 
-- necrones: Immortals -> 70 Suministro
-- necrones: Necron Warriors -> 80 Suministro
+- necrones: Immortals -> 65 Suministro
+- necrones: Necron Warriors -> 85 Suministro
 - necrones: Flayed Ones -> 55 Suministro
 - legiones-daemonicas: Blue Horrors -> 125 Suministro
 - legiones-daemonicas: Pink Horrors -> 150 Suministro
@@ -80,19 +80,19 @@ Generado por `npm run units:generate`.
 - necrones: Hyperscientist [Crucible] -> 8 Honor (47%, Infanteria, Caracter)
 - necrones: Illuminor Szeras -> 17 Honor (49%, Infanteria, Caracter)
 - necrones: Imotekh the Stormlord -> 10 Honor (50%, Infanteria, Caracter)
-- necrones: Lokhust Lord -> 7 Honor (50%, Montado, Caracter)
-- necrones: Nekrosor Ammentar -> 18 Honor (49%, Infanteria, Caracter)
+- necrones: Lokhust Lord -> 8 Honor (50%, Montado, Caracter)
+- necrones: Nekrosor Ammentar -> 19 Honor (49%, Infanteria, Caracter)
 - necrones: Orikan the Diviner -> 9 Honor (50%, Infanteria, Caracter)
 - necrones: Overlord -> 9 Honor (50%, Infanteria, Caracter)
 - necrones: Overlord with Translocation Shroud -> 9 Honor (50%, Infanteria, Caracter)
-- necrones: Plasmancer -> 5 Honor (45%, Infanteria, Caracter)
-- necrones: Psychomancer -> 5 Honor (45%, Infanteria, Caracter)
+- necrones: Plasmancer -> 6 Honor (50%, Infanteria, Caracter)
+- necrones: Psychomancer -> 6 Honor (46%, Infanteria, Caracter)
 - necrones: Royal Warden -> 5 Honor (50%, Infanteria, Caracter)
-- necrones: Skorpekh Lord -> 9 Honor (50%, Infanteria, Caracter)
+- necrones: Skorpekh Lord -> 9 Honor (47%, Infanteria, Caracter)
 - necrones: Technomancer -> 8 Honor (50%, Infanteria, Caracter)
 - necrones: The Silent King -> 42 Honor (50%, Vehiculo, Caracter)
 - necrones: Transcendent C'tan -> 34 Honor (50%, Monstruo, Caracter)
-- necrones: Trazyn the Infinite -> 6 Honor (46%, Infanteria, Caracter)
+- necrones: Trazyn the Infinite -> 6 Honor (50%, Infanteria, Caracter)
 - necrones: Triarchal Overseer [Crucible] -> 12 Honor (50%, Vehiculo, Caracter)
 - legiones-daemonicas: Be'lakor -> 30 Honor (40%, Monstruo, Caracter)
 - legiones-daemonicas: Changecaster -> 4 Honor (33%, Infanteria, Caracter)
