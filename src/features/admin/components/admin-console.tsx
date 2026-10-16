@@ -134,7 +134,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
   const [narrativeBattlePointsLimit, setNarrativeBattlePointsLimit] = useState(snapshot.battlePointsLimit);
   const [narrativeMode, setNarrativeMode] = useState<"attack" | "control">("attack");
   const [missionAnchorSystemId, setMissionAnchorSystemId] = useState(
-    snapshot.systems.find((system) => system.systemKind !== "gaseous" && !system.isTemporaryMission)?.id ?? ""
+    snapshot.systems.find((system) => !system.isCapital && !system.isTemporaryMission)?.id ?? ""
   );
   const [missionFactionId, setMissionFactionId] = useState(snapshot.factions.find((faction) => faction.isNarrative)?.id ?? "");
   const [missionName, setMissionName] = useState("Deriva de guerra");
@@ -197,7 +197,10 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
   const selectedNarrativeIncomingAttack = snapshot.narrativeAttacks.find(
     (attack) => attack.systemId === effectiveNarrativeSystemId && attack.status === "incoming"
   );
-  const missionAnchorSystems = narrativeTargetSystems;
+  const missionAnchorSystems = useMemo(
+    () => snapshot.systems.filter((system) => !system.isCapital && !system.isTemporaryMission),
+    [snapshot.systems]
+  );
   const effectiveMissionFactionId =
     narrativeFactions.find((faction) => faction.id === missionFactionId)?.id ?? narrativeFactions[0]?.id ?? "";
   const effectiveMissionAnchorSystemId =
@@ -864,7 +867,7 @@ export function AdminConsole({ snapshot }: { snapshot: CampaignSnapshot }) {
                 >
                   {missionAnchorSystems.map((system) => (
                     <option key={system.id} value={system.id}>
-                      Anclar en {system.name}
+                      Anclar en {system.name}{system.systemKind === "gaseous" ? " (gaseoso)" : ""}
                     </option>
                   ))}
                 </select>
