@@ -2270,7 +2270,7 @@ function AttackPlanner({
         {attackMode === "coalition" ? (
           <div className="mt-4">
             <div className="mb-2 text-xs uppercase tracking-[0.18em] text-cyan-200/70">
-              Invitar al punto de reunión
+              Invitar aliados
             </div>
             <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
               {supportFactions.map((faction) => {
@@ -2378,7 +2378,7 @@ function AttackPlanner({
               ? "Preparando..."
               : "Lanzando..."
             : attackMode === "coalition"
-              ? "Crear punto de reunión"
+              ? "Preparar coalición"
               : "Confirmar ataque"}
         </Button>
       </aside>

@@ -911,8 +911,8 @@ El backend distingue `movement_type = move` de `movement_type = attack` (solo o 
 
 - En movimientos normales, el propietario de un sistema solo ve el tramo actual si la arista entra o sale de su sistema. La facción y el desplazamiento son visibles, pero no las unidades, los puntos ni el resto de la ruta.
 - Una facción con tropas en un sistema ajeno solo ve movimientos normales en el tramo que sale de ese sistema; no ve el tramo de llegada. Tampoco conoce unidades ni puntos del movimiento.
-- Los ataques en camino se señalan con un círculo rojo público desde su salida, sin bloquear todavía el sistema. El defensor ve las facciones atacantes, una ruta de aproximación y el tiempo restante, pero no unidades ni puntos hasta que llegan las tropas. La ruta usa `get_defender_incoming_attack_routes()` y no concede acceso a la orden real.
-- Cada participante atacante que haya aceptado una coalición ve la orden en Tropas, con todas las unidades de las facciones aliadas, aunque no haya creado la coalición. La fuerza conjunta también se muestra como grupo en tránsito al inspeccionar el origen o el objetivo.
+- Los ataques en camino se señalan con un círculo rojo público desde su salida, sin bloquear todavía el sistema. El defensor ve las facciones atacantes, las rutas de aproximación y el tiempo restante, pero no unidades ni puntos hasta que llegan las tropas. Las rutas usan `get_defender_incoming_attack_routes()` y no conceden acceso a las órdenes reales.
+- Cada participante atacante que haya aceptado una coalición ve todas las órdenes de ataque de esa operación en Tropas, con las unidades de las facciones aliadas, aunque no haya creado la coalición. La fuerza conjunta también se muestra como grupo en tránsito al inspeccionar cada origen o el objetivo.
 - El dueño o una facción con tropas presentes en el sistema desde el que sale un ataque ve la fuerza atacante completa si estaba allí cuando partió. Esta información se fija al lanzar el ataque: llegar al origen después no revela unidades ni puntos retroactivamente. Admin mantiene visión total.
 - Las tropas que ya están moviéndose no cuentan como guarnición del sistema de origen, aunque su última ubicación almacenada siga siendo ese sistema. El dueño las ve en un grupo separado de tránsito y en Tropas; no se presentan como unidades estacionadas.
 - La consulta pública `get_public_incoming_attack_alerts()` solo devuelve identificadores de facción atacante al dueño del sistema y al admin. `get_visible_movement_order_units()` nunca revela unidades de tramos enemigos.
@@ -1314,7 +1314,8 @@ Cuando `now() >= arrival_at`, backend procesa la llegada.
 ### 8.4.1 Coaliciones y refuerzos defensivos
 
 - La coalición atacante solo puede reunirse antes de lanzar el ataque.
-- Durante esa fase previa (`battle_operations.status = assembling`), las facciones atacantes invitadas pueden mover tropas hasta el sistema de origen de la coalición.
+- Durante esa fase previa (`battle_operations.status = assembling`), cada facción atacante reúne sus tropas en cualquier sistema adyacente al objetivo y marca allí sus unidades listas. El origen del comandante sigue registrado para compatibilidad, pero no obliga a los aliados a partir desde él.
+- Al lanzar, el backend valida cada origen y crea una orden `attack` por facción, todas con la misma llegada y vinculadas a una sola `battle_operation`. La primera llegada bloquea el plantel completo y crea un único conflicto; las demás órdenes de la operación pasan a batalla en esa misma resolución.
 - Cuando el ataque sale y pasa a `battle_operations.status = moving`, el bando atacante queda cerrado: no puede añadir tropas ni mover refuerzos hacia el conflicto.
 - Mientras el ataque está en camino, el defensor puede invitar apoyos defensivos cercanos.
 - Los apoyos defensivos se validan contra `attack_arrival_at`: si `now() + duracion_ruta > attack_arrival_at`, el backend rechaza la orden.

@@ -28,10 +28,12 @@ export function getJoinedCoalitionAttackOrderIds(snapshot: CampaignSnapshot, fac
   );
 
   return new Set(
-    snapshot.battleOperations
-      .filter((operation) => operation.mode === "coalition" && joinedOperationIds.has(operation.id))
-      .map((operation) => operation.attackMovementOrderId)
-      .filter((orderId): orderId is string => Boolean(orderId))
+    snapshot.movements
+      .filter((movement) =>
+        movement.movementType === "attack" &&
+        Boolean(movement.battleOperationId && joinedOperationIds.has(movement.battleOperationId))
+      )
+      .map((movement) => movement.id)
   );
 }
 

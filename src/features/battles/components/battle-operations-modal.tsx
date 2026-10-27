@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, Check, Clock3, Flag, Route, Shield, Swords, UserPlus, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -24,7 +24,7 @@ import {
   respondBattleSupportInvitation
 } from "@/features/battles/api/battle-operation-api";
 import { canUseMovementRpc, respondMovementPassageRequest } from "@/features/movement/api/movement-api";
-import { findCheapestRoute, formatTravelDuration } from "@/features/movement/lib/pathfinding";
+import { findCheapestRoute, formatTravelDuration, getEdgeBetween, isSystemBlockedForMovement } from "@/features/movement/lib/pathfinding";
 import { getVisibleBattlePointsLimit } from "@/features/battles/lib/battle-points-limit";
 import { formatOwnedResourceValue } from "@/lib/resource-format";
 import { formatCountdown } from "@/lib/time";
@@ -88,10 +88,10 @@ export function BattleOperationsModal({
   const supportDestinationId =
     supportOperation && supportMember
       ? supportMember.side === "attacker"
-        ? supportOperation.originSystemId
+        ? supportOriginId
         : supportOperation.targetSystemId
       : null;
-  const originOptions = useMemo(() => {
+  const originOptions = (() => {
     if (!currentFactionId) {
       return [];
     }
@@ -102,8 +102,12 @@ export function BattleOperationsModal({
         .map((unit) => unit.currentSystemId as string)
     );
 
-    return snapshot.systems.filter((system) => ids.has(system.id));
-  }, [currentFactionId, snapshot.systems, snapshot.units]);
+    return snapshot.systems.filter((system) =>
+      ids.has(system.id) &&
+      (!supportOperation || supportMember?.side !== "attacker" ||
+        isAvailableAttackOrigin(snapshot, system.id, supportOperation.targetSystemId, currentFactionId))
+    );
+  })();
   const availableUnits = snapshot.units.filter(
     (unit) =>
       unit.factionId === currentFactionId &&
@@ -215,7 +219,7 @@ export function BattleOperationsModal({
               arrivesInTime={arrivesInTime}
               availableUnits={availableUnits}
               destinationName={
-                snapshot.systems.find((system) => system.id === supportDestinationId)?.name ?? "Punto de reunión"
+                snapshot.systems.find((system) => system.id === supportOperation.targetSystemId)?.name ?? "Objetivo"
               }
               error={supportMutation.error?.message ?? null}
               isPending={supportMutation.isPending}
@@ -273,7 +277,7 @@ export function BattleOperationsModal({
                   }
                   onPrepareSupport={() => {
                     setSupportOperationId(operation.id);
-                    setSupportOriginId(operation.originSystemId);
+                    setSupportOriginId(null);
                     setSelectedUnitIds([]);
                   }}
                   operation={operation}
@@ -367,7 +371,9 @@ function OperationCard({
   const readyUnitsAtOrigin = snapshot.units.filter(
     (unit) =>
       unit.factionId === currentFactionId &&
-      unit.currentSystemId === operation.originSystemId &&
+      Boolean(unit.currentSystemId && isAvailableAttackOrigin(
+        snapshot, unit.currentSystemId, operation.targetSystemId, currentFactionId
+      )) &&
       unit.status === "ready" &&
       unit.quantity > 0
   );
@@ -403,7 +409,7 @@ function OperationCard({
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="min-w-0 break-words font-semibold text-cyan-50">
-              {origin?.name ?? "Origen"} {" -> "} {target?.name ?? "Objetivo"}
+              {target?.name ?? "Objetivo"}
             </h3>
             <Badge tone={operation.status === "in_battle" ? "rose" : operation.status === "assembling" ? "amber" : "cyan"}>
               {operationStatusLabel(operation.status)}
@@ -413,11 +419,14 @@ function OperationCard({
           <p className="mt-1 text-xs text-slate-400">
             {operation.attackArrivalAt
               ? `Cierre del plantel: ${new Date(operation.attackArrivalAt).toLocaleString()}`
-              : "La salida se decide cuando las tropas aliadas esten reunidas."}
+              : "A la espera de las tropas aliadas."}
           </p>
           <p className="mt-1 text-xs text-slate-300">
-            Objetivo: {target?.name ?? "Sistema objetivo"} - Defensor: {defenderFaction?.name ?? "Fuerza desconocida"}
+            Defensor: {defenderFaction?.name ?? "Fuerza desconocida"}
           </p>
+          {currentMember?.side === "attacker" ? (
+            <p className="mt-1 text-xs text-slate-400">Salida del comandante: {origin?.name ?? "Origen"}</p>
+          ) : null}
         </div>
         <div className="shrink-0 text-left text-xs text-slate-400 sm:text-right">
           {attackForceHidden ? (
@@ -438,7 +447,7 @@ function OperationCard({
               {side === "attacker" ? <Swords size={14} /> : <Shield size={14} />}
               {side === "attacker" ? "Bando atacante" : "Bando defensor"}
             </div>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="grid gap-2">
               {members.filter((member) => member.side === side).length === 0 &&
               side === "defender" &&
               defenderFaction ? (
@@ -447,10 +456,26 @@ function OperationCard({
               {members
                 .filter((member) => member.side === side)
                 .map((member) => (
-                  <Badge key={member.id} tone={member.invitationStatus === "accepted" ? "cyan" : "amber"}>
-                    {snapshot.factions.find((faction) => faction.id === member.factionId)?.name ?? "Facción"} -{" "}
-                    {invitationLabel(member)}
-                  </Badge>
+                  <div className="min-w-0 text-xs" key={member.id}>
+                    <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+                      <span className="break-words font-medium text-slate-100">
+                        {snapshot.factions.find((faction) => faction.id === member.factionId)?.name ?? "Facción"}
+                      </span>
+                      <Badge tone={member.invitationStatus === "accepted" ? "cyan" : "amber"}>
+                        {invitationLabel(member)}
+                      </Badge>
+                    </div>
+                    {!attackForceHidden && side === "attacker" ? (
+                      <div className="mt-1 flex min-w-0 items-center gap-1.5 text-slate-400">
+                        <Route className="shrink-0" size={12} />
+                        <span className="break-words">
+                          {snapshot.systems.find((system) => system.id === commitments.find(
+                            (commitment) => commitment.side === "attacker" && commitment.factionId === member.factionId
+                          )?.stagingSystemId)?.name ?? (member.role === "commander" ? origin?.name : "Salida pendiente")}
+                        </span>
+                      </div>
+                    ) : null}
+                  </div>
                 ))}
             </div>
           </div>
@@ -496,7 +521,7 @@ function OperationCard({
       ) : canMarkAttackerReady && !hasOwnCommitment ? (
         <div className="mt-4 rounded-md border border-cyan-200/15 bg-cyan-300/10 p-3 text-xs text-cyan-50">
           <div>
-            Coalicion aceptada. Mueve tus tropas al sistema de salida y marca listo cuando quieras comprometerlas.
+            Coalición aceptada. Reúne tus tropas en un sistema adyacente al objetivo y elige desde cuál atacar.
           </div>
           <Button
             className="mt-3 w-full"
@@ -505,7 +530,7 @@ function OperationCard({
             size="sm"
           >
             <Check size={15} />
-            {readyUnitsAtOrigin.length > 0 ? "Marcar tropas listas" : "Sin tropas en el punto de salida"}
+            {readyUnitsAtOrigin.length > 0 ? "Elegir salida y tropas" : "Sin tropas junto al objetivo"}
           </Button>
         </div>
       ) : canAcceptDefensiveSupport ? (
@@ -680,34 +705,33 @@ function SupportComposer({
 
       <div className="grid gap-4 lg:grid-cols-[280px_1fr]">
         <aside>
-          {side === "attacker" ? (
-            <div className="rounded-md border border-cyan-200/15 bg-slate-950/40 p-3 text-sm text-cyan-50">
-              Punto de salida confirmado
-              <div className="mt-1 text-xs text-slate-400">{destinationName}</div>
-            </div>
-          ) : (
-            <label className="text-sm text-slate-300">
-              Planeta de origen
-              <select
-                className="mt-2 w-full rounded-md border border-cyan-200/15 bg-slate-950/70 px-3 py-2 text-sm text-cyan-50 outline-none"
-                onChange={(event) => onSelectOrigin(event.target.value || null)}
-                value={selectedOriginId ?? ""}
-              >
-                <option value="">Selecciona origen</option>
-                {originOptions.map((system) => (
-                  <option key={system.id} value={system.id}>
-                    {system.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
+          <label className="text-sm text-slate-300">
+            {side === "attacker" ? "Sistema de salida" : "Planeta de origen"}
+            <select
+              className="mt-2 w-full rounded-md border border-cyan-200/15 bg-slate-950/70 px-3 py-2 text-sm text-cyan-50 outline-none"
+              onChange={(event) => onSelectOrigin(event.target.value || null)}
+              value={selectedOriginId ?? ""}
+            >
+              <option value="">Selecciona origen</option>
+              {originOptions.map((system) => (
+                <option key={system.id} value={system.id}>
+                  {system.name}
+                </option>
+              ))}
+            </select>
+          </label>
 
           <div className="mt-4 rounded-md border border-cyan-200/15 bg-slate-950/40 p-3 text-xs text-slate-300">
-            <div className="break-words font-medium text-cyan-50">{routeNames}</div>
+            <div className="break-words font-medium text-cyan-50">
+              {side === "attacker" && selectedOriginId
+                ? `${snapshot.systems.find((system) => system.id === selectedOriginId)?.name ?? "Origen"} → ${destinationName}`
+                : routeNames}
+            </div>
             <div className="mt-2 flex items-center gap-2">
               <Clock3 size={14} />
-              {route ? formatTravelDuration(route.durationSeconds) : "Ruta no disponible"}
+              {route
+                ? formatTravelDuration(side === "attacker" ? snapshot.attackDurationSeconds : route.durationSeconds)
+                : "Ruta no disponible"}
             </div>
             <div className={hasEnoughUridium ? "mt-1 text-slate-300" : "mt-1 text-rose-200"}>
               Coste: {formatResourceValue(totalUridiumCost)} / {formatOwnedResourceValue(currentResources?.uridium ?? 0)} Uridium
@@ -917,7 +941,11 @@ function NotificationsPanel({
                 {inviter?.name ?? "Una faccion"} propone atacar {target?.name ?? "un sistema"} defendido por{" "}
                 {defender?.name ?? "fuerzas enemigas"}.
               </p>
-              {origin ? <p className="mt-1 text-xs text-slate-400">Punto de salida: {origin.name}</p> : null}
+          {origin && member.side === "attacker" ? (
+            <p className="mt-1 text-xs text-slate-400">
+              Salida del comandante: {origin.name}. Puedes elegir otro sistema adyacente.
+            </p>
+          ) : null}
               <p className="mt-2 text-xs text-slate-300">Responde desde la operacion conjunta activa de abajo.</p>
             </article>
           );
@@ -1167,6 +1195,20 @@ function commitmentStatusLabel(status: CampaignSnapshot["battleUnitCommitments"]
   };
 
   return labels[status];
+}
+
+function isAvailableAttackOrigin(
+  snapshot: CampaignSnapshot,
+  originSystemId: string,
+  targetSystemId: string,
+  factionId: string | null
+) {
+  const system = snapshot.systems.find((item) => item.id === originSystemId);
+  const edge = getEdgeBetween(snapshot.edges, originSystemId, targetSystemId);
+
+  return Boolean(system && edge && !edge.isBlocked &&
+    !isSystemBlockedForMovement(system, factionId) &&
+    !snapshot.conflicts.some((conflict) => conflict.systemId === originSystemId && conflict.status === "pending"));
 }
 
 function getSupportRoute(

@@ -194,7 +194,7 @@ Antes de desplegar frontend que lea estos campos, aplica migraciones Supabase in
 ### Coaliciones y apoyos
 
 - `battle_operations` representa el ciclo completo: reunión, ataque en camino, plantel cerrado, resolución y cancelación.
-- Un ataque de coalición reserva las unidades del comandante, invita facciones atacantes y recibe sus tropas en el sistema de origen antes de lanzar. Esto es reunión previa, no refuerzo durante el conflicto.
+- Un ataque de coalición reserva las unidades del comandante e invita facciones atacantes. Cada aliado marca listas sus tropas en cualquier sistema adyacente al objetivo; no es necesario reunirse en un único origen. Al lanzar, sale una orden por facción con llegada sincronizada y todas forman un solo conflicto.
 - Una vez el ataque está en camino, el bando atacante no puede añadir tropas ni mover refuerzos hacia el conflicto.
 - El defensor sí puede invitar apoyos mientras el ataque está en camino. Supabase calcula la ruta con el tiempo restante real y rechaza cualquier fuerza cuya llegada supere `attack_arrival_at`.
 - Al llegar el ataque se congela el plantel. El sistema queda en guerra y ningún movimiento posterior puede terminar allí, aunque una ruta normal sí puede atravesarlo como sistema intermedio.

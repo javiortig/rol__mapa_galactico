@@ -469,7 +469,7 @@ function MovementOrderCard({
     .map((unitId) => unitById.get(unitId))
     .filter((unit): unit is CampaignUnit => Boolean(unit));
   const isCoalitionAttack = movement.movementType === "attack" && snapshot.battleOperations.some(
-    (operation) => operation.mode === "coalition" && operation.attackMovementOrderId === movement.id
+    (operation) => operation.mode === "coalition" && operation.id === movement.battleOperationId
   );
   const points = movementUnits.reduce((total, unit) => total + unit.points, 0);
   const models = movementUnits.reduce((total, unit) => total + unit.quantity, 0);
