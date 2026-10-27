@@ -6,13 +6,14 @@
     "fetchedAt": "2026-09-20T19:59:25.284Z",
     "note": "MFM oficial 11th edition. No se usa BSData/wh40k-10e como fuente de puntos, tamanos ni opciones. El catálogo previo se conserva y Death Guard se extrajo de /death-guard.",
     "spaceMarinesRefreshedAt": "2026-10-13T13:34:51.173Z",
-    "necronsRefreshedAt": "2026-10-15T16:08:03.379Z"
+    "necronsRefreshedAt": "2026-10-15T16:08:03.379Z",
+    "custodesRefreshedAt": "2026-10-27T12:47:57.172Z"
   },
   "summary": {
-    "providedUnits": 362,
+    "providedUnits": 359,
     "matchedUnits": 341,
-    "unmatchedUnits": 21,
-    "variableUnits": 169,
+    "unmatchedUnits": 18,
+    "variableUnits": 178,
     "conflicts": 150
   },
   "units": [
@@ -13909,1755 +13910,6 @@
     {
       "factionSlug": "adeptus-custodes",
       "factionName": "Adeptus Custodes",
-      "unitSlug": "aleya",
-      "name": "Aleya",
-      "mfmName": "ALEYA",
-      "provided": {
-        "models": 1,
-        "points": 65
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 55,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "blade-champion",
-      "name": "Blade Champion",
-      "mfmName": "BLADE CHAMPION",
-      "provided": {
-        "models": 1,
-        "points": 120
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 110,
-          "copyRange": {
-            "from": 1,
-            "to": 1,
-            "label": "1"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 125,
-          "copyRange": {
-            "from": 2,
-            "to": null,
-            "label": "2+"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 2,
-          "points": 15,
-          "resultingPoints": 125,
-          "minModels": 1,
-          "maxModels": 1,
-          "source": "mfm"
-        }
-      ],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "guardian-of-the-throne",
-      "name": "Guardian of the Throne",
-      "mfmName": null,
-      "provided": {
-        "models": 1,
-        "points": 130
-      },
-      "modelOptions": [],
-      "wargearOptions": [],
-      "rosterModifiers": [],
-      "matchStatus": "unmatched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "kataphraktoi-exemplar",
-      "name": "Kataphraktoi Exemplar",
-      "mfmName": null,
-      "provided": {
-        "models": 1,
-        "points": 150
-      },
-      "modelOptions": [],
-      "wargearOptions": [],
-      "rosterModifiers": [],
-      "matchStatus": "unmatched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "knight-centura",
-      "name": "Knight-Centura",
-      "mfmName": "KNIGHT-CENTURA",
-      "provided": {
-        "models": 1,
-        "points": 55
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 55,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "null-maiden",
-      "name": "Null Maiden",
-      "mfmName": null,
-      "provided": {
-        "models": 1,
-        "points": 65
-      },
-      "modelOptions": [],
-      "wargearOptions": [],
-      "rosterModifiers": [],
-      "matchStatus": "unmatched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "shield-captain",
-      "name": "Shield-Captain",
-      "mfmName": "SHIELD-CAPTAIN",
-      "provided": {
-        "models": 1,
-        "points": 120
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 110,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "shield-captain-in-allarus-terminator-armour",
-      "name": "Shield-Captain in Allarus Terminator Armour",
-      "mfmName": "SHIELD-CAPTAIN IN ALLARUS TERMINATOR ARMOUR",
-      "provided": {
-        "models": 1,
-        "points": 130
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 130,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "shield-captain-on-dawneagle-jetbike",
-      "name": "Shield-Captain on Dawneagle Jetbike",
-      "mfmName": "SHIELD-CAPTAIN ON DAWNEAGLE JETBIKE",
-      "provided": {
-        "models": 1,
-        "points": 150
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 140,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "trajann-valoris",
-      "name": "Trajann Valoris",
-      "mfmName": "TRAJANN VALORIS",
-      "provided": {
-        "models": 1,
-        "points": 140
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 135,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "valerian",
-      "name": "Valerian",
-      "mfmName": "VALERIAN",
-      "provided": {
-        "models": 1,
-        "points": 110
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 110,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "custodian-guard",
-      "name": "Custodian Guard",
-      "mfmName": "CUSTODIAN GUARD",
-      "provided": {
-        "models": 4,
-        "points": 160
-      },
-      "modelOptions": [
-        {
-          "models": 4,
-          "minModels": 4,
-          "maxModels": 4,
-          "label": "4 models",
-          "points": 170,
-          "copyRange": {
-            "from": 1,
-            "to": 3,
-            "label": "1-3"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 5,
-          "minModels": 5,
-          "maxModels": 5,
-          "label": "5 models",
-          "points": 215,
-          "copyRange": {
-            "from": 1,
-            "to": 3,
-            "label": "1-3"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 4,
-          "minModels": 4,
-          "maxModels": 4,
-          "label": "4 models",
-          "points": 180,
-          "copyRange": {
-            "from": 4,
-            "to": null,
-            "label": "4+"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 5,
-          "minModels": 5,
-          "maxModels": 5,
-          "label": "5 models",
-          "points": 225,
-          "copyRange": {
-            "from": 4,
-            "to": null,
-            "label": "4+"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 4,
-          "points": 10,
-          "resultingPoints": 180,
-          "minModels": 4,
-          "maxModels": 4,
-          "source": "mfm"
-        },
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 4,
-          "points": 10,
-          "resultingPoints": 225,
-          "minModels": 5,
-          "maxModels": 5,
-          "source": "mfm"
-        }
-      ],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "allarus-custodians",
-      "name": "Allarus Custodians",
-      "mfmName": "ALLARUS CUSTODIANS",
-      "provided": {
-        "models": 2,
-        "points": 110
-      },
-      "modelOptions": [
-        {
-          "models": 2,
-          "minModels": 2,
-          "maxModels": 2,
-          "label": "2 models",
-          "points": 110,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 3,
-          "minModels": 3,
-          "maxModels": 3,
-          "label": "3 models",
-          "points": 165,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 5,
-          "minModels": 5,
-          "maxModels": 5,
-          "label": "5 models",
-          "points": 275,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 6,
-          "minModels": 6,
-          "maxModels": 6,
-          "label": "6 models",
-          "points": 330,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "anathema-psykana-rhino",
-      "name": "Anathema Psykana Rhino",
-      "mfmName": "ANATHEMA PSYKANA RHINO",
-      "provided": {
-        "models": 1,
-        "points": 75
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 65,
-          "copyRange": {
-            "from": 1,
-            "to": 3,
-            "label": "1-3"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 75,
-          "copyRange": {
-            "from": 4,
-            "to": null,
-            "label": "4+"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 4,
-          "points": 10,
-          "resultingPoints": 75,
-          "minModels": 1,
-          "maxModels": 1,
-          "source": "mfm"
-        }
-      ],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "aquilon-custodians",
-      "name": "Aquilon Custodians",
-      "mfmName": "AQUILON CUSTODIANS",
-      "provided": {
-        "models": 3,
-        "points": 195
-      },
-      "modelOptions": [],
-      "wargearOptions": [],
-      "rosterModifiers": [],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "ares-gunship",
-      "name": "Ares Gunship",
-      "mfmName": "ARES GUNSHIP",
-      "provided": {
-        "models": 1,
-        "points": 580
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 580,
-          "copyRange": {
-            "from": 1,
-            "to": 1,
-            "label": "1"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 610,
-          "copyRange": {
-            "from": 2,
-            "to": null,
-            "label": "2+"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 2,
-          "points": 30,
-          "resultingPoints": 610,
-          "minModels": 1,
-          "maxModels": 1,
-          "source": "mfm"
-        }
-      ],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "caladius-grav-tank",
-      "name": "Caladius Grav-tank",
-      "mfmName": "CALADIUS GRAV-TANK",
-      "provided": {
-        "models": 1,
-        "points": 215
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 210,
-          "copyRange": {
-            "from": 1,
-            "to": 2,
-            "label": "1-2"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 225,
-          "copyRange": {
-            "from": 3,
-            "to": null,
-            "label": "3+"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [
-        {
-          "slug": "twin-arachnus-heavy-blaze-cannon",
-          "name": "Twin Arachnus Heavy Blaze Cannon",
-          "points": 15,
-          "pricing": "per_option",
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 3,
-          "points": 15,
-          "resultingPoints": 225,
-          "minModels": 1,
-          "maxModels": 1,
-          "source": "mfm"
-        }
-      ],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "contemptor-achillus-dreadnought",
-      "name": "Contemptor-Achillus Dreadnought",
-      "mfmName": "CONTEMPTOR-ACHILLUS DREADNOUGHT",
-      "provided": {
-        "models": 1,
-        "points": 155
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 155,
-          "copyRange": {
-            "from": 1,
-            "to": 2,
-            "label": "1-2"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 170,
-          "copyRange": {
-            "from": 3,
-            "to": null,
-            "label": "3+"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 3,
-          "points": 15,
-          "resultingPoints": 170,
-          "minModels": 1,
-          "maxModels": 1,
-          "source": "mfm"
-        }
-      ],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "contemptor-galatus-dreadnought",
-      "name": "Contemptor-Galatus Dreadnought",
-      "mfmName": "CONTEMPTOR-GALATUS DREADNOUGHT",
-      "provided": {
-        "models": 1,
-        "points": 165
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 165,
-          "copyRange": {
-            "from": 1,
-            "to": 2,
-            "label": "1-2"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 180,
-          "copyRange": {
-            "from": 3,
-            "to": null,
-            "label": "3+"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 3,
-          "points": 15,
-          "resultingPoints": 180,
-          "minModels": 1,
-          "maxModels": 1,
-          "source": "mfm"
-        }
-      ],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "coronus-grav-carrier",
-      "name": "Coronus Grav-carrier",
-      "mfmName": "CORONUS GRAV-CARRIER",
-      "provided": {
-        "models": 1,
-        "points": 200
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 180,
-          "copyRange": {
-            "from": 1,
-            "to": 2,
-            "label": "1-2"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 200,
-          "copyRange": {
-            "from": 3,
-            "to": null,
-            "label": "3+"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 3,
-          "points": 20,
-          "resultingPoints": 200,
-          "minModels": 1,
-          "maxModels": 1,
-          "source": "mfm"
-        }
-      ],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "custodian-guard-with-adrasite-and-pyrithite-spears",
-      "name": "Custodian Guard with Adrasite and Pyrithite spears",
-      "mfmName": "CUSTODIAN GUARD WITH ADRASITE AND PYRITHITE SPEARS",
-      "provided": {
-        "models": 5,
-        "points": 250
-      },
-      "modelOptions": [
-        {
-          "models": 5,
-          "minModels": 5,
-          "maxModels": 5,
-          "label": "5 models",
-          "points": 250,
-          "copyRange": {
-            "from": 1,
-            "to": 3,
-            "label": "1-3"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 5,
-          "minModels": 5,
-          "maxModels": 5,
-          "label": "5 models",
-          "points": 260,
-          "copyRange": {
-            "from": 4,
-            "to": null,
-            "label": "4+"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 4,
-          "points": 10,
-          "resultingPoints": 260,
-          "minModels": 5,
-          "maxModels": 5,
-          "source": "mfm"
-        }
-      ],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "custodian-wardens",
-      "name": "Custodian Wardens",
-      "mfmName": "CUSTODIAN WARDENS",
-      "provided": {
-        "models": 4,
-        "points": 210
-      },
-      "modelOptions": [
-        {
-          "models": 4,
-          "minModels": 4,
-          "maxModels": 4,
-          "label": "4 models",
-          "points": 200,
-          "copyRange": {
-            "from": 1,
-            "to": 1,
-            "label": "1"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 5,
-          "minModels": 5,
-          "maxModels": 5,
-          "label": "5 models",
-          "points": 250,
-          "copyRange": {
-            "from": 1,
-            "to": 1,
-            "label": "1"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 4,
-          "minModels": 4,
-          "maxModels": 4,
-          "label": "4 models",
-          "points": 220,
-          "copyRange": {
-            "from": 2,
-            "to": null,
-            "label": "2+"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 5,
-          "minModels": 5,
-          "maxModels": 5,
-          "label": "5 models",
-          "points": 270,
-          "copyRange": {
-            "from": 2,
-            "to": null,
-            "label": "2+"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 2,
-          "points": 20,
-          "resultingPoints": 220,
-          "minModels": 4,
-          "maxModels": 4,
-          "source": "mfm"
-        },
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 2,
-          "points": 20,
-          "resultingPoints": 270,
-          "minModels": 5,
-          "maxModels": 5,
-          "source": "mfm"
-        }
-      ],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "orion-assault-dropship",
-      "name": "Orion Assault Dropship",
-      "mfmName": "ORION ASSAULT DROPSHIP",
-      "provided": {
-        "models": 1,
-        "points": 690
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 690,
-          "copyRange": {
-            "from": 1,
-            "to": 1,
-            "label": "1"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 740,
-          "copyRange": {
-            "from": 2,
-            "to": null,
-            "label": "2+"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 2,
-          "points": 50,
-          "resultingPoints": 740,
-          "minModels": 1,
-          "maxModels": 1,
-          "source": "mfm"
-        }
-      ],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "pallas-grav-attack",
-      "name": "Pallas Grav-attack",
-      "mfmName": "PALLAS GRAV-ATTACK",
-      "provided": {
-        "models": 1,
-        "points": 105
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 100,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "prosecutors",
-      "name": "Prosecutors",
-      "mfmName": "PROSECUTORS",
-      "provided": {
-        "models": 4,
-        "points": 40
-      },
-      "modelOptions": [
-        {
-          "models": 4,
-          "minModels": 4,
-          "maxModels": 4,
-          "label": "4 models",
-          "points": 45,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 5,
-          "minModels": 5,
-          "maxModels": 5,
-          "label": "5 models",
-          "points": 50,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 9,
-          "minModels": 9,
-          "maxModels": 9,
-          "label": "9 models",
-          "points": 75,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 10,
-          "minModels": 10,
-          "maxModels": 10,
-          "label": "10 models",
-          "points": 85,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "sagittarum-custodians",
-      "name": "Sagittarum Custodians",
-      "mfmName": "SAGITTARUM CUSTODIANS",
-      "provided": {
-        "models": 5,
-        "points": 225
-      },
-      "modelOptions": [
-        {
-          "models": 5,
-          "minModels": 5,
-          "maxModels": 5,
-          "label": "5 models",
-          "points": 225,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "telemon-heavy-dreadnought",
-      "name": "Telemon Heavy Dreadnought",
-      "mfmName": "TELEMON HEAVY DREADNOUGHT",
-      "provided": {
-        "models": 1,
-        "points": 225
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 225,
-          "copyRange": {
-            "from": 1,
-            "to": 1,
-            "label": "1"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 245,
-          "copyRange": {
-            "from": 2,
-            "to": null,
-            "label": "2+"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 2,
-          "points": 20,
-          "resultingPoints": 245,
-          "minModels": 1,
-          "maxModels": 1,
-          "source": "mfm"
-        }
-      ],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "venatari-custodians",
-      "name": "Venatari Custodians",
-      "mfmName": "VENATARI CUSTODIANS",
-      "provided": {
-        "models": 3,
-        "points": 165
-      },
-      "modelOptions": [
-        {
-          "models": 3,
-          "minModels": 3,
-          "maxModels": 3,
-          "label": "3 models",
-          "points": 150,
-          "copyRange": {
-            "from": 1,
-            "to": 2,
-            "label": "1-2"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 6,
-          "minModels": 6,
-          "maxModels": 6,
-          "label": "6 models",
-          "points": 300,
-          "copyRange": {
-            "from": 1,
-            "to": 2,
-            "label": "1-2"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 3,
-          "minModels": 3,
-          "maxModels": 3,
-          "label": "3 models",
-          "points": 160,
-          "copyRange": {
-            "from": 3,
-            "to": null,
-            "label": "3+"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 6,
-          "minModels": 6,
-          "maxModels": 6,
-          "label": "6 models",
-          "points": 310,
-          "copyRange": {
-            "from": 3,
-            "to": null,
-            "label": "3+"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [
-        {
-          "slug": "venatari-lance",
-          "name": "Venatari Lance",
-          "points": 5,
-          "pricing": "per_option",
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 3,
-          "points": 10,
-          "resultingPoints": 160,
-          "minModels": 3,
-          "maxModels": 3,
-          "source": "mfm"
-        },
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 3,
-          "points": 10,
-          "resultingPoints": 310,
-          "minModels": 6,
-          "maxModels": 6,
-          "source": "mfm"
-        }
-      ],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "venerable-contemptor-dreadnought",
-      "name": "Venerable Contemptor Dreadnought",
-      "mfmName": "VENERABLE CONTEMPTOR DREADNOUGHT",
-      "provided": {
-        "models": 1,
-        "points": 170
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 170,
-          "copyRange": {
-            "from": 1,
-            "to": 2,
-            "label": "1-2"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 185,
-          "copyRange": {
-            "from": 3,
-            "to": null,
-            "label": "3+"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 3,
-          "points": 15,
-          "resultingPoints": 185,
-          "minModels": 1,
-          "maxModels": 1,
-          "source": "mfm"
-        }
-      ],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "venerable-land-raider",
-      "name": "Venerable Land Raider",
-      "mfmName": "VENERABLE LAND RAIDER",
-      "provided": {
-        "models": 1,
-        "points": 220
-      },
-      "modelOptions": [
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 220,
-          "copyRange": {
-            "from": 1,
-            "to": 1,
-            "label": "1"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 1,
-          "minModels": 1,
-          "maxModels": 1,
-          "label": "1 model",
-          "points": 240,
-          "copyRange": {
-            "from": 2,
-            "to": null,
-            "label": "2+"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [
-        {
-          "type": "nth_copy_surcharge",
-          "threshold": 2,
-          "points": 20,
-          "resultingPoints": 240,
-          "minModels": 1,
-          "maxModels": 1,
-          "source": "mfm"
-        }
-      ],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "vigilators",
-      "name": "Vigilators",
-      "mfmName": "VIGILATORS",
-      "provided": {
-        "models": 4,
-        "points": 45
-      },
-      "modelOptions": [
-        {
-          "models": 4,
-          "minModels": 4,
-          "maxModels": 4,
-          "label": "4 models",
-          "points": 50,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 5,
-          "minModels": 5,
-          "maxModels": 5,
-          "label": "5 models",
-          "points": 55,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 9,
-          "minModels": 9,
-          "maxModels": 9,
-          "label": "9 models",
-          "points": 90,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 10,
-          "minModels": 10,
-          "maxModels": 10,
-          "label": "10 models",
-          "points": 100,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
-      "unitSlug": "witchseekers",
-      "name": "Witchseekers",
-      "mfmName": "WITCHSEEKERS",
-      "provided": {
-        "models": 4,
-        "points": 45
-      },
-      "modelOptions": [
-        {
-          "models": 4,
-          "minModels": 4,
-          "maxModels": 4,
-          "label": "4 models",
-          "points": 50,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 5,
-          "minModels": 5,
-          "maxModels": 5,
-          "label": "5 models",
-          "points": 55,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 9,
-          "minModels": 9,
-          "maxModels": 9,
-          "label": "9 models",
-          "points": 90,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        },
-        {
-          "models": 10,
-          "minModels": 10,
-          "maxModels": 10,
-          "label": "10 models",
-          "points": 100,
-          "copyRange": {
-            "from": 1,
-            "to": null,
-            "label": "default"
-          },
-          "source": "mfm",
-          "change": null
-        }
-      ],
-      "wargearOptions": [],
-      "rosterModifiers": [],
-      "matchStatus": "matched",
-      "source": {
-        "kind": "mfm",
-        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
-        "pageSlug": "adeptus-custodes",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
-      }
-    },
-    {
-      "factionSlug": "adeptus-custodes",
-      "factionName": "Adeptus Custodes",
       "unitSlug": "acastus-knight-asterius",
       "name": "Acastus Knight Asterius",
       "mfmName": "ACASTUS KNIGHT ASTERIUS",
@@ -15712,7 +13964,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -15772,7 +14024,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -15808,7 +14060,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -15868,7 +14120,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -15899,7 +14151,7 @@
       "name": "Canis Rex",
       "mfmName": "CANIS REX",
       "provided": {
-        "models": 2,
+        "models": 1,
         "points": 415
       },
       "modelOptions": [
@@ -15925,7 +14177,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -15985,7 +14237,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -16045,7 +14297,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -16114,7 +14366,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -16133,7 +14385,7 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 400,
+          "points": 385,
           "copyRange": {
             "from": 1,
             "to": 1,
@@ -16147,7 +14399,7 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 420,
+          "points": 405,
           "copyRange": {
             "from": 2,
             "to": null,
@@ -16163,7 +14415,7 @@
           "type": "nth_copy_surcharge",
           "threshold": 2,
           "points": 20,
-          "resultingPoints": 420,
+          "resultingPoints": 405,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -16174,7 +14426,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -16234,7 +14486,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -16294,7 +14546,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -16354,7 +14606,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -16414,7 +14666,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -16433,7 +14685,7 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 400,
+          "points": 390,
           "copyRange": {
             "from": 1,
             "to": 2,
@@ -16447,7 +14699,7 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 415,
+          "points": 405,
           "copyRange": {
             "from": 3,
             "to": null,
@@ -16463,7 +14715,7 @@
           "type": "nth_copy_surcharge",
           "threshold": 3,
           "points": 15,
-          "resultingPoints": 415,
+          "resultingPoints": 405,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -16474,7 +14726,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -16493,7 +14745,7 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 375,
+          "points": 365,
           "copyRange": {
             "from": 1,
             "to": 2,
@@ -16507,7 +14759,7 @@
           "minModels": 1,
           "maxModels": 1,
           "label": "1 model",
-          "points": 390,
+          "points": 380,
           "copyRange": {
             "from": 3,
             "to": null,
@@ -16523,7 +14775,7 @@
           "type": "nth_copy_surcharge",
           "threshold": 3,
           "points": 15,
-          "resultingPoints": 390,
+          "resultingPoints": 380,
           "minModels": 1,
           "maxModels": 1,
           "source": "mfm"
@@ -16534,7 +14786,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-knights",
         "pageSlug": "imperial-knights",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -16570,7 +14822,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/imperial-agents",
         "pageSlug": "imperial-agents",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -16606,7 +14858,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/titan-legions",
         "pageSlug": "titan-legions",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -16642,7 +14894,7 @@
         "kind": "mfm",
         "url": "https://mfm.warhammer-community.com/en/titan-legions",
         "pageSlug": "titan-legions",
-        "fetchedAt": "2026-08-13T23:06:59.333Z"
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     },
     {
@@ -18008,6 +16260,1923 @@
         "url": "https://mfm.warhammer-community.com/en/death-guard",
         "pageSlug": "death-guard",
         "fetchedAt": "2026-09-20T19:59:25.284Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "allarus-custodians",
+      "name": "Allarus Custodians",
+      "mfmName": "ALLARUS CUSTODIANS",
+      "provided": {
+        "models": 2,
+        "points": 180
+      },
+      "modelOptions": [
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 180,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 60
+          }
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 270,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 90
+          }
+        },
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 210,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 50
+          }
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 300,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 80
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 210,
+          "minModels": 2,
+          "maxModels": 2,
+          "source": "mfm"
+        },
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 300,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "aquilon-terminators-with-solarite-power-gauntlets",
+      "name": "Aquilon Terminators With Solarite Power Gauntlets",
+      "mfmName": "AQUILON TERMINATORS WITH SOLARITE POWER GAUNTLETS",
+      "provided": {
+        "models": 3,
+        "points": 285
+      },
+      "modelOptions": [
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 285,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 90
+          }
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 315,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 315,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "aquilon-terminators-with-solarite-power-talons",
+      "name": "Aquilon Terminators With Solarite Power Talons",
+      "mfmName": "AQUILON TERMINATORS WITH SOLARITE POWER TALONS",
+      "provided": {
+        "models": 3,
+        "points": 275
+      },
+      "modelOptions": [
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 275,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 305,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 305,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "ares-gunship",
+      "name": "Ares Gunship",
+      "mfmName": "ARES GUNSHIP",
+      "provided": {
+        "models": 1,
+        "points": 580
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 580,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 610,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 30,
+          "resultingPoints": 610,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "caladius-annihilator-grav-tank",
+      "name": "Caladius Annihilator Grav-Tank",
+      "mfmName": "CALADIUS ANNIHILATOR GRAV‑TANK",
+      "provided": {
+        "models": 1,
+        "points": 250
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 250,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 280,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 280,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "caladius-grav-tank",
+      "name": "Caladius Grav-Tank",
+      "mfmName": "CALADIUS GRAV-TANK",
+      "provided": {
+        "models": 1,
+        "points": 230
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 230,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 20
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 260,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 35
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 260,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "contemptor-achillus-dreadnought",
+      "name": "Contemptor-Achillus Dreadnought",
+      "mfmName": "CONTEMPTOR-ACHILLUS DREADNOUGHT",
+      "provided": {
+        "models": 1,
+        "points": 230
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 230,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 75
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 260,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 90
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 260,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "contemptor-galatus-dreadnought",
+      "name": "Contemptor-Galatus Dreadnought",
+      "mfmName": "CONTEMPTOR-GALATUS DREADNOUGHT",
+      "provided": {
+        "models": 1,
+        "points": 220
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 220,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 55
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 250,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 70
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 250,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "coronus-grav-carrier",
+      "name": "Coronus Grav-Carrier",
+      "mfmName": "CORONUS GRAV-CARRIER",
+      "provided": {
+        "models": 1,
+        "points": 225
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 225,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 45
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 245,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 45
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 20,
+          "resultingPoints": 245,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "custodian-guard-sodality",
+      "name": "Custodian Guard Sodality",
+      "mfmName": "CUSTODIAN GUARD SODALITY",
+      "provided": {
+        "models": 3,
+        "points": 240
+      },
+      "modelOptions": [
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 240,
+          "copyRange": {
+            "from": 1,
+            "to": 3,
+            "label": "1-3"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 270,
+          "copyRange": {
+            "from": 4,
+            "to": null,
+            "label": "4+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 4,
+          "points": 30,
+          "resultingPoints": 270,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "custodian-wardens",
+      "name": "Custodian Wardens",
+      "mfmName": "CUSTODIAN WARDENS",
+      "provided": {
+        "models": 2,
+        "points": 200
+      },
+      "modelOptions": [
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 200,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 295,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 230,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 325,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 30,
+          "resultingPoints": 230,
+          "minModels": 2,
+          "maxModels": 2,
+          "source": "mfm"
+        },
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 30,
+          "resultingPoints": 325,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "gyrfalcon-jetbike-sodality",
+      "name": "Gyrfalcon Jetbike Sodality",
+      "mfmName": "GYRFALCON JETBIKE SODALITY",
+      "provided": {
+        "models": 2,
+        "points": 260
+      },
+      "modelOptions": [
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 260,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 280,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 20,
+          "resultingPoints": 280,
+          "minModels": 2,
+          "maxModels": 2,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "orion-assault-dropship",
+      "name": "Orion Assault Dropship",
+      "mfmName": "ORION ASSAULT DROPSHIP",
+      "provided": {
+        "models": 1,
+        "points": 690
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 690,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 740,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 50,
+          "resultingPoints": 740,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "pallas-grav-attack",
+      "name": "Pallas Grav-Attack",
+      "mfmName": "PALLAS GRAV-ATTACK",
+      "provided": {
+        "models": 1,
+        "points": 135
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 135,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 35
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "sentinel-guard-sodality",
+      "name": "Sentinel Guard Sodality",
+      "mfmName": "SENTINEL GUARD SODALITY",
+      "provided": {
+        "models": 3,
+        "points": 240
+      },
+      "modelOptions": [
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 240,
+          "copyRange": {
+            "from": 1,
+            "to": 3,
+            "label": "1-3"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 270,
+          "copyRange": {
+            "from": 4,
+            "to": null,
+            "label": "4+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 4,
+          "points": 30,
+          "resultingPoints": 270,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "shield-captain",
+      "name": "Shield-Captain",
+      "mfmName": "SHIELD-CAPTAIN",
+      "provided": {
+        "models": 1,
+        "points": 180
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 180,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 70
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 200,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [
+        {
+          "slug": "praesidium-shield",
+          "name": "Praesidium Shield",
+          "points": 25,
+          "pricing": "per_option",
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 20,
+          "resultingPoints": 200,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "shield-captain-in-allarus-terminator-armour",
+      "name": "Shield-Captain In Allarus Terminator Armour",
+      "mfmName": "SHIELD-CAPTAIN IN ALLARUS TERMINATOR ARMOUR",
+      "provided": {
+        "models": 1,
+        "points": 185
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 185,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 55
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 205,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 20,
+          "resultingPoints": 205,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "shield-captain-on-dawneagle-jetbike",
+      "name": "Shield-Captain On Dawneagle Jetbike",
+      "mfmName": "SHIELD-CAPTAIN ON DAWNEAGLE JETBIKE",
+      "provided": {
+        "models": 1,
+        "points": 205
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 205,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 55
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 225,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 20,
+          "resultingPoints": 225,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "telemon-heavy-dreadnought",
+      "name": "Telemon Heavy Dreadnought",
+      "mfmName": "TELEMON HEAVY DREADNOUGHT",
+      "provided": {
+        "models": 1,
+        "points": 280
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 280,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 55
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 310,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 65
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 30,
+          "resultingPoints": 310,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "trajann-valoris",
+      "name": "Trajann Valoris",
+      "mfmName": "TRAJANN VALORIS",
+      "provided": {
+        "models": 1,
+        "points": 265
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 265,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 130
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "venatari-with-kinetic-destroyers",
+      "name": "Venatari With Kinetic Destroyers",
+      "mfmName": "VENATARI WITH KINETIC DESTROYERS",
+      "provided": {
+        "models": 3,
+        "points": 255
+      },
+      "modelOptions": [
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 255,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 280,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 25,
+          "resultingPoints": 280,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "venatari-with-verutum-lances",
+      "name": "Venatari With Verutum Lances",
+      "mfmName": "VENATARI WITH VERUTUM LANCES",
+      "provided": {
+        "models": 3,
+        "points": 270
+      },
+      "modelOptions": [
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 270,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 120
+          }
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 300,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 140
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 300,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "vertus-praetors",
+      "name": "Vertus Praetors",
+      "mfmName": "VERTUS PRAETORS",
+      "provided": {
+        "models": 2,
+        "points": 220
+      },
+      "modelOptions": [
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 220,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 65
+          }
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 330,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 100
+          }
+        },
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 240,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 350,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 20,
+          "resultingPoints": 240,
+          "minModels": 2,
+          "maxModels": 2,
+          "source": "mfm"
+        },
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 20,
+          "resultingPoints": 350,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "anathema-psykana-rhino",
+      "name": "Anathema Psykana Rhino",
+      "mfmName": "ANATHEMA PSYKANA RHINO",
+      "provided": {
+        "models": 1,
+        "points": 70
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 70,
+          "copyRange": {
+            "from": 1,
+            "to": 3,
+            "label": "1-3"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 80,
+          "copyRange": {
+            "from": 4,
+            "to": null,
+            "label": "4+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 4,
+          "points": 10,
+          "resultingPoints": 80,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "knight-centura",
+      "name": "Knight-Centura",
+      "mfmName": "KNIGHT-CENTURA",
+      "provided": {
+        "models": 1,
+        "points": 55
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 55,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "prosecutor-squad",
+      "name": "Prosecutor Squad",
+      "mfmName": "PROSECUTOR SQUAD",
+      "provided": {
+        "models": 4,
+        "points": 45
+      },
+      "modelOptions": [
+        {
+          "models": 4,
+          "minModels": 4,
+          "maxModels": 4,
+          "label": "4 models",
+          "points": 45,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 50,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 9,
+          "minModels": 9,
+          "maxModels": 9,
+          "label": "9 models",
+          "points": 80,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 10,
+          "minModels": 10,
+          "maxModels": 10,
+          "label": "10 models",
+          "points": 90,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "vigilator-squad",
+      "name": "Vigilator Squad",
+      "mfmName": "VIGILATOR SQUAD",
+      "provided": {
+        "models": 4,
+        "points": 50
+      },
+      "modelOptions": [
+        {
+          "models": 4,
+          "minModels": 4,
+          "maxModels": 4,
+          "label": "4 models",
+          "points": 50,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 55,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 9,
+          "minModels": 9,
+          "maxModels": 9,
+          "label": "9 models",
+          "points": 90,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 10,
+          "minModels": 10,
+          "maxModels": 10,
+          "label": "10 models",
+          "points": 100,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "witchseeker-squad",
+      "name": "Witchseeker Squad",
+      "mfmName": "WITCHSEEKER SQUAD",
+      "provided": {
+        "models": 4,
+        "points": 55
+      },
+      "modelOptions": [
+        {
+          "models": 4,
+          "minModels": 4,
+          "maxModels": 4,
+          "label": "4 models",
+          "points": 55,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 60,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 9,
+          "minModels": 9,
+          "maxModels": 9,
+          "label": "9 models",
+          "points": 100,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 10,
+          "minModels": 10,
+          "maxModels": 10,
+          "label": "10 models",
+          "points": 110,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
+      }
+    },
+    {
+      "factionSlug": "adeptus-custodes",
+      "factionName": "Adeptus Custodes",
+      "unitSlug": "blade-champion",
+      "name": "Blade Champion",
+      "mfmName": "BLADE CHAMPION",
+      "provided": {
+        "models": 1,
+        "points": 175
+      },
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 175,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 65
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 195,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 20,
+          "resultingPoints": 195,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ],
+      "matchStatus": "matched",
+      "source": {
+        "kind": "mfm",
+        "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+        "pageSlug": "adeptus-custodes",
+        "fetchedAt": "2026-10-27T12:47:57.172Z"
       }
     }
   ]

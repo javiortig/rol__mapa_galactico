@@ -1,0 +1,1735 @@
+{
+  "factionSlug": "adeptus-custodes",
+  "factionName": "Adeptus Custodes",
+  "sourceFactionName": "Imperium - Adeptus Custodes",
+  "sourceSection": "MFM 11th edition",
+  "isAlliedUnit": false,
+  "source": {
+    "url": "https://mfm.warhammer-community.com/en/adeptus-custodes",
+    "fetchedAt": "2026-10-27T12:47:57.172Z"
+  },
+  "units": [
+    {
+      "name": "Allarus Custodians",
+      "unitSlug": "allarus-custodians",
+      "points": 180,
+      "defaultQuantity": 2,
+      "unitKeywords": [
+        "Infanteria"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 180,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 60
+          }
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 270,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 90
+          }
+        },
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 210,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 50
+          }
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 300,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 80
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 210,
+          "minModels": 2,
+          "maxModels": 2,
+          "source": "mfm"
+        },
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 300,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Aquilon Terminators With Solarite Power Gauntlets",
+      "unitSlug": "aquilon-terminators-with-solarite-power-gauntlets",
+      "points": 285,
+      "defaultQuantity": 3,
+      "unitKeywords": [
+        "Infanteria"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 285,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 90
+          }
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 315,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 315,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Aquilon Terminators With Solarite Power Talons",
+      "unitSlug": "aquilon-terminators-with-solarite-power-talons",
+      "points": 275,
+      "defaultQuantity": 3,
+      "unitKeywords": [
+        "Infanteria"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 275,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 305,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 305,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Ares Gunship",
+      "unitSlug": "ares-gunship",
+      "points": 580,
+      "defaultQuantity": 1,
+      "unitKeywords": [
+        "Vehiculo",
+        "Aeronave"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 580,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 610,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 30,
+          "resultingPoints": 610,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Caladius Annihilator Grav-Tank",
+      "unitSlug": "caladius-annihilator-grav-tank",
+      "points": 250,
+      "defaultQuantity": 1,
+      "unitKeywords": [
+        "Vehiculo"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 250,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 280,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 280,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Caladius Grav-Tank",
+      "unitSlug": "caladius-grav-tank",
+      "points": 230,
+      "defaultQuantity": 1,
+      "unitKeywords": [
+        "Vehiculo"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 230,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 20
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 260,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 35
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 260,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Contemptor-Achillus Dreadnought",
+      "unitSlug": "contemptor-achillus-dreadnought",
+      "points": 230,
+      "defaultQuantity": 1,
+      "unitKeywords": [
+        "Vehiculo"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 230,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 75
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 260,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 90
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 260,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Contemptor-Galatus Dreadnought",
+      "unitSlug": "contemptor-galatus-dreadnought",
+      "points": 220,
+      "defaultQuantity": 1,
+      "unitKeywords": [
+        "Vehiculo"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 220,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 55
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 250,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 70
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 250,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Coronus Grav-Carrier",
+      "unitSlug": "coronus-grav-carrier",
+      "points": 225,
+      "defaultQuantity": 1,
+      "unitKeywords": [
+        "Vehiculo"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 225,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 45
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 245,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 45
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 20,
+          "resultingPoints": 245,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Custodian Guard Sodality",
+      "unitSlug": "custodian-guard-sodality",
+      "points": 240,
+      "defaultQuantity": 3,
+      "unitKeywords": [
+        "Infanteria"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 240,
+          "copyRange": {
+            "from": 1,
+            "to": 3,
+            "label": "1-3"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 270,
+          "copyRange": {
+            "from": 4,
+            "to": null,
+            "label": "4+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 4,
+          "points": 30,
+          "resultingPoints": 270,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Custodian Wardens",
+      "unitSlug": "custodian-wardens",
+      "points": 200,
+      "defaultQuantity": 2,
+      "unitKeywords": [
+        "Infanteria"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 200,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 295,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 230,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 325,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 30,
+          "resultingPoints": 230,
+          "minModels": 2,
+          "maxModels": 2,
+          "source": "mfm"
+        },
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 30,
+          "resultingPoints": 325,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Gyrfalcon Jetbike Sodality",
+      "unitSlug": "gyrfalcon-jetbike-sodality",
+      "points": 260,
+      "defaultQuantity": 2,
+      "unitKeywords": [
+        "Montado"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 260,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 280,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 20,
+          "resultingPoints": 280,
+          "minModels": 2,
+          "maxModels": 2,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Orion Assault Dropship",
+      "unitSlug": "orion-assault-dropship",
+      "points": 690,
+      "defaultQuantity": 1,
+      "unitKeywords": [
+        "Vehiculo",
+        "Aeronave"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 690,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 740,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 50,
+          "resultingPoints": 740,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Pallas Grav-Attack",
+      "unitSlug": "pallas-grav-attack",
+      "points": 135,
+      "defaultQuantity": 1,
+      "unitKeywords": [
+        "Vehiculo"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 135,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 35
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": []
+    },
+    {
+      "name": "Sentinel Guard Sodality",
+      "unitSlug": "sentinel-guard-sodality",
+      "points": 240,
+      "defaultQuantity": 3,
+      "unitKeywords": [
+        "Infanteria"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 240,
+          "copyRange": {
+            "from": 1,
+            "to": 3,
+            "label": "1-3"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 270,
+          "copyRange": {
+            "from": 4,
+            "to": null,
+            "label": "4+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 4,
+          "points": 30,
+          "resultingPoints": 270,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Shield-Captain",
+      "unitSlug": "shield-captain",
+      "points": 180,
+      "defaultQuantity": 1,
+      "unitKeywords": [
+        "Caracter",
+        "Infanteria"
+      ],
+      "category": "Personaje",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 180,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 70
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 200,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [
+        {
+          "slug": "praesidium-shield",
+          "name": "Praesidium Shield",
+          "points": 25,
+          "pricing": "per_option",
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 20,
+          "resultingPoints": 200,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Shield-Captain In Allarus Terminator Armour",
+      "unitSlug": "shield-captain-in-allarus-terminator-armour",
+      "points": 185,
+      "defaultQuantity": 1,
+      "unitKeywords": [
+        "Caracter",
+        "Infanteria"
+      ],
+      "category": "Personaje",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 185,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 55
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 205,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 20,
+          "resultingPoints": 205,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Shield-Captain On Dawneagle Jetbike",
+      "unitSlug": "shield-captain-on-dawneagle-jetbike",
+      "points": 205,
+      "defaultQuantity": 1,
+      "unitKeywords": [
+        "Caracter",
+        "Montado"
+      ],
+      "category": "Personaje",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 205,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 55
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 225,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 20,
+          "resultingPoints": 225,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Telemon Heavy Dreadnought",
+      "unitSlug": "telemon-heavy-dreadnought",
+      "points": 280,
+      "defaultQuantity": 1,
+      "unitKeywords": [
+        "Vehiculo"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 280,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 55
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 310,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 65
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 30,
+          "resultingPoints": 310,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Trajann Valoris",
+      "unitSlug": "trajann-valoris",
+      "points": 265,
+      "defaultQuantity": 1,
+      "unitKeywords": [
+        "Caracter",
+        "Infanteria"
+      ],
+      "category": "Personaje",
+      "isNamedCharacter": true,
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 265,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 130
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": []
+    },
+    {
+      "name": "Venatari With Kinetic Destroyers",
+      "unitSlug": "venatari-with-kinetic-destroyers",
+      "points": 255,
+      "defaultQuantity": 3,
+      "unitKeywords": [
+        "Infanteria"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 255,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 280,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 25,
+          "resultingPoints": 280,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Venatari With Verutum Lances",
+      "unitSlug": "venatari-with-verutum-lances",
+      "points": 270,
+      "defaultQuantity": 3,
+      "unitKeywords": [
+        "Infanteria"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 270,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 120
+          }
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 300,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 140
+          }
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 30,
+          "resultingPoints": 300,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Vertus Praetors",
+      "unitSlug": "vertus-praetors",
+      "points": 220,
+      "defaultQuantity": 2,
+      "unitKeywords": [
+        "Montado"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 220,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 65
+          }
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 330,
+          "copyRange": {
+            "from": 1,
+            "to": 1,
+            "label": "1"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 100
+          }
+        },
+        {
+          "models": 2,
+          "minModels": 2,
+          "maxModels": 2,
+          "label": "2 models",
+          "points": 240,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 3,
+          "minModels": 3,
+          "maxModels": 3,
+          "label": "3 models",
+          "points": 350,
+          "copyRange": {
+            "from": 2,
+            "to": null,
+            "label": "2+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 20,
+          "resultingPoints": 240,
+          "minModels": 2,
+          "maxModels": 2,
+          "source": "mfm"
+        },
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 2,
+          "points": 20,
+          "resultingPoints": 350,
+          "minModels": 3,
+          "maxModels": 3,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Anathema Psykana Rhino",
+      "unitSlug": "anathema-psykana-rhino",
+      "points": 70,
+      "defaultQuantity": 1,
+      "unitKeywords": [
+        "Vehiculo"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 70,
+          "copyRange": {
+            "from": 1,
+            "to": 3,
+            "label": "1-3"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 80,
+          "copyRange": {
+            "from": 4,
+            "to": null,
+            "label": "4+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 4,
+          "points": 10,
+          "resultingPoints": 80,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ]
+    },
+    {
+      "name": "Knight-Centura",
+      "unitSlug": "knight-centura",
+      "points": 55,
+      "defaultQuantity": 1,
+      "unitKeywords": [
+        "Caracter",
+        "Infanteria"
+      ],
+      "category": "Personaje",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 55,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": []
+    },
+    {
+      "name": "Prosecutor Squad",
+      "unitSlug": "prosecutor-squad",
+      "points": 45,
+      "defaultQuantity": 4,
+      "unitKeywords": [
+        "Infanteria"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 4,
+          "minModels": 4,
+          "maxModels": 4,
+          "label": "4 models",
+          "points": 45,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 50,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 9,
+          "minModels": 9,
+          "maxModels": 9,
+          "label": "9 models",
+          "points": 80,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 10,
+          "minModels": 10,
+          "maxModels": 10,
+          "label": "10 models",
+          "points": 90,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": []
+    },
+    {
+      "name": "Vigilator Squad",
+      "unitSlug": "vigilator-squad",
+      "points": 50,
+      "defaultQuantity": 4,
+      "unitKeywords": [
+        "Infanteria"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 4,
+          "minModels": 4,
+          "maxModels": 4,
+          "label": "4 models",
+          "points": 50,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 55,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 9,
+          "minModels": 9,
+          "maxModels": 9,
+          "label": "9 models",
+          "points": 90,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 10,
+          "minModels": 10,
+          "maxModels": 10,
+          "label": "10 models",
+          "points": 100,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": []
+    },
+    {
+      "name": "Witchseeker Squad",
+      "unitSlug": "witchseeker-squad",
+      "points": 55,
+      "defaultQuantity": 4,
+      "unitKeywords": [
+        "Infanteria"
+      ],
+      "category": "Otras hojas de datos",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 4,
+          "minModels": 4,
+          "maxModels": 4,
+          "label": "4 models",
+          "points": 55,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 5,
+          "minModels": 5,
+          "maxModels": 5,
+          "label": "5 models",
+          "points": 60,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 9,
+          "minModels": 9,
+          "maxModels": 9,
+          "label": "9 models",
+          "points": 100,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        },
+        {
+          "models": 10,
+          "minModels": 10,
+          "maxModels": 10,
+          "label": "10 models",
+          "points": 110,
+          "copyRange": {
+            "from": 1,
+            "to": null,
+            "label": "default"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": []
+    },
+    {
+      "name": "Blade Champion",
+      "unitSlug": "blade-champion",
+      "points": 175,
+      "defaultQuantity": 1,
+      "unitKeywords": [
+        "Caracter",
+        "Infanteria"
+      ],
+      "category": "Personaje",
+      "isNamedCharacter": false,
+      "modelOptions": [
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 175,
+          "copyRange": {
+            "from": 1,
+            "to": 2,
+            "label": "1-2"
+          },
+          "source": "mfm",
+          "change": {
+            "direction": "up",
+            "amount": 65
+          }
+        },
+        {
+          "models": 1,
+          "minModels": 1,
+          "maxModels": 1,
+          "label": "1 model",
+          "points": 195,
+          "copyRange": {
+            "from": 3,
+            "to": null,
+            "label": "3+"
+          },
+          "source": "mfm",
+          "change": null
+        }
+      ],
+      "wargearOptions": [],
+      "rosterModifiers": [
+        {
+          "type": "nth_copy_surcharge",
+          "threshold": 3,
+          "points": 20,
+          "resultingPoints": 195,
+          "minModels": 1,
+          "maxModels": 1,
+          "source": "mfm"
+        }
+      ]
+    }
+  ]
+}

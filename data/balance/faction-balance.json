@@ -28,10 +28,10 @@
     "unit-cultos-genestealer-the-red-terror"
   ],
   "supplyOnlyUnitSlugs": [
-    "unit-adeptus-custodes-custodian-guard",
-    "unit-adeptus-custodes-prosecutors",
-    "unit-adeptus-custodes-vigilators",
-    "unit-adeptus-custodes-witchseekers",
+    "unit-adeptus-custodes-custodian-guard-sodality",
+    "unit-adeptus-custodes-prosecutor-squad",
+    "unit-adeptus-custodes-vigilator-squad",
+    "unit-adeptus-custodes-witchseeker-squad",
     "unit-legiones-daemonicas-blue-horrors",
     "unit-legiones-daemonicas-pink-horrors",
     "unit-legiones-daemonicas-plague-marines",
@@ -49,7 +49,7 @@
     "unit-adeptus-custodes-shield-captain-in-allarus-terminator-armour": 0.2,
     "unit-adeptus-custodes-shield-captain-on-dawneagle-jetbike": 0.2,
     "unit-adeptus-custodes-allarus-custodians": 0.25,
-    "unit-adeptus-custodes-sagittarum-custodians": 0.25,
+    "unit-adeptus-custodes-sentinel-guard-sodality": 0.25,
     "unit-adeptus-custodes-orion-assault-dropship": 0.25,
     "unit-adeptus-custodes-telemon-heavy-dreadnought": 0.25,
     "unit-legiones-daemonicas-lord-of-change": 0.25,

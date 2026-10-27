@@ -5,6 +5,7 @@ const SOURCE_PATH = "data/11th40kPoints.txt";
 const FINAL_DAY_TYRANIDS_PATH = "data/11th-final-day-tyranids.json";
 const DEATH_GUARD_PATH = "data/11th-death-guard.json";
 const OUTPUT_PATH = "data/11th-unit-cost-options.json";
+const CUSTODES_CURRENT_PATH = "data/11th-custodes-current.json";
 const REPORT_PATH = "docs/generated/11th-unit-cost-options-report.md";
 const SEED_PATH = "supabase/seed.sql";
 const MFM_BASE_URL = "https://mfm.warhammer-community.com/en";
@@ -62,6 +63,40 @@ const SOURCE_NOTE =
   "MFM oficial 11th edition. No se usa BSData/wh40k-10e como fuente de puntos, tamanos ni opciones.";
 
 async function main() {
+  if (process.argv.includes("--inspect-custodes-allies")) {
+    const output = readJson(OUTPUT_PATH);
+    const sources = new Map();
+    const comparison = [];
+    for (const unit of output.units.filter((entry) => entry.factionSlug === "adeptus-custodes" && entry.source?.pageSlug !== "adeptus-custodes")) {
+      const source = await loadMfmSource(sources, unit.source.pageSlug, unit.source.pageSlug);
+      const current = source.unitsByName.get(resolveMatchKey(unit))?.unit;
+      const first = current?.modelOptions.find((option) => option.copyRange.from === 1 && option.models === unit.provided.models);
+      const old = unit.modelOptions.find((option) => option.copyRange.from === 1 && option.models === unit.provided.models);
+      comparison.push({ name: unit.name, source: source.slug, before: old?.points ?? null, after: first?.points ?? null,
+        models: first ? undefined : current?.modelOptions.map((option) => ({ models: option.models, points: option.points, copyFrom: option.copyRange.from })) ?? [] });
+    }
+    console.log(JSON.stringify(comparison, null, 2));
+    return;
+  }
+  if (process.argv.includes("--inspect-custodes")) {
+    const source = await loadMfmSource(new Map(), "adeptus-custodes", "Adeptus Custodes");
+    console.log(JSON.stringify({
+      url: source.url,
+      fetchedAt: new Date().toISOString(),
+      units: source.units.map((unit) => ({
+        name: unit.name,
+        models: unit.modelOptions,
+        wargear: unit.wargearOptions
+      }))
+    }, null, 2));
+    return;
+  }
+
+  if (process.argv.includes("--refresh-custodes")) {
+    await refreshCustodesMfm();
+    return;
+  }
+
   if (process.argv.includes("--refresh-space-marines")) {
     await refreshFactionMfm({
       factionSlug: "space-marines", mfmSlug: "space-marines", factionName: "Space Marines",
@@ -213,6 +248,113 @@ async function main() {
   console.log(`Unidades no encontradas: ${unmatched.length}`);
 }
 
+function custodesKeywords(name) {
+  if (/^SHIELD-CAPTAIN ON DAWNEAGLE/.test(name)) return ["Caracter", "Montado"];
+  if (/^(BLADE CHAMPION|SHIELD-CAPTAIN|TRAJANN VALORIS|KNIGHT-CENTURA)/.test(name)) return ["Caracter", "Infanteria"];
+  if (/^(VERTUS PRAETORS|GYRFALCON)/.test(name)) return ["Montado"];
+  if (/^(ARES GUNSHIP|ORION ASSAULT DROPSHIP)/.test(name)) return ["Vehiculo", "Aeronave"];
+  if (/^(ALLARUS|AQUILON|CUSTODIAN|SENTINEL GUARD|PROSECUTOR|VIGILATOR|WITCHSEEKER|VENATARI)/.test(name)) return ["Infanteria"];
+  return ["Vehiculo"];
+}
+
+function custodesDisplayName(name) {
+  return toDisplayName(name.replace(/[\u2010-\u2015]/g, "-"));
+}
+
+async function refreshCustodesMfm() {
+  const source = await loadMfmSource(new Map(), "adeptus-custodes", "Adeptus Custodes");
+  const official = source.units.filter((unit) => unit.modelOptions.length > 0);
+  if (official.length < 25) throw new Error("MFM Custodes incompleto: faltan fichas con coste");
+  const fetchedAt = new Date().toISOString();
+  const current = {
+    factionSlug: "adeptus-custodes",
+    factionName: "Adeptus Custodes",
+    sourceFactionName: "Imperium - Adeptus Custodes",
+    sourceSection: "MFM 11th edition",
+    isAlliedUnit: false,
+    source: { url: source.url, fetchedAt },
+    units: official.map((unit) => {
+      const first = unit.modelOptions.find((option) => option.copyRange.from === 1);
+      if (!first) throw new Error(`Sin primera copia MFM: ${unit.name}`);
+      const name = custodesDisplayName(unit.name);
+      return {
+        name,
+        unitSlug: slugify(unit.name),
+        points: first.points,
+        defaultQuantity: first.models,
+        unitKeywords: custodesKeywords(unit.name),
+        category: custodesKeywords(unit.name).includes("Caracter") ? "Personaje" : "Otras hojas de datos",
+        isNamedCharacter: unit.name === "TRAJANN VALORIS",
+        modelOptions: unit.modelOptions,
+        wargearOptions: unit.wargearOptions,
+        rosterModifiers: unit.rosterModifiers
+      };
+    })
+  };
+  writeText(CUSTODES_CURRENT_PATH, `${JSON.stringify(current, null, 2)}\n`);
+
+  const output = readJson(OUTPUT_PATH);
+  output.units = output.units.filter((unit) =>
+    unit.factionSlug !== "adeptus-custodes"
+      || unit.source?.pageSlug !== "adeptus-custodes"
+      || unit.name.includes("[Crucible]")
+  );
+  const alliedSources = new Map();
+  output.units = await Promise.all(output.units.map(async (unit) => {
+    if (unit.factionSlug !== "adeptus-custodes" || !unit.source?.pageSlug ||
+      unit.source.pageSlug === "adeptus-custodes") return unit;
+    const alliedSource = await loadMfmSource(alliedSources, unit.source.pageSlug, unit.source.pageSlug);
+    const currentUnit = alliedSource.unitsByName.get(resolveMatchKey(unit))?.unit;
+    if (!currentUnit?.modelOptions.length) return unit;
+    const providedModels = unit.name === "Canis Rex" ? 1 : unit.provided.models;
+    const first = currentUnit.modelOptions.find((option) => option.copyRange.from === 1 && option.models === providedModels);
+    if (!first) return unit;
+    return buildUnitEntry({
+      provided: {
+        factionSlug: unit.factionSlug, factionName: unit.factionName,
+        unitSlug: unit.unitSlug, name: unit.name,
+        models: providedModels, points: unit.provided.points
+      },
+      mfmUnit: currentUnit,
+      mfmSource: alliedSource,
+      fetchedAt
+    });
+  }));
+  for (const unit of official) {
+    const first = unit.modelOptions.find((option) => option.copyRange.from === 1);
+    output.units.push(buildUnitEntry({
+      provided: {
+        factionSlug: "adeptus-custodes",
+        factionName: "Adeptus Custodes",
+        unitSlug: slugify(unit.name),
+        name: custodesDisplayName(unit.name),
+        models: first.models,
+        points: first.points
+      },
+      mfmUnit: unit,
+      mfmSource: source,
+      fetchedAt
+    }));
+  }
+  output.source.custodesRefreshedAt = fetchedAt;
+  writeText(OUTPUT_PATH, `${JSON.stringify(output, null, 2)}\n`);
+  writeText("docs/generated/custodes-mfm-refresh.md", [
+    "# Adeptus Custodes: MFM 11th edition",
+    "",
+    `Fuente oficial: ${source.url}`,
+    `Consultada: ${fetchedAt}`,
+    `Fichas actuales con coste: ${official.length}`,
+    "",
+    "Las fichas antiguas que ya no figuran en MFM no se ofrecen para nuevo reclutamiento. Las unidades existentes conservan su historial.",
+    "",
+    "| Unidad | Opciones primera copia |",
+    "|---|---|",
+    ...official.map((unit) => `| ${custodesDisplayName(unit.name)} | ${unit.modelOptions.filter((option) => option.copyRange.from === 1).map((option) => `${option.models} miniaturas: ${option.points} pt`).join(", ")} |`),
+    ""
+  ].join("\n"));
+  console.log(`Custodes: ${official.length} fichas MFM exportadas a ${CUSTODES_CURRENT_PATH}`);
+}
+
 async function refreshFactionMfm({ factionSlug, mfmSlug, factionName, refreshedAtKey, reportPath }) {
   const output = readJson(OUTPUT_PATH);
   const previousCount = output.units.length;
@@ -254,6 +396,7 @@ async function refreshFactionMfm({ factionSlug, mfmSlug, factionName, refreshedA
   });
 
   if (output.units.length !== previousCount || unavailable.length > 25) {
+    console.error(`Sin ficha ${factionName}: ${unavailable.join(", ")}`);
     throw new Error(`El catalogo ${factionName} no se pudo cruzar con MFM de forma segura`);
   }
 

@@ -9,10 +9,10 @@ Generado por `npm run units:generate` desde `data/11th40kPoints.txt`.
 - Archivos BSData escaneados: 46.
 - Entradas BSData escaneadas: 1508.
 - Entradas BSData con keywords de tipo usadas por el rol: 1460.
-- Unidades con keywords reales cruzadas: 362.
+- Unidades con keywords reales cruzadas: 391.
 - Cruces BSData faltantes: 0.
 - Fallback heuristico: 0.
-- Puntos base actualizados desde MFM: 172.
+- Puntos base actualizados desde MFM: 158.
 - Material Industrial y Uridium: siempre 0 en costes de unidades.
 - Disponibilidad inicial: todas las plantillas importadas quedan bloqueadas (`is_available = false`).
 
@@ -24,7 +24,8 @@ Generado por `npm run units:generate` desde `data/11th40kPoints.txt`.
 - Xenos - Aeldari: 64/64 unidades, 9860/10200 puntos.
 - Xenos - Genestealer Cults: 27/27 unidades, 1945/1910 puntos.
 - Imperium - Adeptus Astartes - Space Marines: 85/85 unidades, 10890/10785 puntos.
-- Imperium - Adeptus Custodes: 51/51 unidades, 16160/16160 puntos.
+- Imperium - Adeptus Custodes: 51/51 unidades, 16210/16160 puntos.
+- Adeptus Custodes - MFM 11th edition: 29/29 unidades, 6550/6550 puntos.
 - Cultos Genestealer - FINAL DAY TYRANIDS: 14/14 unidades, 1450/1450 puntos.
 - El Caos - Death Guard: 15/15 unidades, 1940/1940 puntos.
 
@@ -42,10 +43,10 @@ Generado por `npm run units:generate` desde `data/11th40kPoints.txt`.
 
 ## Unidades por categoria
 
-- Personaje: 136
-- Linea de batalla: 21
-- Otras hojas de datos: 158
-- Transporte: 12
+- Personaje: 134
+- Linea de batalla: 20
+- Otras hojas de datos: 162
+- Transporte: 11
 - Aliada: 35
 
 ## Cruces BSData faltantes
@@ -202,27 +203,13 @@ Generado por `npm run units:generate` desde `data/11th40kPoints.txt`.
 - Imperium - Adeptus Astartes - Space Marines: Thunderhawk Gunship (1 modelos) 840 -> 850 pts
 - Imperium - Adeptus Astartes - Space Marines: Vanguard Veteran Squad with Jump Packs (5 modelos) 100 -> 110 pts
 - Imperium - Adeptus Astartes - Space Marines: Whirlwind (1 modelos) 190 -> 175 pts
-- Imperium - Adeptus Custodes: Aleya (1 modelos) 65 -> 55 pts
-- Imperium - Adeptus Custodes: Blade Champion (1 modelos) 120 -> 110 pts
-- Imperium - Adeptus Custodes: Shield-Captain (1 modelos) 120 -> 110 pts
-- Imperium - Adeptus Custodes: Shield-Captain on Dawneagle Jetbike (1 modelos) 150 -> 140 pts
-- Imperium - Adeptus Custodes: Trajann Valoris (1 modelos) 140 -> 135 pts
-- Imperium - Adeptus Custodes: Custodian Guard (4 modelos) 160 -> 170 pts
-- Imperium - Adeptus Custodes: Anathema Psykana Rhino (1 modelos) 75 -> 65 pts
-- Imperium - Adeptus Custodes: Caladius Grav-tank (1 modelos) 215 -> 210 pts
-- Imperium - Adeptus Custodes: Coronus Grav-carrier (1 modelos) 200 -> 180 pts
-- Imperium - Adeptus Custodes: Custodian Wardens (4 modelos) 210 -> 200 pts
-- Imperium - Adeptus Custodes: Pallas Grav-attack (1 modelos) 105 -> 100 pts
-- Imperium - Adeptus Custodes: Prosecutors (4 modelos) 40 -> 45 pts
-- Imperium - Adeptus Custodes: Venatari Custodians (3 modelos) 165 -> 150 pts
-- Imperium - Adeptus Custodes: Vigilators (4 modelos) 45 -> 50 pts
-- Imperium - Adeptus Custodes: Witchseekers (4 modelos) 45 -> 50 pts
 - Imperium - Adeptus Custodes: Acastus Knight Asterius (1 modelos) 765 -> 785 pts
 - Imperium - Adeptus Custodes: Acastus Knight Porphyrion (1 modelos) 700 -> 725 pts
 - Imperium - Adeptus Custodes: Armiger Helverin (1 modelos) 135 -> 140 pts
 - Imperium - Adeptus Custodes: Cerastus Knight Lancer (1 modelos) 395 -> 415 pts
 - Imperium - Adeptus Custodes: Knight Castellan (1 modelos) 410 -> 425 pts
 - Imperium - Adeptus Custodes: Knight Crusader (1 modelos) 385 -> 395 pts
-- Imperium - Adeptus Custodes: Knight Defender (1 modelos) 415 -> 400 pts
+- Imperium - Adeptus Custodes: Knight Defender (1 modelos) 415 -> 385 pts
 - Imperium - Adeptus Custodes: Knight Destrier (1 modelos) 250 -> 265 pts
-- Imperium - Adeptus Custodes: Knight Valiant (1 modelos) 410 -> 400 pts
+- Imperium - Adeptus Custodes: Knight Valiant (1 modelos) 410 -> 390 pts
+- Imperium - Adeptus Custodes: Knight Warden (1 modelos) 375 -> 365 pts

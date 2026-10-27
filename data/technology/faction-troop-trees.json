@@ -393,7 +393,7 @@
         {
           "slug": "custodes-custodia-auramita",
           "name": "Custodia Auramita",
-          "description": "La guardia basica del Trono forma la primera linea de defensa perfecta y ofensiva disciplinada. Desbloquea: Custodian Guard.",
+          "description": "La guardia basica del Trono forma la primera linea de defensa perfecta y ofensiva disciplinada. Desbloquea: Custodian Guard Sodality.",
           "branchSlug": "guardia-auramita",
           "tier": 1,
           "positionX": 1,
@@ -401,18 +401,18 @@
           "costTechnology": 1,
           "researchTimeSeconds": 30,
           "iconKey": "custodes_guard",
-          "effectSummary": "Desbloquea: Custodian Guard.",
+          "effectSummary": "Desbloquea: Custodian Guard Sodality.",
           "prerequisiteSlugs": [
             "fundacion-planetaria"
           ],
           "unitTemplateSlugs": [
-            "unit-adeptus-custodes-custodian-guard"
+            "unit-adeptus-custodes-custodian-guard-sodality"
           ]
         },
         {
           "slug": "custodes-lanzas-especialistas",
           "name": "Lanzas Especialistas",
-          "description": "Las formaciones de guardianes se diversifican en escoltas, fuego pesado y armas exoticas de auramita. Desbloquea: Custodian Wardens, Sagittarum Custodians y Custodian Guard with Adrasite and Pyrithite spears.",
+          "description": "Las formaciones de guardianes se diversifican en escoltas y armas especializadas de auramita. Desbloquea: Custodian Wardens y Sentinel Guard Sodality.",
           "branchSlug": "guardia-auramita",
           "tier": 2,
           "positionX": 1,
@@ -420,20 +420,19 @@
           "costTechnology": 2,
           "researchTimeSeconds": 30,
           "iconKey": "custodes_spear",
-          "effectSummary": "Desbloquea: Custodian Wardens, Sagittarum Custodians, Custodian Guard with Adrasite and Pyrithite spears.",
+          "effectSummary": "Desbloquea: Custodian Wardens y Sentinel Guard Sodality.",
           "prerequisiteSlugs": [
             "custodes-custodia-auramita"
           ],
           "unitTemplateSlugs": [
             "unit-adeptus-custodes-custodian-wardens",
-            "unit-adeptus-custodes-sagittarum-custodians",
-            "unit-adeptus-custodes-custodian-guard-with-adrasite-and-pyrithite-spears"
+            "unit-adeptus-custodes-sentinel-guard-sodality"
           ]
         },
         {
           "slug": "custodes-campeones-escudo",
           "name": "Campeones del Escudo",
-          "description": "El mando individual del Adeptus Custodes despliega duelistas, capitanes y custodios de autoridad excepcional. Desbloquea: Blade Champion, Shield-Captain, Guardian of the Throne [Crucible] y Valerian.",
+          "description": "El mando individual del Adeptus Custodes despliega duelistas y capitanes de autoridad excepcional. Desbloquea: Blade Champion, Shield-Captain y Guardian of the Throne [Crucible].",
           "branchSlug": "guardia-auramita",
           "tier": 2,
           "positionX": 1,
@@ -441,7 +440,7 @@
           "costTechnology": 2,
           "researchTimeSeconds": 30,
           "iconKey": "custodes_command",
-          "effectSummary": "Desbloquea: Blade Champion, Shield-Captain, Guardian of the Throne [Crucible], Valerian.",
+          "effectSummary": "Desbloquea: Blade Champion, Shield-Captain y Guardian of the Throne [Crucible].",
           "prerequisiteSlugs": [
             "custodes-custodia-auramita",
             "asamblea-planetaria"
@@ -449,14 +448,13 @@
           "unitTemplateSlugs": [
             "unit-adeptus-custodes-blade-champion",
             "unit-adeptus-custodes-shield-captain",
-            "unit-adeptus-custodes-guardian-of-the-throne-crucible",
-            "unit-adeptus-custodes-valerian"
+            "unit-adeptus-custodes-guardian-of-the-throne-crucible"
           ]
         },
         {
           "slug": "custodes-terminadores-auricos",
           "name": "Terminadores Auricos",
-          "description": "Las armaduras mas pesadas de la Guardia avanzan como camaras acorazadas vivas contra objetivos imposibles. Desbloquea: Allarus Custodians, Aquilon Custodians y Shield-Captain in Allarus Terminator Armour.",
+          "description": "Las armaduras mas pesadas de la Guardia avanzan contra objetivos imposibles. Desbloquea: Allarus Custodians, Aquilon Terminators with Solarite Power Gauntlets, Aquilon Terminators with Solarite Power Talons y Shield-Captain in Allarus Terminator Armour.",
           "branchSlug": "guardia-auramita",
           "tier": 3,
           "positionX": 1,
@@ -464,21 +462,22 @@
           "costTechnology": 2,
           "researchTimeSeconds": 30,
           "iconKey": "custodes_terminator",
-          "effectSummary": "Desbloquea: Allarus Custodians, Aquilon Custodians, Shield-Captain in Allarus Terminator Armour.",
+          "effectSummary": "Desbloquea: Allarus Custodians, Aquilon Terminators with Solarite Power Gauntlets, Aquilon Terminators with Solarite Power Talons y Shield-Captain in Allarus Terminator Armour.",
           "prerequisiteSlugs": [
             "custodes-lanzas-especialistas",
             "custodes-campeones-escudo"
           ],
           "unitTemplateSlugs": [
             "unit-adeptus-custodes-allarus-custodians",
-            "unit-adeptus-custodes-aquilon-custodians",
+            "unit-adeptus-custodes-aquilon-terminators-with-solarite-power-gauntlets",
+            "unit-adeptus-custodes-aquilon-terminators-with-solarite-power-talons",
             "unit-adeptus-custodes-shield-captain-in-allarus-terminator-armour"
           ]
         },
         {
           "slug": "custodes-hueste-victoria",
           "name": "Hueste de la Victoria",
-          "description": "La elite movil y los heroes mayores del Trono transforman cualquier frente en un juramento cumplido. Desbloquea: Trajann Valoris, Venatari Custodians, Kataphraktoi Exemplar [Crucible] y Shield-Captain on Dawneagle Jetbike.",
+          "description": "La elite movil y los heroes mayores del Trono transforman cualquier frente en un juramento cumplido. Desbloquea: Trajann Valoris, Venatari with Kinetic Destroyers, Venatari with Verutum Lances, Vertus Praetors, Gyrfalcon Jetbike Sodality, Kataphraktoi Exemplar [Crucible] y Shield-Captain on Dawneagle Jetbike.",
           "branchSlug": "guardia-auramita",
           "tier": 4,
           "positionX": 1,
@@ -486,14 +485,17 @@
           "costTechnology": 3,
           "researchTimeSeconds": 30,
           "iconKey": "custodes_victory",
-          "effectSummary": "Desbloquea: Trajann Valoris, Venatari Custodians, Kataphraktoi Exemplar [Crucible], Shield-Captain on Dawneagle Jetbike.",
+          "effectSummary": "Desbloquea: Trajann Valoris, Venatari with Kinetic Destroyers, Venatari with Verutum Lances, Vertus Praetors, Gyrfalcon Jetbike Sodality, Kataphraktoi Exemplar [Crucible] y Shield-Captain on Dawneagle Jetbike.",
           "prerequisiteSlugs": [
             "custodes-terminadores-auricos",
             "maquinaria-belica"
           ],
           "unitTemplateSlugs": [
             "unit-adeptus-custodes-trajann-valoris",
-            "unit-adeptus-custodes-venatari-custodians",
+            "unit-adeptus-custodes-venatari-with-kinetic-destroyers",
+            "unit-adeptus-custodes-venatari-with-verutum-lances",
+            "unit-adeptus-custodes-vertus-praetors",
+            "unit-adeptus-custodes-gyrfalcon-jetbike-sodality",
             "unit-adeptus-custodes-kataphraktoi-exemplar-crucible",
             "unit-adeptus-custodes-shield-captain-on-dawneagle-jetbike"
           ]
@@ -501,7 +503,7 @@
         {
           "slug": "custodes-escuadras-nulas",
           "name": "Escuadras Nulas",
-          "description": "Las Hermanas del Silencio sellan rutas psiquicas y cazan brujas antes de que contaminen la campana. Desbloquea: Prosecutors, Vigilators y Witchseekers.",
+          "description": "Las Hermanas del Silencio sellan rutas psiquicas y cazan brujas. Desbloquea: Prosecutor Squad, Vigilator Squad y Witchseeker Squad.",
           "branchSlug": "camara-anathema",
           "tier": 1,
           "positionX": 2,
@@ -509,20 +511,20 @@
           "costTechnology": 1,
           "researchTimeSeconds": 30,
           "iconKey": "custodes_null",
-          "effectSummary": "Desbloquea: Prosecutors, Vigilators, Witchseekers.",
+          "effectSummary": "Desbloquea: Prosecutor Squad, Vigilator Squad y Witchseeker Squad.",
           "prerequisiteSlugs": [
             "fundacion-planetaria"
           ],
           "unitTemplateSlugs": [
-            "unit-adeptus-custodes-prosecutors",
-            "unit-adeptus-custodes-vigilators",
-            "unit-adeptus-custodes-witchseekers"
+            "unit-adeptus-custodes-prosecutor-squad",
+            "unit-adeptus-custodes-vigilator-squad",
+            "unit-adeptus-custodes-witchseeker-squad"
           ]
         },
         {
           "slug": "custodes-centuras-vigilia",
           "name": "Centuras de la Vigilia",
-          "description": "La cadena de mando Anathema despliega ejecutoras, heroes de la Vigilia y protocolos [Crucible]. Desbloquea: Knight-Centura, Aleya y Null Maiden [Crucible].",
+          "description": "La cadena de mando Anathema despliega ejecutoras y protocolos [Crucible]. Desbloquea: Knight-Centura y Null Maiden [Crucible].",
           "branchSlug": "camara-anathema",
           "tier": 2,
           "positionX": 2,
@@ -530,14 +532,13 @@
           "costTechnology": 2,
           "researchTimeSeconds": 30,
           "iconKey": "custodes_silent_command",
-          "effectSummary": "Desbloquea: Knight-Centura, Aleya, Null Maiden [Crucible].",
+          "effectSummary": "Desbloquea: Knight-Centura y Null Maiden [Crucible].",
           "prerequisiteSlugs": [
             "custodes-escuadras-nulas",
             "asamblea-planetaria"
           ],
           "unitTemplateSlugs": [
             "unit-adeptus-custodes-knight-centura",
-            "unit-adeptus-custodes-aleya",
             "unit-adeptus-custodes-null-maiden-crucible"
           ]
         },
@@ -604,7 +605,7 @@
         {
           "slug": "custodes-sarcofagos-venerables",
           "name": "Sarcofagos Venerables",
-          "description": "Los heroes caidos del Trono vuelven a caminar en chasis Contemptor para duelos, brechas y guardiania eterna. Desbloquea: Contemptor-Achillus Dreadnought, Contemptor-Galatus Dreadnought y Venerable Contemptor Dreadnought.",
+          "description": "Los heroes caidos del Trono vuelven a caminar en chasis Contemptor para duelos y brechas. Desbloquea: Contemptor-Achillus Dreadnought y Contemptor-Galatus Dreadnought.",
           "branchSlug": "arsenal-trono",
           "tier": 2,
           "positionX": 3,
@@ -612,21 +613,20 @@
           "costTechnology": 2,
           "researchTimeSeconds": 30,
           "iconKey": "custodes_dreadnought",
-          "effectSummary": "Desbloquea: Contemptor-Achillus Dreadnought, Contemptor-Galatus Dreadnought, Venerable Contemptor Dreadnought.",
+          "effectSummary": "Desbloquea: Contemptor-Achillus Dreadnought y Contemptor-Galatus Dreadnought.",
           "prerequisiteSlugs": [
             "custodes-grav-ligero",
             "custodes-campeones-escudo"
           ],
           "unitTemplateSlugs": [
             "unit-adeptus-custodes-contemptor-achillus-dreadnought",
-            "unit-adeptus-custodes-contemptor-galatus-dreadnought",
-            "unit-adeptus-custodes-venerable-contemptor-dreadnought"
+            "unit-adeptus-custodes-contemptor-galatus-dreadnought"
           ]
         },
         {
           "slug": "custodes-blindados-auramita",
           "name": "Blindados de Auramita",
-          "description": "Tanques grav, reliquias Land Raider y dreadnoughts pesados forman la respuesta dorada a una guerra total. Desbloquea: Caladius Grav-tank, Venerable Land Raider y Telemon Heavy Dreadnought.",
+          "description": "Tanques grav y dreadnoughts pesados forman la respuesta dorada a una guerra total. Desbloquea: Caladius Grav-tank, Caladius Annihilator Grav-tank y Telemon Heavy Dreadnought.",
           "branchSlug": "arsenal-trono",
           "tier": 3,
           "positionX": 3,
@@ -634,13 +634,13 @@
           "costTechnology": 2,
           "researchTimeSeconds": 30,
           "iconKey": "custodes_tank",
-          "effectSummary": "Desbloquea: Caladius Grav-tank, Venerable Land Raider, Telemon Heavy Dreadnought.",
+          "effectSummary": "Desbloquea: Caladius Grav-tank, Caladius Annihilator Grav-tank y Telemon Heavy Dreadnought.",
           "prerequisiteSlugs": [
             "custodes-sarcofagos-venerables"
           ],
           "unitTemplateSlugs": [
             "unit-adeptus-custodes-caladius-grav-tank",
-            "unit-adeptus-custodes-venerable-land-raider",
+            "unit-adeptus-custodes-caladius-annihilator-grav-tank",
             "unit-adeptus-custodes-telemon-heavy-dreadnought"
           ]
         },

@@ -11,6 +11,7 @@ const SOURCE_PATH = "data/11th40kPoints.txt";
 const MFM_COST_OPTIONS_PATH = "data/11th-unit-cost-options.json";
 const FINAL_DAY_TYRANIDS_PATH = "data/11th-final-day-tyranids.json";
 const DEATH_GUARD_PATH = "data/11th-death-guard.json";
+const CUSTODES_CURRENT_PATH = "data/11th-custodes-current.json";
 const SEED_PATH = "supabase/seed.sql";
 const MOCK_PATH = "src/mocks/generated/40k-unit-templates.ts";
 const REPORT_PATH = "docs/generated/40k-unit-import-report.md";
@@ -214,9 +215,9 @@ const INITIAL_UNITS = [
   ["sombra-intercessors-large-damaged", "space-marines", "Intercessor Squad", "sa-cea-gate", "ready", 1, null, 0, 7, 10, 150],
   ["sombra-lieutenant", "space-marines", "Lieutenant", "sa-cea-gate", "ready", 2, null, 0, 1, 1, 55],
   ["sombra-bladeguard-damaged", "space-marines", "Bladeguard Veteran Squad", "sa-cea-gate", "ready", 1, null, 0, 1, 3, 80],
-  ["custodes-blade-champion", "adeptus-custodes", "Blade Champion", "kharon-prime", "ready", 2, null, 0, 1, 1, 120],
-  ["custodes-guard-damaged", "adeptus-custodes", "Custodian Guard", "kharon-prime", "ready", 1, null, 0, 3, 4, 160],
-  ["custodes-prosecutor-damaged", "adeptus-custodes", "Prosecutors", "kharon-prime", "ready", 1, null, 0, 1, 4, 40]
+  ["custodes-blade-champion", "adeptus-custodes", "Blade Champion", "kharon-prime", "ready", 2, null, 0, 1, 1, 175],
+  ["custodes-guard-damaged", "adeptus-custodes", "Custodian Guard Sodality", "kharon-prime", "ready", 1, null, 0, 2, 3, 240],
+  ["custodes-prosecutor-damaged", "adeptus-custodes", "Prosecutor Squad", "kharon-prime", "ready", 1, null, 0, 1, 4, 45]
 ];
 
 const MOVEMENT_ORDERS = [];
@@ -272,7 +273,9 @@ function parseCatalog(text, keywordSource, mfmBasePointOverrides) {
       }
 
       const isCharacterLine = Boolean(unitMatch[1]);
-      const defaultQuantity = Number(unitMatch[2]);
+      const defaultQuantity = faction.slug === "adeptus-custodes" && unitMatch[3].trim() === "Canis Rex"
+        ? 1
+        : Number(unitMatch[2]);
       const name = unitMatch[3].trim();
       const providedPoints = Number(unitMatch[4]);
       const unitSlug = slugify(name);
@@ -339,6 +342,14 @@ function parseCatalog(text, keywordSource, mfmBasePointOverrides) {
     throw new Error(`Faltan cruces BSData para:\n${missingKeywordMatches.map((line) => `- ${line}`).join("\n")}`);
   }
 
+  for (let index = units.length - 1; index >= 0; index -= 1) {
+    const unit = units[index];
+    if (unit.factionSlug === "adeptus-custodes" && !unit.isAlliedUnit && !unit.name.includes("[Crucible]")) {
+      units.splice(index, 1);
+    }
+  }
+
+  appendSupplementalFactionUnits(units, factionSummaries, keywordMatches, CUSTODES_CURRENT_PATH);
   appendFinalDayTyranidUnits(units, factionSummaries, keywordMatches);
   appendSupplementalFactionUnits(units, factionSummaries, keywordMatches, DEATH_GUARD_PATH);
 

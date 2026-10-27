@@ -6,7 +6,7 @@ Generado por `npm run units:generate`.
 
 - Conversion: `supply + 2*minerals + 5*honor + 5*gold = points`.
 - Material Industrial y Uridium no se usan para reclutar unidades.
-- Capital + adyacente objetivo: 19.5 puntos de reclutamiento/dia.
+- Capital + adyacente objetivo: 21.5 puntos de reclutamiento/dia.
 - Uridium y Material Industrial tienen economia separada.
 - La campana empieza sin edificios construidos.
 - Por defecto ninguna unidad cuesta Oro; solo lo hacen las excepciones de faccion y las aliadas que cumplen su umbral.
@@ -22,7 +22,7 @@ Generado por `npm run units:generate`.
 
 | Faccion | Unidades | Unidades con oro | Puntos catalogo | Suministro | Mineral | Honor | Oro |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| adeptus-custodes | 51 | 23 (45%) | 16160 | 2107 | 4468 | 535 | 489 |
+| adeptus-custodes | 51 | 23 (45%) | 17625 | 2804 | 4759 | 552 | 509 |
 | cultos-genestealer | 41 | 11 (27%) | 3395 | 1501 | 503 | 131 | 47 |
 | legiones-daemonicas | 34 | 10 (29%) | 4660 | 1460 | 779 | 221 | 108 |
 | necrones | 55 | 14 (25%) | 7600 | 1471 | 1677 | 361 | 195 |
@@ -31,9 +31,10 @@ Generado por `npm run units:generate`.
 
 | Faccion | Tipo | Unidades | Con oro |
 |---|---|---:|---:|
-| adeptus-custodes | Caracter | 23 | 15 |
-| adeptus-custodes | Infanteria | 10 | 2 |
-| adeptus-custodes | Vehiculo | 18 | 6 |
+| adeptus-custodes | Caracter | 21 | 15 |
+| adeptus-custodes | Infanteria | 11 | 2 |
+| adeptus-custodes | Montado | 2 | 0 |
+| adeptus-custodes | Vehiculo | 17 | 6 |
 | cultos-genestealer | Caracter | 23 | 9 |
 | cultos-genestealer | Infanteria | 11 | 2 |
 | cultos-genestealer | Monstruo | 3 | 0 |
@@ -60,10 +61,10 @@ Generado por `npm run units:generate`.
 - cultos-genestealer: Acolyte Hybrids with Autopistols -> 70 Suministro
 - cultos-genestealer: Neophyte Hybrids -> 70 Suministro
 - cultos-genestealer: Hybrid Metamorphs -> 75 Suministro
-- adeptus-custodes: Custodian Guard -> 170 Suministro
-- adeptus-custodes: Prosecutors -> 45 Suministro
-- adeptus-custodes: Vigilators -> 50 Suministro
-- adeptus-custodes: Witchseekers -> 50 Suministro
+- adeptus-custodes: Custodian Guard Sodality -> 240 Suministro
+- adeptus-custodes: Prosecutor Squad -> 45 Suministro
+- adeptus-custodes: Vigilator Squad -> 50 Suministro
+- adeptus-custodes: Witchseeker Squad -> 55 Suministro
 - legiones-daemonicas: Plague Marines -> 90 Suministro
 - legiones-daemonicas: Poxwalkers -> 65 Suministro
 
@@ -124,29 +125,27 @@ Generado por `npm run units:generate`.
 - cultos-genestealer: Reductus Saboteur -> 5 Honor (36%, Infanteria, Caracter)
 - cultos-genestealer: Sanctus -> 5 Honor (38%, Infanteria, Caracter)
 - cultos-genestealer: Voice of the Patriarch [Crucible] -> 5 Honor (36%, Infanteria, Caracter)
-- adeptus-custodes: Aleya -> 5 Honor (45%, Infanteria, Caracter)
-- adeptus-custodes: Blade Champion -> 11 Honor (50%, Infanteria, Caracter)
 - adeptus-custodes: Guardian of the Throne [Crucible] -> 13 Honor (50%, Infanteria, Caracter)
 - adeptus-custodes: Kataphraktoi Exemplar [Crucible] -> 15 Honor (50%, Montado, Caracter)
-- adeptus-custodes: Knight-Centura -> 5 Honor (45%, Infanteria, Caracter)
 - adeptus-custodes: Null Maiden [Crucible] -> 6 Honor (46%, Infanteria, Caracter)
-- adeptus-custodes: Shield-Captain -> 11 Honor (50%, Infanteria, Caracter)
-- adeptus-custodes: Shield-Captain in Allarus Terminator Armour -> 13 Honor (50%, Infanteria, Caracter)
-- adeptus-custodes: Shield-Captain on Dawneagle Jetbike -> 14 Honor (50%, Montado, Caracter)
-- adeptus-custodes: Trajann Valoris -> 13 Honor (48%, Infanteria, Caracter)
-- adeptus-custodes: Valerian -> 11 Honor (50%, Infanteria, Caracter)
 - adeptus-custodes: Canis Rex -> 41 Honor (49%, Infanteria, Caracter)
 - adeptus-custodes: Cerastus Knight Lancer -> 41 Honor (49%, Vehiculo, Caracter)
 - adeptus-custodes: Knight Castellan -> 42 Honor (49%, Vehiculo, Caracter)
 - adeptus-custodes: Knight Crusader -> 39 Honor (49%, Vehiculo, Caracter)
-- adeptus-custodes: Knight Defender -> 40 Honor (50%, Vehiculo, Caracter)
+- adeptus-custodes: Knight Defender -> 38 Honor (49%, Vehiculo, Caracter)
 - adeptus-custodes: Knight Destrier -> 26 Honor (49%, Vehiculo, Caracter)
 - adeptus-custodes: Knight Gallant -> 35 Honor (49%, Vehiculo, Caracter)
 - adeptus-custodes: Knight Paladin -> 37 Honor (49%, Vehiculo, Caracter)
 - adeptus-custodes: Knight Preceptor -> 36 Honor (49%, Vehiculo, Caracter)
-- adeptus-custodes: Knight Valiant -> 40 Honor (50%, Vehiculo, Caracter)
-- adeptus-custodes: Knight Warden -> 37 Honor (49%, Vehiculo, Caracter)
+- adeptus-custodes: Knight Valiant -> 39 Honor (50%, Vehiculo, Caracter)
+- adeptus-custodes: Knight Warden -> 36 Honor (49%, Vehiculo, Caracter)
 - adeptus-custodes: Ministorum Priest -> 4 Honor (50%, Infanteria, Caracter)
+- adeptus-custodes: Shield-Captain -> 18 Honor (50%, Infanteria, Caracter)
+- adeptus-custodes: Shield-Captain In Allarus Terminator Armour -> 18 Honor (49%, Infanteria, Caracter)
+- adeptus-custodes: Shield-Captain On Dawneagle Jetbike -> 20 Honor (49%, Montado, Caracter)
+- adeptus-custodes: Trajann Valoris -> 26 Honor (49%, Infanteria, Caracter)
+- adeptus-custodes: Knight-Centura -> 5 Honor (45%, Infanteria, Caracter)
+- adeptus-custodes: Blade Champion -> 17 Honor (49%, Infanteria, Caracter)
 - cultos-genestealer: Winged Hive Tyrant -> 14 Honor (38%, Monstruo, Caracter)
 - cultos-genestealer: Winged Tyranid Prime -> 5 Honor (38%, Infanteria, Caracter)
 - cultos-genestealer: Deathleaper -> 6 Honor (38%, Infanteria, Caracter)
@@ -163,11 +162,11 @@ Generado por `npm run units:generate`.
 
 | Faccion | Capital | Pts capital | Adyacente | Pts adyacente | Total | Material capital | Uridium adyacente |
 |---|---|---:|---|---:|---:|---:|---:|
-| legiones-daemonicas | mordax | 13.5 | drusus | 6 | 19.5 | 5 | 0.6 |
-| space-marines | sa-cea-gate | 13.5 | lyra-terminus | 6 | 19.5 | 5 | 0.6 |
-| necrones | thokt-vault | 13.5 | novem | 6 | 19.5 | 5 | 0.6 |
-| adeptus-custodes | kharon-prime | 13.5 | helios-drift | 6 | 19.5 | 5 | 0.6 |
-| cultos-genestealer | blackglass | 13.5 | red-sabbath | 6 | 19.5 | 5 | 0.6 |
+| legiones-daemonicas | mordax | 13.5 | drusus | 8 | 21.5 | 5 | 0.6 |
+| space-marines | sa-cea-gate | 13.5 | lyra-terminus | 8 | 21.5 | 5 | 0.6 |
+| necrones | thokt-vault | 13.5 | novem | 8 | 21.5 | 5 | 0.6 |
+| adeptus-custodes | kharon-prime | 13.5 | helios-drift | 8 | 21.5 | 5 | 0.6 |
+| cultos-genestealer | blackglass | 13.5 | red-sabbath | 8 | 21.5 | 5 | 0.6 |
 
 ## Validaciones rapidas
 
@@ -175,4 +174,4 @@ Generado por `npm run units:generate`.
 - Unidades con Material Industrial o Uridium: 0.
 - Unidades no character con Honor: 0.
 - Sombra del Emperador: costes preservados sin cambios.
-- Facciones importadas desde catalogo: 9.
+- Facciones importadas desde catalogo: 10.
