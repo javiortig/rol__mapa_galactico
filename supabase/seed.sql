@@ -189,6 +189,10 @@ update public.systems
 set building_slots = 4
 where slug in ('corona-voss', 'cicatriz-helion', 'nadir-kappa');
 
+update public.systems
+set battle_points_limit = 800
+where slug in ('corona-voss', 'cicatriz-helion', 'nadir-kappa');
+
 update public.factions set capital_system_id = public.seed_uuid('system', 'thokt-vault') where slug = 'necrones';
 update public.factions set capital_system_id = public.seed_uuid('system', 'kharon-prime') where slug = 'adeptus-custodes';
 update public.factions set capital_system_id = public.seed_uuid('system', 'blackglass') where slug = 'cultos-genestealer';
